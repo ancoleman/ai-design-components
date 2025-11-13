@@ -1,0 +1,58 @@
+{
+  "default10": {
+    "name": "Default 10-Color Categorical",
+    "description": "Extended categorical palette for up to 10 categories",
+    "type": "categorical",
+    "colors": [
+      { "hex": "#3B82F6", "name": "Blue" },
+      { "hex": "#10B981", "name": "Green" },
+      { "hex": "#F59E0B", "name": "Orange" },
+      { "hex": "#8B5CF6", "name": "Purple" },
+      { "hex": "#EF4444", "name": "Red" },
+      { "hex": "#14B8A6", "name": "Teal" },
+      { "hex": "#F97316", "name": "Deep Orange" },
+      { "hex": "#6366F1", "name": "Indigo" },
+      { "hex": "#EC4899", "name": "Pink" },
+      { "hex": "#84CC16", "name": "Lime" }
+    ],
+    "maxCategories": 10
+  },
+  "tableau10": {
+    "name": "Tableau 10",
+    "description": "Tableau's default 10-color palette, widely recognized",
+    "type": "categorical",
+    "colors": [
+      { "hex": "#4E79A7", "name": "Blue" },
+      { "hex": "#F28E2B", "name": "Orange" },
+      { "hex": "#E15759", "name": "Red" },
+      { "hex": "#76B7B2", "name": "Cyan" },
+      { "hex": "#59A14F", "name": "Green" },
+      { "hex": "#EDC948", "name": "Yellow" },
+      { "hex": "#B07AA1", "name": "Purple" },
+      { "hex": "#FF9DA7", "name": "Pink" },
+      { "hex": "#9C755F", "name": "Brown" },
+      { "hex": "#BAB0AC", "name": "Gray" }
+    ],
+    "maxCategories": 10,
+    "source": "Tableau Software"
+  },
+  "d3Category10": {
+    "name": "D3 Category10",
+    "description": "D3.js default categorical colors",
+    "type": "categorical",
+    "colors": [
+      { "hex": "#1F77B4", "name": "Blue" },
+      { "hex": "#FF7F0E", "name": "Orange" },
+      { "hex": "#2CA02C", "name": "Green" },
+      { "hex": "#D62728", "name": "Red" },
+      { "hex": "#9467BD", "name": "Purple" },
+      { "hex": "#8C564B", "name": "Brown" },
+      { "hex": "#E377C2", "name": "Pink" },
+      { "hex": "#7F7F7F", "name": "Gray" },
+      { "hex": "#BCBD22", "name": "Olive" },
+      { "hex": "#17BECF", "name": "Cyan" }
+    ],
+    "maxCategories": 10,
+    "source": "D3.js"
+  }
+}

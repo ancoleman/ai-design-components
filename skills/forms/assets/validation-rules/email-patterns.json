@@ -1,0 +1,34 @@
+{
+  "patterns": {
+    "basic": {
+      "regex": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+      "description": "Basic email validation (most permissive)",
+      "examples": {
+        "valid": ["user@example.com", "test.user+tag@domain.co.uk"],
+        "invalid": ["invalid", "@example.com", "user@", "user@domain"]
+      }
+    },
+    "strict": {
+      "regex": "^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9][a-zA-Z0-9.-]*\\.[a-zA-Z]{2,}$",
+      "description": "Strict email validation (no leading special chars)",
+      "examples": {
+        "valid": ["user@example.com", "test.user@domain.com"],
+        "invalid": [".user@example.com", "-user@example.com"]
+      }
+    },
+    "rfc5322": {
+      "regex": "^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])$",
+      "description": "RFC 5322 compliant (most comprehensive)",
+      "note": "Very complex, use for strict compliance only"
+    }
+  },
+  "commonDomains": {
+    "free": ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "icloud.com"],
+    "business": ["company.com", "corporation.com", "enterprise.com"]
+  },
+  "typos": {
+    "gmail.com": ["gmai.com", "gmial.com", "gmai.co"],
+    "yahoo.com": ["yaho.com", "yahooo.com"],
+    "hotmail.com": ["hotmai.com", "hotmial.com"]
+  }
+}

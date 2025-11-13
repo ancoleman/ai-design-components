@@ -1,0 +1,57 @@
+{
+  "ibm": {
+    "name": "IBM Design Colorblind-Safe Palette",
+    "description": "Perceptually distinct colors safe for all types of colorblindness",
+    "colors": [
+      { "hex": "#648FFF", "name": "Blue" },
+      { "hex": "#785EF0", "name": "Purple" },
+      { "hex": "#DC267F", "name": "Magenta" },
+      { "hex": "#FE6100", "name": "Orange" },
+      { "hex": "#FFB000", "name": "Yellow" }
+    ],
+    "safeFor": ["deuteranopia", "protanopia", "tritanopia"]
+  },
+  "paulTol": {
+    "name": "Paul Tol's Qualitative Palette",
+    "description": "Designed for scientific publications with colorblind readers",
+    "colors": [
+      { "hex": "#4477AA", "name": "Blue" },
+      { "hex": "#EE6677", "name": "Red" },
+      { "hex": "#228833", "name": "Green" },
+      { "hex": "#CCBB44", "name": "Yellow" },
+      { "hex": "#66CCEE", "name": "Cyan" },
+      { "hex": "#AA3377", "name": "Purple" },
+      { "hex": "#BBBBBB", "name": "Grey" }
+    ],
+    "safeFor": ["all types"]
+  },
+  "wong": {
+    "name": "Wong Palette (Nature Methods)",
+    "description": "8-color palette from Bang Wong's 'Points of View' column",
+    "colors": [
+      { "hex": "#000000", "name": "Black" },
+      { "hex": "#E69F00", "name": "Orange" },
+      { "hex": "#56B4E9", "name": "Sky Blue" },
+      { "hex": "#009E73", "name": "Bluish Green" },
+      { "hex": "#F0E442", "name": "Yellow" },
+      { "hex": "#0072B2", "name": "Blue" },
+      { "hex": "#D55E00", "name": "Vermillion" },
+      { "hex": "#CC79A7", "name": "Reddish Purple" }
+    ],
+    "safeFor": ["deuteranopia", "protanopia"]
+  },
+  "tol_bright": {
+    "name": "Paul Tol's Bright Palette",
+    "description": "High-contrast colors for data with dark backgrounds",
+    "colors": [
+      { "hex": "#4477AA", "name": "Blue" },
+      { "hex": "#66CCEE", "name": "Cyan" },
+      { "hex": "#228833", "name": "Green" },
+      { "hex": "#CCBB44", "name": "Yellow" },
+      { "hex": "#EE6677", "name": "Red" },
+      { "hex": "#AA3377", "name": "Purple" },
+      { "hex": "#BBBBBB", "name": "Grey" }
+    ],
+    "safeFor": ["all types"]
+  }
+}

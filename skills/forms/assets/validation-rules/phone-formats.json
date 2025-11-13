@@ -1,0 +1,46 @@
+{
+  "formats": {
+    "E164": {
+      "regex": "^\\+[1-9]\\d{1,14}$",
+      "description": "International standard format",
+      "examples": ["+14155552671", "+442071838750", "+81312345678"]
+    },
+    "US": {
+      "regex": "^(?:\\+1)?\\s?\\(?([0-9]{3})\\)?[-\\s]?([0-9]{3})[-\\s]?([0-9]{4})$",
+      "description": "US phone number (various formats)",
+      "examples": ["(415) 555-2671", "415-555-2671", "4155552671", "+1 415 555 2671"]
+    },
+    "UK": {
+      "regex": "^(?:(?:\\(?(?:0(?:0|11)\\)?[\\s-]?\\(?|\\+)44\\)?[\\s-]?(?:\\(?0\\)?[\\s-]?)?)|(?:\\(?0))(?:(?:\\d{5}\\)?[\\s-]?\\d{4,5})|(?:\\d{4}\\)?[\\s-]?(?:\\d{5}|\\d{3}[\\s-]?\\d{3}))|(?:\\d{3}\\)?[\\s-]?\\d{3}[\\s-]?\\d{3,4})|(?:\\d{2}\\)?[\\s-]?\\d{4}[\\s-]?\\d{4}))(?:[\\s-]?(?:x|ext\\.?|\\#)\\d{3,4})?$",
+      "description": "UK phone number",
+      "examples": ["020 7183 8750", "+44 20 7183 8750", "07700 900123"]
+    }
+  },
+  "countryPatterns": {
+    "US": {
+      "code": "+1",
+      "length": 10,
+      "format": "(XXX) XXX-XXXX"
+    },
+    "UK": {
+      "code": "+44",
+      "length": 10,
+      "format": "XXXX XXX XXXX"
+    },
+    "DE": {
+      "code": "+49",
+      "length": 11,
+      "format": "XXX XXXXXXXX"
+    },
+    "FR": {
+      "code": "+33",
+      "length": 9,
+      "format": "X XX XX XX XX"
+    },
+    "JP": {
+      "code": "+81",
+      "length": 10,
+      "format": "XX-XXXX-XXXX"
+    }
+  }
+}

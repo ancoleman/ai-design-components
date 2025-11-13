@@ -1,0 +1,66 @@
+{
+  "required": "{field} is required",
+  "email": "Please enter a valid email address",
+  "minLength": "{field} must be at least {min} characters",
+  "maxLength": "{field} must be less than {max} characters",
+  "min": "{field} must be at least {min}",
+  "max": "{field} must be at most {max}",
+  "pattern": "{field} format is invalid",
+  "url": "Please enter a valid URL (e.g., https://example.com)",
+  "date": "Please enter a valid date",
+  "integer": "{field} must be a whole number",
+  "positive": "{field} must be a positive number",
+  "future": "{field} must be a future date",
+  "past": "{field} must be a past date",
+
+  "password": {
+    "minLength": "Password must be at least 8 characters long",
+    "uppercase": "Password must contain at least one uppercase letter (A-Z)",
+    "lowercase": "Password must contain at least one lowercase letter (a-z)",
+    "number": "Password must contain at least one number (0-9)",
+    "special": "Password must contain at least one special character (!@#$%^&*)",
+    "common": "This password is too common. Please choose a stronger password.",
+    "match": "Passwords do not match"
+  },
+
+  "username": {
+    "taken": "This username is already taken. Please choose another.",
+    "invalid": "Username can only contain letters, numbers, underscores, and hyphens",
+    "minLength": "Username must be at least 3 characters long",
+    "maxLength": "Username must be less than 20 characters long",
+    "reserved": "This username is reserved. Please choose another."
+  },
+
+  "phone": {
+    "invalid": "Please enter a valid phone number",
+    "invalidFormat": "Phone number format is invalid for selected country",
+    "tooShort": "Phone number is too short",
+    "tooLong": "Phone number is too long"
+  },
+
+  "creditCard": {
+    "invalid": "Please enter a valid credit card number",
+    "luhn": "Credit card number failed validation check",
+    "expired": "This card has expired",
+    "unsupportedType": "This card type is not accepted"
+  },
+
+  "file": {
+    "tooLarge": "File size must be less than {maxSize}",
+    "invalidType": "File type not allowed. Accepted: {allowedTypes}",
+    "tooMany": "Maximum {max} files allowed"
+  },
+
+  "age": {
+    "tooYoung": "You must be at least {min} years old",
+    "invalidDate": "Please enter a valid date of birth"
+  },
+
+  "common": {
+    "serverError": "An error occurred. Please try again.",
+    "networkError": "Network error. Please check your connection.",
+    "validating": "Validating...",
+    "success": "Looks good!",
+    "optional": "(Optional)"
+  }
+}

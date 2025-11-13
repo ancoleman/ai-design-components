@@ -1,0 +1,43 @@
+{
+  "name": "Company",
+  "value": 100000,
+  "children": [
+    {
+      "name": "Engineering",
+      "value": 45000,
+      "children": [
+        { "name": "Frontend", "value": 18000 },
+        { "name": "Backend", "value": 15000 },
+        { "name": "DevOps", "value": 7000 },
+        { "name": "QA", "value": 5000 }
+      ]
+    },
+    {
+      "name": "Sales",
+      "value": 30000,
+      "children": [
+        { "name": "Enterprise", "value": 18000 },
+        { "name": "SMB", "value": 8000 },
+        { "name": "Inside Sales", "value": 4000 }
+      ]
+    },
+    {
+      "name": "Marketing",
+      "value": 15000,
+      "children": [
+        { "name": "Digital", "value": 8000 },
+        { "name": "Content", "value": 4000 },
+        { "name": "Events", "value": 3000 }
+      ]
+    },
+    {
+      "name": "Operations",
+      "value": 10000,
+      "children": [
+        { "name": "Finance", "value": 4000 },
+        { "name": "HR", "value": 3500 },
+        { "name": "Legal", "value": 2500 }
+      ]
+    }
+  ]
+}

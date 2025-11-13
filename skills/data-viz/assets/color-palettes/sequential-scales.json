@@ -1,0 +1,71 @@
+{
+  "blues": {
+    "name": "Sequential Blues (9-step)",
+    "description": "Single-hue progression from light to dark blue. Use for heatmaps, choropleths.",
+    "type": "sequential",
+    "colors": [
+      { "value": 1, "hex": "#EFF6FF", "name": "Blue 50" },
+      { "value": 2, "hex": "#DBEAFE", "name": "Blue 100" },
+      { "value": 3, "hex": "#BFDBFE", "name": "Blue 200" },
+      { "value": 4, "hex": "#93C5FD", "name": "Blue 300" },
+      { "value": 5, "hex": "#60A5FA", "name": "Blue 400" },
+      { "value": 6, "hex": "#3B82F6", "name": "Blue 500" },
+      { "value": 7, "hex": "#2563EB", "name": "Blue 600" },
+      { "value": 8, "hex": "#1D4ED8", "name": "Blue 700" },
+      { "value": 9, "hex": "#1E3A8A", "name": "Blue 900" }
+    ],
+    "useFor": ["heatmaps", "choropleths", "intensity maps"]
+  },
+  "greens": {
+    "name": "Sequential Greens (9-step)",
+    "description": "Light to dark green progression",
+    "type": "sequential",
+    "colors": [
+      { "value": 1, "hex": "#F0FDF4", "name": "Green 50" },
+      { "value": 2, "hex": "#DCFCE7", "name": "Green 100" },
+      { "value": 3, "hex": "#BBF7D0", "name": "Green 200" },
+      { "value": 4, "hex": "#86EFAC", "name": "Green 300" },
+      { "value": 5, "hex": "#4ADE80", "name": "Green 400" },
+      { "value": 6, "hex": "#22C55E", "name": "Green 500" },
+      { "value": 7, "hex": "#16A34A", "name": "Green 600" },
+      { "value": 8, "hex": "#15803D", "name": "Green 700" },
+      { "value": 9, "hex": "#14532D", "name": "Green 900" }
+    ],
+    "useFor": ["positive metrics", "growth indicators", "success heatmaps"]
+  },
+  "reds": {
+    "name": "Sequential Reds (9-step)",
+    "description": "Light to dark red progression",
+    "type": "sequential",
+    "colors": [
+      { "value": 1, "hex": "#FEF2F2", "name": "Red 50" },
+      { "value": 2, "hex": "#FEE2E2", "name": "Red 100" },
+      { "value": 3, "hex": "#FECACA", "name": "Red 200" },
+      { "value": 4, "hex": "#FCA5A5", "name": "Red 300" },
+      { "value": 5, "hex": "#F87171", "name": "Red 400" },
+      { "value": 6, "hex": "#EF4444", "name": "Red 500" },
+      { "value": 7, "hex": "#DC2626", "name": "Red 600" },
+      { "value": 8, "hex": "#B91C1C", "name": "Red 700" },
+      { "value": 9, "hex": "#7F1D1D", "name": "Red 900" }
+    ],
+    "useFor": ["negative metrics", "error rates", "risk heatmaps"]
+  },
+  "viridis": {
+    "name": "Viridis (Perceptually Uniform)",
+    "description": "Scientific colormap with uniform perceptual changes",
+    "type": "sequential",
+    "colors": [
+      { "value": 0.0, "hex": "#440154" },
+      { "value": 0.25, "hex": "#31688E" },
+      { "value": 0.5, "hex": "#35B779" },
+      { "value": 0.75, "hex": "#FDE724" },
+      { "value": 1.0, "hex": "#FDE724" }
+    ],
+    "useFor": ["scientific data", "heatmaps", "perceptually uniform needed"],
+    "properties": {
+      "perceptuallyUniform": true,
+      "colorblindSafe": true,
+      "printFriendly": true
+    }
+  }
+}

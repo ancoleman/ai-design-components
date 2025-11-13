@@ -1,0 +1,58 @@
+{
+  "redBlue": {
+    "name": "Red-Blue Diverging (11-step)",
+    "description": "Diverging scale for positive/negative data. Red (negative) through white (neutral) to blue (positive).",
+    "type": "diverging",
+    "midpoint": { "hex": "#F3F4F6", "name": "Neutral Gray" },
+    "negative": [
+      { "value": -5, "hex": "#B91C1C", "name": "Red 700" },
+      { "value": -4, "hex": "#DC2626", "name": "Red 600" },
+      { "value": -3, "hex": "#EF4444", "name": "Red 500" },
+      { "value": -2, "hex": "#FCA5A5", "name": "Red 300" },
+      { "value": -1, "hex": "#FEE2E2", "name": "Red 100" }
+    ],
+    "positive": [
+      { "value": 1, "hex": "#DBEAFE", "name": "Blue 100" },
+      { "value": 2, "hex": "#93C5FD", "name": "Blue 300" },
+      { "value": 3, "hex": "#3B82F6", "name": "Blue 500" },
+      { "value": 4, "hex": "#2563EB", "name": "Blue 600" },
+      { "value": 5, "hex": "#1D4ED8", "name": "Blue 700" }
+    ],
+    "useFor": ["profit/loss", "temperature anomalies", "variance from target"]
+  },
+  "orangeBlue": {
+    "name": "Orange-Blue Diverging (Colorblind-Safe)",
+    "description": "Safer alternative to red-green for colorblind users",
+    "type": "diverging",
+    "midpoint": { "hex": "#F5F5F5", "name": "Light Gray" },
+    "negative": [
+      { "value": -3, "hex": "#E65100", "name": "Deep Orange" },
+      { "value": -2, "hex": "#FB8C00", "name": "Orange" },
+      { "value": -1, "hex": "#FFB74D", "name": "Light Orange" }
+    ],
+    "positive": [
+      { "value": 1, "hex": "#64B5F6", "name": "Light Blue" },
+      { "value": 2, "hex": "#1976D2", "name": "Blue" },
+      { "value": 3, "hex": "#0D47A1", "name": "Deep Blue" }
+    ],
+    "useFor": ["colorblind-safe diverging", "positive/negative sentiment"],
+    "colorblindSafe": true
+  },
+  "purpleGreen": {
+    "name": "Purple-Green Diverging",
+    "description": "Alternative diverging scale",
+    "type": "diverging",
+    "midpoint": { "hex": "#FFFFFF", "name": "White" },
+    "negative": [
+      { "value": -3, "hex": "#7B1FA2", "name": "Purple" },
+      { "value": -2, "hex": "#AB47BC", "name": "Medium Purple" },
+      { "value": -1, "hex": "#CE93D8", "name": "Light Purple" }
+    ],
+    "positive": [
+      { "value": 1, "hex": "#81C784", "name": "Light Green" },
+      { "value": 2, "hex": "#388E3C", "name": "Green" },
+      { "value": 3, "hex": "#1B5E20", "name": "Dark Green" }
+    ],
+    "useFor": ["alternative diverging", "correlation matrices"]
+  }
+}

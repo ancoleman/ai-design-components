@@ -1,0 +1,66 @@
+{
+  "required": "{field} es obligatorio",
+  "email": "Por favor ingrese una dirección de correo válida",
+  "minLength": "{field} debe tener al menos {min} caracteres",
+  "maxLength": "{field} debe tener menos de {max} caracteres",
+  "min": "{field} debe ser al menos {min}",
+  "max": "{field} debe ser como máximo {max}",
+  "pattern": "El formato de {field} no es válido",
+  "url": "Por favor ingrese una URL válida (ej: https://ejemplo.com)",
+  "date": "Por favor ingrese una fecha válida",
+  "integer": "{field} debe ser un número entero",
+  "positive": "{field} debe ser un número positivo",
+  "future": "{field} debe ser una fecha futura",
+  "past": "{field} debe ser una fecha pasada",
+
+  "password": {
+    "minLength": "La contraseña debe tener al menos 8 caracteres",
+    "uppercase": "La contraseña debe contener al menos una letra mayúscula (A-Z)",
+    "lowercase": "La contraseña debe contener al menos una letra minúscula (a-z)",
+    "number": "La contraseña debe contener al menos un número (0-9)",
+    "special": "La contraseña debe contener al menos un carácter especial (!@#$%^&*)",
+    "common": "Esta contraseña es demasiado común. Por favor elija una más segura.",
+    "match": "Las contraseñas no coinciden"
+  },
+
+  "username": {
+    "taken": "Este nombre de usuario ya está en uso. Por favor elija otro.",
+    "invalid": "El nombre de usuario solo puede contener letras, números, guiones bajos y guiones",
+    "minLength": "El nombre de usuario debe tener al menos 3 caracteres",
+    "maxLength": "El nombre de usuario debe tener menos de 20 caracteres",
+    "reserved": "Este nombre de usuario está reservado. Por favor elija otro."
+  },
+
+  "phone": {
+    "invalid": "Por favor ingrese un número de teléfono válido",
+    "invalidFormat": "El formato del número de teléfono no es válido para el país seleccionado",
+    "tooShort": "El número de teléfono es demasiado corto",
+    "tooLong": "El número de teléfono es demasiado largo"
+  },
+
+  "creditCard": {
+    "invalid": "Por favor ingrese un número de tarjeta de crédito válido",
+    "luhn": "El número de tarjeta de crédito no pasó la validación",
+    "expired": "Esta tarjeta ha expirado",
+    "unsupportedType": "Este tipo de tarjeta no es aceptado"
+  },
+
+  "file": {
+    "tooLarge": "El tamaño del archivo debe ser menor a {maxSize}",
+    "invalidType": "Tipo de archivo no permitido. Aceptados: {allowedTypes}",
+    "tooMany": "Máximo {max} archivos permitidos"
+  },
+
+  "age": {
+    "tooYoung": "Debes tener al menos {min} años",
+    "invalidDate": "Por favor ingrese una fecha de nacimiento válida"
+  },
+
+  "common": {
+    "serverError": "Ocurrió un error. Por favor intente de nuevo.",
+    "networkError": "Error de conexión. Por favor verifique su conexión.",
+    "validating": "Validando...",
+    "success": "¡Se ve bien!",
+    "optional": "(Opcional)"
+  }
+}

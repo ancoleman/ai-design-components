@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Contact Form",
+  "description": "Basic contact form for customer inquiries",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Full Name",
+      "minLength": 2,
+      "maxLength": 100,
+      "description": "Customer's full name"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "title": "Email Address",
+      "description": "Valid email address for response"
+    },
+    "subject": {
+      "type": "string",
+      "title": "Subject",
+      "minLength": 5,
+      "maxLength": 200,
+      "description": "Brief summary of inquiry"
+    },
+    "message": {
+      "type": "string",
+      "title": "Message",
+      "minLength": 20,
+      "maxLength": 2000,
+      "description": "Detailed message content"
+    },
+    "category": {
+      "type": "string",
+      "title": "Inquiry Category",
+      "enum": ["sales", "support", "billing", "other"],
+      "description": "Type of inquiry"
+    },
+    "newsletter": {
+      "type": "boolean",
+      "title": "Subscribe to Newsletter",
+      "default": false,
+      "description": "Opt-in to marketing communications"
+    }
+  },
+  "required": ["name", "email", "subject", "message", "category"],
+  "additionalProperties": false
+}

@@ -1,0 +1,59 @@
+{
+  "password": {
+    "minLength": 8,
+    "patterns": {
+      "uppercase": "[A-Z]",
+      "lowercase": "[a-z]",
+      "number": "[0-9]",
+      "special": "[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]"
+    },
+    "commonPasswords": [
+      "password", "123456", "123456789", "12345678", "12345",
+      "1234567", "password1", "qwerty", "abc123", "111111"
+    ],
+    "strength": {
+      "weak": "Less than 8 chars or missing requirements",
+      "medium": "8+ chars with 2-3 requirements",
+      "strong": "12+ chars with all requirements + special chars"
+    }
+  },
+  "username": {
+    "minLength": 3,
+    "maxLength": 20,
+    "pattern": "^[a-zA-Z0-9_-]+$",
+    "reservedWords": [
+      "admin", "administrator", "root", "system", "api", "test",
+      "user", "guest", "null", "undefined", "moderator"
+    ]
+  },
+  "name": {
+    "minLength": 2,
+    "maxLength": 50,
+    "pattern": "^[a-zA-ZÀ-ÿ\\s'-]+$",
+    "description": "Allows letters, spaces, hyphens, apostrophes, and accented characters"
+  },
+  "age": {
+    "minimum": 13,
+    "maximum": 120,
+    "description": "Typical age constraints (13+ for COPPA compliance)"
+  },
+  "zipCode": {
+    "US": {
+      "pattern": "^\\d{5}(?:-\\d{4})?$",
+      "examples": ["12345", "12345-6789"]
+    },
+    "UK": {
+      "pattern": "^[A-Z]{1,2}\\d[A-Z\\d]? ?\\d[A-Z]{2}$",
+      "examples": ["SW1A 1AA", "W1A 0AX"]
+    },
+    "CA": {
+      "pattern": "^[A-Z]\\d[A-Z] ?\\d[A-Z]\\d$",
+      "examples": ["K1A 0B1", "M5H 2N2"]
+    }
+  },
+  "url": {
+    "pattern": "^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)$",
+    "requireHttps": true,
+    "allowedProtocols": ["http", "https"]
+  }
+}
