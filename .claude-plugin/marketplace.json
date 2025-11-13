@@ -1,6 +1,9 @@
 {
   "name": "ai-design-components",
-  "owner": "Anton Coleman <acoleman@paloaltonetworks.com>",
+  "owner": {
+    "name": "Anton Coleman",
+    "email": "acoleman@paloaltonetworks.com"
+  },
   "version": "0.1.0",
   "description": "Comprehensive UI/UX component design skills for AI-assisted development",
   "plugins": [
@@ -9,7 +12,7 @@
       "description": "Foundational design system including tokens and theming for consistent styling across all components",
       "source": "./",
       "skills": [
-        "design-tokens"
+        "./skills/design-tokens"
       ],
       "strict": false
     },
@@ -18,9 +21,9 @@
       "description": "Data visualization, tables, and dashboard components for displaying and analyzing data (2/3 complete)",
       "source": "./",
       "skills": [
-        "data-viz",
-        "tables",
-        "dashboards"
+        "./skills/data-viz",
+        "./skills/tables",
+        "./skills/dashboards"
       ],
       "strict": false
     },
@@ -29,8 +32,8 @@
       "description": "Form systems, search, and filter components for user input and data collection (1/2 complete)",
       "source": "./",
       "skills": [
-        "forms",
-        "search-filter"
+        "./skills/forms",
+        "./skills/search-filter"
       ],
       "strict": false
     },
@@ -39,9 +42,9 @@
       "description": "Interactive components including AI chat interfaces, drag-drop functionality, and feedback systems (0/3 complete - WIP)",
       "source": "./",
       "skills": [
-        "ai-chat",
-        "drag-drop",
-        "feedback"
+        "./skills/ai-chat",
+        "./skills/drag-drop",
+        "./skills/feedback"
       ],
       "strict": false
     },
@@ -50,9 +53,9 @@
       "description": "Navigation, layout, and timeline components for app structure and organization (0/3 complete - WIP)",
       "source": "./",
       "skills": [
-        "navigation",
-        "layout",
-        "timeline"
+        "./skills/navigation",
+        "./skills/layout",
+        "./skills/timeline"
       ],
       "strict": false
     },
@@ -61,8 +64,8 @@
       "description": "Media management and user onboarding components for content-rich experiences (0/2 complete - WIP)",
       "source": "./",
       "skills": [
-        "media",
-        "onboarding"
+        "./skills/media",
+        "./skills/onboarding"
       ],
       "strict": false
     }
