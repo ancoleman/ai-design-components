@@ -1,0 +1,373 @@
+{
+  "templates": [
+    {
+      "id": "sales-analytics",
+      "name": "Sales Analytics Dashboard",
+      "description": "Comprehensive sales tracking with revenue, orders, and customer metrics",
+      "category": "Sales",
+      "thumbnail": "/templates/sales-analytics.png",
+      "widgets": [
+        {
+          "id": "revenue-kpi",
+          "type": "kpi",
+          "title": "Total Revenue",
+          "metric": "revenue",
+          "data_source": "sales_metrics",
+          "format": "currency",
+          "aggregation": "sum",
+          "trend": {
+            "enabled": true,
+            "comparison": "previous_period"
+          },
+          "position": { "x": 0, "y": 0, "w": 3, "h": 2 }
+        },
+        {
+          "id": "orders-kpi",
+          "type": "kpi",
+          "title": "Total Orders",
+          "metric": "order_count",
+          "data_source": "sales_metrics",
+          "format": "number",
+          "aggregation": "count",
+          "trend": {
+            "enabled": true,
+            "comparison": "previous_period"
+          },
+          "position": { "x": 3, "y": 0, "w": 3, "h": 2 }
+        },
+        {
+          "id": "conversion-kpi",
+          "type": "kpi",
+          "title": "Conversion Rate",
+          "metric": "conversion_rate",
+          "data_source": "sales_metrics",
+          "format": "percentage",
+          "aggregation": "average",
+          "position": { "x": 6, "y": 0, "w": 3, "h": 2 }
+        },
+        {
+          "id": "customers-kpi",
+          "type": "kpi",
+          "title": "New Customers",
+          "metric": "new_customers",
+          "data_source": "customer_metrics",
+          "format": "number",
+          "aggregation": "count",
+          "position": { "x": 9, "y": 0, "w": 3, "h": 2 }
+        },
+        {
+          "id": "revenue-chart",
+          "type": "chart",
+          "title": "Revenue Trend",
+          "chart_type": "area",
+          "data_source": "revenue_history",
+          "axes": {
+            "x": "date",
+            "y": "revenue"
+          },
+          "position": { "x": 0, "y": 2, "w": 8, "h": 4 }
+        },
+        {
+          "id": "top-products",
+          "type": "table",
+          "title": "Top Products",
+          "data_source": "product_performance",
+          "columns": [
+            { "field": "product_name", "label": "Product" },
+            { "field": "revenue", "label": "Revenue", "format": "currency" },
+            { "field": "units", "label": "Units Sold", "format": "number" },
+            { "field": "growth", "label": "Growth", "format": "percentage" }
+          ],
+          "position": { "x": 8, "y": 2, "w": 4, "h": 4 }
+        }
+      ],
+      "filters": [
+        {
+          "id": "date-range",
+          "type": "date_range",
+          "label": "Date Range",
+          "default": "last_30_days"
+        },
+        {
+          "id": "region-filter",
+          "type": "multiselect",
+          "label": "Regions",
+          "options": ["North", "South", "East", "West"],
+          "default": []
+        }
+      ],
+      "refresh_interval": 300000
+    },
+    {
+      "id": "marketing-analytics",
+      "name": "Marketing Analytics Dashboard",
+      "description": "Track marketing campaigns, leads, and conversion metrics",
+      "category": "Marketing",
+      "thumbnail": "/templates/marketing-analytics.png",
+      "widgets": [
+        {
+          "id": "leads-kpi",
+          "type": "kpi",
+          "title": "Total Leads",
+          "metric": "lead_count",
+          "data_source": "marketing_metrics",
+          "format": "number",
+          "aggregation": "count",
+          "position": { "x": 0, "y": 0, "w": 3, "h": 2 }
+        },
+        {
+          "id": "conversion-funnel",
+          "type": "chart",
+          "title": "Conversion Funnel",
+          "chart_type": "funnel",
+          "data_source": "funnel_data",
+          "position": { "x": 3, "y": 0, "w": 6, "h": 4 }
+        },
+        {
+          "id": "campaign-performance",
+          "type": "table",
+          "title": "Campaign Performance",
+          "data_source": "campaigns",
+          "columns": [
+            { "field": "campaign_name", "label": "Campaign" },
+            { "field": "impressions", "label": "Impressions", "format": "number" },
+            { "field": "clicks", "label": "Clicks", "format": "number" },
+            { "field": "ctr", "label": "CTR", "format": "percentage" },
+            { "field": "cost", "label": "Cost", "format": "currency" }
+          ],
+          "position": { "x": 0, "y": 4, "w": 12, "h": 4 }
+        }
+      ],
+      "filters": [
+        {
+          "id": "campaign-type",
+          "type": "select",
+          "label": "Campaign Type",
+          "options": ["Email", "Social", "PPC", "Display"],
+          "default": "all"
+        }
+      ],
+      "refresh_interval": 600000
+    },
+    {
+      "id": "operations-monitoring",
+      "name": "Operations Monitoring Dashboard",
+      "description": "Real-time monitoring of system health and performance",
+      "category": "Operations",
+      "thumbnail": "/templates/operations-monitoring.png",
+      "widgets": [
+        {
+          "id": "system-status",
+          "type": "custom",
+          "title": "System Status",
+          "component": "SystemStatusGrid",
+          "data_source": "system_health",
+          "position": { "x": 0, "y": 0, "w": 12, "h": 2 }
+        },
+        {
+          "id": "cpu-usage",
+          "type": "chart",
+          "title": "CPU Usage",
+          "chart_type": "line",
+          "data_source": "metrics/cpu",
+          "axes": {
+            "x": "timestamp",
+            "y": "usage_percent"
+          },
+          "position": { "x": 0, "y": 2, "w": 4, "h": 3 }
+        },
+        {
+          "id": "memory-usage",
+          "type": "chart",
+          "title": "Memory Usage",
+          "chart_type": "line",
+          "data_source": "metrics/memory",
+          "axes": {
+            "x": "timestamp",
+            "y": "usage_percent"
+          },
+          "position": { "x": 4, "y": 2, "w": 4, "h": 3 }
+        },
+        {
+          "id": "network-traffic",
+          "type": "chart",
+          "title": "Network Traffic",
+          "chart_type": "area",
+          "data_source": "metrics/network",
+          "axes": {
+            "x": "timestamp",
+            "y": ["inbound", "outbound"]
+          },
+          "position": { "x": 8, "y": 2, "w": 4, "h": 3 }
+        },
+        {
+          "id": "alerts-timeline",
+          "type": "timeline",
+          "title": "Recent Alerts",
+          "data_source": "alerts",
+          "position": { "x": 0, "y": 5, "w": 12, "h": 3 }
+        }
+      ],
+      "filters": [
+        {
+          "id": "time-window",
+          "type": "select",
+          "label": "Time Window",
+          "options": ["1h", "6h", "24h", "7d"],
+          "default": "1h"
+        },
+        {
+          "id": "severity",
+          "type": "multiselect",
+          "label": "Alert Severity",
+          "options": ["Critical", "Warning", "Info"],
+          "default": ["Critical", "Warning"]
+        }
+      ],
+      "refresh_interval": 5000
+    },
+    {
+      "id": "financial-overview",
+      "name": "Financial Overview Dashboard",
+      "description": "Financial metrics, P&L, and budget tracking",
+      "category": "Finance",
+      "thumbnail": "/templates/financial-overview.png",
+      "widgets": [
+        {
+          "id": "revenue-ytd",
+          "type": "kpi",
+          "title": "Revenue YTD",
+          "metric": "revenue_ytd",
+          "data_source": "financial_metrics",
+          "format": "currency",
+          "position": { "x": 0, "y": 0, "w": 3, "h": 2 }
+        },
+        {
+          "id": "expenses-ytd",
+          "type": "kpi",
+          "title": "Expenses YTD",
+          "metric": "expenses_ytd",
+          "data_source": "financial_metrics",
+          "format": "currency",
+          "position": { "x": 3, "y": 0, "w": 3, "h": 2 }
+        },
+        {
+          "id": "profit-margin",
+          "type": "kpi",
+          "title": "Profit Margin",
+          "metric": "profit_margin",
+          "data_source": "financial_metrics",
+          "format": "percentage",
+          "position": { "x": 6, "y": 0, "w": 3, "h": 2 }
+        },
+        {
+          "id": "cash-flow",
+          "type": "kpi",
+          "title": "Cash Flow",
+          "metric": "cash_flow",
+          "data_source": "financial_metrics",
+          "format": "currency",
+          "trend": {
+            "enabled": true,
+            "comparison": "previous_month"
+          },
+          "position": { "x": 9, "y": 0, "w": 3, "h": 2 }
+        },
+        {
+          "id": "pl-chart",
+          "type": "chart",
+          "title": "P&L Trend",
+          "chart_type": "bar",
+          "data_source": "pl_monthly",
+          "axes": {
+            "x": "month",
+            "y": ["revenue", "expenses", "profit"]
+          },
+          "position": { "x": 0, "y": 2, "w": 8, "h": 4 }
+        },
+        {
+          "id": "budget-vs-actual",
+          "type": "chart",
+          "title": "Budget vs Actual",
+          "chart_type": "grouped-bar",
+          "data_source": "budget_comparison",
+          "axes": {
+            "x": "category",
+            "y": ["budget", "actual"]
+          },
+          "position": { "x": 8, "y": 2, "w": 4, "h": 4 }
+        }
+      ],
+      "filters": [
+        {
+          "id": "fiscal-period",
+          "type": "select",
+          "label": "Fiscal Period",
+          "options": ["Q1", "Q2", "Q3", "Q4", "YTD"],
+          "default": "YTD"
+        },
+        {
+          "id": "department",
+          "type": "multiselect",
+          "label": "Department",
+          "options": ["Sales", "Marketing", "Operations", "R&D", "Admin"],
+          "default": []
+        }
+      ],
+      "refresh_interval": 3600000
+    },
+    {
+      "id": "executive-summary",
+      "name": "Executive Summary Dashboard",
+      "description": "High-level KPIs and trends for executive team",
+      "category": "Executive",
+      "thumbnail": "/templates/executive-summary.png",
+      "widgets": [
+        {
+          "id": "company-health-score",
+          "type": "gauge",
+          "title": "Company Health Score",
+          "metric": "health_score",
+          "data_source": "executive_metrics",
+          "position": { "x": 4, "y": 0, "w": 4, "h": 3 }
+        },
+        {
+          "id": "key-metrics-grid",
+          "type": "custom",
+          "title": "Key Performance Indicators",
+          "component": "ExecutiveKPIGrid",
+          "data_source": "executive_kpis",
+          "position": { "x": 0, "y": 3, "w": 12, "h": 2 }
+        },
+        {
+          "id": "department-performance",
+          "type": "chart",
+          "title": "Department Performance",
+          "chart_type": "radar",
+          "data_source": "department_scores",
+          "position": { "x": 0, "y": 5, "w": 6, "h": 4 }
+        },
+        {
+          "id": "strategic-initiatives",
+          "type": "table",
+          "title": "Strategic Initiatives",
+          "data_source": "initiatives",
+          "columns": [
+            { "field": "initiative", "label": "Initiative" },
+            { "field": "owner", "label": "Owner" },
+            { "field": "progress", "label": "Progress", "type": "progress" },
+            { "field": "status", "label": "Status", "type": "badge" }
+          ],
+          "position": { "x": 6, "y": 5, "w": 6, "h": 4 }
+        }
+      ],
+      "filters": [],
+      "refresh_interval": 1800000
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2025-01-01",
+    "author": "Dashboard Templates System"
+  }
+}

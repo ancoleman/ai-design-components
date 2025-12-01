@@ -1,0 +1,224 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "$description": "Light theme - semantic token mappings for light mode",
+  "semantic": {
+    "color": {
+      "primary": {
+        "$value": "{color.blue.500}",
+        "$type": "color",
+        "$description": "Primary brand color"
+      },
+      "primary-hover": {
+        "$value": "{color.blue.600}",
+        "$type": "color"
+      },
+      "primary-active": {
+        "$value": "{color.blue.700}",
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": "{color.purple.500}",
+        "$type": "color",
+        "$description": "Secondary brand color"
+      },
+      "accent": {
+        "$value": "{color.orange.500}",
+        "$type": "color",
+        "$description": "Accent color"
+      },
+      "success": {
+        "$value": "{color.green.500}",
+        "$type": "color"
+      },
+      "success-bg": {
+        "$value": "{color.green.50}",
+        "$type": "color"
+      },
+      "success-border": {
+        "$value": "{color.green.200}",
+        "$type": "color"
+      },
+      "warning": {
+        "$value": "{color.yellow.500}",
+        "$type": "color"
+      },
+      "warning-bg": {
+        "$value": "{color.yellow.50}",
+        "$type": "color"
+      },
+      "warning-border": {
+        "$value": "{color.yellow.200}",
+        "$type": "color"
+      },
+      "error": {
+        "$value": "{color.red.500}",
+        "$type": "color"
+      },
+      "error-bg": {
+        "$value": "{color.red.50}",
+        "$type": "color"
+      },
+      "error-border": {
+        "$value": "{color.red.200}",
+        "$type": "color"
+      },
+      "info": {
+        "$value": "{color.blue.500}",
+        "$type": "color"
+      },
+      "info-bg": {
+        "$value": "{color.blue.50}",
+        "$type": "color"
+      },
+      "info-border": {
+        "$value": "{color.blue.200}",
+        "$type": "color"
+      },
+      "text-primary": {
+        "$value": "{color.gray.900}",
+        "$type": "color",
+        "$description": "Primary text color for body content"
+      },
+      "text-secondary": {
+        "$value": "{color.gray.600}",
+        "$type": "color",
+        "$description": "Secondary text color for subdued content"
+      },
+      "text-tertiary": {
+        "$value": "{color.gray.400}",
+        "$type": "color",
+        "$description": "Tertiary text color for placeholders"
+      },
+      "text-disabled": {
+        "$value": "{color.gray.300}",
+        "$type": "color"
+      },
+      "text-inverse": {
+        "$value": "{color.white}",
+        "$type": "color",
+        "$description": "Text color on dark backgrounds"
+      },
+      "text-link": {
+        "$value": "{color.blue.500}",
+        "$type": "color"
+      },
+      "text-link-hover": {
+        "$value": "{color.blue.600}",
+        "$type": "color"
+      },
+      "bg-primary": {
+        "$value": "{color.white}",
+        "$type": "color",
+        "$description": "Primary background color"
+      },
+      "bg-secondary": {
+        "$value": "{color.gray.50}",
+        "$type": "color",
+        "$description": "Secondary background color"
+      },
+      "bg-tertiary": {
+        "$value": "{color.gray.100}",
+        "$type": "color"
+      },
+      "bg-inverse": {
+        "$value": "{color.gray.900}",
+        "$type": "color"
+      },
+      "bg-overlay": {
+        "$value": "rgba(0, 0, 0, 0.5)",
+        "$type": "color",
+        "$description": "Semi-transparent overlay for modals"
+      },
+      "border": {
+        "$value": "{color.gray.300}",
+        "$type": "color",
+        "$description": "Default border color"
+      },
+      "border-hover": {
+        "$value": "{color.gray.400}",
+        "$type": "color"
+      },
+      "border-focus": {
+        "$value": "{color.blue.500}",
+        "$type": "color"
+      },
+      "border-error": {
+        "$value": "{color.red.500}",
+        "$type": "color"
+      },
+      "disabled": {
+        "$value": "{color.gray.200}",
+        "$type": "color"
+      }
+    },
+    "spacing": {
+      "xs": {
+        "$value": "{space.1}",
+        "$type": "dimension",
+        "$description": "4px - extra small spacing"
+      },
+      "sm": {
+        "$value": "{space.2}",
+        "$type": "dimension",
+        "$description": "8px - small spacing"
+      },
+      "md": {
+        "$value": "{space.4}",
+        "$type": "dimension",
+        "$description": "16px - medium spacing (most common)"
+      },
+      "lg": {
+        "$value": "{space.6}",
+        "$type": "dimension",
+        "$description": "24px - large spacing"
+      },
+      "xl": {
+        "$value": "{space.8}",
+        "$type": "dimension",
+        "$description": "32px - extra large spacing"
+      },
+      "2xl": {
+        "$value": "{space.12}",
+        "$type": "dimension",
+        "$description": "48px"
+      },
+      "3xl": {
+        "$value": "{space.16}",
+        "$type": "dimension",
+        "$description": "64px"
+      }
+    },
+    "font": {
+      "sans": {
+        "$value": "{font.family.sans}",
+        "$type": "fontFamily"
+      },
+      "serif": {
+        "$value": "{font.family.serif}",
+        "$type": "fontFamily"
+      },
+      "mono": {
+        "$value": "{font.family.mono}",
+        "$type": "fontFamily"
+      }
+    },
+    "radius": {
+      "sm": {
+        "$value": "{radius.sm}",
+        "$type": "dimension"
+      },
+      "md": {
+        "$value": "{radius.md}",
+        "$type": "dimension"
+      },
+      "lg": {
+        "$value": "{radius.lg}",
+        "$type": "dimension"
+      },
+      "full": {
+        "$value": "{radius.full}",
+        "$type": "dimension"
+      }
+    }
+  }
+}

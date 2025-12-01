@@ -1,0 +1,186 @@
+{
+  "message_templates": {
+    "welcome": {
+      "first_time": {
+        "title": "Welcome Message - First Time User",
+        "template": "Hello! I'm your AI assistant. I'm here to help with questions, creative tasks, analysis, coding, and much more. Feel free to ask me anything or explore what I can do. How can I assist you today?"
+      },
+      "returning": {
+        "title": "Welcome Back Message",
+        "template": "Welcome back! Ready to continue our conversation or start something new?"
+      },
+      "morning": {
+        "title": "Morning Greeting",
+        "template": "Good morning! Fresh start to the day. What can I help you with?"
+      },
+      "afternoon": {
+        "title": "Afternoon Greeting",
+        "template": "Good afternoon! How can I assist you today?"
+      },
+      "evening": {
+        "title": "Evening Greeting",
+        "template": "Good evening! What would you like to work on?"
+      }
+    },
+    "feedback_requests": {
+      "after_complex": {
+        "title": "After Complex Response",
+        "template": "That was quite detailed! Let me know if you need clarification on any part or would like me to elaborate on specific aspects."
+      },
+      "after_code": {
+        "title": "After Code Generation",
+        "template": "I've provided the code above. Would you like me to explain any part in more detail, add comments, or help you adapt it to your specific use case?"
+      },
+      "after_list": {
+        "title": "After List or Options",
+        "template": "These are the options I've identified. Would you like to explore any of these in more depth?"
+      },
+      "need_more_info": {
+        "title": "Need More Information",
+        "template": "I'd be happy to help, but I need a bit more information to provide the best assistance. Could you tell me more about [specific aspect]?"
+      }
+    },
+    "transitions": {
+      "topic_change": {
+        "title": "Changing Topics",
+        "template": "I see we're shifting to a new topic. Let me adjust my focus to help you with this."
+      },
+      "deep_dive": {
+        "title": "Going Deeper",
+        "template": "Let's dive deeper into this. I'll provide more detailed information."
+      },
+      "summary_transition": {
+        "title": "Moving to Summary",
+        "template": "Let me summarize what we've discussed so far..."
+      },
+      "practical_application": {
+        "title": "To Practical Application",
+        "template": "Now let's look at how to apply this in practice..."
+      }
+    },
+    "clarifications": {
+      "ambiguous": {
+        "title": "Ambiguous Request",
+        "template": "Your question could be interpreted in a few different ways. Are you asking about [option A] or [option B]? Or perhaps something else?"
+      },
+      "assumptions": {
+        "title": "Making Assumptions",
+        "template": "I'm going to assume you mean [assumption]. Please let me know if you meant something different."
+      },
+      "technical_level": {
+        "title": "Technical Level Check",
+        "template": "Before I continue, would you prefer a technical deep-dive or a high-level overview?"
+      },
+      "scope_check": {
+        "title": "Scope Clarification",
+        "template": "Just to clarify the scope - are you looking for [specific aspect] or a broader view including [related aspects]?"
+      }
+    },
+    "explanations": {
+      "step_by_step": {
+        "title": "Step-by-Step Explanation",
+        "template": "Let me break this down step by step:\n\n1. [First step]\n2. [Second step]\n3. [Third step]\n\nEach step builds on the previous one to achieve [goal]."
+      },
+      "analogy": {
+        "title": "Explanation with Analogy",
+        "template": "Think of it like [analogy]. Just as [analogy explanation], similarly [concept explanation]."
+      },
+      "pros_cons": {
+        "title": "Pros and Cons Format",
+        "template": "Let me outline the pros and cons:\n\n**Pros:**\n- [Advantage 1]\n- [Advantage 2]\n\n**Cons:**\n- [Disadvantage 1]\n- [Disadvantage 2]\n\n**Recommendation:** [Based on the analysis]"
+      },
+      "comparison": {
+        "title": "Comparison Format",
+        "template": "Here's how these options compare:\n\n| Aspect | Option A | Option B |\n|--------|----------|----------|\n| [Aspect 1] | [A detail] | [B detail] |\n| [Aspect 2] | [A detail] | [B detail] |"
+      }
+    },
+    "code_templates": {
+      "function_template": {
+        "title": "Function Documentation",
+        "template": "```[language]\n/**\n * [Function description]\n * @param {[type]} [param] - [Description]\n * @returns {[type]} [Description]\n */\nfunction [name]([params]) {\n    // Implementation\n}\n```"
+      },
+      "error_handling": {
+        "title": "Error Handling Pattern",
+        "template": "Here's how to handle potential errors:\n\n```[language]\ntry {\n    // Your code here\n} catch (error) {\n    // Error handling\n    console.error('Error:', error);\n    // Recovery or user feedback\n}\n```"
+      },
+      "before_after": {
+        "title": "Before/After Code",
+        "template": "**Before (Issue: [problem]):**\n```[language]\n[original code]\n```\n\n**After (Solution: [fix]):**\n```[language]\n[improved code]\n```\n\n**Key changes:**\n- [Change 1]\n- [Change 2]"
+      }
+    },
+    "conclusions": {
+      "summary": {
+        "title": "Summary Conclusion",
+        "template": "To summarize: [key points]. The main takeaway is [primary conclusion]."
+      },
+      "next_steps": {
+        "title": "Next Steps",
+        "template": "Now that we've covered [topic], your next steps could be:\n1. [Action 1]\n2. [Action 2]\n3. [Action 3]"
+      },
+      "open_ended": {
+        "title": "Open for Questions",
+        "template": "I hope this helps! Feel free to ask if you need clarification on any part or want to explore related topics."
+      },
+      "check_understanding": {
+        "title": "Understanding Check",
+        "template": "Does this explanation make sense? I'm happy to clarify any points or approach it from a different angle if needed."
+      }
+    },
+    "error_messages": {
+      "rate_limit": {
+        "title": "Rate Limit Message",
+        "template": "It looks like we've hit the rate limit. Please wait a moment before sending your next message. This helps ensure quality service for all users."
+      },
+      "context_limit": {
+        "title": "Context Limit Message",
+        "template": "Our conversation is getting quite long! To continue effectively, I'll need to summarize our earlier discussion. This helps me maintain context while staying within system limits."
+      },
+      "processing_error": {
+        "title": "Processing Error",
+        "template": "I encountered an issue processing your request. Please try rephrasing or breaking it into smaller parts. If the problem persists, it might be a temporary issue."
+      },
+      "connection_error": {
+        "title": "Connection Error",
+        "template": "There seems to be a connection issue. Your message has been saved and will be sent once the connection is restored."
+      }
+    },
+    "interactive": {
+      "choice_prompt": {
+        "title": "Multiple Choice",
+        "template": "I can help you with this in several ways:\n\nA) [Option A description]\nB) [Option B description]\nC) [Option C description]\n\nWhich approach would you prefer?"
+      },
+      "confirmation": {
+        "title": "Confirmation Request",
+        "template": "Just to confirm, you'd like me to [action]. Is that correct? Type 'yes' to proceed or let me know if you meant something else."
+      },
+      "iteration": {
+        "title": "Iteration Prompt",
+        "template": "Here's my first attempt. Would you like me to:\n- Refine this further\n- Try a different approach\n- Add more detail\n- Make it more concise"
+      }
+    }
+  },
+  "quick_replies": [
+    "Tell me more",
+    "Can you explain that differently?",
+    "Show me an example",
+    "What are the alternatives?",
+    "How does this work?",
+    "What's next?",
+    "Start over",
+    "Summarize this",
+    "Give me the key points",
+    "Is there a simpler way?"
+  ],
+  "conversation_enders": [
+    "Thanks for the help!",
+    "That's all I needed",
+    "Perfect, thank you",
+    "This is very helpful",
+    "I understand now",
+    "Great explanation",
+    "Problem solved",
+    "See you later",
+    "I'll try this out",
+    "Much appreciated"
+  ]
+}

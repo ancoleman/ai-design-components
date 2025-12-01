@@ -1,0 +1,302 @@
+{
+  "themes": {
+    "light": {
+      "name": "Light Mode",
+      "description": "Clean, bright interface for daytime use",
+      "tokens": {
+        "chat-bg": "#f5f5f5",
+        "message-user-bg": "#007AFF",
+        "message-user-text": "#ffffff",
+        "message-ai-bg": "#ffffff",
+        "message-ai-text": "#000000",
+        "message-system-bg": "#FFF3CD",
+        "message-system-text": "#856404",
+        "input-bg": "#ffffff",
+        "input-border": "#e0e0e0",
+        "input-border-focus": "#007AFF",
+        "chat-border-color": "#e0e0e0",
+        "code-block-bg": "#2d2d2d",
+        "code-text-color": "#f8f8f2",
+        "typing-indicator-color": "#666666",
+        "cursor-color": "#000000",
+        "message-padding": "12px 16px",
+        "message-gap": "12px",
+        "message-border-radius": "16px",
+        "message-shadow": "0 1px 2px rgba(0,0,0,0.1)"
+      }
+    },
+    "dark": {
+      "name": "Dark Mode",
+      "description": "Eye-friendly dark theme for extended conversations",
+      "tokens": {
+        "chat-bg": "#1a1a1a",
+        "message-user-bg": "#0066CC",
+        "message-user-text": "#ffffff",
+        "message-ai-bg": "#2d2d2d",
+        "message-ai-text": "#e0e0e0",
+        "message-system-bg": "#3d3d00",
+        "message-system-text": "#ffff99",
+        "input-bg": "#2d2d2d",
+        "input-border": "#404040",
+        "input-border-focus": "#0066CC",
+        "chat-border-color": "#404040",
+        "code-block-bg": "#000000",
+        "code-text-color": "#f8f8f2",
+        "typing-indicator-color": "#999999",
+        "cursor-color": "#ffffff",
+        "message-padding": "12px 16px",
+        "message-gap": "12px",
+        "message-border-radius": "16px",
+        "message-shadow": "0 2px 4px rgba(0,0,0,0.5)"
+      }
+    },
+    "high-contrast": {
+      "name": "High Contrast",
+      "description": "Maximum readability with strong contrast",
+      "tokens": {
+        "chat-bg": "#000000",
+        "message-user-bg": "#0000FF",
+        "message-user-text": "#FFFFFF",
+        "message-ai-bg": "#FFFFFF",
+        "message-ai-text": "#000000",
+        "message-system-bg": "#FFFF00",
+        "message-system-text": "#000000",
+        "input-bg": "#000000",
+        "input-border": "#FFFFFF",
+        "input-border-focus": "#00FF00",
+        "chat-border-color": "#FFFFFF",
+        "code-block-bg": "#000000",
+        "code-text-color": "#00FF00",
+        "typing-indicator-color": "#FFFFFF",
+        "cursor-color": "#00FF00",
+        "message-padding": "16px 20px",
+        "message-gap": "16px",
+        "message-border-radius": "8px",
+        "message-shadow": "none",
+        "message-border": "2px solid currentColor"
+      }
+    },
+    "sepia": {
+      "name": "Sepia",
+      "description": "Warm, comfortable theme for long reading sessions",
+      "tokens": {
+        "chat-bg": "#f4ecd8",
+        "message-user-bg": "#8b4513",
+        "message-user-text": "#f4ecd8",
+        "message-ai-bg": "#ffffff",
+        "message-ai-text": "#5d4037",
+        "message-system-bg": "#fff8dc",
+        "message-system-text": "#704214",
+        "input-bg": "#ffffff",
+        "input-border": "#d2b48c",
+        "input-border-focus": "#8b4513",
+        "chat-border-color": "#d2b48c",
+        "code-block-bg": "#3e2723",
+        "code-text-color": "#ffecb3",
+        "typing-indicator-color": "#8b6914",
+        "cursor-color": "#5d4037",
+        "message-padding": "12px 16px",
+        "message-gap": "12px",
+        "message-border-radius": "12px",
+        "message-shadow": "0 1px 3px rgba(139,69,19,0.2)"
+      }
+    },
+    "ocean": {
+      "name": "Ocean",
+      "description": "Calming blue-green theme",
+      "tokens": {
+        "chat-bg": "#e0f2f1",
+        "message-user-bg": "#00695c",
+        "message-user-text": "#ffffff",
+        "message-ai-bg": "#ffffff",
+        "message-ai-text": "#004d40",
+        "message-system-bg": "#b2dfdb",
+        "message-system-text": "#00695c",
+        "input-bg": "#ffffff",
+        "input-border": "#80cbc4",
+        "input-border-focus": "#00695c",
+        "chat-border-color": "#80cbc4",
+        "code-block-bg": "#004d40",
+        "code-text-color": "#b2dfdb",
+        "typing-indicator-color": "#00897b",
+        "cursor-color": "#004d40",
+        "message-padding": "12px 16px",
+        "message-gap": "12px",
+        "message-border-radius": "16px",
+        "message-shadow": "0 2px 4px rgba(0,77,64,0.15)"
+      }
+    },
+    "sunset": {
+      "name": "Sunset",
+      "description": "Warm orange and purple gradient theme",
+      "tokens": {
+        "chat-bg": "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
+        "message-user-bg": "#764ba2",
+        "message-user-text": "#ffffff",
+        "message-ai-bg": "rgba(255,255,255,0.95)",
+        "message-ai-text": "#4a148c",
+        "message-system-bg": "rgba(245,147,251,0.3)",
+        "message-system-text": "#4a148c",
+        "input-bg": "rgba(255,255,255,0.95)",
+        "input-border": "rgba(118,75,162,0.3)",
+        "input-border-focus": "#764ba2",
+        "chat-border-color": "rgba(118,75,162,0.2)",
+        "code-block-bg": "#4a148c",
+        "code-text-color": "#f3e5f5",
+        "typing-indicator-color": "#764ba2",
+        "cursor-color": "#764ba2",
+        "message-padding": "14px 18px",
+        "message-gap": "14px",
+        "message-border-radius": "20px",
+        "message-shadow": "0 4px 6px rgba(118,75,162,0.2)"
+      }
+    },
+    "minimal": {
+      "name": "Minimal",
+      "description": "Ultra-clean with minimal visual elements",
+      "tokens": {
+        "chat-bg": "#ffffff",
+        "message-user-bg": "transparent",
+        "message-user-text": "#000000",
+        "message-ai-bg": "transparent",
+        "message-ai-text": "#000000",
+        "message-system-bg": "transparent",
+        "message-system-text": "#666666",
+        "input-bg": "#ffffff",
+        "input-border": "#000000",
+        "input-border-focus": "#000000",
+        "chat-border-color": "#000000",
+        "code-block-bg": "#f5f5f5",
+        "code-text-color": "#000000",
+        "typing-indicator-color": "#000000",
+        "cursor-color": "#000000",
+        "message-padding": "8px 0",
+        "message-gap": "24px",
+        "message-border-radius": "0",
+        "message-shadow": "none",
+        "message-border-bottom": "1px solid #e0e0e0",
+        "message-user-align": "right",
+        "message-ai-align": "left"
+      }
+    },
+    "terminal": {
+      "name": "Terminal",
+      "description": "Classic terminal/console appearance",
+      "tokens": {
+        "chat-bg": "#000000",
+        "message-user-bg": "transparent",
+        "message-user-text": "#00ff00",
+        "message-ai-bg": "transparent",
+        "message-ai-text": "#00ff00",
+        "message-system-bg": "transparent",
+        "message-system-text": "#ffff00",
+        "input-bg": "#000000",
+        "input-border": "#00ff00",
+        "input-border-focus": "#00ffff",
+        "chat-border-color": "#00ff00",
+        "code-block-bg": "#0a0a0a",
+        "code-text-color": "#00ff00",
+        "typing-indicator-color": "#00ff00",
+        "cursor-color": "#00ff00",
+        "message-padding": "4px 0",
+        "message-gap": "8px",
+        "message-border-radius": "0",
+        "message-shadow": "none",
+        "font-family": "'Courier New', monospace",
+        "message-prefix-user": "> ",
+        "message-prefix-ai": "$ "
+      }
+    },
+    "forest": {
+      "name": "Forest",
+      "description": "Natural green theme inspired by nature",
+      "tokens": {
+        "chat-bg": "#f1f8e9",
+        "message-user-bg": "#2e7d32",
+        "message-user-text": "#ffffff",
+        "message-ai-bg": "#ffffff",
+        "message-ai-text": "#1b5e20",
+        "message-system-bg": "#dcedc8",
+        "message-system-text": "#33691e",
+        "input-bg": "#ffffff",
+        "input-border": "#81c784",
+        "input-border-focus": "#2e7d32",
+        "chat-border-color": "#81c784",
+        "code-block-bg": "#1b5e20",
+        "code-text-color": "#c8e6c9",
+        "typing-indicator-color": "#4caf50",
+        "cursor-color": "#2e7d32",
+        "message-padding": "12px 16px",
+        "message-gap": "12px",
+        "message-border-radius": "14px",
+        "message-shadow": "0 2px 4px rgba(46,125,50,0.15)"
+      }
+    },
+    "corporate": {
+      "name": "Corporate",
+      "description": "Professional business theme",
+      "tokens": {
+        "chat-bg": "#fafafa",
+        "message-user-bg": "#1565c0",
+        "message-user-text": "#ffffff",
+        "message-ai-bg": "#ffffff",
+        "message-ai-text": "#212121",
+        "message-system-bg": "#e3f2fd",
+        "message-system-text": "#0d47a1",
+        "input-bg": "#ffffff",
+        "input-border": "#bdbdbd",
+        "input-border-focus": "#1565c0",
+        "chat-border-color": "#e0e0e0",
+        "code-block-bg": "#263238",
+        "code-text-color": "#cfd8dc",
+        "typing-indicator-color": "#757575",
+        "cursor-color": "#212121",
+        "message-padding": "10px 14px",
+        "message-gap": "10px",
+        "message-border-radius": "4px",
+        "message-shadow": "0 1px 3px rgba(0,0,0,0.12)"
+      }
+    }
+  },
+  "color_schemes": {
+    "primary_colors": {
+      "blue": "#007AFF",
+      "green": "#34C759",
+      "purple": "#AF52DE",
+      "red": "#FF3B30",
+      "orange": "#FF9500",
+      "teal": "#00BCD4",
+      "indigo": "#5856D6",
+      "pink": "#FF2D55"
+    },
+    "neutral_colors": {
+      "gray-50": "#FAFAFA",
+      "gray-100": "#F5F5F5",
+      "gray-200": "#EEEEEE",
+      "gray-300": "#E0E0E0",
+      "gray-400": "#BDBDBD",
+      "gray-500": "#9E9E9E",
+      "gray-600": "#757575",
+      "gray-700": "#616161",
+      "gray-800": "#424242",
+      "gray-900": "#212121"
+    }
+  },
+  "animation_themes": {
+    "smooth": {
+      "message-transition": "all 0.3s ease-out",
+      "typing-animation-duration": "1.4s",
+      "scroll-behavior": "smooth"
+    },
+    "instant": {
+      "message-transition": "none",
+      "typing-animation-duration": "0s",
+      "scroll-behavior": "auto"
+    },
+    "bouncy": {
+      "message-transition": "all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+      "typing-animation-duration": "1s",
+      "scroll-behavior": "smooth"
+    }
+  }
+}

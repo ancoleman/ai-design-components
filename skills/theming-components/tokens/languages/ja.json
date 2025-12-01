@@ -1,0 +1,23 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "$description": "Japanese language overrides - font and spacing adjustments",
+  "semantic": {
+    "font": {
+      "sans": {
+        "$value": "'Noto Sans JP', -apple-system, sans-serif",
+        "$type": "fontFamily",
+        "$description": "Japanese-optimized font stack"
+      }
+    },
+    "font-line-height-base": {
+      "$value": "1.7",
+      "$type": "number",
+      "$description": "Japanese characters benefit from taller line height"
+    },
+    "font-letter-spacing-base": {
+      "$value": "0.02em",
+      "$type": "dimension",
+      "$description": "Japanese letter spacing adjustment"
+    }
+  }
+}

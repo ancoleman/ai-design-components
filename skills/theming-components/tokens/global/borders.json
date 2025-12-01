@@ -1,0 +1,65 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "border": {
+    "width": {
+      "0": {
+        "$value": "0",
+        "$type": "dimension"
+      },
+      "thin": {
+        "$value": "1px",
+        "$type": "dimension",
+        "$description": "Standard border width"
+      },
+      "medium": {
+        "$value": "2px",
+        "$type": "dimension"
+      },
+      "thick": {
+        "$value": "4px",
+        "$type": "dimension"
+      },
+      "heavy": {
+        "$value": "8px",
+        "$type": "dimension"
+      }
+    }
+  },
+  "radius": {
+    "none": {
+      "$value": "0",
+      "$type": "dimension",
+      "$description": "No border radius"
+    },
+    "sm": {
+      "$value": "0.25rem",
+      "$type": "dimension",
+      "$description": "4px - small radius"
+    },
+    "md": {
+      "$value": "0.5rem",
+      "$type": "dimension",
+      "$description": "8px - medium radius"
+    },
+    "lg": {
+      "$value": "0.75rem",
+      "$type": "dimension",
+      "$description": "12px - large radius"
+    },
+    "xl": {
+      "$value": "1rem",
+      "$type": "dimension",
+      "$description": "16px - extra large radius"
+    },
+    "2xl": {
+      "$value": "1.5rem",
+      "$type": "dimension",
+      "$description": "24px"
+    },
+    "full": {
+      "$value": "9999px",
+      "$type": "dimension",
+      "$description": "Fully rounded - pills and circles"
+    }
+  }
+}

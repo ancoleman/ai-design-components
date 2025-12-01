@@ -1,0 +1,34 @@
+{
+  "welcomeMessages": [
+    "Welcome! Let's get you started.",
+    "Hi there! Ready to explore?",
+    "Welcome aboard! Let's take a quick tour."
+  ],
+  "completionMessages": [
+    "🎉 You're all set! Ready to get started?",
+    "Great job! You've completed the tour.",
+    "Nice work! You're ready to go."
+  ],
+  "skipConfirmations": [
+    "Skip the tour? You can restart it anytime from the Help menu.",
+    "Want to skip? You can always take the tour later."
+  ],
+  "progressMessages": [
+    "Step {current} of {total}",
+    "{current}/{total}",
+    "Progress: {current} of {total} steps"
+  ],
+  "tooltips": {
+    "create": "Click here to create a new {item}",
+    "edit": "Edit your {item} here",
+    "delete": "Remove this {item}",
+    "save": "Save your changes",
+    "cancel": "Discard changes",
+    "help": "Need help? Click here for documentation"
+  },
+  "hints": {
+    "level1": "Hint: {basic_suggestion}",
+    "level2": "Still stuck? Try {intermediate_suggestion}",
+    "level3": "Here's how: {detailed_explanation}"
+  }
+}

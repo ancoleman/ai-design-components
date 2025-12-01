@@ -1,0 +1,116 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "$description": "Button component tokens - for forms skill",
+  "button": {
+    "bg": {
+      "primary": {
+        "$value": "{semantic.color.primary}",
+        "$type": "color",
+        "$description": "Primary button background"
+      },
+      "primary-hover": {
+        "$value": "{semantic.color.primary-hover}",
+        "$type": "color"
+      },
+      "primary-active": {
+        "$value": "{semantic.color.primary-active}",
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": "{semantic.color.bg-secondary}",
+        "$type": "color"
+      },
+      "secondary-hover": {
+        "$value": "{semantic.color.bg-tertiary}",
+        "$type": "color"
+      },
+      "tertiary": {
+        "$value": "transparent",
+        "$type": "color"
+      },
+      "disabled": {
+        "$value": "{semantic.color.disabled}",
+        "$type": "color"
+      },
+      "danger": {
+        "$value": "{semantic.color.error}",
+        "$type": "color"
+      },
+      "danger-hover": {
+        "$value": "{color.red.600}",
+        "$type": "color"
+      }
+    },
+    "text": {
+      "primary": {
+        "$value": "{semantic.color.text-inverse}",
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": "{semantic.color.text-primary}",
+        "$type": "color"
+      },
+      "tertiary": {
+        "$value": "{semantic.color.primary}",
+        "$type": "color"
+      },
+      "disabled": {
+        "$value": "{semantic.color.text-disabled}",
+        "$type": "color"
+      }
+    },
+    "padding": {
+      "inline": {
+        "$value": "{semantic.spacing.lg}",
+        "$type": "dimension",
+        "$description": "Horizontal padding - uses logical property"
+      },
+      "block": {
+        "$value": "{semantic.spacing.sm}",
+        "$type": "dimension",
+        "$description": "Vertical padding - uses logical property"
+      }
+    },
+    "border": {
+      "radius": {
+        "$value": "{semantic.radius.md}",
+        "$type": "dimension"
+      },
+      "width": {
+        "$value": "{border.width.thin}",
+        "$type": "dimension"
+      },
+      "color-secondary": {
+        "$value": "{semantic.color.border}",
+        "$type": "color"
+      }
+    },
+    "font": {
+      "size": {
+        "$value": "{font.size.base}",
+        "$type": "fontSize"
+      },
+      "weight": {
+        "$value": "{font.weight.medium}",
+        "$type": "fontWeight"
+      }
+    },
+    "height": {
+      "sm": {
+        "$value": "2rem",
+        "$type": "dimension",
+        "$description": "32px - small button"
+      },
+      "md": {
+        "$value": "2.5rem",
+        "$type": "dimension",
+        "$description": "40px - medium button (default)"
+      },
+      "lg": {
+        "$value": "3rem",
+        "$type": "dimension",
+        "$description": "48px - large button"
+      }
+    }
+  }
+}

@@ -1,0 +1,331 @@
+{
+  "http": {
+    "400": {
+      "code": "BAD_REQUEST",
+      "message": "The request was invalid",
+      "userMessage": "Please check your input and try again",
+      "suggestions": [
+        "Verify all required fields are filled",
+        "Check for invalid characters",
+        "Ensure data formats are correct"
+      ]
+    },
+    "401": {
+      "code": "UNAUTHORIZED",
+      "message": "Authentication required",
+      "userMessage": "Please sign in to continue",
+      "suggestions": [
+        "Sign in with your account",
+        "Check your credentials",
+        "Request a password reset if needed"
+      ]
+    },
+    "403": {
+      "code": "FORBIDDEN",
+      "message": "Access denied",
+      "userMessage": "You don't have permission to access this resource",
+      "suggestions": [
+        "Contact your administrator",
+        "Request access permissions",
+        "Check if you're using the right account"
+      ]
+    },
+    "404": {
+      "code": "NOT_FOUND",
+      "message": "Resource not found",
+      "userMessage": "We couldn't find what you're looking for",
+      "suggestions": [
+        "Check the URL or link",
+        "The item may have been moved or deleted",
+        "Try searching for it"
+      ]
+    },
+    "409": {
+      "code": "CONFLICT",
+      "message": "Resource conflict",
+      "userMessage": "This conflicts with existing data",
+      "suggestions": [
+        "Refresh and try again",
+        "Check for duplicate entries",
+        "Someone else may have made changes"
+      ]
+    },
+    "413": {
+      "code": "PAYLOAD_TOO_LARGE",
+      "message": "Request entity too large",
+      "userMessage": "The file or data is too large",
+      "suggestions": [
+        "Reduce file size",
+        "Split into smaller parts",
+        "Compress the data"
+      ]
+    },
+    "422": {
+      "code": "UNPROCESSABLE_ENTITY",
+      "message": "Validation failed",
+      "userMessage": "Please fix the validation errors",
+      "suggestions": [
+        "Review highlighted fields",
+        "Check data formats",
+        "Ensure all requirements are met"
+      ]
+    },
+    "429": {
+      "code": "TOO_MANY_REQUESTS",
+      "message": "Rate limit exceeded",
+      "userMessage": "Too many requests. Please wait a moment",
+      "suggestions": [
+        "Wait before trying again",
+        "Reduce request frequency",
+        "Consider upgrading your plan"
+      ]
+    },
+    "500": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "message": "Server error",
+      "userMessage": "Something went wrong on our end",
+      "suggestions": [
+        "Try again in a few moments",
+        "If the problem persists, contact support",
+        "Check our status page"
+      ]
+    },
+    "502": {
+      "code": "BAD_GATEWAY",
+      "message": "Gateway error",
+      "userMessage": "We're having trouble connecting to our servers",
+      "suggestions": [
+        "Wait a moment and try again",
+        "Check your internet connection",
+        "The service may be temporarily unavailable"
+      ]
+    },
+    "503": {
+      "code": "SERVICE_UNAVAILABLE",
+      "message": "Service unavailable",
+      "userMessage": "The service is temporarily unavailable",
+      "suggestions": [
+        "Try again in a few minutes",
+        "Check our status page for updates",
+        "We may be performing maintenance"
+      ]
+    },
+    "504": {
+      "code": "GATEWAY_TIMEOUT",
+      "message": "Gateway timeout",
+      "userMessage": "The request took too long to process",
+      "suggestions": [
+        "Try again with less data",
+        "The server may be busy",
+        "Check your internet connection"
+      ]
+    }
+  },
+  "application": {
+    "AUTH001": {
+      "message": "Invalid credentials",
+      "userMessage": "Email or password is incorrect",
+      "suggestions": [
+        "Check your email and password",
+        "Passwords are case-sensitive",
+        "Reset your password if forgotten"
+      ]
+    },
+    "AUTH002": {
+      "message": "Session expired",
+      "userMessage": "Your session has expired. Please sign in again",
+      "suggestions": [
+        "Sign in again to continue",
+        "This happens for security reasons",
+        "Your work has been saved"
+      ]
+    },
+    "AUTH003": {
+      "message": "Account locked",
+      "userMessage": "Your account has been temporarily locked",
+      "suggestions": [
+        "Too many failed login attempts",
+        "Wait 15 minutes and try again",
+        "Contact support if you need immediate access"
+      ]
+    },
+    "FILE001": {
+      "message": "Invalid file type",
+      "userMessage": "This file type is not supported",
+      "suggestions": [
+        "Supported types: JPG, PNG, PDF, DOC",
+        "Convert your file to a supported format",
+        "Check file extension is correct"
+      ]
+    },
+    "FILE002": {
+      "message": "File too large",
+      "userMessage": "File exceeds maximum size of {maxSize}",
+      "suggestions": [
+        "Compress or resize the file",
+        "Split into multiple smaller files",
+        "Upgrade for larger file limits"
+      ]
+    },
+    "FILE003": {
+      "message": "File corrupted",
+      "userMessage": "The file appears to be corrupted",
+      "suggestions": [
+        "Try uploading again",
+        "Check the original file",
+        "Use a different file"
+      ]
+    },
+    "DATA001": {
+      "message": "Duplicate entry",
+      "userMessage": "This item already exists",
+      "suggestions": [
+        "Use a different name",
+        "Edit the existing item instead",
+        "Check for typos"
+      ]
+    },
+    "DATA002": {
+      "message": "Referenced item not found",
+      "userMessage": "A related item could not be found",
+      "suggestions": [
+        "The item may have been deleted",
+        "Refresh and try again",
+        "Select a different item"
+      ]
+    },
+    "DATA003": {
+      "message": "Data integrity error",
+      "userMessage": "Data validation failed",
+      "suggestions": [
+        "Check all required fields",
+        "Ensure data formats are correct",
+        "Some fields may have changed"
+      ]
+    },
+    "NETWORK001": {
+      "message": "No internet connection",
+      "userMessage": "You appear to be offline",
+      "suggestions": [
+        "Check your internet connection",
+        "Try again when connected",
+        "Some features work offline"
+      ]
+    },
+    "NETWORK002": {
+      "message": "Connection timeout",
+      "userMessage": "The connection timed out",
+      "suggestions": [
+        "Check your internet speed",
+        "Try again with a stable connection",
+        "The server may be slow"
+      ]
+    },
+    "PAYMENT001": {
+      "message": "Payment failed",
+      "userMessage": "We couldn't process your payment",
+      "suggestions": [
+        "Check your payment details",
+        "Ensure sufficient funds",
+        "Try a different payment method"
+      ]
+    },
+    "PAYMENT002": {
+      "message": "Subscription expired",
+      "userMessage": "Your subscription has expired",
+      "suggestions": [
+        "Renew your subscription",
+        "Update payment method",
+        "Choose a different plan"
+      ]
+    },
+    "LIMIT001": {
+      "message": "Storage limit reached",
+      "userMessage": "You've reached your storage limit",
+      "suggestions": [
+        "Delete unused files",
+        "Upgrade your storage plan",
+        "Download and remove old files"
+      ]
+    },
+    "LIMIT002": {
+      "message": "API limit exceeded",
+      "userMessage": "You've exceeded your API limit",
+      "suggestions": [
+        "Wait until limit resets",
+        "Upgrade to a higher plan",
+        "Reduce API usage"
+      ]
+    }
+  },
+  "validation": {
+    "REQUIRED_FIELD": {
+      "message": "Required field missing",
+      "userMessage": "{fieldName} is required",
+      "fieldLevel": true
+    },
+    "INVALID_EMAIL": {
+      "message": "Invalid email format",
+      "userMessage": "Please enter a valid email address",
+      "fieldLevel": true,
+      "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+    },
+    "INVALID_PHONE": {
+      "message": "Invalid phone format",
+      "userMessage": "Please enter a valid phone number",
+      "fieldLevel": true,
+      "pattern": "^[\\+]?[\\d\\s\\-\\(\\)]+$"
+    },
+    "INVALID_URL": {
+      "message": "Invalid URL format",
+      "userMessage": "Please enter a valid URL",
+      "fieldLevel": true,
+      "pattern": "^https?:\\/\\/.+"
+    },
+    "PASSWORD_TOO_WEAK": {
+      "message": "Password doesn't meet requirements",
+      "userMessage": "Password must be at least 8 characters with uppercase, lowercase, and numbers",
+      "fieldLevel": true
+    },
+    "PASSWORDS_DONT_MATCH": {
+      "message": "Password confirmation failed",
+      "userMessage": "Passwords don't match",
+      "fieldLevel": true
+    },
+    "VALUE_TOO_SHORT": {
+      "message": "Value too short",
+      "userMessage": "Must be at least {minLength} characters",
+      "fieldLevel": true
+    },
+    "VALUE_TOO_LONG": {
+      "message": "Value too long",
+      "userMessage": "Must be no more than {maxLength} characters",
+      "fieldLevel": true
+    },
+    "INVALID_DATE": {
+      "message": "Invalid date",
+      "userMessage": "Please enter a valid date",
+      "fieldLevel": true
+    },
+    "DATE_IN_PAST": {
+      "message": "Date cannot be in the past",
+      "userMessage": "Please select a future date",
+      "fieldLevel": true
+    },
+    "DATE_IN_FUTURE": {
+      "message": "Date cannot be in the future",
+      "userMessage": "Please select a past date",
+      "fieldLevel": true
+    },
+    "INVALID_NUMBER": {
+      "message": "Invalid number",
+      "userMessage": "Please enter a valid number",
+      "fieldLevel": true
+    },
+    "NUMBER_OUT_OF_RANGE": {
+      "message": "Number out of range",
+      "userMessage": "Must be between {min} and {max}",
+      "fieldLevel": true
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "$description": "Arabic language overrides - font and spacing adjustments",
+  "semantic": {
+    "font": {
+      "sans": {
+        "$value": "'Cairo', 'Noto Kufi Arabic', -apple-system, sans-serif",
+        "$type": "fontFamily",
+        "$description": "Arabic-optimized font stack"
+      }
+    },
+    "font-line-height-base": {
+      "$value": "1.75",
+      "$type": "number",
+      "$description": "Arabic needs more line height for diacritics"
+    },
+    "font-letter-spacing-base": {
+      "$value": "0.01em",
+      "$type": "dimension",
+      "$description": "Slightly more spacing for Arabic"
+    }
+  }
+}

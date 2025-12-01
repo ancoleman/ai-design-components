@@ -1,0 +1,62 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "duration": {
+    "instant": {
+      "$value": "100ms",
+      "$type": "duration",
+      "$description": "Instant transition"
+    },
+    "fast": {
+      "$value": "150ms",
+      "$type": "duration",
+      "$description": "Fast transition - hover states"
+    },
+    "normal": {
+      "$value": "200ms",
+      "$type": "duration",
+      "$description": "Normal transition - standard interactions"
+    },
+    "moderate": {
+      "$value": "300ms",
+      "$type": "duration",
+      "$description": "Moderate transition - panel open/close"
+    },
+    "slow": {
+      "$value": "500ms",
+      "$type": "duration",
+      "$description": "Slow transition - large movements"
+    },
+    "slower": {
+      "$value": "700ms",
+      "$type": "duration",
+      "$description": "Very slow transition"
+    }
+  },
+  "ease": {
+    "linear": {
+      "$value": [0, 0, 1, 1],
+      "$type": "cubicBezier",
+      "$description": "Linear easing - constant speed"
+    },
+    "in": {
+      "$value": [0.4, 0, 1, 1],
+      "$type": "cubicBezier",
+      "$description": "Ease in - slow start"
+    },
+    "out": {
+      "$value": [0, 0, 0.2, 1],
+      "$type": "cubicBezier",
+      "$description": "Ease out - slow end (most common)"
+    },
+    "in-out": {
+      "$value": [0.4, 0, 0.2, 1],
+      "$type": "cubicBezier",
+      "$description": "Ease in-out - slow start and end"
+    },
+    "bounce": {
+      "$value": [0.68, -0.55, 0.265, 1.55],
+      "$type": "cubicBezier",
+      "$description": "Bounce easing - playful animations"
+    }
+  }
+}

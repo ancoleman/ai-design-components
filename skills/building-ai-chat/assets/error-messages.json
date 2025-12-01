@@ -1,0 +1,328 @@
+{
+  "errors": {
+    "network": {
+      "connection_failed": {
+        "code": "NETWORK_ERROR",
+        "title": "Connection Failed",
+        "message": "Unable to connect to the AI service. Please check your internet connection and try again.",
+        "suggestion": "Check if you're connected to the internet. If the problem persists, the service might be temporarily unavailable.",
+        "recovery": ["retry", "check_status", "offline_mode"],
+        "severity": "error"
+      },
+      "timeout": {
+        "code": "TIMEOUT_ERROR",
+        "title": "Request Timed Out",
+        "message": "The request took too long to complete. The AI service might be experiencing high load.",
+        "suggestion": "Try again in a moment. If you're sending a complex request, consider breaking it into smaller parts.",
+        "recovery": ["retry", "simplify", "wait"],
+        "severity": "warning"
+      },
+      "offline": {
+        "code": "OFFLINE",
+        "title": "You're Offline",
+        "message": "No internet connection detected. Your messages will be sent when you're back online.",
+        "suggestion": "Check your internet connection. Messages are saved locally and will be sent automatically when connection is restored.",
+        "recovery": ["queue", "check_connection"],
+        "severity": "info"
+      }
+    },
+    "ai_service": {
+      "refusal": {
+        "code": "AI_REFUSAL",
+        "title": "Request Cannot Be Completed",
+        "message": "I'm unable to help with this request due to safety or policy constraints.",
+        "suggestion": "Try rephrasing your request or asking for something related but within guidelines.",
+        "recovery": ["rephrase", "alternatives"],
+        "severity": "info"
+      },
+      "hallucination_warning": {
+        "code": "LOW_CONFIDENCE",
+        "title": "Low Confidence Response",
+        "message": "This response may contain inaccuracies. Please verify important information from authoritative sources.",
+        "suggestion": "Cross-reference critical information, especially facts, figures, and technical details.",
+        "recovery": ["verify", "request_sources"],
+        "severity": "warning"
+      },
+      "capability_limit": {
+        "code": "CAPABILITY_LIMIT",
+        "title": "Beyond Current Capabilities",
+        "message": "This request is outside my current capabilities or training.",
+        "suggestion": "I can help with related topics or break this down into manageable parts.",
+        "recovery": ["simplify", "alternatives"],
+        "severity": "info"
+      },
+      "model_unavailable": {
+        "code": "MODEL_UNAVAILABLE",
+        "title": "AI Model Unavailable",
+        "message": "The selected AI model is temporarily unavailable.",
+        "suggestion": "Try using an alternative model or wait a few moments before retrying.",
+        "recovery": ["switch_model", "retry", "wait"],
+        "severity": "warning"
+      }
+    },
+    "rate_limiting": {
+      "rate_limit_exceeded": {
+        "code": "RATE_LIMIT",
+        "title": "Rate Limit Reached",
+        "message": "You've exceeded the maximum number of requests. Please wait before sending more messages.",
+        "suggestion": "Take a break and return in a few minutes. Consider upgrading your plan for higher limits.",
+        "recovery": ["wait", "upgrade", "queue"],
+        "severity": "warning"
+      },
+      "daily_limit": {
+        "code": "DAILY_LIMIT",
+        "title": "Daily Limit Reached",
+        "message": "You've reached your daily message limit.",
+        "suggestion": "Your limit will reset tomorrow. Consider upgrading for unlimited access.",
+        "recovery": ["wait_daily", "upgrade"],
+        "severity": "info"
+      },
+      "token_limit": {
+        "code": "TOKEN_LIMIT",
+        "title": "Message Too Long",
+        "message": "Your message exceeds the maximum length allowed.",
+        "suggestion": "Please shorten your message or split it into multiple smaller messages.",
+        "recovery": ["shorten", "split"],
+        "severity": "error"
+      }
+    },
+    "context": {
+      "context_overflow": {
+        "code": "CONTEXT_OVERFLOW",
+        "title": "Conversation Too Long",
+        "message": "This conversation has exceeded the maximum context length.",
+        "suggestion": "Start a new conversation or let me summarize the discussion so far to continue.",
+        "recovery": ["summarize", "new_conversation", "export"],
+        "severity": "warning"
+      },
+      "context_lost": {
+        "code": "CONTEXT_LOST",
+        "title": "Context Lost",
+        "message": "I've lost track of our earlier conversation.",
+        "suggestion": "Please remind me what we were discussing or start fresh.",
+        "recovery": ["recap", "new_conversation"],
+        "severity": "error"
+      },
+      "memory_limit": {
+        "code": "MEMORY_LIMIT",
+        "title": "Memory Limit Reached",
+        "message": "Cannot store more conversation history.",
+        "suggestion": "Clear old conversations or export them for backup.",
+        "recovery": ["clear_history", "export"],
+        "severity": "warning"
+      }
+    },
+    "input_validation": {
+      "empty_message": {
+        "code": "EMPTY_INPUT",
+        "title": "Empty Message",
+        "message": "Please type a message before sending.",
+        "suggestion": "Enter your question or request in the input field.",
+        "recovery": ["type_message"],
+        "severity": "info"
+      },
+      "invalid_format": {
+        "code": "INVALID_FORMAT",
+        "title": "Invalid Format",
+        "message": "The message format is not supported.",
+        "suggestion": "Please use text, or supported file formats for attachments.",
+        "recovery": ["change_format", "remove_attachment"],
+        "severity": "error"
+      },
+      "file_too_large": {
+        "code": "FILE_TOO_LARGE",
+        "title": "File Too Large",
+        "message": "The attached file exceeds the maximum size limit.",
+        "suggestion": "Please use a smaller file or compress it before uploading.",
+        "recovery": ["compress", "reduce_size"],
+        "severity": "error"
+      },
+      "unsupported_file": {
+        "code": "UNSUPPORTED_FILE",
+        "title": "Unsupported File Type",
+        "message": "This file type is not supported.",
+        "suggestion": "Supported formats include images (PNG, JPG), documents (PDF, TXT), and code files.",
+        "recovery": ["convert", "change_file"],
+        "severity": "error"
+      }
+    },
+    "authentication": {
+      "unauthorized": {
+        "code": "UNAUTHORIZED",
+        "title": "Authentication Required",
+        "message": "Please sign in to continue using the chat.",
+        "suggestion": "Your session may have expired. Please sign in again.",
+        "recovery": ["sign_in", "refresh"],
+        "severity": "error"
+      },
+      "forbidden": {
+        "code": "FORBIDDEN",
+        "title": "Access Denied",
+        "message": "You don't have permission to perform this action.",
+        "suggestion": "Contact support if you believe this is an error.",
+        "recovery": ["contact_support", "check_permissions"],
+        "severity": "error"
+      },
+      "session_expired": {
+        "code": "SESSION_EXPIRED",
+        "title": "Session Expired",
+        "message": "Your session has expired for security reasons.",
+        "suggestion": "Please refresh the page and sign in again.",
+        "recovery": ["refresh", "sign_in"],
+        "severity": "warning"
+      }
+    },
+    "server": {
+      "internal_error": {
+        "code": "INTERNAL_ERROR",
+        "title": "Something Went Wrong",
+        "message": "An unexpected error occurred on our end.",
+        "suggestion": "We're working to fix this. Please try again in a moment.",
+        "recovery": ["retry", "report", "status_page"],
+        "severity": "error"
+      },
+      "maintenance": {
+        "code": "MAINTENANCE",
+        "title": "Under Maintenance",
+        "message": "The service is temporarily unavailable for scheduled maintenance.",
+        "suggestion": "We'll be back shortly. Check our status page for updates.",
+        "recovery": ["wait", "status_page"],
+        "severity": "info"
+      },
+      "degraded_performance": {
+        "code": "DEGRADED",
+        "title": "Slower Than Usual",
+        "message": "The service is experiencing slower response times.",
+        "suggestion": "Responses may take longer than usual. Thank you for your patience.",
+        "recovery": ["wait", "retry_later"],
+        "severity": "warning"
+      }
+    }
+  },
+  "recovery_actions": {
+    "retry": {
+      "label": "Try Again",
+      "description": "Attempt the request again"
+    },
+    "check_status": {
+      "label": "Check Status",
+      "description": "View service status page"
+    },
+    "offline_mode": {
+      "label": "Work Offline",
+      "description": "Continue with limited functionality"
+    },
+    "rephrase": {
+      "label": "Rephrase",
+      "description": "Try asking in a different way"
+    },
+    "alternatives": {
+      "label": "Alternatives",
+      "description": "Explore related options"
+    },
+    "verify": {
+      "label": "Verify",
+      "description": "Check information from other sources"
+    },
+    "request_sources": {
+      "label": "Request Sources",
+      "description": "Ask for citations and references"
+    },
+    "simplify": {
+      "label": "Simplify",
+      "description": "Break down into smaller requests"
+    },
+    "switch_model": {
+      "label": "Switch Model",
+      "description": "Use a different AI model"
+    },
+    "wait": {
+      "label": "Wait",
+      "description": "Try again in a few moments"
+    },
+    "upgrade": {
+      "label": "Upgrade",
+      "description": "Get higher limits with a paid plan"
+    },
+    "queue": {
+      "label": "Queue Message",
+      "description": "Send automatically when available"
+    },
+    "shorten": {
+      "label": "Shorten",
+      "description": "Reduce message length"
+    },
+    "split": {
+      "label": "Split Message",
+      "description": "Divide into multiple messages"
+    },
+    "summarize": {
+      "label": "Summarize",
+      "description": "Compress conversation history"
+    },
+    "new_conversation": {
+      "label": "New Chat",
+      "description": "Start a fresh conversation"
+    },
+    "export": {
+      "label": "Export",
+      "description": "Save conversation for backup"
+    },
+    "clear_history": {
+      "label": "Clear History",
+      "description": "Remove old conversations"
+    },
+    "sign_in": {
+      "label": "Sign In",
+      "description": "Authenticate to continue"
+    },
+    "refresh": {
+      "label": "Refresh Page",
+      "description": "Reload the application"
+    },
+    "contact_support": {
+      "label": "Contact Support",
+      "description": "Get help from our team"
+    },
+    "report": {
+      "label": "Report Issue",
+      "description": "Let us know about this problem"
+    }
+  },
+  "user_friendly_messages": {
+    "thinking": [
+      "Let me think about that...",
+      "Processing your request...",
+      "Working on it...",
+      "Just a moment...",
+      "Analyzing..."
+    ],
+    "still_thinking": [
+      "This is taking a bit longer...",
+      "Still working on it...",
+      "Almost there...",
+      "Complex request, bear with me...",
+      "Taking extra care with this one..."
+    ],
+    "success": [
+      "Got it!",
+      "Here's what I found:",
+      "I can help with that:",
+      "Great question! Here's my response:",
+      "Thanks for your patience. Here's the answer:"
+    ],
+    "partial_success": [
+      "I found some information, though it may not be complete:",
+      "Here's what I could determine:",
+      "I have a partial answer:",
+      "Based on available information:"
+    ],
+    "retry_success": [
+      "Success on retry!",
+      "Got through this time!",
+      "Connection restored!",
+      "Back online!",
+      "We're back in business!"
+    ]
+  }
+}

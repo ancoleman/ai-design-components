@@ -1,0 +1,447 @@
+{
+  "templates": {
+    "react-router": {
+      "name": "React Router v6 Templates",
+      "description": "Common route patterns for React Router",
+      "patterns": [
+        {
+          "name": "Basic Routes",
+          "template": {
+            "path": "/",
+            "element": "Layout",
+            "children": [
+              {
+                "index": true,
+                "element": "Home"
+              },
+              {
+                "path": "about",
+                "element": "About"
+              },
+              {
+                "path": "contact",
+                "element": "Contact"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Nested Routes",
+          "template": {
+            "path": "products",
+            "element": "ProductsLayout",
+            "children": [
+              {
+                "index": true,
+                "element": "ProductList"
+              },
+              {
+                "path": ":productId",
+                "element": "ProductDetail",
+                "loader": "productLoader"
+              },
+              {
+                "path": ":productId/edit",
+                "element": "ProductEdit",
+                "action": "editProductAction"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Protected Routes",
+          "template": {
+            "path": "dashboard",
+            "element": "ProtectedRoute",
+            "children": [
+              {
+                "index": true,
+                "element": "Dashboard"
+              },
+              {
+                "path": "profile",
+                "element": "Profile"
+              },
+              {
+                "path": "settings",
+                "element": "Settings"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Error Routes",
+          "template": {
+            "path": "*",
+            "element": "NotFound"
+          }
+        }
+      ]
+    },
+    "nextjs": {
+      "name": "Next.js App Router Templates",
+      "description": "Common patterns for Next.js App Router",
+      "patterns": [
+        {
+          "name": "Basic Structure",
+          "files": [
+            "app/layout.tsx",
+            "app/page.tsx",
+            "app/about/page.tsx",
+            "app/contact/page.tsx"
+          ]
+        },
+        {
+          "name": "Dynamic Routes",
+          "files": [
+            "app/products/page.tsx",
+            "app/products/[productId]/page.tsx",
+            "app/products/[productId]/edit/page.tsx"
+          ]
+        },
+        {
+          "name": "Route Groups",
+          "files": [
+            "app/(marketing)/layout.tsx",
+            "app/(marketing)/page.tsx",
+            "app/(marketing)/about/page.tsx",
+            "app/(dashboard)/layout.tsx",
+            "app/(dashboard)/dashboard/page.tsx"
+          ]
+        },
+        {
+          "name": "Parallel Routes",
+          "files": [
+            "app/dashboard/@analytics/page.tsx",
+            "app/dashboard/@team/page.tsx",
+            "app/dashboard/layout.tsx"
+          ]
+        },
+        {
+          "name": "Intercepting Routes",
+          "files": [
+            "app/@modal/(.)products/[id]/page.tsx",
+            "app/products/[id]/page.tsx"
+          ]
+        }
+      ]
+    },
+    "flask": {
+      "name": "Flask Route Templates",
+      "description": "Common Flask routing patterns",
+      "patterns": [
+        {
+          "name": "Basic Routes",
+          "routes": [
+            {
+              "path": "/",
+              "method": "GET",
+              "function": "index",
+              "template": "index.html"
+            },
+            {
+              "path": "/about",
+              "method": "GET",
+              "function": "about",
+              "template": "about.html"
+            },
+            {
+              "path": "/contact",
+              "methods": ["GET", "POST"],
+              "function": "contact",
+              "template": "contact.html"
+            }
+          ]
+        },
+        {
+          "name": "RESTful Routes",
+          "blueprint": "api",
+          "prefix": "/api/v1",
+          "routes": [
+            {
+              "path": "/resources",
+              "method": "GET",
+              "function": "get_resources"
+            },
+            {
+              "path": "/resources",
+              "method": "POST",
+              "function": "create_resource"
+            },
+            {
+              "path": "/resources/<int:id>",
+              "method": "GET",
+              "function": "get_resource"
+            },
+            {
+              "path": "/resources/<int:id>",
+              "method": "PUT",
+              "function": "update_resource"
+            },
+            {
+              "path": "/resources/<int:id>",
+              "method": "DELETE",
+              "function": "delete_resource"
+            }
+          ]
+        },
+        {
+          "name": "Admin Routes",
+          "blueprint": "admin",
+          "prefix": "/admin",
+          "auth_required": true,
+          "routes": [
+            {
+              "path": "/",
+              "method": "GET",
+              "function": "admin_dashboard",
+              "roles": ["admin"]
+            },
+            {
+              "path": "/users",
+              "method": "GET",
+              "function": "manage_users",
+              "roles": ["admin", "moderator"]
+            }
+          ]
+        }
+      ]
+    },
+    "django": {
+      "name": "Django URL Templates",
+      "description": "Common Django URL patterns",
+      "patterns": [
+        {
+          "name": "Basic URLs",
+          "urlpatterns": [
+            {
+              "pattern": "",
+              "view": "views.index",
+              "name": "index"
+            },
+            {
+              "pattern": "about/",
+              "view": "views.about",
+              "name": "about"
+            },
+            {
+              "pattern": "contact/",
+              "view": "views.ContactView.as_view()",
+              "name": "contact"
+            }
+          ]
+        },
+        {
+          "name": "Model CRUD URLs",
+          "app_name": "products",
+          "urlpatterns": [
+            {
+              "pattern": "",
+              "view": "views.ProductListView.as_view()",
+              "name": "product_list"
+            },
+            {
+              "pattern": "<int:pk>/",
+              "view": "views.ProductDetailView.as_view()",
+              "name": "product_detail"
+            },
+            {
+              "pattern": "create/",
+              "view": "views.ProductCreateView.as_view()",
+              "name": "product_create"
+            },
+            {
+              "pattern": "<int:pk>/update/",
+              "view": "views.ProductUpdateView.as_view()",
+              "name": "product_update"
+            },
+            {
+              "pattern": "<int:pk>/delete/",
+              "view": "views.ProductDeleteView.as_view()",
+              "name": "product_delete"
+            }
+          ]
+        },
+        {
+          "name": "Date-based Archives",
+          "urlpatterns": [
+            {
+              "pattern": "archive/",
+              "view": "views.ArchiveIndexView.as_view()",
+              "name": "archive_index"
+            },
+            {
+              "pattern": "archive/<int:year>/",
+              "view": "views.YearArchiveView.as_view()",
+              "name": "archive_year"
+            },
+            {
+              "pattern": "archive/<int:year>/<int:month>/",
+              "view": "views.MonthArchiveView.as_view()",
+              "name": "archive_month"
+            },
+            {
+              "pattern": "archive/<int:year>/<int:month>/<int:day>/",
+              "view": "views.DayArchiveView.as_view()",
+              "name": "archive_day"
+            }
+          ]
+        }
+      ]
+    },
+    "fastapi": {
+      "name": "FastAPI Route Templates",
+      "description": "Common FastAPI routing patterns",
+      "patterns": [
+        {
+          "name": "Basic Routes",
+          "routes": [
+            {
+              "path": "/",
+              "method": "get",
+              "function": "root",
+              "response_model": "dict",
+              "summary": "Root endpoint"
+            },
+            {
+              "path": "/health",
+              "method": "get",
+              "function": "health_check",
+              "tags": ["system"]
+            }
+          ]
+        },
+        {
+          "name": "CRUD Operations",
+          "router": "products",
+          "prefix": "/products",
+          "tags": ["products"],
+          "routes": [
+            {
+              "path": "/",
+              "method": "get",
+              "function": "get_products",
+              "response_model": "List[Product]"
+            },
+            {
+              "path": "/",
+              "method": "post",
+              "function": "create_product",
+              "response_model": "Product",
+              "status_code": 201
+            },
+            {
+              "path": "/{product_id}",
+              "method": "get",
+              "function": "get_product",
+              "response_model": "Product"
+            },
+            {
+              "path": "/{product_id}",
+              "method": "put",
+              "function": "update_product",
+              "response_model": "Product"
+            },
+            {
+              "path": "/{product_id}",
+              "method": "delete",
+              "function": "delete_product",
+              "status_code": 204
+            }
+          ]
+        },
+        {
+          "name": "WebSocket Routes",
+          "routes": [
+            {
+              "path": "/ws",
+              "type": "websocket",
+              "function": "websocket_endpoint"
+            },
+            {
+              "path": "/ws/chat/{room_id}",
+              "type": "websocket",
+              "function": "chat_endpoint"
+            }
+          ]
+        },
+        {
+          "name": "File Operations",
+          "routes": [
+            {
+              "path": "/upload",
+              "method": "post",
+              "function": "upload_file",
+              "consumes": "multipart/form-data"
+            },
+            {
+              "path": "/download/{file_id}",
+              "method": "get",
+              "function": "download_file",
+              "response_class": "FileResponse"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "common_patterns": {
+    "authentication": {
+      "routes": [
+        "/login",
+        "/logout",
+        "/register",
+        "/forgot-password",
+        "/reset-password/{token}",
+        "/verify-email/{token}"
+      ]
+    },
+    "user_management": {
+      "routes": [
+        "/profile",
+        "/profile/edit",
+        "/settings",
+        "/settings/security",
+        "/settings/notifications",
+        "/settings/privacy"
+      ]
+    },
+    "e_commerce": {
+      "routes": [
+        "/products",
+        "/products/{category}",
+        "/products/{category}/{product}",
+        "/cart",
+        "/cart/add",
+        "/cart/remove/{item_id}",
+        "/checkout",
+        "/checkout/shipping",
+        "/checkout/payment",
+        "/checkout/confirm",
+        "/orders",
+        "/orders/{order_id}"
+      ]
+    },
+    "blog": {
+      "routes": [
+        "/blog",
+        "/blog/{year}",
+        "/blog/{year}/{month}",
+        "/blog/{year}/{month}/{day}",
+        "/blog/{year}/{month}/{day}/{slug}",
+        "/blog/category/{category}",
+        "/blog/tag/{tag}",
+        "/blog/author/{author}",
+        "/blog/search"
+      ]
+    },
+    "api_versioning": {
+      "patterns": [
+        "/api/v1/{resource}",
+        "/api/v2/{resource}",
+        "/v1/api/{resource}",
+        "/api/latest/{resource}"
+      ]
+    }
+  }
+}

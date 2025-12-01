@@ -1,0 +1,32 @@
+{
+  "autoShowDelays": {
+    "firstLogin": 500,
+    "afterSignup": 1000,
+    "featureAnnouncement": 2000,
+    "inactivityTrigger": 30000
+  },
+  "autoDismissTimings": {
+    "simpleTooltip": 5000,
+    "featureSpotlight": 10000,
+    "contextualHint": 7000,
+    "successMessage": 3000
+  },
+  "transitionDurations": {
+    "stepChange": 300,
+    "modalFade": 200,
+    "tooltipAppear": 150,
+    "pulseAnimation": 2000
+  },
+  "interactionTimeouts": {
+    "clickDelay": 100,
+    "hoverDelay": 500,
+    "focusDelay": 200
+  },
+  "recommendations": {
+    "maxTourDuration": 180000,
+    "maxStepDuration": 15000,
+    "minStepDuration": 3000,
+    "optimalStepCount": 5,
+    "maxStepCount": 7
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "@ai-design-components/design-tokens",
+  "version": "1.0.0",
+  "description": "Design token system for ai-design-components - foundational styling layer",
+  "type": "module",
+  "scripts": {
+    "build": "style-dictionary build --config config.js",
+    "build:watch": "style-dictionary build --config config.js --watch",
+    "clean": "rm -rf build/",
+    "validate": "python scripts/validate_tokens.py",
+    "validate:contrast": "python scripts/validate_contrast.py",
+    "validate:rtl": "python scripts/validate_logical_properties.py",
+    "generate:palette": "python scripts/generate_color_scale.py"
+  },
+  "keywords": [
+    "design-tokens",
+    "design-system",
+    "theming",
+    "css-variables",
+    "style-dictionary",
+    "w3c",
+    "accessibility",
+    "rtl",
+    "i18n"
+  ],
+  "author": "Anton Coleman",
+  "license": "MIT",
+  "dependencies": {
+    "style-dictionary": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "files": [
+    "build/",
+    "tokens/",
+    "config.js",
+    "SKILL.md",
+    "README.md"
+  ]
+}

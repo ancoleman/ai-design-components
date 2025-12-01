@@ -1,0 +1,91 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "$description": "Input component tokens - for forms skill",
+  "input": {
+    "bg": {
+      "$value": "{semantic.color.bg-primary}",
+      "$type": "color"
+    },
+    "bg-disabled": {
+      "$value": "{semantic.color.bg-secondary}",
+      "$type": "color"
+    },
+    "text": {
+      "color": {
+        "$value": "{semantic.color.text-primary}",
+        "$type": "color"
+      },
+      "placeholder": {
+        "$value": "{semantic.color.text-tertiary}",
+        "$type": "color"
+      },
+      "disabled": {
+        "$value": "{semantic.color.text-disabled}",
+        "$type": "color"
+      }
+    },
+    "border": {
+      "color": {
+        "$value": "{semantic.color.border}",
+        "$type": "color",
+        "$description": "Default border color"
+      },
+      "color-hover": {
+        "$value": "{semantic.color.border-hover}",
+        "$type": "color"
+      },
+      "color-focus": {
+        "$value": "{semantic.color.border-focus}",
+        "$type": "color"
+      },
+      "color-error": {
+        "$value": "{semantic.color.border-error}",
+        "$type": "color"
+      },
+      "width": {
+        "$value": "{border.width.thin}",
+        "$type": "dimension"
+      },
+      "radius": {
+        "$value": "{semantic.radius.md}",
+        "$type": "dimension"
+      }
+    },
+    "padding": {
+      "inline": {
+        "$value": "{semantic.spacing.md}",
+        "$type": "dimension",
+        "$description": "Horizontal padding - uses logical property"
+      },
+      "block": {
+        "$value": "{semantic.spacing.sm}",
+        "$type": "dimension",
+        "$description": "Vertical padding - uses logical property"
+      }
+    },
+    "font": {
+      "size": {
+        "$value": "{font.size.base}",
+        "$type": "fontSize"
+      }
+    },
+    "height": {
+      "$value": "2.5rem",
+      "$type": "dimension",
+      "$description": "40px - standard input height"
+    },
+    "shadow": {
+      "focus": {
+        "$value": {
+          "offsetX": "0",
+          "offsetY": "0",
+          "blur": "0",
+          "spread": "3px",
+          "color": "rgba(59, 130, 246, 0.3)"
+        },
+        "$type": "shadow",
+        "$description": "Focus ring shadow"
+      }
+    }
+  }
+}

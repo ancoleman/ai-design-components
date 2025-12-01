@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Tokens - Theme Switcher Demo</title>
+
+  <!-- Prevent FOUC (Flash of Unstyled Content) -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <style>
+    /* Import generated token CSS */
+    /* In production, link to build/css/variables.css and variables-dark.css */
+
+    /* Light theme (default) */
+    :root {
+      --color-primary: #3B82F6;
+      --color-bg-primary: #FFFFFF;
+      --color-text-primary: #1F2937;
+      --color-border: #E5E7EB;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --radius-md: 8px;
+      --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+      --transition-fast: all 150ms ease-out;
+    }
+
+    /* Dark theme */
+    :root[data-theme="dark"] {
+      --color-primary: #60A5FA;
+      --color-bg-primary: #111827;
+      --color-text-primary: #F9FAFB;
+      --color-border: #374151;
+      --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Base styles */
+    body {
+      margin: 0;
+      padding: var(--spacing-lg);
+      background-color: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      transition: var(--transition-fast);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background-color: var(--color-bg-primary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding-inline: var(--spacing-lg);
+      padding-block: var(--spacing-md);
+      margin-block-end: var(--spacing-md);
+      box-shadow: var(--shadow-md);
+      transition: var(--transition-fast);
+    }
+
+    .button {
+      background-color: var(--color-primary);
+      color: white;
+      padding-inline: var(--spacing-lg);
+      padding-block: var(--spacing-md);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .theme-selector {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-block-end: var(--spacing-lg);
+    }
+
+    .theme-button {
+      padding-inline: var(--spacing-md);
+      padding-block: var(--spacing-md);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background-color: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      font-size: 14px;
+    }
+
+    .theme-button.active {
+      background-color: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    .theme-button:hover {
+      border-color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Design Tokens - Theme Switcher Demo</h1>
+
+    <!-- Theme selector -->
+    <div class="theme-selector">
+      <button class="theme-button" data-theme="light">
+        ☀️ Light
+      </button>
+      <button class="theme-button" data-theme="dark">
+        🌙 Dark
+      </button>
+      <button class="theme-button" data-theme="high-contrast">
+        ⚡ High Contrast
+      </button>
+    </div>
+
+    <!-- Demo cards -->
+    <div class="card">
+      <h2>Welcome to Design Tokens</h2>
+      <p>
+        This demo shows how design tokens enable automatic theme switching.
+        All visual styling comes from CSS custom properties (design tokens).
+      </p>
+      <p>
+        Try switching themes above - notice how all components update instantly
+        without any JavaScript manipulation of styles.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>How It Works</h3>
+      <ol>
+        <li>Set <code>data-theme</code> attribute on <code>&lt;html&gt;</code></li>
+        <li>CSS overrides token values for that theme</li>
+        <li>All components referencing tokens update automatically</li>
+      </ol>
+      <button class="button">Example Button</button>
+    </div>
+
+    <div class="card">
+      <h3>Benefits</h3>
+      <ul>
+        <li>✅ Zero code changes for new themes</li>
+        <li>✅ Consistent visual design</li>
+        <li>✅ Easy brand customization</li>
+        <li>✅ Automatic RTL support (with logical properties)</li>
+        <li>✅ Accessibility built-in (WCAG 2.1 AA)</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Theme switching logic
+    function setTheme(themeName) {
+      // Set attribute on <html>
+      document.documentElement.setAttribute('data-theme', themeName);
+
+      // Save preference
+      localStorage.setItem('theme', themeName);
+
+      // Update active button
+      document.querySelectorAll('.theme-button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === themeName);
+      });
+    }
+
+    // Initialize
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    setTheme(currentTheme);
+
+    // Add click handlers
+    document.querySelectorAll('.theme-button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setTheme(btn.dataset.theme);
+      });
+    });
+
+    // Listen to system preference changes (optional)
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    });
+  </script>
+</body>
+</html>

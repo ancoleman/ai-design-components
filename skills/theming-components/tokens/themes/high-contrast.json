@@ -1,0 +1,70 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "$description": "High-contrast theme - WCAG AAA (7:1 contrast ratio)",
+  "semantic": {
+    "color": {
+      "primary": {
+        "$value": "#0000FF",
+        "$type": "color",
+        "$description": "Pure blue for maximum contrast"
+      },
+      "primary-hover": {
+        "$value": "#0000CC",
+        "$type": "color"
+      },
+      "primary-active": {
+        "$value": "#000099",
+        "$type": "color"
+      },
+      "text-primary": {
+        "$value": "{color.black}",
+        "$type": "color",
+        "$description": "Pure black text"
+      },
+      "text-secondary": {
+        "$value": "#333333",
+        "$type": "color"
+      },
+      "text-link": {
+        "$value": "#0000FF",
+        "$type": "color"
+      },
+      "text-link-hover": {
+        "$value": "#0000CC",
+        "$type": "color"
+      },
+      "bg-primary": {
+        "$value": "{color.white}",
+        "$type": "color"
+      },
+      "bg-secondary": {
+        "$value": "#F5F5F5",
+        "$type": "color"
+      },
+      "border": {
+        "$value": "{color.black}",
+        "$type": "color",
+        "$description": "High contrast borders"
+      },
+      "border-focus": {
+        "$value": "#0000FF",
+        "$type": "color"
+      },
+      "success": {
+        "$value": "#008000",
+        "$type": "color",
+        "$description": "Dark green for high contrast"
+      },
+      "warning": {
+        "$value": "#FF8C00",
+        "$type": "color",
+        "$description": "Dark orange"
+      },
+      "error": {
+        "$value": "#CC0000",
+        "$type": "color",
+        "$description": "Dark red"
+      }
+    }
+  }
+}

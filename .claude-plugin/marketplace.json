@@ -4,7 +4,7 @@
     "name": "Anton Coleman",
     "email": "acoleman@paloaltonetworks.com"
   },
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Comprehensive UI/UX component design skills for AI-assisted development",
   "plugins": [
     {
@@ -12,60 +12,60 @@
       "description": "Foundational design system including tokens and theming for consistent styling across all components",
       "source": "./",
       "skills": [
-        "./skills/design-tokens"
+        "./skills/theming-components"
       ],
       "strict": false
     },
     {
       "name": "ui-data-skills",
-      "description": "Data visualization, tables, and dashboard components for displaying and analyzing data (2/3 complete)",
+      "description": "Data visualization, tables, and dashboard components for displaying and analyzing data",
       "source": "./",
       "skills": [
-        "./skills/data-viz",
-        "./skills/tables",
-        "./skills/dashboards"
+        "./skills/visualizing-data",
+        "./skills/building-tables",
+        "./skills/creating-dashboards"
       ],
       "strict": false
     },
     {
       "name": "ui-input-skills",
-      "description": "Form systems, search, and filter components for user input and data collection (1/2 complete)",
+      "description": "Form systems, search, and filter components for user input and data collection",
       "source": "./",
       "skills": [
-        "./skills/forms",
-        "./skills/search-filter"
+        "./skills/building-forms",
+        "./skills/implementing-search-filter"
       ],
       "strict": false
     },
     {
       "name": "ui-interaction-skills",
-      "description": "Interactive components including AI chat interfaces, drag-drop functionality, and feedback systems (0/3 complete - WIP)",
+      "description": "Interactive components including AI chat interfaces, drag-drop functionality, and feedback systems",
       "source": "./",
       "skills": [
-        "./skills/ai-chat",
-        "./skills/drag-drop",
-        "./skills/feedback"
+        "./skills/building-ai-chat",
+        "./skills/implementing-drag-drop",
+        "./skills/providing-feedback"
       ],
       "strict": false
     },
     {
       "name": "ui-structure-skills",
-      "description": "Navigation, layout, and timeline components for app structure and organization (0/3 complete - WIP)",
+      "description": "Navigation, layout, and timeline components for app structure and organization",
       "source": "./",
       "skills": [
-        "./skills/navigation",
-        "./skills/layout",
-        "./skills/timeline"
+        "./skills/implementing-navigation",
+        "./skills/designing-layouts",
+        "./skills/displaying-timelines"
       ],
       "strict": false
     },
     {
       "name": "ui-content-skills",
-      "description": "Media management and user onboarding components for content-rich experiences (0/2 complete - WIP)",
+      "description": "Media management and user onboarding components for content-rich experiences",
       "source": "./",
       "skills": [
-        "./skills/media",
-        "./skills/onboarding"
+        "./skills/managing-media",
+        "./skills/guiding-users"
       ],
       "strict": false
     }

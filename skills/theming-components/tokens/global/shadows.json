@@ -1,0 +1,88 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "shadow": {
+    "none": {
+      "$value": "none",
+      "$type": "shadow",
+      "$description": "No shadow"
+    },
+    "xs": {
+      "$value": {
+        "offsetX": "0",
+        "offsetY": "1px",
+        "blur": "2px",
+        "spread": "0",
+        "color": "rgba(0, 0, 0, 0.05)"
+      },
+      "$type": "shadow",
+      "$description": "Extra small shadow"
+    },
+    "sm": {
+      "$value": {
+        "offsetX": "0",
+        "offsetY": "2px",
+        "blur": "4px",
+        "spread": "0",
+        "color": "rgba(0, 0, 0, 0.07)"
+      },
+      "$type": "shadow",
+      "$description": "Small shadow - subtle elevation"
+    },
+    "md": {
+      "$value": {
+        "offsetX": "0",
+        "offsetY": "4px",
+        "blur": "8px",
+        "spread": "0",
+        "color": "rgba(0, 0, 0, 0.1)"
+      },
+      "$type": "shadow",
+      "$description": "Medium shadow - standard elevation"
+    },
+    "lg": {
+      "$value": {
+        "offsetX": "0",
+        "offsetY": "8px",
+        "blur": "16px",
+        "spread": "0",
+        "color": "rgba(0, 0, 0, 0.12)"
+      },
+      "$type": "shadow",
+      "$description": "Large shadow - elevated cards"
+    },
+    "xl": {
+      "$value": {
+        "offsetX": "0",
+        "offsetY": "12px",
+        "blur": "24px",
+        "spread": "0",
+        "color": "rgba(0, 0, 0, 0.15)"
+      },
+      "$type": "shadow",
+      "$description": "Extra large shadow - modals"
+    },
+    "2xl": {
+      "$value": {
+        "offsetX": "0",
+        "offsetY": "24px",
+        "blur": "48px",
+        "spread": "0",
+        "color": "rgba(0, 0, 0, 0.2)"
+      },
+      "$type": "shadow",
+      "$description": "Largest shadow - high elevation"
+    },
+    "inner": {
+      "$value": {
+        "inset": true,
+        "offsetX": "0",
+        "offsetY": "2px",
+        "blur": "4px",
+        "spread": "0",
+        "color": "rgba(0, 0, 0, 0.1)"
+      },
+      "$type": "shadow",
+      "$description": "Inset shadow for pressed states"
+    }
+  }
+}

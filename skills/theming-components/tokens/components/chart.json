@@ -1,0 +1,85 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "$description": "Chart component tokens - for data-viz skill (colorblind-safe palette)",
+  "chart": {
+    "color": {
+      "1": {
+        "$value": "#648FFF",
+        "$type": "color",
+        "$description": "Blue - IBM colorblind-safe palette"
+      },
+      "2": {
+        "$value": "#785EF0",
+        "$type": "color",
+        "$description": "Purple"
+      },
+      "3": {
+        "$value": "#DC267F",
+        "$type": "color",
+        "$description": "Magenta"
+      },
+      "4": {
+        "$value": "#FE6100",
+        "$type": "color",
+        "$description": "Orange"
+      },
+      "5": {
+        "$value": "#FFB000",
+        "$type": "color",
+        "$description": "Yellow"
+      },
+      "6": {
+        "$value": "#228833",
+        "$type": "color",
+        "$description": "Green - Paul Tol palette"
+      },
+      "7": {
+        "$value": "#4477AA",
+        "$type": "color",
+        "$description": "Blue"
+      },
+      "8": {
+        "$value": "#EE6677",
+        "$type": "color",
+        "$description": "Red"
+      }
+    },
+    "axis": {
+      "color": {
+        "$value": "{semantic.color.border}",
+        "$type": "color"
+      },
+      "font-size": {
+        "$value": "{font.size.sm}",
+        "$type": "fontSize"
+      }
+    },
+    "grid": {
+      "color": {
+        "$value": "{semantic.color.bg-tertiary}",
+        "$type": "color",
+        "$description": "Subtle grid lines"
+      }
+    },
+    "tooltip": {
+      "bg": {
+        "$value": "{semantic.color.bg-inverse}",
+        "$type": "color"
+      },
+      "text": {
+        "$value": "{semantic.color.text-inverse}",
+        "$type": "color"
+      },
+      "shadow": {
+        "$value": "{shadow.md}",
+        "$type": "shadow"
+      }
+    },
+    "font": {
+      "family": {
+        "$value": "{semantic.font.sans}",
+        "$type": "fontFamily"
+      }
+    }
+  }
+}

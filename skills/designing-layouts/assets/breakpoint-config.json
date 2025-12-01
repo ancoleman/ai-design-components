@@ -1,0 +1,179 @@
+{
+  "breakpoints": {
+    "xs": {
+      "min": 0,
+      "max": 639,
+      "label": "Extra Small",
+      "description": "Small phones (portrait)",
+      "columns": 4,
+      "margin": "16px",
+      "gutter": "16px"
+    },
+    "sm": {
+      "min": 640,
+      "max": 767,
+      "label": "Small",
+      "description": "Large phones, small tablets",
+      "columns": 8,
+      "margin": "24px",
+      "gutter": "16px"
+    },
+    "md": {
+      "min": 768,
+      "max": 1023,
+      "label": "Medium",
+      "description": "Tablets (portrait and landscape)",
+      "columns": 8,
+      "margin": "32px",
+      "gutter": "24px"
+    },
+    "lg": {
+      "min": 1024,
+      "max": 1279,
+      "label": "Large",
+      "description": "Desktop, laptop",
+      "columns": 12,
+      "margin": "32px",
+      "gutter": "24px"
+    },
+    "xl": {
+      "min": 1280,
+      "max": 1535,
+      "label": "Extra Large",
+      "description": "Wide desktop",
+      "columns": 12,
+      "margin": "auto",
+      "maxWidth": "1280px",
+      "gutter": "32px"
+    },
+    "2xl": {
+      "min": 1536,
+      "max": null,
+      "label": "2X Large",
+      "description": "Ultra-wide displays",
+      "columns": 12,
+      "margin": "auto",
+      "maxWidth": "1536px",
+      "gutter": "32px"
+    }
+  },
+  "devices": {
+    "iphone-se": {
+      "width": 375,
+      "height": 667,
+      "dpr": 2
+    },
+    "iphone-12": {
+      "width": 390,
+      "height": 844,
+      "dpr": 3
+    },
+    "iphone-14-pro": {
+      "width": 393,
+      "height": 852,
+      "dpr": 3
+    },
+    "iphone-14-pro-max": {
+      "width": 430,
+      "height": 932,
+      "dpr": 3
+    },
+    "pixel-5": {
+      "width": 393,
+      "height": 851,
+      "dpr": 2.75
+    },
+    "samsung-s20": {
+      "width": 412,
+      "height": 915,
+      "dpr": 3.5
+    },
+    "ipad-mini": {
+      "width": 768,
+      "height": 1024,
+      "dpr": 2
+    },
+    "ipad-air": {
+      "width": 820,
+      "height": 1180,
+      "dpr": 2
+    },
+    "ipad-pro-11": {
+      "width": 834,
+      "height": 1194,
+      "dpr": 2
+    },
+    "ipad-pro-12": {
+      "width": 1024,
+      "height": 1366,
+      "dpr": 2
+    },
+    "surface-pro": {
+      "width": 912,
+      "height": 1368,
+      "dpr": 2
+    },
+    "macbook-air": {
+      "width": 1440,
+      "height": 900,
+      "dpr": 2
+    },
+    "macbook-pro-14": {
+      "width": 1512,
+      "height": 982,
+      "dpr": 2
+    },
+    "macbook-pro-16": {
+      "width": 1728,
+      "height": 1117,
+      "dpr": 2
+    },
+    "imac-24": {
+      "width": 1920,
+      "height": 1080,
+      "dpr": 2
+    },
+    "desktop-4k": {
+      "width": 3840,
+      "height": 2160,
+      "dpr": 1
+    }
+  },
+  "containerSizes": {
+    "xs": "100%",
+    "sm": "640px",
+    "md": "768px",
+    "lg": "1024px",
+    "xl": "1280px",
+    "2xl": "1536px",
+    "full": "100%"
+  },
+  "gridSystems": {
+    "12-column": {
+      "columns": 12,
+      "gutterSizes": {
+        "xs": "16px",
+        "sm": "16px",
+        "md": "24px",
+        "lg": "24px",
+        "xl": "32px"
+      }
+    },
+    "8-column": {
+      "columns": 8,
+      "gutterSizes": {
+        "xs": "16px",
+        "sm": "16px",
+        "md": "24px",
+        "lg": "24px"
+      }
+    },
+    "4-column": {
+      "columns": 4,
+      "gutterSizes": {
+        "xs": "16px",
+        "sm": "16px"
+      }
+    }
+  }
+}

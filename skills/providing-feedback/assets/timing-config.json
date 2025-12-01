@@ -1,0 +1,254 @@
+{
+  "toast": {
+    "durations": {
+      "success": {
+        "base": 3000,
+        "min": 2000,
+        "max": 5000,
+        "description": "Brief positive confirmation"
+      },
+      "info": {
+        "base": 4000,
+        "min": 3000,
+        "max": 6000,
+        "description": "Informational message"
+      },
+      "warning": {
+        "base": 5000,
+        "min": 4000,
+        "max": 7000,
+        "description": "Important notice requiring attention"
+      },
+      "error": {
+        "base": 7000,
+        "min": 5000,
+        "max": 10000,
+        "description": "Error message requiring reading time"
+      },
+      "withAction": {
+        "base": null,
+        "min": 10000,
+        "max": null,
+        "description": "Never auto-dismiss when action button present"
+      }
+    },
+    "readingSpeed": {
+      "fast": 250,
+      "average": 200,
+      "slow": 150,
+      "unit": "words per minute"
+    },
+    "stacking": {
+      "maxVisible": 5,
+      "spacing": 12,
+      "strategy": {
+        "queue": {
+          "maxVisible": 1,
+          "showNext": "after-dismiss"
+        },
+        "stack": {
+          "maxVisible": 5,
+          "showNext": "immediate"
+        },
+        "replace": {
+          "maxVisible": 1,
+          "showNext": "replace"
+        }
+      }
+    },
+    "animations": {
+      "enter": {
+        "duration": 300,
+        "easing": "ease-out"
+      },
+      "exit": {
+        "duration": 200,
+        "easing": "ease-in"
+      },
+      "update": {
+        "duration": 150,
+        "easing": "ease-in-out"
+      }
+    }
+  },
+  "modal": {
+    "animations": {
+      "backdrop": {
+        "enter": 200,
+        "exit": 150
+      },
+      "content": {
+        "enter": 200,
+        "exit": 150
+      },
+      "scale": {
+        "from": 0.95,
+        "to": 1
+      }
+    },
+    "dismissible": {
+      "clickOutside": true,
+      "escapeKey": true,
+      "exceptions": ["critical", "confirmation"]
+    }
+  },
+  "progress": {
+    "thresholds": {
+      "immediate": {
+        "max": 100,
+        "indicator": "none",
+        "description": "No indicator needed"
+      },
+      "quick": {
+        "min": 100,
+        "max": 1000,
+        "indicator": "spinner-small",
+        "description": "Small spinner only"
+      },
+      "moderate": {
+        "min": 1000,
+        "max": 5000,
+        "indicator": "spinner-with-text",
+        "description": "Spinner with loading message"
+      },
+      "long": {
+        "min": 5000,
+        "max": 30000,
+        "indicator": "progress-bar",
+        "description": "Determinate progress bar if possible"
+      },
+      "veryLong": {
+        "min": 30000,
+        "max": null,
+        "indicator": "progress-bar-with-cancel",
+        "description": "Progress bar with time estimate and cancel option"
+      }
+    },
+    "updates": {
+      "spinner": {
+        "showElapsedAfter": 10000,
+        "updateInterval": 1000
+      },
+      "progressBar": {
+        "updateInterval": 250,
+        "smoothTransition": true
+      },
+      "timeEstimate": {
+        "showAfter": 5000,
+        "updateInterval": 1000,
+        "algorithm": "moving-average"
+      }
+    }
+  },
+  "alert": {
+    "dismissTiming": {
+      "info": {
+        "autoDismiss": false,
+        "userDismissible": true
+      },
+      "success": {
+        "autoDismiss": 5000,
+        "userDismissible": true
+      },
+      "warning": {
+        "autoDismiss": false,
+        "userDismissible": true
+      },
+      "error": {
+        "autoDismiss": false,
+        "userDismissible": false,
+        "dismissAfterAction": true
+      }
+    }
+  },
+  "emptyState": {
+    "animations": {
+      "enter": {
+        "duration": 400,
+        "stagger": 100,
+        "easing": "ease-out"
+      },
+      "illustration": {
+        "float": {
+          "enabled": true,
+          "duration": 3000,
+          "distance": 10
+        }
+      }
+    }
+  },
+  "accessibility": {
+    "announcements": {
+      "debounce": 500,
+      "priority": {
+        "error": "assertive",
+        "warning": "assertive",
+        "success": "polite",
+        "info": "polite"
+      }
+    },
+    "focus": {
+      "trapDelay": 0,
+      "restoreDelay": 0,
+      "autoFocus": {
+        "modal": true,
+        "alert": false,
+        "toast": false
+      }
+    },
+    "reducedMotion": {
+      "detect": true,
+      "overrides": {
+        "animations": 0,
+        "transitions": 0.01,
+        "smoothScroll": false
+      }
+    }
+  },
+  "mobile": {
+    "toast": {
+      "position": "bottom-center",
+      "fullWidth": true,
+      "swipeToDismiss": true,
+      "swipeThreshold": 100
+    },
+    "modal": {
+      "fullScreen": true,
+      "slideUp": true,
+      "dragToDismiss": true,
+      "dragThreshold": 150
+    },
+    "touchTargets": {
+      "minSize": 44,
+      "recommendedSize": 48,
+      "unit": "pixels"
+    }
+  },
+  "performance": {
+    "batchUpdates": {
+      "enabled": true,
+      "debounce": 16,
+      "maxBatch": 10
+    },
+    "virtualScrolling": {
+      "enabled": true,
+      "threshold": 50,
+      "overscan": 3
+    },
+    "lazyLoading": {
+      "enabled": true,
+      "threshold": 100,
+      "rootMargin": "50px"
+    }
+  },
+  "defaults": {
+    "position": "bottom-right",
+    "theme": "auto",
+    "sound": false,
+    "vibration": false,
+    "persistence": {
+      "saveState": false,
+      "clearOnReload": true
+    }
+  }
+}

@@ -1,0 +1,370 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Navigation Configuration Schema",
+  "description": "Schema for defining navigation structure with accessibility and responsive support",
+  "type": "object",
+  "required": ["items"],
+  "properties": {
+    "skipLink": {
+      "type": "boolean",
+      "description": "Include skip navigation link for accessibility",
+      "default": true
+    },
+    "keyboardNavigation": {
+      "type": "boolean",
+      "description": "Enable keyboard navigation support",
+      "default": true
+    },
+    "landmarkRole": {
+      "type": "string",
+      "description": "ARIA landmark role for navigation",
+      "enum": ["navigation", "menu"],
+      "default": "navigation"
+    },
+    "mobile": {
+      "type": "object",
+      "description": "Mobile navigation configuration",
+      "properties": {
+        "breakpoint": {
+          "type": "number",
+          "description": "Responsive breakpoint in pixels",
+          "default": 768
+        },
+        "type": {
+          "type": "string",
+          "description": "Mobile navigation pattern",
+          "enum": ["hamburger", "bottom-nav", "tab-bar"],
+          "default": "hamburger"
+        },
+        "animation": {
+          "type": "string",
+          "description": "Animation type for mobile menu",
+          "enum": ["slide", "fade", "none"],
+          "default": "slide"
+        }
+      }
+    },
+    "focusIndicators": {
+      "type": "object",
+      "description": "Focus indicator styling",
+      "properties": {
+        "style": {
+          "type": "string",
+          "enum": ["outline", "box-shadow", "underline"],
+          "default": "outline"
+        },
+        "color": {
+          "type": "string",
+          "description": "CSS color value",
+          "default": "#0066cc"
+        },
+        "width": {
+          "type": "number",
+          "description": "Width in pixels",
+          "default": 2
+        },
+        "offset": {
+          "type": "number",
+          "description": "Offset in pixels",
+          "default": 2
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "description": "Navigation items",
+      "items": {
+        "$ref": "#/definitions/navigationItem"
+      }
+    },
+    "footer": {
+      "type": "array",
+      "description": "Footer navigation items",
+      "items": {
+        "$ref": "#/definitions/navigationItem"
+      }
+    },
+    "breadcrumbs": {
+      "type": "object",
+      "description": "Breadcrumb configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "separator": {
+          "type": "string",
+          "description": "Separator character or icon",
+          "default": "/"
+        },
+        "maxItems": {
+          "type": "number",
+          "description": "Maximum visible items before collapsing",
+          "default": 5
+        },
+        "homeLabel": {
+          "type": "string",
+          "description": "Label for home breadcrumb",
+          "default": "Home"
+        }
+      }
+    },
+    "search": {
+      "type": "object",
+      "description": "Search configuration in navigation",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "placeholder": {
+          "type": "string",
+          "default": "Search..."
+        },
+        "position": {
+          "type": "string",
+          "enum": ["left", "right", "center"],
+          "default": "right"
+        },
+        "hotkey": {
+          "type": "string",
+          "description": "Keyboard shortcut (e.g., 'cmd+k')",
+          "default": "cmd+k"
+        }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "description": "Navigation theming",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "enum": ["light", "dark", "transparent", "custom"],
+          "default": "light"
+        },
+        "sticky": {
+          "type": "boolean",
+          "description": "Sticky navigation on scroll",
+          "default": true
+        },
+        "shadow": {
+          "type": "boolean",
+          "description": "Show shadow/border",
+          "default": true
+        },
+        "height": {
+          "type": "number",
+          "description": "Navigation height in pixels",
+          "default": 64
+        }
+      }
+    },
+    "analytics": {
+      "type": "object",
+      "description": "Analytics tracking configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "trackClicks": {
+          "type": "boolean",
+          "default": true
+        },
+        "trackHover": {
+          "type": "boolean",
+          "default": false
+        },
+        "trackSearch": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    }
+  },
+  "definitions": {
+    "navigationItem": {
+      "type": "object",
+      "required": ["label"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the navigation item"
+        },
+        "label": {
+          "type": "string",
+          "description": "Display text for the navigation item"
+        },
+        "href": {
+          "type": "string",
+          "description": "URL or route path"
+        },
+        "target": {
+          "type": "string",
+          "description": "Link target attribute",
+          "enum": ["_self", "_blank", "_parent", "_top"]
+        },
+        "external": {
+          "type": "boolean",
+          "description": "Mark as external link",
+          "default": false
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon identifier or URL"
+        },
+        "iconPosition": {
+          "type": "string",
+          "enum": ["left", "right"],
+          "default": "left"
+        },
+        "badge": {
+          "type": ["string", "number"],
+          "description": "Badge content (e.g., notification count)"
+        },
+        "badgeColor": {
+          "type": "string",
+          "description": "Badge color variant",
+          "enum": ["primary", "secondary", "success", "danger", "warning", "info"]
+        },
+        "children": {
+          "type": "array",
+          "description": "Nested navigation items",
+          "items": {
+            "$ref": "#/definitions/navigationItem"
+          }
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Mark as currently active",
+          "default": false
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Disable this navigation item",
+          "default": false
+        },
+        "hidden": {
+          "type": "boolean",
+          "description": "Hide this item",
+          "default": false
+        },
+        "roles": {
+          "type": "array",
+          "description": "Required user roles to see this item",
+          "items": {
+            "type": "string"
+          }
+        },
+        "permissions": {
+          "type": "array",
+          "description": "Required permissions to see this item",
+          "items": {
+            "type": "string"
+          }
+        },
+        "divider": {
+          "type": "boolean",
+          "description": "Show divider after this item",
+          "default": false
+        },
+        "className": {
+          "type": "string",
+          "description": "Additional CSS class names"
+        },
+        "ariaLabel": {
+          "type": "string",
+          "description": "Accessible label if different from label"
+        },
+        "ariaHaspopup": {
+          "type": "boolean",
+          "description": "Indicates item has a submenu"
+        },
+        "ariaExpanded": {
+          "type": "boolean",
+          "description": "Indicates if submenu is expanded"
+        },
+        "ariaCurrent": {
+          "type": "string",
+          "description": "Indicates current item",
+          "enum": ["page", "step", "location", "date", "time", "true", "false"]
+        },
+        "dataAttributes": {
+          "type": "object",
+          "description": "Custom data attributes",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "onClick": {
+          "type": "string",
+          "description": "Click handler function name"
+        },
+        "onHover": {
+          "type": "string",
+          "description": "Hover handler function name"
+        },
+        "tooltip": {
+          "type": "string",
+          "description": "Tooltip text on hover"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional metadata",
+          "additionalProperties": true
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "skipLink": true,
+      "keyboardNavigation": true,
+      "mobile": {
+        "breakpoint": 768,
+        "type": "hamburger"
+      },
+      "items": [
+        {
+          "id": "home",
+          "label": "Home",
+          "href": "/",
+          "icon": "home",
+          "active": true,
+          "ariaCurrent": "page"
+        },
+        {
+          "id": "products",
+          "label": "Products",
+          "href": "/products",
+          "icon": "shopping-bag",
+          "ariaHaspopup": true,
+          "children": [
+            {
+              "label": "Electronics",
+              "href": "/products/electronics"
+            },
+            {
+              "label": "Clothing",
+              "href": "/products/clothing"
+            }
+          ]
+        },
+        {
+          "id": "about",
+          "label": "About",
+          "href": "/about",
+          "icon": "info"
+        },
+        {
+          "id": "contact",
+          "label": "Contact",
+          "href": "/contact",
+          "icon": "mail",
+          "badge": "New",
+          "badgeColor": "success"
+        }
+      ]
+    }
+  ]
+}

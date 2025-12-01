@@ -1,0 +1,500 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Table Configuration Schema",
+  "description": "Schema for configuring table components with features, columns, and behavior",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the table instance"
+    },
+    "columns": {
+      "type": "array",
+      "description": "Column definitions for the table",
+      "items": {
+        "type": "object",
+        "required": ["id", "header"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique column identifier"
+          },
+          "header": {
+            "type": "string",
+            "description": "Column header text"
+          },
+          "accessor": {
+            "type": "string",
+            "description": "Property path to access cell data"
+          },
+          "width": {
+            "type": ["number", "string"],
+            "description": "Column width (pixels or percentage)"
+          },
+          "minWidth": {
+            "type": "number",
+            "description": "Minimum column width in pixels"
+          },
+          "maxWidth": {
+            "type": "number",
+            "description": "Maximum column width in pixels"
+          },
+          "sortable": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable sorting for this column"
+          },
+          "filterable": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable filtering for this column"
+          },
+          "resizable": {
+            "type": "boolean",
+            "default": true,
+            "description": "Allow column resizing"
+          },
+          "editable": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable inline editing"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["string", "number", "date", "boolean", "select", "currency", "percentage"],
+            "default": "string",
+            "description": "Data type for the column"
+          },
+          "format": {
+            "type": "string",
+            "description": "Format string for display (e.g., date format, number format)"
+          },
+          "align": {
+            "type": "string",
+            "enum": ["left", "center", "right"],
+            "default": "left",
+            "description": "Text alignment in cells"
+          },
+          "hidden": {
+            "type": "boolean",
+            "default": false,
+            "description": "Hide column by default"
+          },
+          "sticky": {
+            "type": "string",
+            "enum": ["left", "right"],
+            "description": "Make column sticky when scrolling"
+          },
+          "cell": {
+            "type": "object",
+            "description": "Custom cell rendering options",
+            "properties": {
+              "component": {
+                "type": "string",
+                "description": "Custom component name for rendering"
+              },
+              "props": {
+                "type": "object",
+                "description": "Props to pass to custom component"
+              }
+            }
+          },
+          "filter": {
+            "type": "object",
+            "description": "Column filter configuration",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["text", "select", "multiSelect", "range", "date", "dateRange", "boolean"],
+                "description": "Filter input type"
+              },
+              "options": {
+                "type": "array",
+                "description": "Options for select filters",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {"type": "string"},
+                    "value": {"type": ["string", "number", "boolean"]}
+                  }
+                }
+              },
+              "placeholder": {
+                "type": "string",
+                "description": "Filter input placeholder"
+              }
+            }
+          },
+          "validation": {
+            "type": "object",
+            "description": "Validation rules for editable columns",
+            "properties": {
+              "required": {
+                "type": "boolean",
+                "description": "Field is required"
+              },
+              "min": {
+                "type": "number",
+                "description": "Minimum value (for numbers) or length (for strings)"
+              },
+              "max": {
+                "type": "number",
+                "description": "Maximum value (for numbers) or length (for strings)"
+              },
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for validation"
+              },
+              "custom": {
+                "type": "string",
+                "description": "Custom validation function name"
+              }
+            }
+          }
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "description": "Table feature configuration",
+      "properties": {
+        "sorting": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true
+            },
+            "multiSort": {
+              "type": "boolean",
+              "default": false,
+              "description": "Allow sorting by multiple columns"
+            },
+            "defaultSort": {
+              "type": "array",
+              "description": "Default sort configuration",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "column": {"type": "string"},
+                  "direction": {
+                    "type": "string",
+                    "enum": ["asc", "desc"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "filtering": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true
+            },
+            "globalSearch": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable global search across all columns"
+            },
+            "debounceMs": {
+              "type": "number",
+              "default": 300,
+              "description": "Debounce delay for filter inputs"
+            }
+          }
+        },
+        "pagination": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true
+            },
+            "type": {
+              "type": "string",
+              "enum": ["client", "server", "infinite"],
+              "default": "client"
+            },
+            "pageSize": {
+              "type": "number",
+              "default": 25
+            },
+            "pageSizeOptions": {
+              "type": "array",
+              "default": [10, 25, 50, 100],
+              "items": {
+                "type": "number"
+              }
+            },
+            "showPageInfo": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        "selection": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "type": {
+              "type": "string",
+              "enum": ["single", "multi"],
+              "default": "multi"
+            },
+            "showCheckboxes": {
+              "type": "boolean",
+              "default": true
+            },
+            "selectOnRowClick": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "editing": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "type": {
+              "type": "string",
+              "enum": ["inline", "row", "modal"],
+              "default": "inline"
+            },
+            "validation": {
+              "type": "boolean",
+              "default": true
+            },
+            "confirmSave": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "export": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "formats": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["csv", "excel", "pdf", "json"]
+              },
+              "default": ["csv"]
+            }
+          }
+        },
+        "grouping": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "defaultGroups": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "showAggregations": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        "virtualization": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable virtual scrolling for large datasets"
+            },
+            "rowHeight": {
+              "type": "number",
+              "default": 40,
+              "description": "Fixed row height for virtual scrolling"
+            },
+            "overscan": {
+              "type": "number",
+              "default": 5,
+              "description": "Number of rows to render outside viewport"
+            }
+          }
+        }
+      }
+    },
+    "appearance": {
+      "type": "object",
+      "description": "Visual appearance configuration",
+      "properties": {
+        "theme": {
+          "type": "string",
+          "enum": ["default", "compact", "comfortable", "dark"],
+          "default": "default"
+        },
+        "striped": {
+          "type": "boolean",
+          "default": false,
+          "description": "Alternate row colors"
+        },
+        "bordered": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show cell borders"
+        },
+        "hover": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight rows on hover"
+        },
+        "stickyHeader": {
+          "type": "boolean",
+          "default": false,
+          "description": "Keep header visible when scrolling"
+        },
+        "height": {
+          "type": ["number", "string"],
+          "description": "Table container height"
+        },
+        "maxHeight": {
+          "type": ["number", "string"],
+          "description": "Maximum table height before scrolling"
+        }
+      }
+    },
+    "responsive": {
+      "type": "object",
+      "description": "Responsive behavior configuration",
+      "properties": {
+        "breakpoint": {
+          "type": "string",
+          "enum": ["sm", "md", "lg", "xl"],
+          "default": "md",
+          "description": "Breakpoint for responsive behavior"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["scroll", "stack", "priority", "collapse"],
+          "default": "scroll",
+          "description": "Responsive mode for mobile devices"
+        },
+        "priorityColumns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Columns to show on mobile (priority mode)"
+        }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "description": "Accessibility configuration",
+      "properties": {
+        "ariaLabel": {
+          "type": "string",
+          "description": "ARIA label for the table"
+        },
+        "caption": {
+          "type": "string",
+          "description": "Table caption for screen readers"
+        },
+        "announceChanges": {
+          "type": "boolean",
+          "default": true,
+          "description": "Announce changes to screen readers"
+        },
+        "keyboardNavigation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable keyboard navigation"
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "description": "Data source configuration",
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["static", "api", "graphql", "websocket"],
+          "default": "static"
+        },
+        "url": {
+          "type": "string",
+          "description": "API endpoint for data fetching"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST"],
+          "default": "GET"
+        },
+        "headers": {
+          "type": "object",
+          "description": "HTTP headers for API requests"
+        },
+        "refresh": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "interval": {
+              "type": "number",
+              "description": "Refresh interval in milliseconds"
+            }
+          }
+        }
+      }
+    },
+    "callbacks": {
+      "type": "object",
+      "description": "Event callback configuration",
+      "properties": {
+        "onRowClick": {
+          "type": "string",
+          "description": "Function name for row click handler"
+        },
+        "onSelectionChange": {
+          "type": "string",
+          "description": "Function name for selection change handler"
+        },
+        "onSort": {
+          "type": "string",
+          "description": "Function name for sort change handler"
+        },
+        "onFilter": {
+          "type": "string",
+          "description": "Function name for filter change handler"
+        },
+        "onPageChange": {
+          "type": "string",
+          "description": "Function name for page change handler"
+        },
+        "onEdit": {
+          "type": "string",
+          "description": "Function name for edit handler"
+        },
+        "onExport": {
+          "type": "string",
+          "description": "Function name for export handler"
+        }
+      }
+    }
+  },
+  "required": ["columns"]
+}

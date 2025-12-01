@@ -1,0 +1,207 @@
+{
+  "spacingScale": {
+    "base": 4,
+    "unit": "px",
+    "scale": {
+      "0": "0px",
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px",
+      "3xl": "64px",
+      "4xl": "96px",
+      "5xl": "128px",
+      "6xl": "192px"
+    },
+    "aliases": {
+      "none": "0",
+      "extra-small": "xs",
+      "small": "sm",
+      "medium": "md",
+      "large": "lg",
+      "extra-large": "xl"
+    }
+  },
+  "layoutSpacing": {
+    "container": {
+      "padding": {
+        "xs": "16px",
+        "sm": "24px",
+        "md": "32px",
+        "lg": "48px",
+        "xl": "64px"
+      },
+      "maxWidth": {
+        "sm": "640px",
+        "md": "768px",
+        "lg": "1024px",
+        "xl": "1280px",
+        "2xl": "1536px",
+        "full": "100%"
+      }
+    },
+    "section": {
+      "padding": {
+        "xs": "32px 0",
+        "sm": "48px 0",
+        "md": "64px 0",
+        "lg": "80px 0",
+        "xl": "96px 0"
+      }
+    },
+    "grid": {
+      "gap": {
+        "xs": "8px",
+        "sm": "12px",
+        "md": "16px",
+        "lg": "24px",
+        "xl": "32px"
+      }
+    },
+    "stack": {
+      "gap": {
+        "xs": "8px",
+        "sm": "12px",
+        "md": "16px",
+        "lg": "24px",
+        "xl": "32px"
+      }
+    },
+    "card": {
+      "padding": {
+        "xs": "12px",
+        "sm": "16px",
+        "md": "20px",
+        "lg": "24px",
+        "xl": "32px"
+      }
+    },
+    "form": {
+      "fieldGap": "24px",
+      "labelGap": "8px",
+      "inputPadding": "12px 16px",
+      "buttonPadding": "12px 24px"
+    }
+  },
+  "componentSpacing": {
+    "header": {
+      "height": {
+        "mobile": "56px",
+        "desktop": "64px"
+      },
+      "padding": "0 16px"
+    },
+    "sidebar": {
+      "width": {
+        "collapsed": "64px",
+        "narrow": "200px",
+        "normal": "280px",
+        "wide": "320px"
+      },
+      "padding": "16px",
+      "itemGap": "4px"
+    },
+    "modal": {
+      "padding": {
+        "sm": "16px",
+        "md": "24px",
+        "lg": "32px"
+      },
+      "headerPadding": "16px 24px",
+      "bodyPadding": "24px",
+      "footerPadding": "16px 24px"
+    },
+    "table": {
+      "cellPadding": "12px 16px",
+      "headerPadding": "16px",
+      "rowGap": "0"
+    },
+    "list": {
+      "itemPadding": "12px 16px",
+      "itemGap": "4px",
+      "groupGap": "16px"
+    }
+  },
+  "rhythmScale": {
+    "description": "Vertical rhythm based on line height",
+    "baseLineHeight": 24,
+    "unit": "px",
+    "scale": {
+      "0.25": "6px",
+      "0.5": "12px",
+      "0.75": "18px",
+      "1": "24px",
+      "1.5": "36px",
+      "2": "48px",
+      "3": "72px",
+      "4": "96px"
+    }
+  },
+  "customProperties": {
+    "css": [
+      "--spacing-xs: 4px",
+      "--spacing-sm: 8px",
+      "--spacing-md: 16px",
+      "--spacing-lg: 24px",
+      "--spacing-xl: 32px",
+      "--spacing-2xl: 48px",
+      "--spacing-3xl: 64px",
+      "--spacing-4xl: 96px",
+      "--container-padding-x: var(--spacing-lg)",
+      "--container-padding-y: var(--spacing-md)",
+      "--container-max-width: 1280px",
+      "--section-spacing: var(--spacing-3xl)",
+      "--content-spacing: var(--spacing-lg)",
+      "--grid-gap: var(--spacing-md)",
+      "--stack-gap: var(--spacing-md)",
+      "--header-height: 64px",
+      "--sidebar-width: 280px",
+      "--sidebar-collapsed-width: 64px"
+    ]
+  },
+  "utilities": {
+    "margin": {
+      "m-0": "0",
+      "m-auto": "auto",
+      "m-xs": "4px",
+      "m-sm": "8px",
+      "m-md": "16px",
+      "m-lg": "24px",
+      "m-xl": "32px",
+      "mx-auto": "0 auto",
+      "my-xs": "4px 0",
+      "my-sm": "8px 0",
+      "my-md": "16px 0",
+      "my-lg": "24px 0",
+      "mx-xs": "0 4px",
+      "mx-sm": "0 8px",
+      "mx-md": "0 16px",
+      "mx-lg": "0 24px"
+    },
+    "padding": {
+      "p-0": "0",
+      "p-xs": "4px",
+      "p-sm": "8px",
+      "p-md": "16px",
+      "p-lg": "24px",
+      "p-xl": "32px",
+      "py-xs": "4px 0",
+      "py-sm": "8px 0",
+      "py-md": "16px 0",
+      "py-lg": "24px 0",
+      "px-xs": "0 4px",
+      "px-sm": "0 8px",
+      "px-md": "0 16px",
+      "px-lg": "0 24px"
+    },
+    "gap": {
+      "gap-xs": "4px",
+      "gap-sm": "8px",
+      "gap-md": "16px",
+      "gap-lg": "24px",
+      "gap-xl": "32px"
+    }
+  }
+}

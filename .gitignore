@@ -1,6 +1,7 @@
 # Claude local files
 claude.md
 .claude/
+.agent-work/
 
 # OS files
 .DS_Store

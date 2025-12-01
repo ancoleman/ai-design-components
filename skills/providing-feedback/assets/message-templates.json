@@ -1,0 +1,211 @@
+{
+  "success": {
+    "create": {
+      "default": "{item} created successfully",
+      "withId": "{item} created with ID: {id}",
+      "withName": "'{name}' created successfully"
+    },
+    "update": {
+      "default": "{item} updated successfully",
+      "withChanges": "{count} changes saved",
+      "withTime": "Last updated at {time}"
+    },
+    "delete": {
+      "default": "{item} deleted successfully",
+      "withUndo": "{item} deleted. Undo",
+      "permanent": "{item} permanently deleted"
+    },
+    "save": {
+      "default": "Changes saved",
+      "withLocation": "Saved to {location}",
+      "autosave": "Autosaved at {time}"
+    },
+    "upload": {
+      "single": "{filename} uploaded successfully",
+      "multiple": "{count} files uploaded",
+      "withSize": "{filename} ({size}) uploaded"
+    },
+    "download": {
+      "started": "Download started",
+      "complete": "{filename} downloaded",
+      "multiple": "{count} files downloaded"
+    },
+    "copy": {
+      "default": "Copied to clipboard",
+      "withContent": "'{content}' copied",
+      "link": "Link copied to clipboard"
+    },
+    "share": {
+      "default": "Shared successfully",
+      "withUsers": "Shared with {count} users",
+      "public": "Public link created"
+    },
+    "sync": {
+      "default": "Sync complete",
+      "withDevices": "Synced across {count} devices",
+      "withTime": "Last synced: {time}"
+    }
+  },
+  "error": {
+    "network": {
+      "offline": "No internet connection",
+      "timeout": "Request timed out",
+      "serverError": "Server error. Please try again",
+      "notFound": "Resource not found"
+    },
+    "auth": {
+      "unauthorized": "Please sign in to continue",
+      "forbidden": "You don't have permission",
+      "sessionExpired": "Session expired. Please sign in again",
+      "invalidCredentials": "Invalid email or password"
+    },
+    "validation": {
+      "required": "{field} is required",
+      "invalidFormat": "Invalid {field} format",
+      "tooLong": "{field} is too long",
+      "tooShort": "{field} is too short",
+      "invalidEmail": "Please enter a valid email",
+      "invalidPhone": "Please enter a valid phone number",
+      "invalidUrl": "Please enter a valid URL",
+      "passwordMismatch": "Passwords don't match"
+    },
+    "file": {
+      "tooLarge": "File size exceeds {maxSize}",
+      "invalidType": "Invalid file type. Accepted: {types}",
+      "uploadFailed": "Upload failed. Please try again",
+      "processingFailed": "Failed to process file"
+    },
+    "data": {
+      "saveFailed": "Failed to save changes",
+      "loadFailed": "Failed to load data",
+      "deleteFailed": "Failed to delete item",
+      "conflictError": "Conflict detected. Please refresh"
+    },
+    "limit": {
+      "rateLimited": "Too many requests. Please wait",
+      "quotaExceeded": "Quota exceeded",
+      "storageLimit": "Storage limit reached"
+    }
+  },
+  "warning": {
+    "unsavedChanges": "You have unsaved changes",
+    "deleteConfirm": "Are you sure you want to delete {item}?",
+    "permanentAction": "This action cannot be undone",
+    "largeOperation": "This may take several minutes",
+    "deprecation": "This feature will be removed soon",
+    "compatibility": "Some features may not work in your browser",
+    "slowConnection": "Slow connection detected",
+    "limitApproaching": "You're approaching your {limit} limit",
+    "maintenanceScheduled": "Maintenance scheduled for {time}"
+  },
+  "info": {
+    "loading": {
+      "default": "Loading...",
+      "withItem": "Loading {item}...",
+      "percentage": "Loading... {progress}%"
+    },
+    "processing": {
+      "default": "Processing...",
+      "withEstimate": "Processing... About {time} remaining",
+      "withStep": "Processing step {current} of {total}"
+    },
+    "searching": {
+      "default": "Searching...",
+      "withQuery": "Searching for '{query}'...",
+      "withCount": "Found {count} results"
+    },
+    "empty": {
+      "default": "No items found",
+      "search": "No results for '{query}'",
+      "filter": "No items match your filters",
+      "firstUse": "Get started by creating your first {item}"
+    },
+    "help": {
+      "keyboard": "Press {key} for keyboard shortcuts",
+      "drag": "Drag to reorder",
+      "click": "Click to select",
+      "hover": "Hover for more info"
+    },
+    "status": {
+      "online": "Connected",
+      "offline": "Working offline",
+      "syncing": "Syncing...",
+      "saved": "All changes saved",
+      "draft": "Draft",
+      "published": "Published"
+    }
+  },
+  "confirmation": {
+    "titles": {
+      "delete": "Delete {item}?",
+      "remove": "Remove {item}?",
+      "cancel": "Cancel {action}?",
+      "discard": "Discard changes?",
+      "logout": "Sign out?",
+      "leave": "Leave page?"
+    },
+    "messages": {
+      "deleteItem": "This will permanently delete {item}. This action cannot be undone.",
+      "discardChanges": "All unsaved changes will be lost.",
+      "cancelOperation": "The current operation will be cancelled and any progress will be lost.",
+      "logout": "You will be signed out from all devices.",
+      "bulkAction": "This will affect {count} items."
+    },
+    "actions": {
+      "confirmDelete": "Delete",
+      "confirmRemove": "Remove",
+      "confirmDiscard": "Discard",
+      "confirmCancel": "Cancel Operation",
+      "confirmLogout": "Sign Out",
+      "confirmLeave": "Leave",
+      "cancel": "Cancel",
+      "goBack": "Go Back",
+      "saveFirst": "Save First"
+    }
+  },
+  "progress": {
+    "upload": {
+      "starting": "Starting upload...",
+      "uploading": "Uploading {filename}... {progress}%",
+      "processing": "Processing uploaded file...",
+      "complete": "Upload complete"
+    },
+    "download": {
+      "preparing": "Preparing download...",
+      "downloading": "Downloading... {progress}%",
+      "complete": "Download complete"
+    },
+    "install": {
+      "checking": "Checking for updates...",
+      "downloading": "Downloading update...",
+      "installing": "Installing...",
+      "complete": "Installation complete"
+    },
+    "export": {
+      "preparing": "Preparing export...",
+      "generating": "Generating {format} file...",
+      "compressing": "Compressing files...",
+      "complete": "Export ready"
+    }
+  },
+  "accessibility": {
+    "announcements": {
+      "error": "Error: {message}",
+      "warning": "Warning: {message}",
+      "success": "Success: {message}",
+      "info": "Information: {message}",
+      "loading": "Loading {item}, please wait",
+      "loaded": "{item} loaded",
+      "updated": "{item} updated",
+      "deleted": "{item} deleted"
+    },
+    "descriptions": {
+      "close": "Close notification",
+      "dismiss": "Dismiss message",
+      "expand": "Show more information",
+      "collapse": "Show less information",
+      "retry": "Try again",
+      "undo": "Undo last action"
+    }
+  }
+}

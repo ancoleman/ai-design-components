@@ -1,0 +1,535 @@
+{
+  "widgets": [
+    {
+      "id": "basic-kpi",
+      "type": "kpi",
+      "name": "Basic KPI Card",
+      "description": "Simple KPI with value and trend",
+      "category": "Metrics",
+      "icon": "chart-bar",
+      "defaultConfig": {
+        "title": "Metric Name",
+        "format": "number",
+        "aggregation": "sum",
+        "trend": {
+          "enabled": true,
+          "comparison": "previous_period"
+        }
+      },
+      "requiredFields": ["metric", "data_source"],
+      "optionalFields": ["format", "aggregation", "trend", "sparkline"],
+      "defaultSize": { "w": 3, "h": 2 },
+      "minSize": { "w": 2, "h": 2 },
+      "maxSize": { "w": 6, "h": 4 }
+    },
+    {
+      "id": "advanced-kpi",
+      "type": "kpi",
+      "name": "Advanced KPI Card",
+      "description": "KPI with sparkline, breakdown, and actions",
+      "category": "Metrics",
+      "icon": "trending-up",
+      "defaultConfig": {
+        "title": "Metric Name",
+        "format": "currency",
+        "aggregation": "sum",
+        "trend": {
+          "enabled": true,
+          "comparison": "year_over_year"
+        },
+        "sparkline": {
+          "enabled": true,
+          "points": 20
+        },
+        "breakdown": {
+          "enabled": true,
+          "categories": []
+        }
+      },
+      "requiredFields": ["metric", "data_source"],
+      "defaultSize": { "w": 4, "h": 3 },
+      "minSize": { "w": 3, "h": 2 },
+      "maxSize": { "w": 6, "h": 4 }
+    },
+    {
+      "id": "line-chart",
+      "type": "chart",
+      "name": "Line Chart",
+      "description": "Time series line chart",
+      "category": "Charts",
+      "icon": "chart-line",
+      "defaultConfig": {
+        "chart_type": "line",
+        "title": "Chart Title",
+        "axes": {
+          "x": "date",
+          "y": "value"
+        },
+        "options": {
+          "showLegend": true,
+          "showGridLines": true,
+          "showTooltip": true,
+          "animation": true
+        }
+      },
+      "requiredFields": ["data_source", "axes"],
+      "defaultSize": { "w": 6, "h": 4 },
+      "minSize": { "w": 4, "h": 3 },
+      "maxSize": { "w": 12, "h": 8 }
+    },
+    {
+      "id": "bar-chart",
+      "type": "chart",
+      "name": "Bar Chart",
+      "description": "Categorical bar chart",
+      "category": "Charts",
+      "icon": "chart-bar",
+      "defaultConfig": {
+        "chart_type": "bar",
+        "title": "Chart Title",
+        "axes": {
+          "x": "category",
+          "y": "value"
+        },
+        "options": {
+          "orientation": "vertical",
+          "stacked": false,
+          "showValues": true
+        }
+      },
+      "requiredFields": ["data_source", "axes"],
+      "defaultSize": { "w": 6, "h": 4 },
+      "minSize": { "w": 4, "h": 3 }
+    },
+    {
+      "id": "area-chart",
+      "type": "chart",
+      "name": "Area Chart",
+      "description": "Filled area chart for trends",
+      "category": "Charts",
+      "icon": "chart-area",
+      "defaultConfig": {
+        "chart_type": "area",
+        "title": "Chart Title",
+        "axes": {
+          "x": "date",
+          "y": ["metric1", "metric2"]
+        },
+        "options": {
+          "stacked": true,
+          "fillOpacity": 0.5
+        }
+      },
+      "requiredFields": ["data_source", "axes"],
+      "defaultSize": { "w": 8, "h": 4 },
+      "minSize": { "w": 6, "h": 3 }
+    },
+    {
+      "id": "pie-chart",
+      "type": "chart",
+      "name": "Pie Chart",
+      "description": "Proportional pie chart",
+      "category": "Charts",
+      "icon": "chart-pie",
+      "defaultConfig": {
+        "chart_type": "pie",
+        "title": "Chart Title",
+        "category": "category",
+        "value": "value",
+        "options": {
+          "showLabels": true,
+          "showPercentages": true
+        }
+      },
+      "requiredFields": ["data_source", "category", "value"],
+      "defaultSize": { "w": 4, "h": 4 },
+      "minSize": { "w": 3, "h": 3 }
+    },
+    {
+      "id": "donut-chart",
+      "type": "chart",
+      "name": "Donut Chart",
+      "description": "Donut chart with center metric",
+      "category": "Charts",
+      "icon": "chart-donut",
+      "defaultConfig": {
+        "chart_type": "donut",
+        "title": "Chart Title",
+        "category": "category",
+        "value": "value",
+        "centerText": {
+          "enabled": true,
+          "metric": "total"
+        }
+      },
+      "requiredFields": ["data_source", "category", "value"],
+      "defaultSize": { "w": 4, "h": 4 },
+      "minSize": { "w": 3, "h": 3 }
+    },
+    {
+      "id": "data-table",
+      "type": "table",
+      "name": "Data Table",
+      "description": "Sortable, filterable data table",
+      "category": "Tables",
+      "icon": "table",
+      "defaultConfig": {
+        "title": "Table Title",
+        "columns": [],
+        "features": {
+          "sorting": true,
+          "filtering": true,
+          "pagination": true,
+          "export": true
+        },
+        "pageSize": 10
+      },
+      "requiredFields": ["data_source", "columns"],
+      "defaultSize": { "w": 6, "h": 4 },
+      "minSize": { "w": 4, "h": 3 }
+    },
+    {
+      "id": "pivot-table",
+      "type": "table",
+      "name": "Pivot Table",
+      "description": "Aggregated pivot table",
+      "category": "Tables",
+      "icon": "table-pivot",
+      "defaultConfig": {
+        "title": "Pivot Table",
+        "rows": [],
+        "columns": [],
+        "values": [],
+        "aggregation": "sum"
+      },
+      "requiredFields": ["data_source", "rows", "values"],
+      "defaultSize": { "w": 8, "h": 5 },
+      "minSize": { "w": 6, "h": 4 }
+    },
+    {
+      "id": "heat-map",
+      "type": "chart",
+      "name": "Heat Map",
+      "description": "Color-coded heat map",
+      "category": "Charts",
+      "icon": "grid",
+      "defaultConfig": {
+        "chart_type": "heatmap",
+        "title": "Heat Map",
+        "x": "x_category",
+        "y": "y_category",
+        "value": "intensity",
+        "colorScale": {
+          "min": "#f0f0f0",
+          "max": "#ff0000"
+        }
+      },
+      "requiredFields": ["data_source", "x", "y", "value"],
+      "defaultSize": { "w": 6, "h": 5 },
+      "minSize": { "w": 4, "h": 4 }
+    },
+    {
+      "id": "gauge-chart",
+      "type": "gauge",
+      "name": "Gauge Chart",
+      "description": "Radial gauge indicator",
+      "category": "Charts",
+      "icon": "gauge",
+      "defaultConfig": {
+        "title": "Gauge",
+        "value": "value",
+        "min": 0,
+        "max": 100,
+        "thresholds": [
+          { "value": 33, "color": "red" },
+          { "value": 66, "color": "yellow" },
+          { "value": 100, "color": "green" }
+        ]
+      },
+      "requiredFields": ["data_source", "value", "max"],
+      "defaultSize": { "w": 3, "h": 3 },
+      "minSize": { "w": 2, "h": 2 }
+    },
+    {
+      "id": "timeline",
+      "type": "timeline",
+      "name": "Timeline",
+      "description": "Event timeline visualization",
+      "category": "Time",
+      "icon": "clock",
+      "defaultConfig": {
+        "title": "Timeline",
+        "dateField": "timestamp",
+        "eventField": "event",
+        "categoryField": "category",
+        "options": {
+          "showToday": true,
+          "groupByCategory": false
+        }
+      },
+      "requiredFields": ["data_source", "dateField", "eventField"],
+      "defaultSize": { "w": 12, "h": 3 },
+      "minSize": { "w": 8, "h": 2 }
+    },
+    {
+      "id": "map-widget",
+      "type": "map",
+      "name": "Geographic Map",
+      "description": "Interactive map visualization",
+      "category": "Maps",
+      "icon": "map",
+      "defaultConfig": {
+        "title": "Map",
+        "mapType": "choropleth",
+        "geoField": "location",
+        "valueField": "value",
+        "center": { "lat": 39.8283, "lng": -98.5795 },
+        "zoom": 4
+      },
+      "requiredFields": ["data_source", "geoField"],
+      "defaultSize": { "w": 8, "h": 5 },
+      "minSize": { "w": 6, "h": 4 }
+    },
+    {
+      "id": "scatter-plot",
+      "type": "chart",
+      "name": "Scatter Plot",
+      "description": "X-Y scatter plot",
+      "category": "Charts",
+      "icon": "scatter",
+      "defaultConfig": {
+        "chart_type": "scatter",
+        "title": "Scatter Plot",
+        "axes": {
+          "x": "x_value",
+          "y": "y_value"
+        },
+        "sizeField": null,
+        "colorField": null
+      },
+      "requiredFields": ["data_source", "axes"],
+      "defaultSize": { "w": 6, "h": 4 },
+      "minSize": { "w": 4, "h": 3 }
+    },
+    {
+      "id": "funnel-chart",
+      "type": "chart",
+      "name": "Funnel Chart",
+      "description": "Conversion funnel visualization",
+      "category": "Charts",
+      "icon": "funnel",
+      "defaultConfig": {
+        "chart_type": "funnel",
+        "title": "Funnel",
+        "stages": [],
+        "valueField": "count",
+        "showPercentages": true
+      },
+      "requiredFields": ["data_source", "stages", "valueField"],
+      "defaultSize": { "w": 4, "h": 5 },
+      "minSize": { "w": 3, "h": 4 }
+    },
+    {
+      "id": "text-widget",
+      "type": "text",
+      "name": "Text/Markdown",
+      "description": "Rich text or markdown content",
+      "category": "Content",
+      "icon": "text",
+      "defaultConfig": {
+        "title": "Text Widget",
+        "content": "",
+        "format": "markdown",
+        "style": {
+          "fontSize": "14px",
+          "textAlign": "left"
+        }
+      },
+      "requiredFields": ["content"],
+      "defaultSize": { "w": 4, "h": 2 },
+      "minSize": { "w": 2, "h": 1 }
+    },
+    {
+      "id": "image-widget",
+      "type": "image",
+      "name": "Image",
+      "description": "Display image or logo",
+      "category": "Content",
+      "icon": "image",
+      "defaultConfig": {
+        "src": "",
+        "alt": "Image",
+        "fit": "contain",
+        "link": null
+      },
+      "requiredFields": ["src"],
+      "defaultSize": { "w": 4, "h": 3 },
+      "minSize": { "w": 2, "h": 2 }
+    },
+    {
+      "id": "filter-select",
+      "type": "filter",
+      "name": "Select Filter",
+      "description": "Single-select dropdown filter",
+      "category": "Filters",
+      "icon": "filter",
+      "defaultConfig": {
+        "filter_type": "select",
+        "label": "Filter",
+        "field": "",
+        "options": [],
+        "default": "",
+        "target_widgets": []
+      },
+      "requiredFields": ["field", "options"],
+      "defaultSize": { "w": 3, "h": 1 },
+      "minSize": { "w": 2, "h": 1 }
+    },
+    {
+      "id": "filter-multiselect",
+      "type": "filter",
+      "name": "Multi-Select Filter",
+      "description": "Multiple selection filter",
+      "category": "Filters",
+      "icon": "filter-multiple",
+      "defaultConfig": {
+        "filter_type": "multiselect",
+        "label": "Filter",
+        "field": "",
+        "options": [],
+        "default": [],
+        "target_widgets": []
+      },
+      "requiredFields": ["field", "options"],
+      "defaultSize": { "w": 3, "h": 1 },
+      "minSize": { "w": 2, "h": 1 }
+    },
+    {
+      "id": "filter-daterange",
+      "type": "filter",
+      "name": "Date Range Filter",
+      "description": "Date range picker filter",
+      "category": "Filters",
+      "icon": "calendar",
+      "defaultConfig": {
+        "filter_type": "date_range",
+        "label": "Date Range",
+        "startField": "start_date",
+        "endField": "end_date",
+        "presets": [
+          "today",
+          "yesterday",
+          "last_7_days",
+          "last_30_days",
+          "this_month",
+          "last_month",
+          "custom"
+        ],
+        "default": "last_30_days",
+        "target_widgets": []
+      },
+      "requiredFields": ["startField", "endField"],
+      "defaultSize": { "w": 4, "h": 1 },
+      "minSize": { "w": 3, "h": 1 }
+    },
+    {
+      "id": "progress-bar",
+      "type": "custom",
+      "name": "Progress Bar",
+      "description": "Progress indicator with percentage",
+      "category": "Indicators",
+      "icon": "progress",
+      "defaultConfig": {
+        "title": "Progress",
+        "value": 0,
+        "max": 100,
+        "showPercentage": true,
+        "color": "blue",
+        "segments": []
+      },
+      "requiredFields": ["value", "max"],
+      "defaultSize": { "w": 4, "h": 1 },
+      "minSize": { "w": 3, "h": 1 }
+    },
+    {
+      "id": "alert-list",
+      "type": "custom",
+      "name": "Alert List",
+      "description": "Real-time alert feed",
+      "category": "Monitoring",
+      "icon": "bell",
+      "defaultConfig": {
+        "title": "Alerts",
+        "data_source": "alerts",
+        "maxItems": 10,
+        "severities": ["critical", "warning", "info"],
+        "autoRefresh": true,
+        "refreshInterval": 5000
+      },
+      "requiredFields": ["data_source"],
+      "defaultSize": { "w": 4, "h": 4 },
+      "minSize": { "w": 3, "h": 3 }
+    }
+  ],
+  "categories": [
+    {
+      "id": "metrics",
+      "name": "Metrics",
+      "description": "KPI cards and metric displays",
+      "icon": "chart-bar"
+    },
+    {
+      "id": "charts",
+      "name": "Charts",
+      "description": "Data visualizations and graphs",
+      "icon": "chart-line"
+    },
+    {
+      "id": "tables",
+      "name": "Tables",
+      "description": "Data tables and grids",
+      "icon": "table"
+    },
+    {
+      "id": "filters",
+      "name": "Filters",
+      "description": "Interactive filter controls",
+      "icon": "filter"
+    },
+    {
+      "id": "content",
+      "name": "Content",
+      "description": "Text, images, and media",
+      "icon": "text"
+    },
+    {
+      "id": "maps",
+      "name": "Maps",
+      "description": "Geographic visualizations",
+      "icon": "map"
+    },
+    {
+      "id": "time",
+      "name": "Time",
+      "description": "Time-based visualizations",
+      "icon": "clock"
+    },
+    {
+      "id": "indicators",
+      "name": "Indicators",
+      "description": "Progress and status indicators",
+      "icon": "gauge"
+    },
+    {
+      "id": "monitoring",
+      "name": "Monitoring",
+      "description": "Real-time monitoring widgets",
+      "icon": "activity"
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "total_widgets": 23,
+    "categories_count": 9
+  }
+}

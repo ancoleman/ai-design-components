@@ -1,0 +1,50 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "z": {
+    "base": {
+      "$value": "0",
+      "$type": "number",
+      "$description": "Base z-index for normal content"
+    },
+    "dropdown": {
+      "$value": "1000",
+      "$type": "number",
+      "$description": "Dropdown menus"
+    },
+    "sticky": {
+      "$value": "1020",
+      "$type": "number",
+      "$description": "Sticky positioned elements"
+    },
+    "fixed": {
+      "$value": "1030",
+      "$type": "number",
+      "$description": "Fixed positioned elements"
+    },
+    "modal-backdrop": {
+      "$value": "1040",
+      "$type": "number",
+      "$description": "Modal backdrop/overlay"
+    },
+    "modal": {
+      "$value": "1050",
+      "$type": "number",
+      "$description": "Modal dialogs"
+    },
+    "popover": {
+      "$value": "1060",
+      "$type": "number",
+      "$description": "Popovers and context menus"
+    },
+    "tooltip": {
+      "$value": "1070",
+      "$type": "number",
+      "$description": "Tooltips"
+    },
+    "notification": {
+      "$value": "1080",
+      "$type": "number",
+      "$description": "Toast notifications - highest layer"
+    }
+  }
+}

@@ -1,0 +1,270 @@
+{
+  "templates": {
+    "admin-dashboard": {
+      "name": "Admin Dashboard",
+      "description": "Classic admin layout with sidebar navigation",
+      "structure": {
+        "header": {
+          "height": "64px",
+          "position": "fixed",
+          "zIndex": 40
+        },
+        "sidebar": {
+          "width": "280px",
+          "collapsedWidth": "64px",
+          "position": "fixed",
+          "breakpoint": "lg"
+        },
+        "main": {
+          "marginLeft": "280px",
+          "marginTop": "64px",
+          "padding": "24px"
+        }
+      },
+      "responsive": {
+        "mobile": {
+          "sidebar": "off-canvas",
+          "header": "sticky"
+        }
+      }
+    },
+    "holy-grail": {
+      "name": "Holy Grail Layout",
+      "description": "Header, footer, and three-column body",
+      "structure": {
+        "header": {
+          "height": "auto",
+          "flexShrink": 0
+        },
+        "body": {
+          "display": "flex",
+          "flex": 1
+        },
+        "nav": {
+          "width": "200px",
+          "order": -1
+        },
+        "main": {
+          "flex": 1,
+          "minWidth": 0
+        },
+        "aside": {
+          "width": "200px"
+        },
+        "footer": {
+          "height": "auto",
+          "flexShrink": 0
+        }
+      }
+    },
+    "split-view": {
+      "name": "Split View",
+      "description": "Two-panel resizable layout",
+      "structure": {
+        "container": {
+          "display": "flex",
+          "height": "100vh"
+        },
+        "panel1": {
+          "defaultWidth": "50%",
+          "minWidth": "200px"
+        },
+        "resizer": {
+          "width": "4px",
+          "cursor": "col-resize"
+        },
+        "panel2": {
+          "flex": 1,
+          "minWidth": "200px"
+        }
+      }
+    },
+    "card-grid": {
+      "name": "Card Grid",
+      "description": "Responsive card layout",
+      "structure": {
+        "container": {
+          "display": "grid",
+          "gap": "24px"
+        },
+        "columns": {
+          "xs": "1",
+          "sm": "2",
+          "md": "3",
+          "lg": "4",
+          "xl": "4"
+        },
+        "cardAspectRatio": "4/3"
+      }
+    },
+    "masonry": {
+      "name": "Masonry Grid",
+      "description": "Pinterest-style variable height grid",
+      "structure": {
+        "columns": {
+          "xs": "1",
+          "sm": "2",
+          "md": "3",
+          "lg": "4",
+          "xl": "5"
+        },
+        "gap": "16px",
+        "method": "css-columns"
+      }
+    },
+    "landing-page": {
+      "name": "Landing Page",
+      "description": "Marketing page with hero and sections",
+      "structure": {
+        "hero": {
+          "minHeight": "80vh",
+          "display": "flex",
+          "alignItems": "center"
+        },
+        "section": {
+          "padding": "80px 0",
+          "maxWidth": "1200px",
+          "margin": "0 auto"
+        }
+      }
+    },
+    "blog": {
+      "name": "Blog Layout",
+      "description": "Article with optional sidebar",
+      "structure": {
+        "container": {
+          "maxWidth": "1200px",
+          "display": "grid",
+          "gap": "32px"
+        },
+        "article": {
+          "maxWidth": "65ch",
+          "lineHeight": 1.6
+        },
+        "sidebar": {
+          "width": "300px",
+          "position": "sticky",
+          "top": "80px"
+        }
+      }
+    },
+    "kanban": {
+      "name": "Kanban Board",
+      "description": "Horizontal scrolling columns",
+      "structure": {
+        "board": {
+          "display": "flex",
+          "overflowX": "auto",
+          "gap": "16px",
+          "padding": "16px"
+        },
+        "column": {
+          "width": "300px",
+          "flexShrink": 0,
+          "maxHeight": "calc(100vh - 100px)"
+        }
+      }
+    },
+    "comparison": {
+      "name": "Comparison View",
+      "description": "Side-by-side comparison",
+      "structure": {
+        "container": {
+          "display": "grid",
+          "gridTemplateColumns": "1fr 1fr",
+          "gap": "2px",
+          "height": "100%"
+        },
+        "panel": {
+          "overflow": "auto",
+          "padding": "16px"
+        }
+      }
+    },
+    "dashboard-grid": {
+      "name": "Dashboard Grid",
+      "description": "Widget-based dashboard layout",
+      "structure": {
+        "grid": {
+          "display": "grid",
+          "gridTemplateColumns": "repeat(12, 1fr)",
+          "gridAutoRows": "minmax(100px, auto)",
+          "gap": "16px"
+        },
+        "widgets": {
+          "small": "span 3",
+          "medium": "span 6",
+          "large": "span 9",
+          "full": "span 12"
+        }
+      }
+    }
+  },
+  "patterns": {
+    "sticky-header": {
+      "position": "sticky",
+      "top": 0,
+      "zIndex": 40,
+      "background": "var(--color-surface)",
+      "borderBottom": "1px solid var(--border-color)"
+    },
+    "sticky-footer": {
+      "marginTop": "auto",
+      "flexShrink": 0
+    },
+    "centered-content": {
+      "maxWidth": "var(--container-max-width)",
+      "margin": "0 auto",
+      "padding": "0 var(--container-padding-x)"
+    },
+    "full-bleed": {
+      "width": "100vw",
+      "marginLeft": "calc(50% - 50vw)",
+      "marginRight": "calc(50% - 50vw)"
+    },
+    "aspect-ratio-box": {
+      "position": "relative",
+      "paddingBottom": "56.25%",
+      "child": {
+        "position": "absolute",
+        "top": 0,
+        "left": 0,
+        "width": "100%",
+        "height": "100%"
+      }
+    }
+  },
+  "responsive_patterns": {
+    "stack-on-mobile": {
+      "desktop": {
+        "display": "grid",
+        "gridTemplateColumns": "repeat(auto-fit, minmax(250px, 1fr))"
+      },
+      "mobile": {
+        "display": "block"
+      }
+    },
+    "hide-on-mobile": {
+      "@media (max-width: 768px)": {
+        "display": "none"
+      }
+    },
+    "show-on-mobile": {
+      "display": "none",
+      "@media (max-width: 768px)": {
+        "display": "block"
+      }
+    },
+    "collapse-padding": {
+      "desktop": {
+        "padding": "32px"
+      },
+      "tablet": {
+        "padding": "24px"
+      },
+      "mobile": {
+        "padding": "16px"
+      }
+    }
+  }
+}

@@ -1,0 +1,362 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DnD-Kit Configuration Schema",
+  "description": "Configuration schema for dnd-kit drag-and-drop library",
+  "type": "object",
+  "properties": {
+    "sensors": {
+      "type": "array",
+      "description": "Input sensors for detecting drag operations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sensor": {
+            "type": "string",
+            "enum": ["PointerSensor", "KeyboardSensor", "TouchSensor"],
+            "description": "Type of sensor to use"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "activationConstraint": {
+                "type": "object",
+                "properties": {
+                  "distance": {
+                    "type": "number",
+                    "description": "Minimum distance in pixels to activate drag"
+                  },
+                  "delay": {
+                    "type": "number",
+                    "description": "Delay in milliseconds before drag activation"
+                  },
+                  "tolerance": {
+                    "type": "number",
+                    "description": "Movement tolerance during delay period"
+                  }
+                }
+              },
+              "coordinateGetter": {
+                "type": "string",
+                "description": "Function name for getting keyboard coordinates"
+              },
+              "scrollBehavior": {
+                "type": "string",
+                "enum": ["auto", "smooth"],
+                "description": "Scrolling behavior during keyboard navigation"
+              }
+            }
+          }
+        },
+        "required": ["sensor"]
+      }
+    },
+    "modifiers": {
+      "type": "array",
+      "description": "Modifiers to constrain or modify drag behavior",
+      "items": {
+        "type": "object",
+        "properties": {
+          "modifier": {
+            "type": "string",
+            "enum": [
+              "restrictToVerticalAxis",
+              "restrictToHorizontalAxis",
+              "restrictToWindowEdges",
+              "restrictToParentElement",
+              "restrictToFirstScrollableAncestor",
+              "snapCenterToCursor"
+            ],
+            "description": "Type of modifier to apply"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "gridSize": {
+                "type": "number",
+                "description": "Grid size for snapping (in pixels)"
+              }
+            }
+          }
+        },
+        "required": ["modifier"]
+      }
+    },
+    "animation": {
+      "type": "object",
+      "description": "Animation configuration",
+      "properties": {
+        "duration": {
+          "type": "number",
+          "description": "Animation duration in milliseconds",
+          "minimum": 0
+        },
+        "easing": {
+          "type": "string",
+          "description": "CSS easing function",
+          "examples": [
+            "ease",
+            "ease-in",
+            "ease-out",
+            "ease-in-out",
+            "cubic-bezier(0.4, 0, 0.2, 1)"
+          ]
+        },
+        "dragOverlay": {
+          "type": ["object", "null"],
+          "description": "Drag overlay animation settings",
+          "properties": {
+            "opacity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Opacity of dragged element"
+            },
+            "scale": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Scale factor for dragged element"
+            }
+          }
+        },
+        "dropAnimation": {
+          "type": ["object", "null"],
+          "description": "Drop animation settings",
+          "properties": {
+            "duration": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Drop animation duration"
+            },
+            "easing": {
+              "type": "string",
+              "description": "Drop animation easing"
+            },
+            "keyframes": {
+              "type": "array",
+              "description": "Animation keyframes",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "layoutAnimation": {
+          "type": ["object", "null"],
+          "description": "Layout shift animation settings",
+          "properties": {
+            "duration": {
+              "type": "number",
+              "minimum": 0
+            },
+            "easing": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "collision": {
+      "type": "object",
+      "description": "Collision detection strategy",
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "closestCenter",
+            "closestCorners",
+            "rectIntersection",
+            "pointerWithin"
+          ],
+          "description": "Collision detection algorithm"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the collision strategy"
+        }
+      },
+      "required": ["name"]
+    },
+    "sorting": {
+      "type": "object",
+      "description": "Sorting strategy for sortable items",
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "verticalListSortingStrategy",
+            "horizontalListSortingStrategy",
+            "rectSortingStrategy"
+          ],
+          "description": "Sorting strategy name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the sorting strategy"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["vertical", "horizontal", "both"],
+          "description": "Direction of sorting"
+        }
+      },
+      "required": ["name", "direction"]
+    },
+    "accessibility": {
+      "type": "object",
+      "description": "Accessibility configuration",
+      "properties": {
+        "announcements": {
+          "type": ["object", "null"],
+          "description": "Screen reader announcements",
+          "properties": {
+            "onDragStart": {
+              "type": "string",
+              "description": "Template for drag start announcement"
+            },
+            "onDragOver": {
+              "type": "string",
+              "description": "Template for drag over announcement"
+            },
+            "onDragEnd": {
+              "type": "string",
+              "description": "Template for drag end announcement"
+            },
+            "onDragCancel": {
+              "type": "string",
+              "description": "Template for drag cancel announcement"
+            }
+          }
+        },
+        "liveRegion": {
+          "type": "boolean",
+          "description": "Enable live region for announcements",
+          "default": true
+        },
+        "screenReaderInstructions": {
+          "type": "boolean",
+          "description": "Include screen reader instructions",
+          "default": true
+        },
+        "ariaDescribedBy": {
+          "type": "string",
+          "description": "ID of element containing instructions"
+        },
+        "ariaAttributes": {
+          "type": "object",
+          "description": "Additional ARIA attributes",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "autoScroll": {
+      "type": ["object", "null"],
+      "description": "Auto-scroll configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable auto-scrolling",
+          "default": true
+        },
+        "threshold": {
+          "type": "object",
+          "description": "Distance from edge to trigger scrolling (0-1)",
+          "properties": {
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "maxSpeed": {
+          "type": "number",
+          "description": "Maximum scroll speed in pixels per frame",
+          "minimum": 0
+        },
+        "acceleration": {
+          "type": "number",
+          "description": "Scroll acceleration factor",
+          "minimum": 0
+        },
+        "interval": {
+          "type": "number",
+          "description": "Scroll interval in milliseconds",
+          "minimum": 0
+        },
+        "canScroll": {
+          "type": "boolean",
+          "description": "Whether scrolling is allowed"
+        }
+      }
+    }
+  },
+  "required": ["sensors", "collision", "sorting"],
+  "examples": [
+    {
+      "sensors": [
+        {
+          "sensor": "PointerSensor",
+          "options": {
+            "activationConstraint": {
+              "distance": 10
+            }
+          }
+        },
+        {
+          "sensor": "KeyboardSensor",
+          "options": {
+            "coordinateGetter": "sortableKeyboardCoordinates"
+          }
+        }
+      ],
+      "modifiers": [
+        {
+          "modifier": "restrictToWindowEdges"
+        }
+      ],
+      "animation": {
+        "duration": 200,
+        "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "dragOverlay": {
+          "opacity": 0.5,
+          "scale": 1.05
+        }
+      },
+      "collision": {
+        "name": "closestCenter",
+        "description": "Drop on the element whose center is closest to the pointer"
+      },
+      "sorting": {
+        "name": "verticalListSortingStrategy",
+        "description": "For vertical lists",
+        "direction": "vertical"
+      },
+      "accessibility": {
+        "announcements": {
+          "onDragStart": "Picked up draggable item ${id}",
+          "onDragEnd": "Dropped draggable item ${id}"
+        },
+        "liveRegion": true,
+        "screenReaderInstructions": true,
+        "ariaDescribedBy": "dnd-instructions"
+      },
+      "autoScroll": {
+        "enabled": true,
+        "threshold": {
+          "x": 0.2,
+          "y": 0.2
+        },
+        "maxSpeed": 10,
+        "acceleration": 10,
+        "interval": 10
+      }
+    }
+  ]
+}

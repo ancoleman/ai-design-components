@@ -1,0 +1,26 @@
+id,name,email,department,role,location,salary,start_date,is_active,performance_rating
+1,Alice Johnson,alice.johnson@example.com,Engineering,Senior Developer,San Francisco,125000,2021-03-15,true,4.5
+2,Bob Smith,bob.smith@example.com,Sales,Account Manager,New York,95000,2020-07-22,true,4.2
+3,Charlie Brown,charlie.brown@example.com,Marketing,Marketing Specialist,Chicago,72000,2022-01-10,true,3.8
+4,Diana Prince,diana.prince@example.com,Engineering,Tech Lead,San Francisco,145000,2019-11-05,true,4.8
+5,Edward Norton,edward.norton@example.com,HR,HR Manager,Boston,88000,2021-09-20,true,4.0
+6,Fiona Green,fiona.green@example.com,Finance,Financial Analyst,New York,92000,2020-05-18,true,4.3
+7,George Williams,george.williams@example.com,Engineering,Junior Developer,Austin,85000,2023-02-28,true,3.5
+8,Helen Martinez,helen.martinez@example.com,Product,Product Manager,Seattle,135000,2019-08-12,true,4.6
+9,Ian Thompson,ian.thompson@example.com,Sales,Sales Director,Los Angeles,155000,2018-04-03,true,4.7
+10,Julia Roberts,julia.roberts@example.com,Design,UI/UX Designer,Portland,98000,2021-06-14,true,4.4
+11,Kevin Davis,kevin.davis@example.com,Engineering,DevOps Engineer,Denver,115000,2020-10-25,true,4.1
+12,Lisa Anderson,lisa.anderson@example.com,Marketing,Content Manager,Chicago,78000,2022-03-07,true,3.9
+13,Michael Chen,michael.chen@example.com,Engineering,Senior Developer,San Francisco,132000,2019-12-01,true,4.5
+14,Nancy Wilson,nancy.wilson@example.com,HR,Recruiter,Boston,68000,2023-01-15,true,3.6
+15,Oliver Taylor,oliver.taylor@example.com,Finance,CFO,New York,225000,2017-09-10,true,4.9
+16,Patricia Moore,patricia.moore@example.com,Legal,Legal Counsel,Washington DC,165000,2018-11-20,true,4.4
+17,Quinn Jackson,quinn.jackson@example.com,Engineering,QA Engineer,Austin,95000,2021-04-05,true,4.0
+18,Rachel White,rachel.white@example.com,Product,Senior Product Manager,Seattle,148000,2019-07-18,true,4.7
+19,Samuel Harris,samuel.harris@example.com,Sales,Sales Representative,Miami,72000,2022-08-22,true,3.7
+20,Tina Martin,tina.martin@example.com,Customer Support,Support Manager,Phoenix,82000,2020-12-10,true,4.2
+21,Uma Patel,uma.patel@example.com,Engineering,Data Scientist,San Francisco,142000,2019-05-30,false,4.6
+22,Victor Lee,victor.lee@example.com,Marketing,Marketing Director,New York,175000,2018-03-25,true,4.8
+23,Wendy Clark,wendy.clark@example.com,Design,Design Director,Portland,138000,2019-10-15,true,4.5
+24,Xavier Rodriguez,xavier.rodriguez@example.com,Engineering,Backend Developer,Austin,108000,2021-02-20,true,4.1
+25,Yolanda King,yolanda.king@example.com,HR,Benefits Specialist,Boston,75000,2022-06-08,true,3.8

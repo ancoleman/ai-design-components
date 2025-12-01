@@ -1,0 +1,90 @@
+{
+  "$schema": "https://www.designtokens.org/tr/2025.10/",
+  "$description": "Dark theme - overrides for dark mode (only changed values)",
+  "semantic": {
+    "color": {
+      "primary": {
+        "$value": "{color.blue.400}",
+        "$type": "color",
+        "$description": "Lighter primary for dark backgrounds"
+      },
+      "primary-hover": {
+        "$value": "{color.blue.300}",
+        "$type": "color"
+      },
+      "primary-active": {
+        "$value": "{color.blue.200}",
+        "$type": "color"
+      },
+      "text-primary": {
+        "$value": "{color.gray.50}",
+        "$type": "color",
+        "$description": "Light text for dark backgrounds"
+      },
+      "text-secondary": {
+        "$value": "{color.gray.400}",
+        "$type": "color"
+      },
+      "text-tertiary": {
+        "$value": "{color.gray.600}",
+        "$type": "color"
+      },
+      "text-disabled": {
+        "$value": "{color.gray.700}",
+        "$type": "color"
+      },
+      "text-inverse": {
+        "$value": "{color.gray.900}",
+        "$type": "color",
+        "$description": "Dark text on light backgrounds (inverse of light theme)"
+      },
+      "bg-primary": {
+        "$value": "{color.gray.900}",
+        "$type": "color",
+        "$description": "Dark background"
+      },
+      "bg-secondary": {
+        "$value": "{color.gray.800}",
+        "$type": "color"
+      },
+      "bg-tertiary": {
+        "$value": "{color.gray.700}",
+        "$type": "color"
+      },
+      "bg-inverse": {
+        "$value": "{color.white}",
+        "$type": "color"
+      },
+      "bg-overlay": {
+        "$value": "rgba(0, 0, 0, 0.7)",
+        "$type": "color",
+        "$description": "Darker overlay for dark mode"
+      },
+      "border": {
+        "$value": "{color.gray.700}",
+        "$type": "color"
+      },
+      "border-hover": {
+        "$value": "{color.gray.600}",
+        "$type": "color"
+      },
+      "success-bg": {
+        "$value": "rgba(34, 197, 94, 0.1)",
+        "$type": "color",
+        "$description": "Semi-transparent success background for dark mode"
+      },
+      "warning-bg": {
+        "$value": "rgba(234, 179, 8, 0.1)",
+        "$type": "color"
+      },
+      "error-bg": {
+        "$value": "rgba(239, 68, 68, 0.1)",
+        "$type": "color"
+      },
+      "info-bg": {
+        "$value": "rgba(59, 130, 246, 0.1)",
+        "$type": "color"
+      }
+    }
+  }
+}

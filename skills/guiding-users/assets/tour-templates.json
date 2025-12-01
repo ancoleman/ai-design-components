@@ -1,0 +1,54 @@
+{
+  "templates": {
+    "first-time-onboarding": {
+      "name": "First-Time User Onboarding",
+      "description": "Standard 3-5 step tour for new users",
+      "maxSteps": 5,
+      "duration": "2-3 minutes",
+      "steps": [
+        {
+          "type": "welcome",
+          "placement": "center",
+          "title": "Welcome to [Product Name]!",
+          "content": "Let's take a quick tour of the key features."
+        },
+        {
+          "type": "feature",
+          "placement": "bottom",
+          "title": "[Feature Name]",
+          "content": "[Feature description and value]"
+        }
+      ]
+    },
+    "feature-announcement": {
+      "name": "New Feature Spotlight",
+      "description": "Single-step announcement for new features",
+      "maxSteps": 1,
+      "duration": "10-15 seconds",
+      "steps": [
+        {
+          "type": "spotlight",
+          "placement": "auto",
+          "title": "New: [Feature Name]",
+          "content": "[Brief description and benefit]",
+          "cta": "Try it now"
+        }
+      ]
+    },
+    "interactive-tutorial": {
+      "name": "Guided Task Completion",
+      "description": "Step-by-step task guidance with validation",
+      "maxSteps": 7,
+      "duration": "5-10 minutes",
+      "steps": [
+        {
+          "type": "task",
+          "validation": true,
+          "title": "Step 1: [Action]",
+          "content": "[Instructions]",
+          "successMessage": "Great! [Encouragement]"
+        }
+      ]
+    }
+  }
+}
