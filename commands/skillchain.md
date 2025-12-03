@@ -1,7 +1,7 @@
 ---
-description: "Start a guided skill chaining workflow to build UI components. Usage: /skillchain [goal] or /skillchain help"
+description: "Start a guided skill chaining workflow to build full-stack applications. 29 skills covering frontend, backend, databases, and AI. Usage: /skillchain [goal] or /skillchain help"
 allowed-tools: Skill, Read, Glob, Bash, Write
-argument-hint: "[goal] e.g., 'dashboard with charts', 'login form', 'data table' — or 'help' for usage guide"
+argument-hint: "[goal] e.g., 'dashboard with charts', 'API with postgres', 'RAG pipeline' — or 'help' for usage guide"
 ---
 
 # Skill Chain Orchestrator
@@ -19,16 +19,24 @@ argument-hint: "[goal] e.g., 'dashboard with charts', 'login form', 'data table'
 ║                                                                  ║
 ║  USAGE: /skillchain [your goal]                                  ║
 ║                                                                  ║
-║  EXAMPLES:                                                       ║
+║  FRONTEND EXAMPLES:                                              ║
 ║    /skillchain sales dashboard with revenue charts               ║
 ║    /skillchain login form with validation                        ║
 ║    /skillchain data table with search and filters                ║
 ║    /skillchain AI chat interface                                 ║
-║    /skillchain file upload gallery                               ║
-║    /skillchain onboarding wizard                                 ║
+║                                                                  ║
+║  BACKEND EXAMPLES:                                               ║
+║    /skillchain REST API with PostgreSQL                          ║
+║    /skillchain import CSV data to database                       ║
+║    /skillchain RAG pipeline with vector search                   ║
+║    /skillchain deploy to Kubernetes with monitoring              ║
+║                                                                  ║
+║  FULL-STACK EXAMPLES:                                            ║
+║    /skillchain dashboard with charts and postgres backend        ║
+║    /skillchain login form with OAuth authentication              ║
 ║                                                                  ║
 ╠══════════════════════════════════════════════════════════════════╣
-║  AVAILABLE SKILLS (15 total)                                     ║
+║  FRONTEND SKILLS (15)                                            ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║                                                                  ║
 ║  FOUNDATION:                                                     ║
@@ -57,8 +65,36 @@ argument-hint: "[goal] e.g., 'dashboard with charts', 'login form', 'data table'
 ║    managing-media        → File upload, galleries, video/audio   ║
 ║    guiding-users         → Onboarding, tutorials, tooltips       ║
 ║                                                                  ║
-║  ASSEMBLY (Capstone):                                            ║
+║  ASSEMBLY:                                                       ║
 ║    assembling-components → Wires components, validates tokens    ║
+║                                                                  ║
+╠══════════════════════════════════════════════════════════════════╣
+║  BACKEND SKILLS (14)                                             ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                  ║
+║  DATA INGESTION:                                                 ║
+║    ingesting-data        → ETL, S3, APIs, CDC, dlt pipelines     ║
+║                                                                  ║
+║  DATABASES:                                                      ║
+║    databases-relational  → PostgreSQL, MySQL, SQLite, ORMs       ║
+║    databases-vector      → Qdrant, pgvector, Pinecone, RAG       ║
+║    databases-timeseries  → ClickHouse, TimescaleDB, InfluxDB     ║
+║    databases-document    → MongoDB, Firestore, DynamoDB          ║
+║    databases-graph       → Neo4j, memgraph, Cypher               ║
+║                                                                  ║
+║  APIS & MESSAGING:                                               ║
+║    api-patterns          → REST, GraphQL, gRPC, tRPC             ║
+║    message-queues        → Kafka, RabbitMQ, NATS, Temporal       ║
+║    realtime-sync         → WebSockets, SSE, Y.js, presence       ║
+║                                                                  ║
+║  PLATFORM:                                                       ║
+║    auth-security         → OAuth 2.1, passkeys, RBAC, JWT        ║
+║    observability         → OpenTelemetry, LGTM stack, tracing    ║
+║    deploying-applications → Kubernetes, serverless, edge         ║
+║                                                                  ║
+║  AI/ML:                                                          ║
+║    ai-data-engineering   → RAG pipelines, embeddings, chunking   ║
+║    model-serving         → vLLM, BentoML, Ollama, inference      ║
 ║                                                                  ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║  WORKFLOW COMMANDS (use during skill chain)                      ║
@@ -78,10 +114,12 @@ argument-hint: "[goal] e.g., 'dashboard with charts', 'login form', 'data table'
 ║  3. I invoke each skill in the correct order                     ║
 ║  4. After each skill, I ask you questions based on its options   ║
 ║  5. Your answers shape the final output                          ║
-║  6. All skills chain together for consistent, themed components  ║
+║  6. All skills chain together for consistent components          ║
 ║                                                                  ║
 ║  SKILL ORDER: theming → structure → content → interaction        ║
-║               → assembling-components (FINAL STEP)               ║
+║               → backend → assembling-components (FINAL STEP)     ║
+║                                                                  ║
+║  TOTAL SKILLS: 29 (15 frontend + 14 backend)                     ║
 ║                                                                  ║
 ╚══════════════════════════════════════════════════════════════════╝
 ```

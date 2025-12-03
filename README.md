@@ -17,14 +17,14 @@ Built following [Anthropic's official Skills best practices](https://docs.anthro
 The **recommended way** to use AI Design Components is through the `/skillchain` command. Instead of manually triggering individual skills, skillchain provides a guided workflow:
 
 ```bash
-# Install the skillchain command to your project
+# Option A: Install globally (available in ALL your projects)
+./commands/install-skillchain.sh --global
+
+# Option B: Install to specific project
 ./commands/install-skillchain.sh ~/your-project
 
-# Start Claude Code
-cd ~/your-project
+# Then start Claude Code and use skillchain
 claude
-
-# Use skillchain
 /skillchain dashboard with charts and filters
 ```
 
@@ -209,6 +209,7 @@ skills/[skill-name]/
 - **[CLAUDE.md](./CLAUDE.md)** - Repository guidance for Claude
 - **[CHANGELOG.md](./CHANGELOG.md)** - Version history and updates
 - **[skills/RESEARCH_GUIDE.md](./skills/RESEARCH_GUIDE.md)** - Library research methodology
+- **[docs/architecture/](./docs/architecture/)** - Token efficiency and architecture docs
 
 ## Resources
 
