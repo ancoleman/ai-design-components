@@ -1,134 +1,78 @@
-# Styling & Theming Section Template
+# Styling & Theming Integration Guide
 
 ## Purpose
 
-This template provides the standard "Styling & Theming" section to be added to each component skill's `init.md` file. This section documents how the component uses design tokens for visual styling.
-
-## Where to Insert
-
-Add this section **before** the "## Skill Structure" section in each `init.md` file.
+This document describes how component skills integrate with the `theming-components` skill for consistent, themeable styling across all 29 skills.
 
 ## Status
 
-**✅ Completed:**
-- `design-tokens/init.md` - Foundational theming skill created
-- `forms/init.md` - Styling section added
-- `ai-chat/init.md` - Styling section added
-- `tables/init.md` - Styling section added
+**All 29 skills are complete and integrated with the theming system.**
 
-**📝 Remaining (use template below):**
-- `data-viz/init.md`
-- `dashboards/init.md`
-- `feedback/init.md`
-- `navigation/init.md`
-- `search-filter/init.md`
-- `layout/init.md`
-- `media/init.md`
-- `timeline/init.md`
-- `drag-drop/init.md`
-- `onboarding/init.md`
+### Frontend Skills (15/15)
+- `theming-components` - Foundational theming skill (design tokens source)
+- `visualizing-data` - Charts, graphs, data visualization
+- `building-tables` - Tables and data grids
+- `creating-dashboards` - Dashboard layouts and analytics
+- `building-forms` - Form systems and validation
+- `implementing-search-filter` - Search and filter interfaces
+- `building-ai-chat` - AI chat interfaces
+- `implementing-drag-drop` - Drag-and-drop functionality
+- `providing-feedback` - Feedback and notifications
+- `implementing-navigation` - Navigation patterns
+- `designing-layouts` - Layout systems and responsive design
+- `displaying-timelines` - Timeline and activity components
+- `managing-media` - Media and file management
+- `guiding-users` - Onboarding and help systems
+- `assembling-components` - Component integration and validation
 
----
-
-## Template
-
-```markdown
----
-
-## Styling & Theming
-
-### Design Token Integration
-
-All [COMPONENT TYPE] components use the **design-tokens** skill for visual styling, enabling consistent design, theme switching, and brand customization.
-
-**See:** `skills/design-tokens/` for complete theming documentation.
-
-### Token Categories Used
-
-**Color Tokens:**
-- `--[component]-bg` - [Description]
-- `--[component]-text-color` - [Description]
-- `--[component]-border-color` - [Description]
-[Add relevant color tokens for this component type]
-
-**Spacing Tokens:**
-- `--[component]-padding` - [Description]
-- `--[component]-gap` - [Description]
-[Add relevant spacing tokens]
-
-**Typography Tokens:**
-- `--[component]-font-size` - [Description]
-- `--[component]-font-weight` - [Description]
-[Add relevant typography tokens]
-
-**Border & Radius:**
-- `--[component]-border-width` - [Description]
-- `--[component]-border-radius` - [Description]
-
-**Shadow Tokens:**
-- `--[component]-shadow` - [Description]
-
-[**Motion Tokens:** (if applicable)]
-[- `--[component]-transition` - [Description]]
-
-### Component-Specific Tokens
-
-\```css
-/* [Component Name] */
---[component]-primary-token: var(--semantic-token);
---[component]-secondary-token: value;
-
-/* Example values showing token hierarchy */
---button-bg-primary: var(--color-primary);
---button-text-primary: var(--color-white);
---button-padding: var(--spacing-md);
-\```
-
-### Theme Support
-
-- ✅ **Light Mode** - [Description of light theme]
-- ✅ **Dark Mode** - [Description of dark theme]
-- ✅ **High Contrast** - [Description of accessibility theme]
-- ✅ **Custom Brand Themes** - [Description of customization]
-
-### Example: Custom Theming
-
-\```css
-/* Example custom theme for [component] */
-:root[data-theme="custom-[component]"] {
-  /* Override specific tokens */
-  --[component]-primary-token: #CustomValue;
-
-  /* Adjust spacing/sizing */
-  --[component]-spacing: var(--spacing-lg);
-
-  /* Customize appearance */
-  --[component]-border-radius: var(--radius-xl);
-}
-\```
-
-[**Dark Mode Considerations:** (optional, if component has significant dark mode differences)]
-[\```css
-:root[data-theme="dark"] {
-  --[component]-bg: var(--color-gray-900);
-  --[component]-text: var(--color-gray-100);
-  /* ... other dark mode overrides */
-}
-\```]
-
-### Accessibility via Tokens
-
-- **High Contrast Mode**: [Describe how tokens ensure accessibility]
-- **Reduced Motion**: [Describe motion preference handling]
-- **Color Contrast**: [Describe WCAG compliance]
-- **Focus Indicators**: [Describe focus state tokens]
+### Backend Skills (14/14)
+Backend skills reference theming tokens for any UI components they generate (admin panels, API documentation, etc.).
 
 ---
+
+## Core Architecture
+
+### Token Hierarchy (3 Levels)
+
+```
+Primitive Tokens     → Raw values (--color-blue-500: #3B82F6)
+        ↓
+Semantic Tokens      → Purpose-based (--color-primary: var(--color-blue-500))
+        ↓
+Component Tokens     → Component-specific (--button-bg-primary: var(--color-primary))
 ```
 
-## Component-Specific Token Examples
+### Token Categories (7 Core)
 
-### Data Visualization
+| Category | Purpose | Example |
+|----------|---------|---------|
+| Color | All color values | `--color-primary`, `--color-error` |
+| Spacing | Margins, padding, gaps | `--spacing-md`, `--space-4` |
+| Typography | Fonts, sizes, weights | `--font-size-base`, `--font-weight-bold` |
+| Borders | Widths, styles | `--border-width-thin`, `--radius-md` |
+| Shadows | Elevation, depth | `--shadow-md`, `--shadow-focus-primary` |
+| Motion | Transitions, animations | `--duration-fast`, `--transition-fast` |
+| Z-Index | Stacking order | `--z-modal`, `--z-tooltip` |
+
+---
+
+## Component Token Naming Convention
+
+```
+--{component}-{property}-{variant?}-{state?}
+```
+
+**Examples:**
+- `--button-bg-primary` - Button background, primary variant
+- `--button-bg-primary-hover` - Button background, primary variant, hover state
+- `--input-border-color-focus` - Input border color, focus state
+- `--chart-color-1` - Chart color palette, first color
+
+---
+
+## Component-Specific Token Reference
+
+### Data Visualization (`visualizing-data`)
 ```css
 --chart-primary-color: var(--color-primary);
 --chart-secondary-color: var(--color-secondary);
@@ -136,9 +80,22 @@ All [COMPONENT TYPE] components use the **design-tokens** skill for visual styli
 --chart-grid-color: var(--color-border);
 --chart-tooltip-bg: var(--color-gray-900);
 --chart-tooltip-text: var(--color-white);
+--chart-color-1: var(--color-blue-500);
+--chart-color-2: var(--color-green-500);
+--chart-color-3: var(--color-amber-500);
 ```
 
-### Dashboards
+### Tables (`building-tables`)
+```css
+--table-bg: var(--color-white);
+--table-header-bg: var(--color-gray-50);
+--table-row-hover-bg: var(--color-gray-100);
+--table-border-color: var(--color-border);
+--table-cell-padding: var(--spacing-md);
+--table-sort-icon-color: var(--color-text-secondary);
+```
+
+### Dashboards (`creating-dashboards`)
 ```css
 --dashboard-bg: var(--color-bg-secondary);
 --widget-bg: var(--color-white);
@@ -149,54 +106,38 @@ All [COMPONENT TYPE] components use the **design-tokens** skill for visual styli
 --kpi-trend-negative: var(--color-error);
 ```
 
-### Feedback/Notifications
+### Forms (`building-forms`)
 ```css
---toast-bg: var(--color-gray-900);
---toast-text: var(--color-white);
---toast-shadow: var(--shadow-xl);
---alert-success-bg: var(--color-success-bg);
---alert-error-bg: var(--color-error-bg);
---modal-backdrop-bg: rgba(0, 0, 0, 0.5);
+--input-bg: var(--color-white);
+--input-border-color: var(--color-border);
+--input-border-color-focus: var(--color-primary);
+--input-text-color: var(--color-text-primary);
+--input-placeholder-color: var(--color-text-tertiary);
+--input-error-color: var(--color-error);
+--input-padding: var(--spacing-sm) var(--spacing-md);
 ```
 
-### Navigation
+### Search & Filter (`implementing-search-filter`)
 ```css
---nav-bg: var(--color-white);
---nav-border-color: var(--color-border);
---nav-item-color: var(--color-text-primary);
---nav-item-hover-bg: var(--color-gray-100);
---nav-item-active-bg: var(--color-primary-50);
---nav-item-active-color: var(--color-primary);
+--search-input-bg: var(--color-white);
+--search-icon-color: var(--color-text-secondary);
+--filter-chip-bg: var(--color-gray-100);
+--filter-chip-bg-active: var(--color-primary-50);
+--filter-dropdown-shadow: var(--shadow-lg);
 ```
 
-### Layout
+### AI Chat (`building-ai-chat`)
 ```css
---layout-max-width: 1280px;
---layout-gutter: var(--spacing-md);
---container-padding: var(--spacing-lg);
---grid-gap: var(--spacing-md);
+--chat-bg: var(--color-bg-primary);
+--chat-user-bubble-bg: var(--color-primary);
+--chat-user-bubble-text: var(--color-white);
+--chat-ai-bubble-bg: var(--color-gray-100);
+--chat-ai-bubble-text: var(--color-text-primary);
+--chat-typing-indicator-color: var(--color-text-secondary);
+--chat-input-bg: var(--color-white);
 ```
 
-### Media
-```css
---image-border-radius: var(--radius-md);
---image-shadow: var(--shadow-md);
---video-player-bg: var(--color-black);
---video-controls-bg: rgba(0, 0, 0, 0.7);
---upload-zone-border-color: var(--color-border);
---upload-zone-border-color-active: var(--color-primary);
-```
-
-### Timeline
-```css
---timeline-line-color: var(--color-border);
---timeline-dot-color: var(--color-primary);
---timeline-item-bg: var(--color-white);
---timeline-item-shadow: var(--shadow-sm);
---timestamp-color: var(--color-text-secondary);
-```
-
-### Drag-Drop
+### Drag & Drop (`implementing-drag-drop`)
 ```css
 --draggable-cursor: grab;
 --dragging-cursor: grabbing;
@@ -204,9 +145,64 @@ All [COMPONENT TYPE] components use the **design-tokens** skill for visual styli
 --drop-zone-border-color-active: var(--color-primary);
 --drop-zone-bg-active: var(--color-primary-50);
 --dragged-item-opacity: 0.5;
+--drag-handle-color: var(--color-text-tertiary);
 ```
 
-### Onboarding
+### Feedback (`providing-feedback`)
+```css
+--toast-bg: var(--color-gray-900);
+--toast-text: var(--color-white);
+--toast-shadow: var(--shadow-xl);
+--alert-success-bg: var(--color-success-bg);
+--alert-error-bg: var(--color-error-bg);
+--alert-warning-bg: var(--color-warning-bg);
+--modal-backdrop-bg: rgba(0, 0, 0, 0.5);
+--modal-bg: var(--color-white);
+```
+
+### Navigation (`implementing-navigation`)
+```css
+--nav-bg: var(--color-white);
+--nav-border-color: var(--color-border);
+--nav-item-color: var(--color-text-primary);
+--nav-item-hover-bg: var(--color-gray-100);
+--nav-item-active-bg: var(--color-primary-50);
+--nav-item-active-color: var(--color-primary);
+--nav-mobile-menu-bg: var(--color-white);
+```
+
+### Layout (`designing-layouts`)
+```css
+--layout-max-width: 1280px;
+--layout-gutter: var(--spacing-md);
+--container-padding: var(--spacing-lg);
+--grid-gap: var(--spacing-md);
+--sidebar-width: 256px;
+--header-height: 64px;
+```
+
+### Timeline (`displaying-timelines`)
+```css
+--timeline-line-color: var(--color-border);
+--timeline-dot-color: var(--color-primary);
+--timeline-dot-size: 12px;
+--timeline-item-bg: var(--color-white);
+--timeline-item-shadow: var(--shadow-sm);
+--timestamp-color: var(--color-text-secondary);
+```
+
+### Media (`managing-media`)
+```css
+--image-border-radius: var(--radius-md);
+--image-shadow: var(--shadow-md);
+--video-player-bg: var(--color-black);
+--video-controls-bg: rgba(0, 0, 0, 0.7);
+--upload-zone-border-color: var(--color-border);
+--upload-zone-border-color-active: var(--color-primary);
+--upload-progress-color: var(--color-primary);
+```
+
+### Onboarding (`guiding-users`)
 ```css
 --tour-spotlight-bg: var(--color-white);
 --tour-spotlight-shadow: var(--shadow-2xl);
@@ -214,34 +210,133 @@ All [COMPONENT TYPE] components use the **design-tokens** skill for visual styli
 --tour-progress-color: var(--color-primary);
 --tooltip-bg: var(--color-gray-900);
 --tooltip-text: var(--color-white);
+--hint-bg: var(--color-primary-50);
 ```
 
 ---
 
-## Integration Benefits
+## Theme Support
 
-By adding this section to each component init.md, we achieve:
+All component tokens automatically adapt to themes:
 
-1. **Separation of Concerns**: Component behavior separate from visual styling
-2. **Consistency**: All components reference the same token system
-3. **Theme Support**: Built-in light/dark/high-contrast/custom themes
-4. **Brand Flexibility**: Easy to apply brand identity via token overrides
-5. **Accessibility**: WCAG compliance handled at token level
-6. **Documentation**: Clear reference for which tokens each component uses
-7. **Progressive Disclosure**: Detailed token docs in design-tokens skill
+### Built-in Themes
+- **Light Mode** - Default bright theme
+- **Dark Mode** - Dark backgrounds, light text
+- **High Contrast** - WCAG AAA compliance (7:1 contrast)
+- **Custom Brand** - Override tokens for brand identity
+
+### Theme Switching
+
+```javascript
+// Set theme
+document.documentElement.setAttribute('data-theme', 'dark');
+
+// Toggle theme
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  document.documentElement.setAttribute('data-theme',
+    current === 'dark' ? 'light' : 'dark'
+  );
+}
+```
+
+### Dark Mode Example
+
+```css
+:root[data-theme="dark"] {
+  /* Semantic tokens automatically adjust */
+  --color-bg-primary: var(--color-gray-900);
+  --color-bg-secondary: var(--color-gray-800);
+  --color-text-primary: var(--color-gray-50);
+  --color-border: var(--color-gray-700);
+
+  /* Component tokens use semantics - no changes needed! */
+}
+```
 
 ---
 
-## Quick Integration Steps
+## RTL/i18n Support
 
-For each remaining component init.md:
+Use CSS logical properties for automatic RTL language support:
 
-1. **Identify location**: Find "## Skill Structure" section
-2. **Add section**: Insert "## Styling & Theming" before it
-3. **Customize tokens**: List relevant tokens for that component type
-4. **Provide examples**: Show how to override tokens for custom theming
-5. **Document accessibility**: Describe how tokens ensure WCAG compliance
+| Physical (Avoid) | Logical (Use) |
+|------------------|---------------|
+| `margin-left` | `margin-inline-start` |
+| `padding-right` | `padding-inline-end` |
+| `text-align: left` | `text-align: start` |
+| `border-left` | `border-inline-start` |
+
+**Example:**
+```css
+.button {
+  padding-inline: var(--button-padding-inline);
+  margin-inline-start: var(--spacing-sm);
+}
+```
 
 ---
 
-*This template ensures consistent styling documentation across all component skills while maintaining the flexibility for component-specific token definitions.*
+## Accessibility Tokens
+
+### Focus States
+```css
+--focus-ring-color: var(--color-primary);
+--focus-ring-width: 2px;
+--focus-ring-offset: 2px;
+--shadow-focus-primary: 0 0 0 3px rgba(59, 130, 246, 0.3);
+```
+
+### Reduced Motion
+```css
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --transition-fast: none;
+  }
+}
+```
+
+### High Contrast
+```css
+:root[data-theme="high-contrast"] {
+  --color-primary: #0000FF;
+  --color-text-primary: #000000;
+  --color-bg-primary: #FFFFFF;
+  /* 7:1+ contrast ratios */
+}
+```
+
+---
+
+## Integration Checklist
+
+When creating or updating a component skill:
+
+- [ ] Use CSS custom properties for ALL visual styling
+- [ ] Follow naming convention: `--{component}-{property}-{variant?}-{state?}`
+- [ ] Reference semantic tokens, not primitive values
+- [ ] Use CSS logical properties for spacing/alignment
+- [ ] Include focus state tokens for accessibility
+- [ ] Test with light, dark, and high-contrast themes
+- [ ] Verify reduced motion support
+
+---
+
+## Reference Documents
+
+**In `skills/theming-components/`:**
+- `SKILL.md` - Main theming skill documentation
+- `references/color-system.md` - Complete color scales
+- `references/typography-system.md` - Type system
+- `references/spacing-system.md` - Spacing scale
+- `references/theme-switching.md` - Theme implementation
+- `references/component-integration.md` - Integration patterns
+- `references/logical-properties.md` - RTL support
+- `references/accessibility-tokens.md` - WCAG compliance
+- `references/style-dictionary-setup.md` - Multi-platform export
+
+---
+
+*This guide ensures consistent styling across all 29 skills while enabling theme customization and accessibility compliance.*

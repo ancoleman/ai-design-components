@@ -1,0 +1,139 @@
+name: Roadmap Item
+description: Propose a new roadmap item or milestone for AI Design Components
+title: "[ROADMAP]: "
+labels: ["roadmap", "planning"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Roadmap Item Proposal
+        Use this template to propose new milestones, features, or strategic initiatives for the AI Design Components project.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Roadmap Category
+      description: Which area of the project does this relate to?
+      options:
+        - "Foundation Skills (design-tokens, core architecture)"
+        - "Data Skills (data-viz, tables, dashboards)"
+        - "Input Skills (forms, search-filter)"
+        - "Interaction Skills (ai-chat, drag-drop, feedback)"
+        - "Structure Skills (navigation, layout, timeline)"
+        - "Content Skills (media, onboarding)"
+        - "Infrastructure (CI/CD, testing, documentation)"
+        - "Community (templates, contributions, governance)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority_tier
+    attributes:
+      label: Priority Tier
+      description: Based on strategic importance (see CLAUDE.md for tier definitions)
+      options:
+        - "Tier 1: Foundation (Highest Priority)"
+        - "Tier 2: High-Value Components"
+        - "Tier 3: Specialized Patterns"
+        - "Infrastructure/Tooling"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: timeline
+    attributes:
+      label: Target Release
+      description: When should this be completed?
+      options:
+        - "v0.2.0 (Next Minor)"
+        - "v0.3.0 (Following Minor)"
+        - "v1.0.0 (Stable Release)"
+        - "Future (Post-1.0)"
+        - "Ongoing/Continuous"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the roadmap item and its strategic value
+      placeholder: |
+        What is this roadmap item?
+        Why is it important for the project?
+        How does it align with project goals?
+    validations:
+      required: true
+
+  - type: textarea
+    id: success_criteria
+    attributes:
+      label: Success Criteria
+      description: How will we know this is complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: What must be completed before this can start?
+      placeholder: |
+        - Depends on #123
+        - Requires design-tokens skill completion
+        - Needs external library research
+    validations:
+      required: false
+
+  - type: textarea
+    id: skills_affected
+    attributes:
+      label: Skills Affected
+      description: Which skills will this impact?
+      placeholder: |
+        - data-viz (major changes)
+        - forms (minor updates)
+        - All skills (if infrastructure)
+    validations:
+      required: false
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Estimated Effort
+      description: Rough complexity estimate
+      options:
+        - "Small (1-2 skills, straightforward)"
+        - "Medium (3-5 skills, moderate complexity)"
+        - "Large (6+ skills or architectural changes)"
+        - "Epic (Major initiative spanning multiple releases)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation_notes
+    attributes:
+      label: Implementation Notes
+      description: Any technical considerations or approaches to consider
+      placeholder: |
+        Technical approach ideas, constraints, or considerations...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have checked this doesn't duplicate an existing roadmap item
+          required: true
+        - label: This aligns with the project's strategic priorities
+          required: true
+        - label: I have considered dependencies on other work
+          required: true

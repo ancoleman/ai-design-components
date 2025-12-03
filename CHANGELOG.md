@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.4] - 2025-12-03
+
+### Added
+- **Community Health Files**:
+  - `CODE_OF_CONDUCT.md` - Contributor Covenant v2.1
+  - `CONTRIBUTING.md` - Comprehensive contribution guidelines
+    - Skill development guidelines from skill_best_practice.md
+    - Branch naming, commit messages, PR process
+    - Quality checklist for skills
+    - Multi-language support expectations
+
+- **GitHub Issue Templates** (`.github/ISSUE_TEMPLATE/`):
+  - `bug_report.yml` - Bug reporting with component, skill, environment fields
+  - `feature_request.yml` - Feature proposals with priority and acceptance criteria
+  - `skill_contribution.yml` - Dedicated skill contribution workflow
+    - Quality checklist (500 line limit, gerund naming, progressive disclosure)
+    - Decision framework requirements
+    - Multi-language support
+  - `documentation.yml` - Documentation improvement requests
+  - `question.yml` - General questions and discussions
+  - `config.yml` - Template configuration with contact links
+
+- **Project Roadmap System**:
+  - `.github/ROADMAP.md` - Comprehensive project roadmap reflecting all 29 skills complete
+  - `.github/ISSUE_TEMPLATE/roadmap_item.yml` - Issue template for proposing roadmap items
+
+### Changed
+- **Documentation Updates**:
+  - `docs/STYLING_TEMPLATE.md` - Completely rewritten as integration guide
+    - Updated to reflect all 29 skills complete
+    - Added component-specific token references for all 12 UI skills
+    - Added theme switching, RTL support, and accessibility sections
+    - Uses correct gerund skill naming convention
+  - Added `source_data/` to `.gitignore`
+
 ## [0.3.3] - 2025-12-02
 
 ### Added
