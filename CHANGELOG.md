@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2025-12-02
+
+### Added
+- Complete backend support in `/skillchain` command:
+  - Backend plugin groups: `backend-data-skills`, `backend-api-skills`, `backend-platform-skills`, `backend-ai-skills`
+  - Backend skill mappings for all 14 backend skills
+  - 14 new backend configuration question blocks (databases, APIs, auth, observability, deployment, AI/ML)
+  - Backend keyword detection (database, api, vector, kafka, deploy, auth, etc.)
+  - Full-stack compound detection combining frontend and backend skills
+- Backend examples in skillchain help guide
+- Global installation option for skillchain command (`--global` flag)
+- Architecture documentation directory (`docs/architecture/`)
+
+### Changed
+- Updated skillchain.md to show all 29 skills (was showing only 15)
+- Help guide now displays both frontend (15) and backend (14) skill categories
+- Skillchain description updated to "full-stack applications" (from "UI components")
+- Moved TOKEN_EFFICIENCY.md to `docs/architecture/` for better organization
+- Updated README.md with architecture docs link
+
+### Removed
+- Deleted `skillchains/` directory (17 files) - outdated documentation superseded by `/skillchain` command
+  - README.md, GUIDE.md, ROADMAP.md (outdated, claimed "3/14 skills")
+  - patterns/ directory (now embedded in skillchain.md)
+  - chains/ directory (superseded by keyword mapping)
+  - examples/ directory
+
+### Fixed
+- YAML frontmatter error in skillchain.md (unquoted values containing colons)
+
 ## [0.3.1] - 2025-12-02
 
 ### Added
@@ -142,6 +172,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Design tokens foundational system
 - AI chat interfaces (strategic priority)
 
+[0.3.2]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.2
 [0.3.1]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.1
 [0.3.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.0
 [0.2.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.2.0

@@ -2,7 +2,7 @@
 
 > Comprehensive UI/UX and Backend component design skills for AI-assisted development with Claude
 
-[![Version](https://img.shields.io/badge/version-0.3.1-blue.svg)](./VERSION)
+[![Version](https://img.shields.io/badge/version-0.3.2-blue.svg)](./VERSION)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![Skills](https://img.shields.io/badge/skills-29-purple.svg)](./skills)
 
@@ -52,7 +52,7 @@ See [commands/README.md](./commands/README.md) for complete skillchain documenta
 
 ## Project Status
 
-- **Current Version:** 0.3.1
+- **Current Version:** 0.3.2
 - **Frontend Skills:** 15/15 complete
 - **Backend Skills:** 14/14 complete
 - **Total Skills:** 29

@@ -174,11 +174,25 @@ Parse "$ARGUMENTS" for these keywords to determine which skills to invoke:
 
 If multiple keywords match, combine the skill chains. Common combinations:
 
+**Frontend Combinations:**
 - "dashboard with charts and filters" → theming → layouts → dashboards → visualizing-data → forms
 - "table with search" → theming → tables → search-filter
 - "form with notifications" → theming → forms → feedback
 - "chat with file upload" → theming → ai-chat → media → forms
 - "kanban with drag drop" → theming → drag-drop → tables
+
+**Backend Combinations:**
+- "REST API with postgres and auth" → api-patterns → databases-relational → auth-security
+- "RAG pipeline with embeddings" → ingesting-data → ai-data-engineering → databases-vector
+- "real-time chat with websockets" → api-patterns → realtime-sync → message-queues
+- "microservices with kafka" → api-patterns → message-queues → observability → deploying-applications
+- "import CSV to postgres" → ingesting-data → databases-relational
+
+**Full-Stack Combinations:**
+- "dashboard with postgres backend" → theming → dashboards → visualizing-data → api-patterns → databases-relational
+- "login form with OAuth" → theming → forms → api-patterns → auth-security
+- "chat app with real-time sync" → theming → ai-chat → api-patterns → realtime-sync → databases-document
+- "analytics dashboard with timeseries" → theming → dashboards → visualizing-data → databases-timeseries → observability
 
 ---
 
@@ -187,6 +201,8 @@ If multiple keywords match, combine the skill chains. Common combinations:
 **CRITICAL: You must actually invoke each skill using the Skill tool.**
 
 ### Plugin Groups and Skill Names
+
+#### Frontend Skills
 
 ```
 ui-foundation-skills:
@@ -219,6 +235,32 @@ ui-assembly-skills:
   - assembling-components
 ```
 
+#### Backend Skills
+
+```
+backend-data-skills:
+  - ingesting-data
+  - databases-relational
+  - databases-vector
+  - databases-timeseries
+  - databases-document
+  - databases-graph
+
+backend-api-skills:
+  - api-patterns
+  - message-queues
+  - realtime-sync
+
+backend-platform-skills:
+  - auth-security
+  - observability
+  - deploying-applications
+
+backend-ai-skills:
+  - ai-data-engineering
+  - model-serving
+```
+
 ### Invocation Syntax
 
 To invoke a skill, use:
@@ -226,7 +268,8 @@ To invoke a skill, use:
 Skill({ skill: "ui-data-skills:visualizing-data" })
 ```
 
-Match skill to its plugin group:
+#### Frontend Skill Mappings
+
 - theming-components → `ui-foundation-skills:theming-components`
 - visualizing-data → `ui-data-skills:visualizing-data`
 - building-tables → `ui-data-skills:building-tables`
@@ -242,6 +285,23 @@ Match skill to its plugin group:
 - managing-media → `ui-content-skills:managing-media`
 - guiding-users → `ui-content-skills:guiding-users`
 - assembling-components → `ui-assembly-skills:assembling-components`
+
+#### Backend Skill Mappings
+
+- ingesting-data → `backend-data-skills:ingesting-data`
+- databases-relational → `backend-data-skills:databases-relational`
+- databases-vector → `backend-data-skills:databases-vector`
+- databases-timeseries → `backend-data-skills:databases-timeseries`
+- databases-document → `backend-data-skills:databases-document`
+- databases-graph → `backend-data-skills:databases-graph`
+- api-patterns → `backend-api-skills:api-patterns`
+- message-queues → `backend-api-skills:message-queues`
+- realtime-sync → `backend-api-skills:realtime-sync`
+- auth-security → `backend-platform-skills:auth-security`
+- observability → `backend-platform-skills:observability`
+- deploying-applications → `backend-platform-skills:deploying-applications`
+- ai-data-engineering → `backend-ai-skills:ai-data-engineering`
+- model-serving → `backend-ai-skills:model-serving`
 
 ---
 
@@ -355,6 +415,236 @@ For each subsequent skill:
 > - Loading states: spinner, skeleton, or progress bar?
 > - Notifications: toast (auto-dismiss) or alert (manual)?
 > - Error display: inline or modal?
+
+### Step 4b: Backend Skill Questions
+
+**After ingesting-data:**
+> **📥 Data Ingestion Configuration**
+>
+> - Source type:
+>   - A) Cloud storage (S3, GCS, Azure Blob)
+>   - B) Files (CSV, JSON, Parquet)
+>   - C) API feeds (REST, webhooks)
+>   - D) Database migration (CDC, replication)
+>   - E) Streaming (Kafka, Kinesis)
+>
+> - Target database: PostgreSQL, MongoDB, or other?
+> - Incremental or full refresh?
+> - Schedule: real-time, hourly, daily?
+
+**After databases-relational:**
+> **🗄️ Relational Database Configuration**
+>
+> - Database:
+>   - A) PostgreSQL (recommended)
+>   - B) MySQL
+>   - C) SQLite (development/embedded)
+>
+> - ORM preference:
+>   - A) Prisma (TypeScript)
+>   - B) Drizzle (TypeScript)
+>   - C) SQLAlchemy (Python)
+>   - D) sqlx (Rust)
+>   - E) Raw SQL
+>
+> - Connection pooling? (Y/N)
+> - Migrations strategy: manual or auto-generate?
+
+**After databases-vector:**
+> **🔮 Vector Database Configuration**
+>
+> - Primary use case:
+>   - A) RAG/semantic search
+>   - B) Recommendation engine
+>   - C) Image similarity
+>   - D) Hybrid search (vector + keyword)
+>
+> - Vector store:
+>   - A) Qdrant (recommended, full-featured)
+>   - B) pgvector (PostgreSQL extension)
+>   - C) Pinecone (managed service)
+>   - D) Weaviate
+>
+> - Embedding model: OpenAI, Cohere, or local?
+> - Expected vector count: <100k, 100k-1M, 1M+?
+
+**After databases-timeseries:**
+> **📈 Time-Series Database Configuration**
+>
+> - Use case:
+>   - A) Metrics/monitoring
+>   - B) IoT sensor data
+>   - C) Financial data
+>   - D) Log aggregation
+>
+> - Database:
+>   - A) ClickHouse (analytics, fast aggregations)
+>   - B) TimescaleDB (PostgreSQL extension)
+>   - C) InfluxDB (IoT/metrics)
+>
+> - Retention policy: days, months, years?
+> - Expected write rate: low, medium, high?
+
+**After databases-document:**
+> **📄 Document Database Configuration**
+>
+> - Database:
+>   - A) MongoDB (self-hosted/Atlas)
+>   - B) Firestore (serverless, real-time)
+>   - C) DynamoDB (AWS, auto-scaling)
+>
+> - Data model: embedded or referenced documents?
+> - Indexes needed?
+> - Real-time subscriptions? (Y/N)
+
+**After databases-graph:**
+> **🕸️ Graph Database Configuration**
+>
+> - Database:
+>   - A) Neo4j (full-featured, Cypher query language)
+>   - B) Memgraph (in-memory, streaming)
+>
+> - Primary use case:
+>   - A) Social network / relationships
+>   - B) Knowledge graph
+>   - C) Fraud detection
+>   - D) Recommendation engine
+>
+> - Expected nodes/edges: <1M, 1M-100M, 100M+?
+
+**After api-patterns:**
+> **🔌 API Configuration**
+>
+> - API style:
+>   - A) REST (simple, widely supported)
+>   - B) GraphQL (flexible queries)
+>   - C) gRPC (high-performance, typed)
+>   - D) tRPC (end-to-end TypeScript)
+>
+> - Framework:
+>   - Python: FastAPI, Flask
+>   - TypeScript: Hono, Express, Fastify
+>   - Rust: Axum, Actix
+>   - Go: Chi, Gin
+>
+> - Authentication method? (JWT, API keys, OAuth)
+> - Rate limiting? (Y/N)
+
+**After message-queues:**
+> **📨 Message Queue Configuration**
+>
+> - Use case:
+>   - A) Event-driven architecture
+>   - B) Background job processing
+>   - C) Microservice communication
+>   - D) Workflow orchestration
+>
+> - Technology:
+>   - A) Kafka (high-throughput, ordered)
+>   - B) RabbitMQ (flexible routing)
+>   - C) NATS (lightweight, fast)
+>   - D) Temporal (durable workflows)
+>   - E) BullMQ/Celery (job queues)
+>
+> - Delivery guarantee: at-least-once or exactly-once?
+
+**After realtime-sync:**
+> **⚡ Real-time Configuration**
+>
+> - Protocol:
+>   - A) WebSockets (bidirectional)
+>   - B) Server-Sent Events (server push)
+>   - C) WebTransport (modern, multiplexed)
+>
+> - Use case:
+>   - A) Live updates / notifications
+>   - B) Collaborative editing (Y.js/CRDT)
+>   - C) Presence / cursors
+>   - D) Chat / messaging
+>
+> - Scale: single server or distributed?
+
+**After auth-security:**
+> **🔐 Authentication Configuration**
+>
+> - Auth method:
+>   - A) OAuth 2.1 / OIDC (Google, GitHub, etc.)
+>   - B) Passkeys / WebAuthn (passwordless)
+>   - C) Magic links (email)
+>   - D) Username/password + MFA
+>
+> - Provider:
+>   - A) Self-hosted (recommended for control)
+>   - B) Auth0
+>   - C) Clerk
+>   - D) Supabase Auth
+>
+> - Authorization: RBAC, ABAC, or simple roles?
+> - Session storage: JWT, cookies, or database?
+
+**After observability:**
+> **📊 Observability Configuration**
+>
+> - Stack:
+>   - A) LGTM (Loki, Grafana, Tempo, Mimir) - full open-source
+>   - B) OpenTelemetry + Jaeger
+>   - C) Datadog (managed)
+>   - D) Custom setup
+>
+> - What to instrument:
+>   - [ ] Traces (request flow)
+>   - [ ] Metrics (counters, gauges)
+>   - [ ] Logs (structured)
+>   - [ ] Profiling (continuous)
+>
+> - Alerting rules needed? (Y/N)
+
+**After deploying-applications:**
+> **🚀 Deployment Configuration**
+>
+> - Platform:
+>   - A) Kubernetes (full control)
+>   - B) Serverless (Lambda, Cloud Run)
+>   - C) Edge (Cloudflare Workers, Vercel Edge)
+>   - D) PaaS (Railway, Render, Fly.io)
+>
+> - Container registry: Docker Hub, ECR, GCR?
+> - CI/CD: GitHub Actions, GitLab CI, ArgoCD?
+> - Infrastructure as Code: Terraform, Pulumi, Helm?
+
+**After ai-data-engineering:**
+> **🧠 AI/RAG Pipeline Configuration**
+>
+> - Pipeline type:
+>   - A) RAG (retrieval-augmented generation)
+>   - B) Embedding generation
+>   - C) Data preprocessing for ML
+>   - D) Feature engineering
+>
+> - Chunking strategy:
+>   - A) Fixed size (simple)
+>   - B) Semantic (sentence boundaries)
+>   - C) Recursive (hierarchical)
+>   - D) Document-aware (markdown, code)
+>
+> - Embedding model: OpenAI, Cohere, local (sentence-transformers)?
+
+**After model-serving:**
+> **🤖 Model Serving Configuration**
+>
+> - Model type:
+>   - A) LLM (language model)
+>   - B) Embedding model
+>   - C) Custom ML model
+>
+> - Serving framework:
+>   - A) vLLM (fast LLM inference)
+>   - B) Ollama (local, easy setup)
+>   - C) BentoML (general ML serving)
+>   - D) TensorRT-LLM (NVIDIA optimized)
+>
+> - Hardware: CPU, GPU, or auto-scale?
+> - Batching and caching? (Y/N)
 
 ### Step 5: Invoke assembling-components (FINAL STEP)
 
