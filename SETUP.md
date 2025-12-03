@@ -2,39 +2,91 @@
 
 ## Overview
 
-This guide walks you through adding the **ai-design-components** marketplace to Claude Code, enabling access to comprehensive UI/UX component design skills for AI-assisted development. The marketplace provides 14 specialized skills organized into 6 plugin categories, covering everything from foundational design systems to advanced data visualization and interactive components.
+This guide walks you through adding the **ai-design-components** marketplace to Claude Code, enabling access to **29 comprehensive skills** for full-stack AI-assisted development. The marketplace provides both frontend UI/UX skills and backend infrastructure skills organized into 11 plugin categories.
+
+**Current Version:** 0.3.2
 
 ---
 
 ## What You're Installing
 
-The **ai-design-components** marketplace contains:
+The **ai-design-components** marketplace contains **29 skills** across frontend and backend development:
 
-### 🎨 **Foundation Skills** (1/1 complete)
-- **design-tokens**: Design system tokens and theming for consistent styling
+### Frontend Skills (15)
 
-### 📊 **Data Skills** (2/3 complete)
-- **data-viz**: Data visualization methods and components
-- **tables**: Table components and data display patterns
-- **dashboards**: Dashboard layout and analytics components
+#### 🎨 **UI Foundation Skills**
+- **theming-components**: Design tokens, dark mode, brand colors, CSS variables
 
-### 📝 **Input Skills** (1/2 complete)
-- **forms**: Form systems and validation patterns
-- **search-filter**: Search and filtering functionality
+#### 📊 **UI Data Skills**
+- **visualizing-data**: 24+ chart types with decision frameworks
+- **building-tables**: Data grids, sorting, pagination, virtualization
+- **creating-dashboards**: Dashboard layouts, KPI cards, analytics
 
-### ⚡ **Interaction Skills** (0/3 complete - WIP)
-- **ai-chat**: AI chat interface patterns
-- **drag-drop**: Drag and drop functionality
-- **feedback**: User feedback systems
+#### 📝 **UI Input Skills**
+- **building-forms**: 50+ input types, validation patterns, multi-step wizards
+- **implementing-search-filter**: Search bars, faceted filters, autocomplete
 
-### 🏗️ **Structure Skills** (0/3 complete - WIP)
-- **navigation**: Navigation patterns and components
-- **layout**: Layout systems and responsive design
-- **timeline**: Timeline and chronological displays
+#### ⚡ **UI Interaction Skills**
+- **building-ai-chat**: AI chat interfaces, streaming, context management
+- **implementing-drag-drop**: Kanban boards, sortable lists, reordering
+- **providing-feedback**: Toasts, alerts, loading states, error handling
 
-### 🎬 **Content Skills** (0/2 complete - WIP)
-- **media**: Media management components
-- **onboarding**: User onboarding flows
+#### 🏗️ **UI Structure Skills**
+- **implementing-navigation**: Menus, tabs, breadcrumbs, routing
+- **designing-layouts**: Grid systems, responsive design, sidebars
+- **displaying-timelines**: Activity feeds, history, event logs
+
+#### 🎬 **UI Content Skills**
+- **managing-media**: File upload, galleries, video/audio players
+- **guiding-users**: Onboarding flows, tutorials, tooltips
+
+#### 🔧 **UI Assembly Skills**
+- **assembling-components**: Component integration, token validation, scaffolding
+
+### Backend Skills (14)
+
+#### 💾 **Backend Data Skills**
+- **ingesting-data**: ETL, S3/GCS ingestion, CDC, dlt pipelines
+- **databases-relational**: PostgreSQL, MySQL, SQLite with Prisma/Drizzle/SQLAlchemy
+- **databases-vector**: Qdrant, Pinecone, pgvector for RAG and semantic search
+- **databases-timeseries**: ClickHouse, TimescaleDB, InfluxDB for metrics
+- **databases-document**: MongoDB, Firestore, DynamoDB
+- **databases-graph**: Neo4j, memgraph with Cypher
+
+#### 🔌 **Backend API Skills**
+- **api-patterns**: REST, GraphQL, gRPC, tRPC
+- **message-queues**: Kafka, RabbitMQ, NATS, Temporal
+- **realtime-sync**: WebSockets, SSE, Y.js, Liveblocks
+
+#### 🛡️ **Backend Platform Skills**
+- **observability**: OpenTelemetry, LGTM stack (Loki, Grafana, Tempo, Mimir)
+- **auth-security**: OAuth 2.1, passkeys/WebAuthn, RBAC, JWT
+- **deploying-applications**: Kubernetes, serverless, edge deployment
+
+#### 🧠 **Backend AI Skills**
+- **ai-data-engineering**: RAG pipelines, embedding strategies, chunking
+- **model-serving**: vLLM, BentoML, Ollama for LLM deployment
+
+---
+
+## Quick Start: The Skillchain Command
+
+The **recommended way** to use AI Design Components is through the `/skillchain` command:
+
+```bash
+# Install skillchain globally (available in all projects)
+./commands/install-skillchain.sh --global
+
+# Or install to a specific project
+./commands/install-skillchain.sh ~/your-project
+
+# Then use it in Claude Code
+/skillchain dashboard with charts and postgres backend
+/skillchain login form with OAuth authentication
+/skillchain RAG pipeline with vector search
+```
+
+See [commands/README.md](./commands/README.md) for complete skillchain documentation.
 
 ---
 
@@ -62,8 +114,6 @@ Open Claude Code and run:
 /plugin marketplace add ancoleman/ai-design-components
 ```
 
-Replace `ancoleman/ai-design-components` with your actual GitHub username and repository name.
-
 #### Step 2: Verify Installation
 
 Check that the marketplace was added successfully:
@@ -82,7 +132,7 @@ Open the plugin menu to see all available skills:
 /plugin
 ```
 
-This will show you all 6 plugin categories and their 14 individual skills.
+This will show you all 11 plugin categories and their 29 individual skills.
 
 ---
 
@@ -93,8 +143,6 @@ If you're using GitLab, Bitbucket, or another git hosting service:
 ```bash
 /plugin marketplace add https://github.com/ancoleman/ai-design-components.git
 ```
-
-Replace with your actual git repository URL.
 
 ---
 
@@ -114,74 +162,79 @@ Or if you're in a different directory:
 
 ---
 
-### Method 4: Direct marketplace.json URL
-
-If you're hosting the marketplace.json file directly on a web server:
-
-```bash
-/plugin marketplace add https://your-domain.com/path/to/marketplace.json
-```
-
----
-
 ## Installing Individual Plugins
 
 Once the marketplace is added, you can install specific plugin categories:
 
-### Install Foundation Skills
+### Frontend Plugin Categories
+
 ```bash
+# Foundation (theming)
 /plugin install ui-foundation-skills@ai-design-components
-```
 
-### Install Data Visualization Skills
-```bash
+# Data visualization, tables, dashboards
 /plugin install ui-data-skills@ai-design-components
-```
 
-### Install Form & Input Skills
-```bash
+# Forms and search/filter
 /plugin install ui-input-skills@ai-design-components
-```
 
-### Install Interaction Skills
-```bash
+# AI chat, drag-drop, feedback
 /plugin install ui-interaction-skills@ai-design-components
-```
 
-### Install Structure & Layout Skills
-```bash
+# Navigation, layout, timelines
 /plugin install ui-structure-skills@ai-design-components
+
+# Media and onboarding
+/plugin install ui-content-skills@ai-design-components
+
+# Component assembly
+/plugin install ui-assembly-skills@ai-design-components
 ```
 
-### Install Content & Media Skills
+### Backend Plugin Categories
+
 ```bash
-/plugin install ui-content-skills@ai-design-components
+# Data ingestion and databases
+/plugin install backend-data-skills@ai-design-components
+
+# REST, GraphQL, messaging, realtime
+/plugin install backend-api-skills@ai-design-components
+
+# Observability, auth, deployment
+/plugin install backend-platform-skills@ai-design-components
+
+# AI/ML data engineering and model serving
+/plugin install backend-ai-skills@ai-design-components
 ```
 
 ---
 
-## Using Individual Skills
+## Using Skills
 
-After installing a plugin category, you can access specific skills:
+### Option 1: Skillchain (Recommended)
 
-### Example: Using Data Visualization Skills
+Use the `/skillchain` command for guided, multi-skill workflows:
 
 ```bash
-# If you need help choosing the right chart type
-/data-viz help
-
-# Apply data visualization guidance to your project
-@data-viz analyze this dataset and suggest visualizations
+/skillchain help                              # Show all 29 skills
+/skillchain sales dashboard with KPIs         # Frontend workflow
+/skillchain REST API with postgres and auth   # Backend workflow
+/skillchain chat app with real-time sync      # Full-stack workflow
 ```
 
-### Example: Using Design Tokens
+### Option 2: Direct Skill Invocation
 
-```bash
-# Apply consistent design tokens
-/design-tokens setup
+Skills activate automatically based on context, or you can invoke them directly:
 
-# Get color palette recommendations
-@design-tokens suggest colors for a healthcare dashboard
+```
+"I need to display monthly revenue trends - what visualization should I use?"
+→ Automatically uses visualizing-data skill
+
+"Set up a design system with dark mode support"
+→ Automatically uses theming-components skill
+
+"Create a REST API with PostgreSQL"
+→ Automatically uses api-patterns and databases-relational skills
 ```
 
 ---
@@ -203,7 +256,8 @@ For teams working on shared projects, configure automatic marketplace installati
   "enabledPlugins": [
     "ui-foundation-skills@ai-design-components",
     "ui-data-skills@ai-design-components",
-    "ui-input-skills@ai-design-components"
+    "backend-data-skills@ai-design-components",
+    "backend-api-skills@ai-design-components"
   ]
 }
 ```
@@ -215,117 +269,47 @@ When team members open the project and trust the repository, Claude Code will:
 
 ---
 
-## Marketplace Structure Explained
+## Repository Structure
 
-Your `marketplace.json` defines the plugin organization:
+The marketplace follows this structure:
 
-```json
-{
-  "name": "ai-design-components",
-  "owner": "Anton Coleman <acoleman@paloaltonetworks.com>",
-  "version": "0.1.0",
-  "description": "Comprehensive UI/UX component design skills for AI-assisted development",
-  "plugins": [...]
-}
 ```
-
-Each plugin entry contains:
-- **name**: Plugin identifier (e.g., `ui-foundation-skills`)
-- **description**: What the plugin provides
-- **source**: Where the skill files are located (e.g., `./`)
-- **skills**: Array of individual skill names
-- **strict**: Whether plugin.json is required (false means marketplace.json serves as manifest)
-
----
-
-## Skill Activation & Usage
-
-### How Skills Work
-
-Skills are specialized knowledge sets that Claude can use when working on design tasks. When you install a plugin category, all its skills become available to Claude.
-
-### Triggering Skills
-
-Skills activate based on:
-1. **Direct invocation**: Using `/skill-name` or `@skill-name` syntax
-2. **Context detection**: Claude recognizes when a skill is relevant to your query
-3. **Explicit requests**: Asking Claude to "use the data-viz skill" or "apply design tokens"
-
-### Best Practices
-
-**For Data Visualization:**
-```
-"I need to display monthly revenue trends for the past year - 
-what visualization method should I use?"
-```
-
-**For Design Tokens:**
-```
-"Set up a design system with consistent colors, typography, 
-and spacing for a SaaS dashboard"
-```
-
-**For Forms:**
-```
-"Create a multi-step user registration form with validation"
+ai-design-components/
+├── .claude-plugin/
+│   └── marketplace.json          # Marketplace definition
+├── skills/                       # All 29 skills
+│   ├── theming-components/
+│   │   └── SKILL.md
+│   ├── visualizing-data/
+│   │   └── SKILL.md
+│   ├── databases-relational/
+│   │   └── SKILL.md
+│   └── ...                       # 26 more skills
+├── commands/
+│   ├── skillchain.md             # The /skillchain command
+│   └── install-skillchain.sh     # Installation script
+└── docs/
+    └── architecture/             # Architecture documentation
 ```
 
 ---
 
-## Advanced Configuration
-
-### Custom Skill Locations
-
-If your skills are in non-standard locations, you can specify paths in the marketplace.json:
-
-```json
-{
-  "name": "ui-foundation-skills",
-  "source": "./skills/foundation",
-  "skills": ["design-tokens"],
-  "commands": ["./commands/"],
-  "agents": ["./agents/design-reviewer.md"]
-}
-```
-
-### Version Pinning
-
-Specify exact versions for production stability:
-
-```json
-{
-  "name": "ui-data-skills",
-  "version": "1.0.0",
-  "source": "./",
-  "skills": ["data-viz", "tables", "dashboards"]
-}
-```
-
----
-
-## Managing Your Marketplace
+## Managing Your Installation
 
 ### Update Marketplace Data
 ```bash
 /plugin marketplace update ai-design-components
 ```
-Refreshes plugin listings and metadata from the source.
 
 ### List All Marketplaces
 ```bash
 /plugin marketplace list
 ```
-Shows all configured marketplaces and their status.
 
 ### Remove Marketplace
 ```bash
 /plugin marketplace remove ai-design-components
 ```
-⚠️ This will uninstall all plugins from this marketplace.
-
----
-
-## Managing Installed Plugins
 
 ### List Installed Plugins
 ```bash
@@ -354,365 +338,93 @@ Shows all configured marketplaces and their status.
 
 ### Issue: Marketplace Not Loading
 
-**Symptoms:** Can't add marketplace or see plugins
-
 **Solutions:**
 1. Verify the repository URL is correct and accessible
-2. Ensure `.claude-plugin/marketplace.json` exists in the repo root
+2. Ensure `.claude-plugin/marketplace.json` exists in the repo
 3. Validate JSON syntax: `claude plugin validate`
-4. For private repos, check GitHub authentication:
-   ```bash
-   gh auth status
-   ```
+4. For private repos, check GitHub authentication: `gh auth status`
 
 ### Issue: Skills Not Activating
 
-**Symptoms:** Skills installed but Claude doesn't use them
-
 **Solutions:**
 1. Verify plugin is enabled: `/plugin list`
-2. Re-enable the plugin: `/plugin disable ui-data-skills` then `/plugin enable ui-data-skills`
-3. Explicitly mention the skill in your request: "Use the data-viz skill to..."
-4. Check skill files exist in the expected location
+2. Re-enable the plugin
+3. Explicitly mention the skill: "Use the visualizing-data skill to..."
+4. Check skill files exist at `skills/[skill-name]/SKILL.md`
 
-### Issue: Plugin Installation Fails
-
-**Symptoms:** Marketplace loads but plugin won't install
+### Issue: Skillchain Command Not Found
 
 **Solutions:**
-1. Check that skill directories exist at the paths specified in `marketplace.json`
-2. Verify each skill has a `SKILL.md` file (if strict mode is enabled)
-3. For GitHub sources, ensure the repository is public or you have access
-4. Test by cloning the repo manually to verify file structure
-
-### Issue: Permission Denied
-
-**Symptoms:** Cannot access private repository
-
-**Solutions:**
-1. Set up SSH keys for the git hosting service
-2. Use HTTPS with personal access tokens
-3. For GitHub: Generate a token at https://github.com/settings/tokens
-4. Authenticate: `gh auth login`
+1. Ensure skillchain is installed: Check `~/.claude/commands/skillchain.md` or `.claude/commands/skillchain.md`
+2. Re-run installation: `./commands/install-skillchain.sh --global`
+3. Restart Claude Code
 
 ---
 
-## Validation & Testing
+## Multi-Language Support
 
-### Before Sharing Your Marketplace
+All backend skills provide patterns for multiple languages:
 
-1. **Validate JSON Syntax:**
-   ```bash
-   claude plugin validate ./marketplace.json
-   ```
-
-2. **Test Local Installation:**
-   ```bash
-   /plugin marketplace add ./ai-design-components
-   /plugin install ui-foundation-skills@ai-design-components
-   ```
-
-3. **Verify Skill Loading:**
-   Create a test query that should trigger each skill and confirm it works.
-
-4. **Check Documentation:**
-   Ensure each SKILL.md file is comprehensive and has clear usage examples.
+| Language | Framework Examples |
+|----------|-------------------|
+| **Python** | FastAPI, SQLAlchemy, dlt, Polars |
+| **TypeScript** | Hono, Prisma, Drizzle, tRPC |
+| **Rust** | Axum, sqlx, tokio |
+| **Go** | Chi, pgx, sqlc |
 
 ---
 
-## Repository Structure Requirements
+## Version History
 
-For your marketplace to work correctly, ensure this structure:
-
-```
-ai-design-components/
-├── .claude-plugin/
-│   └── marketplace.json          # Required: Marketplace definition
-├── design-tokens/
-│   └── SKILL.md                  # Your design tokens skill
-├── data-viz/
-│   └── SKILL.md                  # Your data visualization skill
-├── tables/
-│   └── SKILL.md                  # Your tables skill
-├── dashboards/
-│   └── SKILL.md                  # Your dashboards skill
-├── forms/
-│   └── SKILL.md                  # Your forms skill
-├── search-filter/
-│   └── SKILL.md                  # Your search/filter skill
-├── ai-chat/
-│   └── SKILL.md                  # Your AI chat skill (WIP)
-├── drag-drop/
-│   └── SKILL.md                  # Your drag-drop skill (WIP)
-├── feedback/
-│   └── SKILL.md                  # Your feedback skill (WIP)
-├── navigation/
-│   └── SKILL.md                  # Your navigation skill (WIP)
-├── layout/
-│   └── SKILL.md                  # Your layout skill (WIP)
-├── timeline/
-│   └── SKILL.md                  # Your timeline skill (WIP)
-├── media/
-│   └── SKILL.md                  # Your media skill (WIP)
-├── onboarding/
-│   └── SKILL.md                  # Your onboarding skill (WIP)
-└── README.md                     # Documentation
-```
-
-Since your `marketplace.json` uses `"source": "./"`, Claude Code will look for skill directories in the repository root.
-
----
-
-## Example Workflow: Complete Setup
-
-Here's a complete example from start to finish:
-
-```bash
-# 1. Add the marketplace
-/plugin marketplace add ancoleman/ai-design-components
-
-# 2. Verify it was added
-/plugin marketplace list
-
-# 3. Browse available plugins
-/plugin
-
-# 4. Install the data visualization plugin
-/plugin install ui-data-skills@ai-design-components
-
-# 5. Install the foundation plugin for design tokens
-/plugin install ui-foundation-skills@ai-design-components
-
-# 6. Verify installation
-/plugin list
-
-# 7. Start using skills in your work
-# Just ask Claude naturally:
-```
-
-Then in your conversation with Claude:
-
-```
-"I'm building a financial dashboard and need to display:
-1. Monthly revenue trends over 2 years
-2. Regional sales breakdown
-3. Top 10 products by revenue
-4. Customer acquisition funnel
-
-Can you help me choose the right visualization methods for each?"
-```
-
-Claude will automatically use the `data-viz` skill to provide expert guidance.
-
----
-
-## Next Steps After Installation
-
-### 1. **Explore Each Skill**
-
-Try out different skills to understand what they provide:
-- Ask for design token recommendations
-- Request data visualization suggestions  
-- Get form validation patterns
-
-### 2. **Customize for Your Workflow**
-
-- Add your team's specific design patterns to the skills
-- Create custom commands that combine multiple skills
-- Build agents that specialize in your design system
-
-### 3. **Share with Your Team**
-
-- Add the `.claude/settings.json` configuration to your repository
-- Document team-specific conventions for using the skills
-- Create example projects that showcase the skills in action
-
-### 4. **Contribute Back**
-
-- Complete the WIP skills (interaction, structure, content categories)
-- Add more visualization methods to data-viz
-- Share improvements via pull requests
-
----
-
-## Ultrathink Mode Usage
-
-For complex design decisions, you can invoke ultrathink mode with your design components:
-
-```bash
-/ultrathink "Design a complete data analytics dashboard for healthcare 
-that displays patient outcomes, resource utilization, and operational 
-metrics. Use the data-viz and dashboard skills to ensure best practices."
-```
-
-This activates a multi-agent system that will:
-1. **Architect**: Plan the dashboard structure using layout and navigation skills
-2. **Researcher**: Analyze healthcare dashboard patterns using data-viz skill
-3. **Coder**: Implement components using design-tokens for consistency
-4. **Tester**: Validate accessibility and usability
+| Version | Skills | Notes |
+|---------|--------|-------|
+| 0.3.2 | 29 | Complete backend support in skillchain |
+| 0.3.1 | 29 | Added ingesting-data skill |
+| 0.3.0 | 28 | Added 13 backend skills |
+| 0.2.0 | 15 | All frontend skills complete |
+| 0.1.0 | 2 | Initial release (data-viz, forms) |
 
 ---
 
 ## Support & Resources
 
-### Getting Help
+- **[README.md](./README.md)** - Project overview
+- **[commands/README.md](./commands/README.md)** - Skillchain documentation
+- **[CHANGELOG.md](./CHANGELOG.md)** - Version history
+- **[Anthropic Skills Docs](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills)** - Official documentation
 
-- **Marketplace Issues**: Check the troubleshooting section above
-- **Skill Documentation**: Each SKILL.md file contains detailed usage information
-- **Claude Code Docs**: https://docs.claude.com/en/docs/claude-code/plugin-marketplaces
-- **Community**: Join Claude Code Discord (#claude-code channel)
+---
 
-### Useful Commands Reference
+## Quick Reference
 
 ```bash
-# Marketplace Management
-/plugin marketplace add <source>
-/plugin marketplace list
-/plugin marketplace update <name>
-/plugin marketplace remove <name>
-
-# Plugin Management
-/plugin install <name>@<marketplace>
-/plugin list
-/plugin enable <name>
-/plugin disable <name>
-/plugin uninstall <name>
-/plugin update
-
-# Interactive Browsing
-/plugin                           # Browse all available plugins
-```
-
----
-
-## Technical Notes
-
-### Token Efficiency
-
-Skills are designed for token efficiency:
-- Core concepts are front-loaded
-- Progressive disclosure for complex topics
-- Reference patterns rather than full examples
-- Cross-references between related skills
-
-### Skill Interaction
-
-Skills can work together:
-- `design-tokens` provides values for all other component skills
-- `data-viz` guides chart selection for `dashboards`
-- `forms` and `search-filter` share validation patterns
-- `navigation` and `layout` coordinate page structure
-
-### Version Strategy
-
-The marketplace follows semantic versioning:
-- **0.1.0**: Initial beta with foundation and data skills
-- **0.2.0**: Complete input and interaction skills (planned)
-- **0.3.0**: Complete structure and content skills (planned)
-- **1.0.0**: Full production release with all 14 skills
-
----
-
-## Frequently Asked Questions
-
-**Q: Can I use some skills without installing all plugins?**  
-A: Yes! Install only the plugin categories you need. Each plugin is independent.
-
-**Q: How do I update skills when you release new versions?**  
-A: Run `/plugin marketplace update ai-design-components` then `/plugin update`
-
-**Q: Can I modify the skills for my team's needs?**  
-A: Yes! Fork the repository, customize the skills, and host your own marketplace.
-
-**Q: Do skills work offline?**  
-A: Once installed, skills are available offline. Only marketplace updates require internet.
-
-**Q: Can I create my own skills in this marketplace?**  
-A: Yes! Add new skill directories and update marketplace.json to include them.
-
-**Q: How do I know which skill to use?**  
-A: Just describe your task naturally - Claude will activate relevant skills automatically.
-
----
-
-## Conclusion
-
-The ai-design-components marketplace provides a comprehensive foundation for AI-assisted UI/UX development. By organizing design knowledge into focused, reusable skills, it enables Claude to provide expert guidance across the entire component design process - from foundational tokens to advanced data visualizations.
-
-Start with the foundation and data skills (the most complete), then gradually adopt other categories as your needs grow and the WIP skills are completed.
-
-**Ready to get started?** Run:
-
-```bash
+# Add marketplace
 /plugin marketplace add ancoleman/ai-design-components
+
+# Install all frontend skills
 /plugin install ui-foundation-skills@ai-design-components
 /plugin install ui-data-skills@ai-design-components
-```
+/plugin install ui-input-skills@ai-design-components
+/plugin install ui-interaction-skills@ai-design-components
+/plugin install ui-structure-skills@ai-design-components
+/plugin install ui-content-skills@ai-design-components
+/plugin install ui-assembly-skills@ai-design-components
 
-Then ask Claude: *"Help me design a dashboard component - what should I consider?"*
+# Install all backend skills
+/plugin install backend-data-skills@ai-design-components
+/plugin install backend-api-skills@ai-design-components
+/plugin install backend-platform-skills@ai-design-components
+/plugin install backend-ai-skills@ai-design-components
 
----
-
-## Appendix: Complete marketplace.json Reference
-
-Your current marketplace.json configuration:
-
-```json
-{
-  "name": "ai-design-components",
-  "owner": "Anton Coleman <acoleman@paloaltonetworks.com>",
-  "version": "0.1.0",
-  "description": "Comprehensive UI/UX component design skills for AI-assisted development",
-  "plugins": [
-    {
-      "name": "ui-foundation-skills",
-      "description": "Foundational design system including tokens and theming for consistent styling across all components",
-      "source": "./",
-      "skills": ["design-tokens"],
-      "strict": false
-    },
-    {
-      "name": "ui-data-skills",
-      "description": "Data visualization, tables, and dashboard components for displaying and analyzing data (2/3 complete)",
-      "source": "./",
-      "skills": ["data-viz", "tables", "dashboards"],
-      "strict": false
-    },
-    {
-      "name": "ui-input-skills",
-      "description": "Data visualization, tables, and dashboard components for displaying and analyzing data (2/3 complete)",
-      "source": "./",
-      "skills": ["forms", "search-filter"],
-      "strict": false
-    },
-    {
-      "name": "ui-interaction-skills",
-      "description": "Interactive components including AI chat interfaces, drag-drop functionality, and feedback systems (0/3 complete - WIP)",
-      "source": "./",
-      "skills": ["ai-chat", "drag-drop", "feedback"],
-      "strict": false
-    },
-    {
-      "name": "ui-structure-skills",
-      "description": "Navigation, layout, and timeline components for app structure and organization (0/3 complete - WIP)",
-      "source": "./",
-      "skills": ["navigation", "layout", "timeline"],
-      "strict": false
-    },
-    {
-      "name": "ui-content-skills",
-      "description": "Media management and user onboarding components for content-rich experiences (0/2 complete - WIP)",
-      "source": "./",
-      "skills": ["media", "onboarding"],
-      "strict": false
-    }
-  ]
-}
+# Use skillchain for guided workflows
+/skillchain dashboard with charts and filters
+/skillchain API with postgres and auth
+/skillchain RAG pipeline with embeddings
 ```
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: November 2025  
-**Maintained By**: Anton Coleman  
-**License**: Same as ai-design-components repository
+**Document Version**: 2.0
+**Last Updated**: December 2025
+**Maintained By**: Anton Coleman
+**License**: MIT
