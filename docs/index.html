@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Design Components - Claude Skills for Full-Stack Development</title>
+    <meta name="description" content="29 Claude Skills for UI/UX and Backend component design. Build full-stack applications with expert AI guidance.">
+    <meta property="og:title" content="AI Design Components">
+    <meta property="og:description" content="Comprehensive Claude Skills for full-stack application development">
+    <meta property="og:type" content="website">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #7c3aed;
+            --primary-dark: #5b21b6;
+            --primary-light: #a78bfa;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        header {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            font-weight: 800;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .tagline {
+            font-size: 1.5em;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .hero .subtitle {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .badge-version {
+            background: var(--primary);
+            color: white;
+        }
+
+        .badge-skills {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .badge-license {
+            background: var(--success);
+            color: white;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            padding: 60px 0;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 32px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: 800;
+            color: var(--primary-light);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Skills Section */
+        .skills-section {
+            padding: 60px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5em;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        .skill-category {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid var(--border);
+        }
+
+        .skill-category h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4em;
+            margin-bottom: 24px;
+        }
+
+        .skill-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .frontend-icon {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        .backend-icon {
+            background: linear-gradient(135deg, var(--success) 0%, var(--secondary) 100%);
+        }
+
+        .skill-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .skill-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .skill-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-light);
+        }
+
+        .skill-name {
+            font-weight: 500;
+        }
+
+        .skill-desc {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* Skillchain Section */
+        .skillchain-section {
+            padding: 60px 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(124, 58, 237, 0.05) 100%);
+        }
+
+        .skillchain-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 48px;
+            border: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .skillchain-content h2 {
+            font-size: 2em;
+            margin-bottom: 16px;
+        }
+
+        .skillchain-content p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .feature-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .feature-check {
+            width: 24px;
+            height: 24px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8em;
+            flex-shrink: 0;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 24px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+
+        .code-comment {
+            color: #6e7681;
+        }
+
+        .code-command {
+            color: #79c0ff;
+        }
+
+        .code-string {
+            color: #a5d6ff;
+        }
+
+        /* Resources Section */
+        .resources-section {
+            padding: 60px 0;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .resource-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 32px;
+            border: 1px solid var(--border);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 8px 32px rgba(124, 58, 237, 0.2);
+        }
+
+        .resource-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(124, 58, 237, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin-bottom: 16px;
+        }
+
+        .resource-card h3 {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .resource-card p {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        /* Footer */
+        footer {
+            padding: 48px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--text-secondary);
+        }
+
+        footer a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .skills-grid,
+            .skillchain-card {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2.5em;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">AI</div>
+                    <span>Design Components</span>
+                </div>
+                <nav class="nav-links">
+                    <a href="#skills">Skills</a>
+                    <a href="#skillchain">Skillchain</a>
+                    <a href="#resources">Resources</a>
+                    <a href="https://github.com/ancoleman/ai-design-components">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>AI Design Components</h1>
+                <p class="tagline">Claude Skills for Full-Stack Development</p>
+                <p class="subtitle">29 production-ready skills providing expert guidance for UI/UX and backend development. Built following Anthropic's official best practices.</p>
+
+                <div class="badges">
+                    <span class="badge badge-version">v0.3.3</span>
+                    <span class="badge badge-skills">29 Skills</span>
+                    <span class="badge badge-license">MIT License</span>
+                </div>
+
+                <div class="cta-buttons">
+                    <a href="https://github.com/ancoleman/ai-design-components" class="btn btn-primary">
+                        <span>View on GitHub</span>
+                        <span>-></span>
+                    </a>
+                    <a href="#skillchain" class="btn btn-secondary">
+                        <span>Get Started</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats container">
+            <div class="stat-card">
+                <div class="stat-number">29</div>
+                <div class="stat-label">Total Skills</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Frontend Skills</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">14</div>
+                <div class="stat-label">Backend Skills</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Languages</div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="skills-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Skill Categories</h2>
+                    <p>Comprehensive coverage for modern full-stack development</p>
+                </div>
+
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h3>
+                            <span class="skill-icon frontend-icon">UI</span>
+                            Frontend Skills (15)
+                        </h3>
+                        <div class="skill-list">
+                            <div class="skill-item">
+                                <span class="skill-dot"></span>
+                                <div>
+                                    <div class="skill-name">theming-components</div>
+                                    <div class="skill-desc">Design tokens and theming systems</div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-dot"></span>
+                                <div>
+                                    <div class="skill-name">visualizing-data</div>
+                                    <div class="skill-desc">24+ chart types for data visualization</div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-dot"></span>
+                                <div>
+                                    <div class="skill-name">building-forms</div>
+                                    <div class="skill-desc">50+ input types with validation</div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-dot"></span>
+                                <div>
+                                    <div class="skill-name">creating-dashboards</div>
+                                    <div class="skill-desc">Dashboard layouts and analytics</div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-dot"></span>
+                                <div>
+                                    <div class="skill-name">building-ai-chat</div>
+                                    <div class="skill-desc">AI chat interfaces and interactions</div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-dot"></span>
+                                <div>
+                                    <div class="skill-name">+ 10 more</div>
+                                    <div class="skill-desc">Tables, navigation, layouts, media...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="skill-category">
+                        <h3>
+                            <span class="skill-icon backend-icon">API</span>
+                            Backend Skills (14)
+                        </h3>
+                        <div class="skill-list">
+                            <div class="skill-item">
+                                <span class="skill-dot" style="background: var(--success);"></span>
+                                <div>
+                                    <div class="skill-name">api-patterns</div>
+                                    <div class="skill-desc">REST, GraphQL, gRPC, tRPC</div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-dot" style="background: var(--success);"></span>
+                                <div>
+                                    <div class="skill-name">databases-*</div>
+                                    <div class="skill-desc">Relational, Vector, TimeSeries, Document, Graph</div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-dot" style="background: var(--success);"></span>
+                                <div>
+                                    <div class="skill-name">ai-data-engineering</div>
+                                    <div class="skill-desc">RAG pipelines and embeddings</div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-dot" style="background: var(--success);"></span>
+                                <div>
+                                    <div class="skill-name">auth-security</div>
+                                    <div class="skill-desc">OAuth 2.1, passkeys, RBAC</div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-dot" style="background: var(--success);"></span>
+                                <div>
+                                    <div class="skill-name">observability</div>
+                                    <div class="skill-desc">OpenTelemetry, LGTM stack</div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-dot" style="background: var(--success);"></span>
+                                <div>
+                                    <div class="skill-name">+ 9 more</div>
+                                    <div class="skill-desc">Message queues, realtime, deployment...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skillchain Section -->
+        <section id="skillchain" class="skillchain-section">
+            <div class="container">
+                <div class="skillchain-card">
+                    <div class="skillchain-content">
+                        <h2>/skillchain v2.1</h2>
+                        <p>The recommended way to use AI Design Components. Just describe what you want to build - skillchain handles the rest.</p>
+
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <span class="feature-check">+</span>
+                                <div>
+                                    <strong>Blueprints</strong> - Pre-configured chains for dashboards, APIs, RAG pipelines
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-check">+</span>
+                                <div>
+                                    <strong>User Preferences</strong> - Saves your choices for smart defaults
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-check">+</span>
+                                <div>
+                                    <strong>Parallel Loading</strong> - Independent skills load concurrently
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-check">+</span>
+                                <div>
+                                    <strong>Category Routing</strong> - Auto-routes to the right orchestrator
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-comment"># Install globally</div>
+                        <div><span class="code-command">./commands/install-skillchain.sh</span> <span class="code-string">--global</span></div>
+                        <br>
+                        <div class="code-comment"># Start building</div>
+                        <div><span class="code-command">/skillchain</span> <span class="code-string">dashboard with charts</span></div>
+                        <div><span class="code-command">/skillchain</span> <span class="code-string">REST API with postgres</span></div>
+                        <div><span class="code-command">/skillchain</span> <span class="code-string">RAG pipeline with embeddings</span></div>
+                        <br>
+                        <div class="code-comment"># Get help</div>
+                        <div><span class="code-command">/skillchain</span> <span class="code-string">help</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources Section -->
+        <section id="resources" class="resources-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Resources</h2>
+                    <p>Documentation and guides to help you get started</p>
+                </div>
+
+                <div class="resources-grid">
+                    <a href="https://github.com/ancoleman/ai-design-components/blob/main/README.md" class="resource-card">
+                        <div class="resource-icon">+</div>
+                        <h3>Getting Started</h3>
+                        <p>Installation guide and quick start instructions for using AI Design Components.</p>
+                    </a>
+                    <a href="https://github.com/ancoleman/ai-design-components/blob/main/commands/README.md" class="resource-card">
+                        <div class="resource-icon">/</div>
+                        <h3>Skillchain Docs</h3>
+                        <p>Complete documentation for the /skillchain command and all its features.</p>
+                    </a>
+                    <a href="llm-ecosystem.html" class="resource-card">
+                        <div class="resource-icon">~</div>
+                        <h3>LLM Tool Ecosystem</h3>
+                        <p>Interactive guide to understanding Tool Calling, MCP, Agents, and Claude Skills.</p>
+                    </a>
+                    <a href="https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills" class="resource-card">
+                        <div class="resource-icon">A</div>
+                        <h3>Anthropic Skills Docs</h3>
+                        <p>Official Anthropic documentation for building and using Claude Skills.</p>
+                    </a>
+                    <a href="https://github.com/ancoleman/ai-design-components/blob/main/CHANGELOG.md" class="resource-card">
+                        <div class="resource-icon">*</div>
+                        <h3>Changelog</h3>
+                        <p>Version history and release notes for AI Design Components.</p>
+                    </a>
+                    <a href="https://github.com/ancoleman/ai-design-components/blob/main/CONTRIBUTING.md" class="resource-card">
+                        <div class="resource-icon">&</div>
+                        <h3>Contributing</h3>
+                        <p>Guidelines for contributing new skills and improvements to the project.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                <strong>AI Design Components</strong> - Built with Claude |
+                Following <a href="https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills">Anthropic's Skills best practices</a>
+            </p>
+            <p style="margin-top: 12px;">
+                <a href="https://github.com/ancoleman/ai-design-components">GitHub</a> |
+                MIT License
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
