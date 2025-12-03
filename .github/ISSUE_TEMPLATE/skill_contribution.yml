@@ -1,0 +1,233 @@
+name: Skill Contribution
+description: Propose contributing a new skill or major enhancement to an existing skill
+title: "[Skill]: "
+labels: ["skill-contribution", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing a skill! This template helps coordinate skill development and ensures quality standards.
+
+        **Before submitting:**
+        - Review [skill_best_practice.md](https://github.com/ancoleman/ai-design-components/blob/main/skill_best_practice.md)
+        - Check [CLAUDE.md](https://github.com/ancoleman/ai-design-components/blob/main/CLAUDE.md) for project structure
+        - Review existing skills in [skills/](https://github.com/ancoleman/ai-design-components/tree/main/skills) for examples
+
+  - type: dropdown
+    id: contribution-type
+    attributes:
+      label: Contribution Type
+      description: What are you contributing?
+      options:
+        - New Skill
+        - Major Enhancement to Existing Skill
+        - Skill Refactor/Optimization
+    validations:
+      required: true
+
+  - type: input
+    id: skill-name
+    attributes:
+      label: Skill Name
+      description: Use gerund form (verb + -ing). Examples: visualizing-data, building-forms, managing-state
+      placeholder: "e.g., animating-components"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Skill Category
+      description: Which category does this skill belong to?
+      options:
+        - Frontend - Foundation (theming, tokens)
+        - Frontend - Data Display (charts, tables, dashboards)
+        - Frontend - User Input (forms, search, filters)
+        - Frontend - Interaction (chat, drag-drop, feedback)
+        - Frontend - Structure (navigation, layouts, timelines)
+        - Frontend - Content (media, onboarding)
+        - Backend - Data Ingestion (ETL, imports)
+        - Backend - Databases (relational, vector, timeseries, document, graph)
+        - Backend - APIs & Messaging (REST, GraphQL, queues, realtime)
+        - Backend - Platform (auth, observability, deployment)
+        - Backend - AI/ML (RAG, model serving)
+        - Cross-cutting
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Skill Description
+      description: |
+        Clear description of what this skill does AND when to use it (max 1024 chars).
+        This will be the description in SKILL.md frontmatter.
+      placeholder: |
+        This skill guides building animation systems using Framer Motion, React Spring,
+        or GSAP. Use when you need to add motion, transitions, or interactive animations
+        to UI components. Covers entrance/exit animations, layout transitions, scroll-based
+        effects, and performance optimization.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope & Coverage
+      description: What does this skill cover? What libraries, patterns, or technologies?
+      placeholder: |
+        - Animation libraries: Framer Motion (React), Motion One (framework-agnostic), GSAP
+        - Animation types: Entrance/exit, layout transitions, scroll-driven, gesture-based
+        - Patterns: Spring physics, keyframes, orchestration, shared layout animations
+        - Performance: GPU acceleration, will-change, transform/opacity optimization
+        - Accessibility: prefers-reduced-motion, focus management
+    validations:
+      required: true
+
+  - type: textarea
+    id: structure
+    attributes:
+      label: Proposed File Structure
+      description: |
+        How will the skill be organized? List main files and their purpose.
+        Remember: SKILL.md should be under 500 lines (use progressive disclosure).
+      placeholder: |
+        skills/animating-components/
+        ├── SKILL.md                      # Main skill file (<500 lines)
+        ├── references/
+        │   ├── animation-types.md        # Types of animations reference
+        │   ├── library-comparison.md     # When to use which library
+        │   └── performance-guide.md      # Animation performance patterns
+        ├── examples/
+        │   ├── react-framer-motion/      # Framer Motion examples
+        │   ├── motion-one/               # Motion One examples
+        │   └── gsap/                     # GSAP examples
+        └── scripts/
+            └── validate_animation_config.py  # Config validation
+    validations:
+      required: true
+
+  - type: textarea
+    id: decision-frameworks
+    attributes:
+      label: Decision Frameworks
+      description: |
+        What decision frameworks will you provide to help users choose the right approach?
+        Skills should guide users through choices, not just list options.
+      placeholder: |
+        1. Library Selection Framework:
+           - Use Framer Motion if: React-only, need layout animations, prefer declarative API
+           - Use Motion One if: Framework-agnostic, need small bundle size, prefer imperative
+           - Use GSAP if: Complex timelines, need SVG morphing, maximum browser support
+
+        2. Animation Type Framework:
+           - Entrance/Exit: When to use fade vs slide vs scale
+           - Layout: When to use shared layout vs manual orchestration
+           - Scroll: When to use CSS scroll-timeline vs JS-based
+
+  - type: textarea
+    id: research
+    attributes:
+      label: Library Research
+      description: |
+        What research have you done? List libraries evaluated, their strengths/weaknesses.
+        If using Context7 or Google Search, summarize findings.
+      placeholder: |
+        Evaluated libraries (Nov 2025):
+        - Framer Motion (150k+ weekly downloads): Best React integration, 40KB gzipped
+        - Motion One (50k+ weekly downloads): Framework-agnostic, 2.5KB gzipped
+        - GSAP (700k+ weekly downloads): Most powerful, 50KB gzipped, paid features
+        - React Spring: Good physics, complex API, maintenance concerns
+
+  - type: dropdown
+    id: language-support
+    attributes:
+      label: Multi-Language Support
+      description: Which languages/frameworks will this skill support?
+      multiple: true
+      options:
+        - JavaScript/React
+        - JavaScript/Vue
+        - JavaScript/Svelte
+        - TypeScript
+        - Python
+        - Rust
+        - Go
+        - Other
+
+  - type: textarea
+    id: keywords
+    attributes:
+      label: Skillchain Keywords
+      description: What keywords should trigger this skill in /skillchain?
+      placeholder: |
+        animation, animate, motion, transition, spring, gesture, scroll-animation
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Skill Dependencies
+      description: Does this skill depend on other skills? Should it run before/after others?
+      placeholder: |
+        - Depends on: theming-components (for motion tokens)
+        - Should run after: designing-layouts
+        - Works with: building-forms, implementing-navigation
+
+  - type: checkboxes
+    id: quality-checklist
+    attributes:
+      label: Quality Checklist
+      description: Confirm you'll follow project standards
+      options:
+        - label: SKILL.md will be under 500 lines (progressive disclosure)
+          required: true
+        - label: Name uses gerund form (verb + -ing)
+          required: true
+        - label: Description includes WHAT and WHEN (max 1024 chars)
+          required: true
+        - label: Will provide concrete examples (not just theory)
+          required: true
+        - label: Will include decision frameworks (not just option lists)
+          required: true
+        - label: Will minimize token usage (only specialized knowledge)
+          required: true
+        - label: Will use forward slashes for paths (not backslashes)
+          required: true
+        - label: References are one level deep from SKILL.md
+          required: true
+
+  - type: dropdown
+    id: timeline
+    attributes:
+      label: Estimated Timeline
+      description: When do you plan to complete this contribution?
+      options:
+        - Within 1 week
+        - 1-2 weeks
+        - 2-4 weeks
+        - 1-2 months
+        - Flexible/exploring
+
+  - type: textarea
+    id: help-needed
+    attributes:
+      label: Help Needed
+      description: Do you need help with any aspect of this contribution?
+      placeholder: |
+        - Need guidance on: Library selection, testing approach
+        - Could use examples of: Similar skills, decision frameworks
+        - Questions about: File structure, progressive disclosure
+
+  - type: checkboxes
+    id: acknowledgment
+    attributes:
+      label: Acknowledgment
+      options:
+        - label: I have read skill_best_practice.md
+          required: true
+        - label: I have reviewed similar existing skills
+          required: true
+        - label: I understand this will be MIT licensed
+          required: true
+        - label: I'm comfortable with evaluation-driven development (create tests first)
+          required: false

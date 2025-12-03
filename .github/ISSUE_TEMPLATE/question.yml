@@ -1,0 +1,84 @@
+name: Question or Discussion
+description: Ask a question or start a discussion about AI Design Components
+title: "[Question]: "
+labels: ["question", "discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question? Want to discuss an idea? This is the place!
+
+        **Note:** For bug reports, feature requests, or skill contributions, please use the appropriate template.
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      description: What's your question about?
+      options:
+        - Getting Started
+        - Using Skillchain
+        - Using a Specific Skill
+        - Library/Framework Recommendations
+        - Best Practices
+        - Architecture/Design Patterns
+        - Contributing
+        - Project Direction
+        - General Discussion
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: skill-name
+    attributes:
+      label: Related Skill (if applicable)
+      description: Is this about a specific skill?
+      placeholder: "e.g., visualizing-data, building-forms"
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question or Discussion Topic
+      description: What would you like to know or discuss?
+      placeholder: |
+        I'm working on a dashboard and wondering which approach is better...
+
+        What's the recommended way to...
+
+        Has anyone tried using this skill with...
+
+        I'd like to discuss the possibility of...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Any additional context that might help answer your question
+      placeholder: |
+        I'm building a React application with...
+        I tried using the skill but...
+        My use case involves...
+
+  - type: textarea
+    id: attempted
+    attributes:
+      label: What Have You Tried?
+      description: Have you attempted to find an answer? What resources have you checked?
+      placeholder: |
+        - Checked the README
+        - Looked at examples in skills/*/examples/
+        - Searched existing issues
+        - Tried asking Claude...
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched existing issues for similar questions
+          required: true
+        - label: This is a question/discussion (not a bug report or feature request)
+          required: true

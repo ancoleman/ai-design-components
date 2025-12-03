@@ -1,0 +1,147 @@
+name: Bug Report
+description: Report a bug or issue with a skill, skillchain, or the project
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the information below to help us understand and fix the issue.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the project is affected?
+      options:
+        - Skillchain Command
+        - Frontend Skill
+        - Backend Skill
+        - Installation/Setup
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: skill-name
+    attributes:
+      label: Skill Name (if applicable)
+      description: If this is a skill-specific bug, which skill? (e.g., visualizing-data, building-forms)
+      placeholder: "e.g., building-forms"
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: "When I use /skillchain dashboard..., the theming step..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Install skillchain globally with './install-skillchain.sh --global'
+        2. Run '/skillchain dashboard with charts'
+        3. Answer questions...
+        4. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: "I expected the skill to generate..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: "Instead, I got an error..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: error-output
+    attributes:
+      label: Error Output/Logs
+      description: If applicable, paste any error messages or relevant log output
+      render: shell
+      placeholder: |
+        Error: File not found: {SKILLCHAIN_DIR}/_help.md
+        ...
+
+  - type: dropdown
+    id: claude-model
+    attributes:
+      label: Claude Model
+      description: Which Claude model were you using?
+      options:
+        - Claude Opus 4
+        - Claude Sonnet 4.5
+        - Claude Sonnet 4
+        - Claude Haiku 4
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: claude-code-version
+    attributes:
+      label: Claude Code Version
+      description: Output of `claude --version`
+      placeholder: "e.g., 1.2.3"
+
+  - type: dropdown
+    id: installation-type
+    attributes:
+      label: Installation Type
+      description: How did you install AI Design Components?
+      options:
+        - Global skillchain (--global)
+        - Project-specific skillchain
+        - Marketplace plugin
+        - Local clone
+        - Other
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: What OS are you using?
+      options:
+        - macOS
+        - Linux
+        - Windows (WSL)
+        - Windows (Native)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other context about the problem (screenshots, related issues, etc.)
+      placeholder: "This started happening after updating to v0.3.3..."
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched for similar issues before creating this one
+          required: true
+        - label: I have included all relevant information above
+          required: true
+        - label: I am using the latest version of the project
+          required: false

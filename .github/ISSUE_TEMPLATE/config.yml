@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📚 Documentation
+    url: https://github.com/ancoleman/ai-design-components#readme
+    about: Read the README, SETUP.md, and skill documentation
+  - name: 💬 GitHub Discussions
+    url: https://github.com/ancoleman/ai-design-components/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 🐛 Security Issues
+    url: mailto:acoleman@paloaltonetworks.com
+    about: Report security vulnerabilities privately via email

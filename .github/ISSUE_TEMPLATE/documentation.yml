@@ -1,0 +1,153 @@
+name: Documentation Improvement
+description: Report unclear documentation, missing information, or suggest improvements
+title: "[Docs]: "
+labels: ["documentation", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our documentation! Clear docs make the project accessible to everyone.
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What kind of documentation needs improvement?
+      options:
+        - README.md
+        - SETUP.md
+        - CLAUDE.md
+        - commands/README.md (Skillchain docs)
+        - Skill SKILL.md file
+        - Reference documentation
+        - Code examples
+        - CHANGELOG.md
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Documentation Location
+      description: Which file or section? (e.g., "skills/building-forms/SKILL.md", "README Quick Start")
+      placeholder: "e.g., commands/README.md - Blueprints section"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What's the problem with the current documentation?
+      options:
+        - Missing information
+        - Unclear/confusing explanation
+        - Outdated information
+        - Incorrect information
+        - Poor examples
+        - Broken links
+        - Typos/grammar
+        - Missing code examples
+        - Needs more detail
+        - Too verbose
+        - Needs better organization
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current Documentation
+      description: What does the documentation currently say? (paste relevant section or link)
+      placeholder: |
+        Current text from README.md line 45:
+        "Install the skillchain with npm install"
+
+        Or: Link to section that needs improvement
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's Unclear/Missing?
+      description: Explain what's confusing, missing, or incorrect
+      placeholder: |
+        The installation instructions mention npm, but the project uses a bash script.
+        There's no mention of the --global flag or what it does.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Improvement
+      description: How would you improve this documentation?
+      placeholder: |
+        Suggested text:
+        "Install the skillchain globally using the provided script:
+        ./commands/install-skillchain.sh --global
+
+        This makes the /skillchain command available in all your projects."
+
+        Also add:
+        - Explanation of global vs project-specific installation
+        - Link to commands/README.md for full documentation
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples/References
+      description: Are there good examples elsewhere we could follow? Links to other projects?
+      placeholder: |
+        The Anthropic skills repository has good examples of progressive disclosure:
+        https://github.com/anthropics/skills/tree/main/example-skills
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact
+      description: How much does this documentation issue affect users?
+      options:
+        - Critical - Blocks users from getting started
+        - High - Causes significant confusion
+        - Medium - Somewhat unclear
+        - Low - Minor improvement
+    validations:
+      required: true
+
+  - type: dropdown
+    id: audience
+    attributes:
+      label: Target Audience
+      description: Who is primarily affected by this documentation issue?
+      options:
+        - New users (getting started)
+        - Skill users (using existing skills)
+        - Skill contributors (creating new skills)
+        - Maintainers
+        - All users
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I'm willing to submit a PR with the suggested changes
+          required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other context about this documentation issue
+      placeholder: "I encountered this when trying to..."
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have checked this documentation is still current (not already fixed)
+          required: true
+        - label: I have provided specific suggestions for improvement
+          required: true

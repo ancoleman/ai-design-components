@@ -1,0 +1,153 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for AI Design Components
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! We appreciate your ideas for making AI Design Components better.
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: Feature Type
+      description: What kind of feature are you proposing?
+      options:
+        - New Skill
+        - Skillchain Enhancement
+        - Existing Skill Enhancement
+        - New Blueprint
+        - Documentation Improvement
+        - Tooling/Scripts
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: skill-name
+    attributes:
+      label: Skill/Component Name (if applicable)
+      description: If this relates to a specific skill or you're proposing a new skill name
+      placeholder: "e.g., building-animations, databases-graph"
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? What use case does it address?
+      placeholder: |
+        Currently, there's no skill for...
+        Users need to manually...
+        It's difficult to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like to see this implemented?
+      placeholder: |
+        Add a new skill that...
+        Enhance the skillchain command to...
+        Provide templates for...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Are there alternative solutions or workarounds you've considered?
+      placeholder: |
+        Instead of a new skill, we could...
+        Users could work around this by...
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category (if new skill)
+      description: If proposing a new skill, which category does it fit?
+      options:
+        - Frontend - Foundation
+        - Frontend - Data Display
+        - Frontend - User Input
+        - Frontend - Interaction
+        - Frontend - Structure
+        - Frontend - Content
+        - Backend - Data Ingestion
+        - Backend - Databases
+        - Backend - APIs & Messaging
+        - Backend - Platform
+        - Backend - AI/ML
+        - Cross-cutting
+        - Not applicable
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority/Impact
+      description: How important is this feature to you?
+      options:
+        - Critical - Blocking my work
+        - High - Would significantly improve my workflow
+        - Medium - Nice to have
+        - Low - Small improvement
+    validations:
+      required: true
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples/References
+      description: |
+        Are there similar features in other tools? Can you provide code examples or mockups?
+        If proposing a new skill, what libraries/patterns should it cover?
+      placeholder: |
+        Similar to how X handles...
+        Libraries to consider: Framer Motion, React Spring
+        Example use case: ...
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How would we know this feature is complete and working correctly?
+      placeholder: |
+        - [ ] Skill SKILL.md is under 500 lines
+        - [ ] Includes examples for React/Vue/Svelte
+        - [ ] Added to skillchain registry
+        - [ ] Documentation updated
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you be willing to help implement this feature?
+      options:
+        - label: I'm willing to contribute to this feature
+          required: false
+        - label: I'm willing to help with documentation
+          required: false
+        - label: I'm willing to help with testing
+          required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, or information about the feature
+      placeholder: "This would be especially useful for..."
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched for similar feature requests before creating this one
+          required: true
+        - label: This feature aligns with the project's goals (AI-assisted component design)
+          required: true
+        - label: I have provided enough detail for the feature to be evaluated
+          required: true
