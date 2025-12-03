@@ -1,7 +1,7 @@
 ---
-description: Start a guided skill chaining workflow to build UI components. Usage: /skillchain [goal] or /skillchain help
+description: "Start a guided skill chaining workflow to build UI components. Usage: /skillchain [goal] or /skillchain help"
 allowed-tools: Skill, Read, Glob, Bash, Write
-argument-hint: [goal] e.g., "dashboard with charts", "login form", "data table" — or "help" for usage guide
+argument-hint: "[goal] e.g., 'dashboard with charts', 'login form', 'data table' — or 'help' for usage guide"
 ---
 
 # Skill Chain Orchestrator
