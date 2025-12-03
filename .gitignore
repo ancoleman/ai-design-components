@@ -3,6 +3,9 @@ claude.md
 .claude/
 .agent-work/
 
+# Source data (private/sensitive)
+source_data/
+
 # OS files
 .DS_Store
 .DS_Store?
