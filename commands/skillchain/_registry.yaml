@@ -1,0 +1,758 @@
+# _registry.yaml
+registry_version: "2.1.0"  # Bump from 2.0.0 to reflect Phase 3
+version: "2.0.0"  # Keep for backwards compat
+last_updated: "2025-12-02"
+
+# Category definitions
+categories:
+  frontend:
+    description: "UI components and interactions"
+    default_tools: ["Read", "Write", "Skill"]
+
+  backend:
+    description: "APIs, databases, deployment"
+    default_tools: ["Read", "Write", "Bash", "Skill"]
+
+  fullstack:
+    description: "Frontend + Backend combinations"
+    default_tools: ["Read", "Write", "Bash", "Skill"]
+
+  ai-ml:
+    description: "AI/ML specific workflows"
+    default_tools: ["Read", "Write", "Bash", "Skill"]
+
+# Blueprint definitions (pre-configured skill chains)
+blueprints:
+  dashboard:
+    description: "Analytics dashboard with charts, KPIs, and data tables"
+    category: frontend
+    confidence_threshold: 0.7
+
+    triggers:
+      primary: [dashboard, analytics, admin panel, metrics]
+      secondary: [KPI, overview, reporting, stats]
+
+    skill_chain:
+      - theming-components
+      - designing-layouts
+      - creating-dashboards
+      - visualizing-data
+      - building-tables  # optional
+      - providing-feedback
+      - assembling-components
+
+    quick_questions: 3
+    estimated_time: "5 minutes"
+
+    file: "{SKILLCHAIN_DIR}/blueprints/dashboard.md"
+
+  crud-api:
+    description: "REST API with database, authentication, and CRUD operations"
+    category: backend
+    confidence_threshold: 0.7
+
+    triggers:
+      primary: [rest api, crud, backend api, fastapi]
+      secondary: [database api, postgres api, api server]
+
+    skill_chain:
+      - api-patterns
+      - databases-relational
+      - auth-security
+      - observability  # optional
+      - deploying-applications  # optional
+
+    quick_questions: 4
+    estimated_time: "6 minutes"
+
+    file: "{SKILLCHAIN_DIR}/blueprints/crud-api.md"
+
+  rag-pipeline:
+    description: "RAG pipeline with vector search, embeddings, and optional chat UI"
+    category: ai-ml
+    confidence_threshold: 0.7
+
+    triggers:
+      primary: [rag, semantic search, vector search, embeddings]
+      secondary: [document qa, knowledge base, ai search]
+
+    skill_chain:
+      - ingesting-data
+      - databases-vector
+      - ai-data-engineering
+      - api-patterns
+      - model-serving  # optional
+      - building-ai-chat  # optional, if UI needed
+
+    quick_questions: 4
+    estimated_time: "7 minutes"
+
+    file: "{SKILLCHAIN_DIR}/blueprints/rag-pipeline.md"
+
+# Skills registry
+skills:
+  # FRONTEND SKILLS (15)
+
+  theming-components:
+    category: frontend
+    group: foundation
+    priority: 1
+    parallel_group: 1  # Auto-added
+    required: true  # Always included for frontend
+
+    keywords:
+      primary: [theme, colors, brand, styling, tokens, dark mode]
+      secondary: [palette, design system, css variables]
+      exclusions: [api, database, backend]
+
+    invocation: "ui-foundation-skills:theming-components"
+    dependencies: []
+
+    questions:
+      source: "inline"  # < 5 questions
+      defaults:
+        color_scheme: "blue-gray"
+        theme_modes: ["light", "dark"]
+        spacing_base: "8px"
+
+    estimate_tokens: 200
+    version: "1.0.0"
+
+  visualizing-data:
+    category: frontend
+    group: data-display
+    priority: 5
+    parallel_group: 3  # Auto-added
+    required: false
+
+    keywords:
+      primary: [chart, graph, visualize, plot, analytics]
+      secondary: [bar, line, pie, donut, scatter, area, heatmap]
+      exclusions: []
+
+    invocation: "ui-data-skills:visualizing-data"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "skill"  # 10+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 350
+    version: "1.0.0"
+
+  building-tables:
+    category: frontend
+    group: data-display
+    priority: 5
+    parallel_group: 3  # Auto-added
+    required: false
+
+    keywords:
+      primary: [table, grid, records, rows, columns]
+      secondary: [data grid, list, pagination, sorting, filtering]
+      exclusions: []
+
+    invocation: "ui-data-skills:building-tables"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "skill"  # 8+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 300
+    version: "1.0.0"
+
+  creating-dashboards:
+    category: frontend
+    group: data-display
+    priority: 5
+    parallel_group: 3  # Auto-added
+    required: false
+
+    keywords:
+      primary: [dashboard, admin, metrics, overview, analytics]
+      secondary: [kpi, cards, widgets]
+      exclusions: []
+
+    invocation: "ui-data-skills:creating-dashboards"
+    dependencies: ["theming-components", "designing-layouts"]
+
+    questions:
+      source: "inline"  # 3 questions
+      defaults:
+        layout: "sidebar-grid"
+        kpi_cards: 4
+        responsive: true
+
+    estimate_tokens: 250
+    version: "1.0.0"
+
+  building-forms:
+    category: frontend
+    group: user-input
+    priority: 6
+    parallel_group: 4  # Auto-added
+    required: false
+
+    keywords:
+      primary: [form, input, validation, login, signup, register]
+      secondary: [fields, submit, textarea, select, checkbox]
+      exclusions: []
+
+    invocation: "ui-input-skills:building-forms"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "skill"  # 12+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  implementing-search-filter:
+    category: frontend
+    group: user-input
+    priority: 6
+    parallel_group: 4  # Auto-added
+    required: false
+
+    keywords:
+      primary: [search, filter, find, query]
+      secondary: [faceted, autocomplete, typeahead]
+      exclusions: []
+
+    invocation: "ui-input-skills:implementing-search-filter"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 3 questions
+      defaults:
+        realtime: true
+        position: "top-right"
+        scope: "all"
+
+    estimate_tokens: 250
+    version: "1.0.0"
+
+  building-ai-chat:
+    category: frontend
+    group: interaction
+    priority: 7
+    parallel_group: 5  # Auto-added
+    required: false
+
+    keywords:
+      primary: [chat, ai, assistant, chatbot, conversation]
+      secondary: [streaming, messages, llm]
+      exclusions: []
+
+    invocation: "ui-interaction-skills:building-ai-chat"
+    dependencies: ["theming-components", "building-forms"]
+
+    questions:
+      source: "skill"  # 8+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  implementing-drag-drop:
+    category: frontend
+    group: interaction
+    priority: 7
+    parallel_group: 5  # Auto-added
+    required: false
+
+    keywords:
+      primary: [drag, drop, sortable, reorder, move]
+      secondary: [kanban, dnd, draggable]
+      exclusions: []
+
+    invocation: "ui-interaction-skills:implementing-drag-drop"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        library: "dnd-kit"
+        touch_support: true
+
+    estimate_tokens: 250
+    version: "1.0.0"
+
+  providing-feedback:
+    category: frontend
+    group: interaction
+    priority: 8
+    parallel_group: 5  # Auto-added
+    required: false
+
+    keywords:
+      primary: [notification, toast, alert, loading, spinner]
+      secondary: [feedback, skeleton, progress]
+      exclusions: []
+
+    invocation: "ui-interaction-skills:providing-feedback"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        toast_position: "top-right"
+        loading_type: "skeleton"
+
+    estimate_tokens: 200
+    version: "1.0.0"
+
+  implementing-navigation:
+    category: frontend
+    group: structure
+    priority: 4
+    parallel_group: 2  # Auto-added
+    required: false
+
+    keywords:
+      primary: [navigation, menu, nav, tabs, routing]
+      secondary: [sidebar, breadcrumb, links]
+      exclusions: []
+
+    invocation: "ui-structure-skills:implementing-navigation"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        type: "sidebar"
+        collapsible: true
+
+    estimate_tokens: 250
+    version: "1.0.0"
+
+  designing-layouts:
+    category: frontend
+    group: structure
+    priority: 3
+    parallel_group: 2  # Auto-added
+    required: false
+
+    keywords:
+      primary: [layout, grid, columns, structure, responsive]
+      secondary: [flexbox, css grid, container]
+      exclusions: []
+
+    invocation: "ui-structure-skills:designing-layouts"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 3 questions
+      defaults:
+        system: "css-grid"
+        responsive: true
+        breakpoints: ["sm", "md", "lg", "xl"]
+
+    estimate_tokens: 250
+    version: "1.0.0"
+
+  displaying-timelines:
+    category: frontend
+    group: structure
+    priority: 6
+    parallel_group: 6  # Auto-added
+    required: false
+
+    keywords:
+      primary: [timeline, activity, history, feed, events, log]
+      secondary: [chronological, audit]
+      exclusions: []
+
+    invocation: "ui-structure-skills:displaying-timelines"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        orientation: "vertical"
+        timestamps: true
+
+    estimate_tokens: 200
+    version: "1.0.0"
+
+  managing-media:
+    category: frontend
+    group: content
+    priority: 7
+    parallel_group: 6  # Auto-added
+    required: false
+
+    keywords:
+      primary: [upload, file, image, gallery, media, video, audio]
+      secondary: [attachment, dropzone]
+      exclusions: []
+
+    invocation: "ui-content-skills:managing-media"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "skill"  # 7+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 350
+    version: "1.0.0"
+
+  guiding-users:
+    category: frontend
+    group: content
+    priority: 8
+    parallel_group: 6  # Auto-added
+    required: false
+
+    keywords:
+      primary: [onboarding, tutorial, guide, tour, tooltip, help, wizard]
+      secondary: [walkthrough, hints]
+      exclusions: []
+
+    invocation: "ui-content-skills:guiding-users"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        type: "tooltips"
+        dismissible: true
+
+    estimate_tokens: 200
+    version: "1.0.0"
+
+  assembling-components:
+    category: frontend
+    group: assembly
+    priority: 99  # Always last
+    parallel_group: 99  # Assembly - must be last
+    required: true
+
+    keywords:
+      primary: [assemble, wire, integrate, scaffold, production]
+      secondary: [validate, combine]
+      exclusions: []
+
+    invocation: "ui-assembly-skills:assembling-components"
+    dependencies: ["*"]  # Depends on all previous skills
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        validate_tokens: true
+        production_ready: true
+
+    estimate_tokens: 300
+    version: "1.0.0"
+
+  # BACKEND SKILLS (14)
+
+  ingesting-data:
+    category: backend
+    group: data-ingestion
+    priority: 5
+    parallel_group: 1  # Auto-added (backend data layer)
+    required: false
+
+    keywords:
+      primary: [ingest, import, etl, csv, extract, load, migration]
+      secondary: [s3, bucket, cdc, dlt, pipeline]
+      exclusions: []
+
+    invocation: "backend-data-skills:ingesting-data"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  databases-relational:
+    category: backend
+    group: databases
+    priority: 10
+    parallel_group: 1  # Auto-added
+    required: false
+
+    keywords:
+      primary: [database, sql, postgres, mysql, sqlite]
+      secondary: [orm, prisma, drizzle, sqlalchemy, rds]
+      exclusions: []
+
+    invocation: "backend-data-skills:databases-relational"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  databases-vector:
+    category: backend
+    group: databases
+    priority: 10
+    parallel_group: 2  # Auto-added
+    required: false
+
+    keywords:
+      primary: [vector, embedding, qdrant, pgvector, similarity]
+      secondary: [rag, semantic search, pinecone]
+      requires_any: [database, search, ai, rag]
+
+    invocation: "backend-data-skills:databases-vector"
+    dependencies: ["ingesting-data"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  databases-timeseries:
+    category: backend
+    group: databases
+    priority: 10
+    parallel_group: 1  # Auto-added
+    required: false
+
+    keywords:
+      primary: [timeseries, metrics, clickhouse, influxdb, timescale]
+      secondary: [prometheus, grafana, tsdb]
+      exclusions: []
+
+    invocation: "backend-data-skills:databases-timeseries"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  databases-document:
+    category: backend
+    group: databases
+    priority: 10
+    parallel_group: 1  # Auto-added
+    required: false
+
+    keywords:
+      primary: [nosql, mongo, document, firestore, dynamodb]
+      secondary: [collection, json, bson]
+      exclusions: []
+
+    invocation: "backend-data-skills:databases-document"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  databases-graph:
+    category: backend
+    group: databases
+    priority: 10
+    parallel_group: 1  # Auto-added
+    required: false
+
+    keywords:
+      primary: [graph, neo4j, cypher, relationships, nodes, edges]
+      secondary: [memgraph, knowledge graph]
+      exclusions: []
+
+    invocation: "backend-data-skills:databases-graph"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  api-patterns:
+    category: backend
+    group: apis
+    priority: 5
+    parallel_group: 2  # Auto-added
+    required: false
+
+    keywords:
+      primary: [api, rest, graphql, grpc, trpc]
+      secondary: [fastapi, hono, axum, endpoints]
+      exclusions: []
+
+    invocation: "backend-api-skills:api-patterns"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  message-queues:
+    category: backend
+    group: messaging
+    priority: 15
+    parallel_group: 3  # Auto-added
+    required: false
+
+    keywords:
+      primary: [kafka, queue, message, event, rabbitmq, nats]
+      secondary: [temporal, celery, pub-sub]
+      exclusions: []
+
+    invocation: "backend-api-skills:message-queues"
+    dependencies: ["api-patterns"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  realtime-sync:
+    category: backend
+    group: messaging
+    priority: 15
+    parallel_group: 3  # Auto-added
+    required: false
+
+    keywords:
+      primary: [websocket, realtime, streaming, sse, collaborative]
+      secondary: [yjs, presence, live]
+      exclusions: []
+
+    invocation: "backend-api-skills:realtime-sync"
+    dependencies: ["api-patterns"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  auth-security:
+    category: backend
+    group: platform
+    priority: 8
+    parallel_group: 3  # Auto-added
+    required: false
+
+    keywords:
+      primary: [auth, login, security, jwt, oauth, authentication]
+      secondary: [passkeys, webauthn, rbac, permissions]
+      exclusions: []
+
+    invocation: "backend-platform-skills:auth-security"
+    dependencies: ["api-patterns"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  observability:
+    category: backend
+    group: platform
+    priority: 20
+    parallel_group: 5  # Auto-added
+    required: false
+
+    keywords:
+      primary: [monitoring, observability, logs, traces, opentelemetry]
+      secondary: [otel, lgtm, metrics, prometheus]
+      exclusions: []
+
+    invocation: "backend-platform-skills:observability"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  deploying-applications:
+    category: backend
+    group: platform
+    priority: 25
+    parallel_group: 5  # Auto-added
+    required: false
+
+    keywords:
+      primary: [deploy, kubernetes, k8s, serverless, helm]
+      secondary: [lambda, vercel, cloudflare, docker]
+      exclusions: []
+
+    invocation: "backend-platform-skills:deploying-applications"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  ai-data-engineering:
+    category: backend
+    group: ai-ml
+    priority: 15
+    parallel_group: 4  # Auto-added
+    required: false
+
+    keywords:
+      primary: [rag, embeddings, chunking, pipeline]
+      secondary: [vector, indexing, semantic]
+      requires_any: [ai, rag, llm, search]
+
+    invocation: "backend-ai-skills:ai-data-engineering"
+    dependencies: ["databases-vector"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  model-serving:
+    category: backend
+    group: ai-ml
+    priority: 20
+    parallel_group: 4  # Auto-added
+    required: false
+
+    keywords:
+      primary: [llm, model, serving, vllm, inference]
+      secondary: [bentoml, ollama, mlops]
+      requires_any: [ai, llm, model]
+
+    invocation: "backend-ai-skills:model-serving"
+    dependencies: ["ai-data-engineering"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"

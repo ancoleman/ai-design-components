@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.3] - 2025-12-02
+
+### Added
+- **Skillchain v2.1 - Modular Architecture (Phase 3 Complete)**:
+  - **User Preferences System**: Saves choices to `~/.claude/skillchain-prefs.yaml` for smart defaults
+  - **Skill Versioning**: All 29 skills versioned (v1.0.0) with changelog and compatibility tracking
+  - **Parallel Skill Loading**: Independent skills load concurrently via `parallel_group` field
+  - **Blueprint System**: Pre-configured skill chains for common patterns:
+    - `dashboard` - Analytics dashboard with charts & KPIs
+    - `crud-api` - REST API with database & auth
+    - `rag-pipeline` - RAG with vector search & embeddings
+  - **Category Orchestrators**: Specialized handlers for frontend, backend, fullstack, ai-ml
+  - **Dynamic Path Discovery**: Works globally from any project via Bash path detection
+
+- New skillchain directory structure (19 files):
+  - `skillchain.md` - Router with Step 0 (path discovery), Step 0.5 (preferences), Step 7 (save prefs)
+  - `_registry.yaml` - 29 skills with keywords, dependencies, versions, parallel_group
+  - `_help.md` - Updated help with v2.1 features
+  - `_shared/` - 9 shared resource files (theming-rules, execution-flow, preferences, parallel-loading, changelog, compatibility)
+  - `categories/` - 4 orchestrators (frontend.md, backend.md, fullstack.md, ai-ml.md)
+  - `blueprints/` - 3 templates (dashboard.md, crud-api.md, rag-pipeline.md)
+
+- Updated `commands/README.md` with comprehensive v2.1 documentation
+- Updated `_help.md` with v2.1 features section and revised workflow steps
+
+### Changed
+- Installer updated to v2.1 with Phase 3 feature display
+- Registry version bumped to 2.1.0
+- All file references now use `{SKILLCHAIN_DIR}/...` pattern for portability
+- `_help.md` "How It Works" section updated to reflect 8-step workflow
+
+### Removed
+- Old monolithic `skillchain.md` files (replaced by modular structure)
+
 ## [0.3.2] - 2025-12-02
 
 ### Added
@@ -172,6 +206,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Design tokens foundational system
 - AI chat interfaces (strategic priority)
 
+[0.3.3]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.3
 [0.3.2]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.2
 [0.3.1]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.1
 [0.3.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.0
