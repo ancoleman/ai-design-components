@@ -2,7 +2,7 @@
 
 > Comprehensive UI/UX and Backend component design skills for AI-assisted development with Claude
 
-[![Version](https://img.shields.io/badge/version-0.3.2-blue.svg)](./VERSION)
+[![Version](https://img.shields.io/badge/version-0.3.3-blue.svg)](./VERSION)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![Skills](https://img.shields.io/badge/skills-29-purple.svg)](./skills)
 
@@ -12,16 +12,13 @@ AI Design Components is a collection of Claude Skills that provide expert guidan
 
 Built following [Anthropic's official Skills best practices](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills), these skills use progressive disclosure to minimize context usage while maximizing Claude's effectiveness.
 
-## Quick Start with Skillchain
+## Quick Start with Skillchain (v2.1)
 
-The **recommended way** to use AI Design Components is through the `/skillchain` command. Instead of manually triggering individual skills, skillchain provides a guided workflow:
+The **recommended way** to use AI Design Components is through the `/skillchain` command. Instead of manually triggering individual skills, skillchain provides a guided workflow with intelligent defaults.
 
 ```bash
-# Option A: Install globally (available in ALL your projects)
+# Install globally (available in ALL your projects)
 ./commands/install-skillchain.sh --global
-
-# Option B: Install to specific project
-./commands/install-skillchain.sh ~/your-project
 
 # Then start Claude Code and use skillchain
 claude
@@ -37,22 +34,46 @@ claude
 | Easy to miss required skills | Correct order enforced |
 | Manual theming | Theming always applied first |
 | Hope components integrate | Assembly validation at end |
+| Answer same questions each time | **Preferences saved for next time** |
 
-**Examples:**
+### Skillchain v2.1 Features
+
+| Feature | Description |
+|---------|-------------|
+| **Blueprints** | Pre-configured chains for common patterns (dashboard, crud-api, rag-pipeline) |
+| **User Preferences** | Saves your choices to `~/.claude/skillchain-prefs.yaml` for smart defaults |
+| **Parallel Loading** | Independent skills load concurrently for faster workflows |
+| **Skill Versioning** | All 29 skills versioned (v1.0.0) with compatibility tracking |
+| **Category Routing** | Automatic routing to frontend, backend, fullstack, or ai-ml orchestrators |
+
+### Examples
 
 ```
-/skillchain help                              # Show all 29 skills
-/skillchain sales dashboard with KPIs         # Frontend: theming → layouts → dashboards → data-viz
-/skillchain login form with OAuth             # Full-stack: theming → forms → api-patterns → auth-security
-/skillchain import CSV to postgres            # Backend: ingesting-data → databases-relational
-/skillchain RAG pipeline with vector search   # AI/ML: ingesting-data → ai-data-engineering → databases-vector
+/skillchain help                              # Show all 29 skills + v2.1 features
+/skillchain sales dashboard with KPIs         # → Uses dashboard blueprint
+/skillchain REST API with postgres            # → Uses crud-api blueprint
+/skillchain RAG pipeline with embeddings      # → Uses rag-pipeline blueprint
+/skillchain login form with OAuth             # Full-stack: theming → forms → auth-security
+```
+
+### Modular Architecture
+
+```
+commands/skillchain/
+├── skillchain.md           # Router with dynamic path discovery
+├── _registry.yaml          # 29 skills with keywords, dependencies, versions
+├── _help.md                # Help content
+├── _shared/                # Theming rules, preferences, parallel loading
+├── categories/             # Frontend, backend, fullstack, ai-ml orchestrators
+└── blueprints/             # Dashboard, crud-api, rag-pipeline templates
 ```
 
 See [commands/README.md](./commands/README.md) for complete skillchain documentation.
 
 ## Project Status
 
-- **Current Version:** 0.3.2
+- **Current Version:** 0.3.3
+- **Skillchain Version:** 2.1.0 (modular architecture)
 - **Frontend Skills:** 15/15 complete
 - **Backend Skills:** 14/14 complete
 - **Total Skills:** 29
