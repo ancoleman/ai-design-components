@@ -1,0 +1,218 @@
+/**
+ * Dashboard Layout Styles
+ * Palo Alto Networks Security Dashboard
+ */
+
+.dashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--dashboard-bg);
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.dashboard__header {
+  background: var(--dashboard-header-bg);
+  border-bottom: var(--border-width-thin) solid var(--dashboard-header-border);
+  padding: var(--spacing-md) var(--spacing-lg);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.dashboard__header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: var(--spacing-md);
+}
+
+.dashboard__branding {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.dashboard__title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+.dashboard__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.dashboard__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.dashboard__refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.dashboard__refresh:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.dashboard__refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dashboard__refresh:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--button-height-md);
+  height: var(--button-height-md);
+  background: var(--color-bg-tertiary);
+  border: var(--border-width-thin) solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-secondary);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+
+.dashboard__main {
+  flex: 1;
+  padding: var(--spacing-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Sections */
+.dashboard__section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.dashboard__section-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+/* Grid Layouts */
+.dashboard__grid {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.dashboard__grid--kpis {
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+}
+
+.dashboard__grid--charts {
+  grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
+}
+
+/* Chart Placeholder (Loading) */
+.dashboard__chart-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--min-height-chart);
+  background: var(--kpi-bg);
+  border: var(--border-width-thin) solid var(--kpi-border);
+  border-radius: var(--radius-lg);
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.dashboard__footer {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: var(--border-width-thin) solid var(--color-border-primary);
+  text-align: center;
+}
+
+.dashboard__footer p {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .dashboard__header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .dashboard__header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .dashboard__main {
+    padding: var(--spacing-md);
+  }
+
+  .dashboard__grid--charts {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard__title {
+    font-size: var(--font-size-lg);
+  }
+
+  .dashboard__grid--kpis {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,171 @@
+/**
+ * Donut Chart Styles
+ * Palo Alto Networks Security Dashboard
+ */
+
+.donut-chart {
+  background: var(--kpi-bg);
+  border: var(--border-width-thin) solid var(--kpi-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.donut-chart__title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.donut-chart__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+@media (min-width: 640px) {
+  .donut-chart__content {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+/* SVG Chart */
+.donut-chart__figure {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.donut-chart__svg {
+  display: block;
+}
+
+.donut-chart__segment {
+  transition: var(--transition-fast);
+  cursor: pointer;
+}
+
+.donut-chart__segment:hover {
+  opacity: 0.85;
+  transform-origin: center;
+}
+
+.donut-chart__segment:focus {
+  outline: none;
+}
+
+.donut-chart__segment:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Center Text */
+.donut-chart__center-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  fill: var(--color-text-primary);
+}
+
+.donut-chart__center-label {
+  font-size: var(--font-size-sm);
+  fill: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Legend */
+.donut-chart__legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-width: var(--min-width-legend);
+}
+
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+.legend__color {
+  width: var(--indicator-size-md);
+  height: var(--indicator-size-md);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.legend__label {
+  color: var(--color-text-primary);
+  flex: 1;
+}
+
+.legend__value {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.legend__percentage {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+  min-width: var(--spacing-xl);
+}
+
+/* Loading State */
+.donut-chart--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--min-height-chart);
+}
+
+.donut-chart__spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Empty State */
+.donut-chart--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--min-height-empty);
+  color: var(--color-text-tertiary);
+}
+
+.donut-chart__empty-icon {
+  font-size: var(--icon-size-xl);
+  margin-bottom: var(--spacing-md);
+  opacity: 0.5;
+}
+
+.donut-chart__empty-text {
+  font-size: var(--font-size-sm);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .donut-chart {
+    padding: var(--spacing-md);
+  }
+
+  .donut-chart__content {
+    flex-direction: column;
+  }
+
+  .donut-chart__legend {
+    width: 100%;
+  }
+
+  .legend__item {
+    justify-content: space-between;
+  }
+}

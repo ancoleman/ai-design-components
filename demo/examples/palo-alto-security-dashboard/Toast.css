@@ -1,0 +1,184 @@
+/**
+ * Toast Notification Styles
+ * Palo Alto Networks Security Dashboard
+ */
+
+.toast-container {
+  position: fixed;
+  bottom: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  max-width: 400px;
+  width: calc(100% - var(--spacing-lg) * 2);
+  pointer-events: none;
+}
+
+/* Individual Toast */
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--toast-bg);
+  border-radius: var(--toast-radius);
+  box-shadow: var(--toast-shadow);
+  border: var(--border-width-thin) solid var(--color-border-primary);
+  border-inline-start: var(--border-width-accent) solid;
+  pointer-events: auto;
+  animation: toast-enter var(--duration-normal) var(--ease-out);
+}
+
+.toast--exiting {
+  animation: toast-exit var(--duration-fast) var(--ease-out) forwards;
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-exit {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* Toast Types */
+.toast--success {
+  border-inline-start-color: var(--color-success);
+}
+
+.toast--success .toast__icon {
+  background: rgba(0, 204, 102, 0.1);
+  color: var(--color-success);
+}
+
+.toast--error {
+  border-inline-start-color: var(--color-error);
+}
+
+.toast--error .toast__icon {
+  background: rgba(200, 71, 39, 0.1);
+  color: var(--color-error);
+}
+
+.toast--warning {
+  border-inline-start-color: var(--color-warning);
+}
+
+.toast--warning .toast__icon {
+  background: rgba(255, 203, 6, 0.1);
+  color: var(--color-warning);
+}
+
+.toast--info {
+  border-inline-start-color: var(--color-info);
+}
+
+.toast--info .toast__icon {
+  background: rgba(0, 192, 232, 0.1);
+  color: var(--color-info);
+}
+
+/* Toast Icon */
+.toast__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+
+/* Toast Content */
+.toast__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast__title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--toast-text);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+.toast__message {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: var(--spacing-xs) 0 0 0;
+  line-height: var(--line-height-normal);
+}
+
+/* Dismiss Button */
+.toast__dismiss {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: var(--transition-fast);
+}
+
+.toast__dismiss:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+.toast__dismiss:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 480px) {
+  .toast-container {
+    bottom: var(--spacing-md);
+    right: var(--spacing-md);
+    left: var(--spacing-md);
+    width: auto;
+    max-width: none;
+  }
+
+  .toast {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+
+  .toast--exiting {
+    animation: none;
+    opacity: 0;
+  }
+}

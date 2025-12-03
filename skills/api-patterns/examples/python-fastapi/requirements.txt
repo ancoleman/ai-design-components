@@ -1,0 +1,5 @@
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+pydantic[email]==2.5.3
+slowapi==0.1.9

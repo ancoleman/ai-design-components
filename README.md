@@ -1,221 +1,212 @@
 # AI Design Components
 
-> Comprehensive UI/UX component design skills for AI-assisted development with Claude
+> Comprehensive UI/UX and Backend component design skills for AI-assisted development with Claude
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](./VERSION)
+[![Version](https://img.shields.io/badge/version-0.3.1-blue.svg)](./VERSION)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+[![Skills](https://img.shields.io/badge/skills-29-purple.svg)](./skills)
 
 ## Overview
 
-AI Design Components is a collection of Claude Skills that provide expert guidance for designing and implementing UI/UX components across 14 comprehensive categories. Each skill combines research-backed recommendations, decision frameworks, and production-ready code patterns to accelerate component development.
+AI Design Components is a collection of Claude Skills that provide expert guidance for designing and implementing full-stack applications. With **29 skills** across frontend and backend development, these skills combine research-backed recommendations, decision frameworks, and production-ready code patterns.
 
-Built following [Anthropic's official Skills best practices](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills), these skills use progressive disclosure to minimize context usage while maximizing Claude's effectiveness at component design decisions.
+Built following [Anthropic's official Skills best practices](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills), these skills use progressive disclosure to minimize context usage while maximizing Claude's effectiveness.
 
-## Quick Start
+## Quick Start with Skillchain
 
-### Adding to Claude Code as a Marketplace
-
-To use these skills in Claude Code, add this repository as a plugin marketplace:
+The **recommended way** to use AI Design Components is through the `/skillchain` command. Instead of manually triggering individual skills, skillchain provides a guided workflow:
 
 ```bash
-/plugin marketplace add ancoleman/ai-design-components
+# Install the skillchain command to your project
+./commands/install-skillchain.sh ~/your-project
+
+# Start Claude Code
+cd ~/your-project
+claude
+
+# Use skillchain
+/skillchain dashboard with charts and filters
 ```
 
-Then install the plugin categories you need:
+### Why Skillchain?
 
-```bash
-# Install data visualization skills
-/plugin install ui-data-skills@ai-design-components
+| Traditional Approach | Skillchain Approach |
+|---------------------|---------------------|
+| Must know skill names | Just describe what you want |
+| Trigger skills individually | Skills chain automatically |
+| Easy to miss required skills | Correct order enforced |
+| Manual theming | Theming always applied first |
+| Hope components integrate | Assembly validation at end |
 
-# Install form system skills
-/plugin install ui-input-skills@ai-design-components
+**Examples:**
+
+```
+/skillchain help                              # Show all 29 skills
+/skillchain sales dashboard with KPIs         # Frontend: theming → layouts → dashboards → data-viz
+/skillchain login form with OAuth             # Full-stack: theming → forms → api-patterns → auth-security
+/skillchain import CSV to postgres            # Backend: ingesting-data → databases-relational
+/skillchain RAG pipeline with vector search   # AI/ML: ingesting-data → ai-data-engineering → databases-vector
 ```
 
-**For complete installation instructions, troubleshooting, and advanced usage, see [SETUP.md](./SETUP.md).**
-
-## What are Claude Skills?
-
-Skills are modular packages that extend Claude's capabilities with specialized knowledge and workflows. They use a 3-tier loading architecture:
-1. **Metadata** (name + description) - Always in context
-2. **Skill body** (SKILL.md) - Loaded when relevant
-3. **Bundled resources** - Accessed on-demand (scripts, references, examples)
-
-This approach ensures efficient context usage while providing deep expertise when needed.
+See [commands/README.md](./commands/README.md) for complete skillchain documentation.
 
 ## Project Status
 
-- **Current Version:** 0.1.0 (Alpha)
-- **Completed Skills:** 2/14 (data-viz, forms)
-- **Skills in Development:** 12/14
+- **Current Version:** 0.3.1
+- **Frontend Skills:** 15/15 complete
+- **Backend Skills:** 14/14 complete
+- **Total Skills:** 29
 
 ## Skill Categories
 
-The 14 component skills are organized into 6 logical plugin groups:
+### Frontend Skills (15)
 
-### 🎨 UI Foundation Skills (0/1 complete)
-**Foundational design system**
-- `design-tokens` - Design tokens and theming system for consistent styling
+#### 🎨 UI Foundation Skills
+- `theming-components` - Design tokens and theming system
 
-### 📊 UI Data Skills (1/3 complete)
-**Data display and analysis components**
-- ✅ `data-viz` - Data visualization selection and implementation (24+ chart types)
-- `tables` - Tables and data grids
-- `dashboards` - Dashboard layouts and analytics components
+#### 📊 UI Data Skills
+- `visualizing-data` - Data visualization (24+ chart types)
+- `building-tables` - Tables and data grids
+- `creating-dashboards` - Dashboard layouts and analytics
 
-### 📝 UI Input Skills (1/2 complete)
-**User input and data collection**
-- ✅ `forms` - Form systems, validation, and input patterns (50+ input types)
-- `search-filter` - Search and filter interfaces
+#### 📝 UI Input Skills
+- `building-forms` - Form systems and validation (50+ input types)
+- `implementing-search-filter` - Search and filter interfaces
 
-### 🤖 UI Interaction Skills (0/3 complete)
-**Interactive and feedback components**
-- `ai-chat` - AI chat interfaces (STRATEGIC PRIORITY)
-- `drag-drop` - Drag-and-drop and sortable interfaces
-- `feedback` - Feedback and notification systems
+#### 🤖 UI Interaction Skills
+- `building-ai-chat` - AI chat interfaces
+- `implementing-drag-drop` - Drag-and-drop functionality
+- `providing-feedback` - Feedback and notification systems
 
-### 🧭 UI Structure Skills (0/3 complete)
-**Navigation and layout components**
-- `navigation` - Navigation patterns
-- `layout` - Layout systems and responsive design
-- `timeline` - Timeline and activity components
+#### 🧭 UI Structure Skills
+- `implementing-navigation` - Navigation patterns
+- `designing-layouts` - Layout systems and responsive design
+- `displaying-timelines` - Timeline and activity components
 
-### 🎬 UI Content Skills (0/2 complete)
-**Media and onboarding components**
-- `media` - Media and file management
-- `onboarding` - Onboarding and help systems
+#### 🎬 UI Content Skills
+- `managing-media` - Media and file management
+- `guiding-users` - Onboarding and help systems
+
+#### 🔧 UI Assembly Skills
+- `assembling-components` - Component integration and validation
+
+### Backend Skills (14)
+
+#### 💾 Backend Data Skills
+- `ingesting-data` - ETL, data ingestion from S3/APIs/files
+- `databases-relational` - PostgreSQL, MySQL, SQLite
+- `databases-vector` - Qdrant, Pinecone, pgvector
+- `databases-timeseries` - ClickHouse, TimescaleDB, InfluxDB
+- `databases-document` - MongoDB, Firestore, DynamoDB
+- `databases-graph` - Neo4j, memgraph
+
+#### 🔌 Backend API Skills
+- `api-patterns` - REST, GraphQL, gRPC, tRPC
+- `message-queues` - Kafka, RabbitMQ, NATS, Temporal
+- `realtime-sync` - WebSockets, SSE, Y.js
+
+#### 🛡️ Backend Platform Skills
+- `observability` - OpenTelemetry, LGTM stack
+- `auth-security` - OAuth 2.1, passkeys, RBAC
+- `deploying-applications` - Kubernetes, serverless, edge
+
+#### 🧠 Backend AI Skills
+- `ai-data-engineering` - RAG pipelines, embeddings
+- `model-serving` - vLLM, BentoML, Ollama
+
+## Prerequisites
+
+### Required
+- **Claude Code CLI** - [Install Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+
+### Recommended (for latest library documentation)
+- **Context7 MCP Server** - Provides up-to-date documentation lookup for libraries
+
+  ```bash
+  # Add to your Claude Code MCP configuration
+  # ~/.config/claude/mcp.json (or project .claude/mcp.json)
+  {
+    "mcpServers": {
+      "context7": {
+        "command": "npx",
+        "args": ["-y", "@anthropics/context7-mcp"]
+      }
+    }
+  }
+  ```
+
+  With Context7 enabled, skills can verify library recommendations against current documentation, ensuring you always get the latest patterns and best practices.
+
+### Optional
+- **Google Search MCP** - For real-time library research and validation
 
 ## Installation
 
 ### Option 1: Add as Claude Code Marketplace (Recommended)
 
-Add this repository as a plugin marketplace in Claude Code:
-
 ```bash
 /plugin marketplace add ancoleman/ai-design-components
 ```
 
-See **[SETUP.md](./SETUP.md)** for:
-- Detailed installation instructions
-- Installing individual plugin categories
-- Team configuration with `.claude/settings.json`
-- Troubleshooting and validation
-- Complete usage examples
+Then install plugin groups:
 
-### Option 2: Local Development
+```bash
+# Frontend skills
+/plugin install ui-data-skills@ai-design-components
+/plugin install ui-input-skills@ai-design-components
 
-1. Clone the repository:
+# Backend skills
+/plugin install backend-data-skills@ai-design-components
+/plugin install backend-api-skills@ai-design-components
+```
+
+### Option 2: Install Skillchain Command
+
+For the guided workflow experience:
+
 ```bash
 git clone https://github.com/ancoleman/ai-design-components.git
 cd ai-design-components
+./commands/install-skillchain.sh ~/your-project
 ```
 
-2. The skills are automatically available to Claude when working in this directory.
+### Option 3: Local Development
 
-### Production-Ready Skills
-
-Currently available for production use:
-- **data-viz** - Data visualization selection and implementation (24+ chart types)
-- **forms** - Form systems, validation, and input patterns (50+ input types)
-
-## Usage
-
-Skills are invoked automatically by Claude when relevant to your task. You can also explicitly reference them:
-
-### Data Visualization
-```
-"I need to visualize sales trends over time with regional breakdown"
-→ Triggers: data-viz skill
-→ Provides: Chart type recommendations, implementation patterns
+```bash
+git clone https://github.com/ancoleman/ai-design-components.git
+cd ai-design-components
+# Skills available immediately when working in this directory
 ```
 
-### Forms
-```
-"Build a user registration form with validation"
-→ Triggers: forms skill
-→ Provides: Input component selection, validation patterns, accessibility guidance
-```
+## Multi-Language Support
+
+All backend skills provide patterns for multiple languages:
+
+| Language | Framework Examples |
+|----------|-------------------|
+| **Python** | FastAPI, SQLAlchemy, dlt, Polars |
+| **TypeScript** | Hono, Prisma, Drizzle, tRPC |
+| **Rust** | Axum, sqlx, tokio |
+| **Go** | Chi, pgx, sqlc |
 
 ## Skill Structure
 
-Each skill follows this standardized structure:
+Each skill follows a standardized structure:
 
 ```
 skills/[skill-name]/
-├── SKILL.md              # Main skill file (implementation)
-├── init.md               # Master plan document (research & planning)
+├── SKILL.md              # Main skill file (<500 lines)
 ├── references/           # Detailed documentation
-├── examples/             # Code examples and templates
-├── scripts/              # Utility scripts (executed without loading to context)
-└── assets/               # Templates, schemas, illustrations
+├── examples/             # Code examples by language
+├── scripts/              # Utility scripts (executed without loading)
+└── assets/               # Templates and schemas
 ```
-
-## Development Workflow
-
-This project follows Anthropic's evaluation-driven development process:
-
-1. **Identify gaps** - Document what Claude struggles with
-2. **Create evaluations** - Build 3+ test scenarios
-3. **Establish baseline** - Measure performance without skill
-4. **Write minimal instructions** - Just enough to pass evaluations
-5. **Iterate** - Execute evaluations and refine
-
-See [skill_best_practice.md](./docs/skill_best_practice.md) for comprehensive guidance.
-
-## Key Design Principles
-
-### 1. Conciseness is Critical
-- Context window is a public good - minimize token usage
-- Only include specialized knowledge Claude doesn't already have
-- Keep SKILL.md under 500 lines; use progressive disclosure
-
-### 2. Progressive Disclosure
-- Scripts can be executed WITHOUT loading to context (zero-token cost)
-- Reference files loaded only when needed
-- Avoid deeply nested references
-
-### 3. Production-Ready Recommendations
-- All library recommendations researched (November 2025)
-- 32+ libraries evaluated with trust scores
-- Working code examples included
-
-## Strategic Priorities
-
-**Tier 1: Foundation (Highest Value)**
-1. AI/Chat Interfaces - Emerging space, high market demand
-2. Data Visualization - Complements all other skills
-3. Form Systems - Universal need
-
-**Tier 2: High-Value Components**
-4. Tables/Data Grids
-5. Dashboards
-6. Feedback Systems
-
-**Tier 3: Specialized Patterns**
-7-14. Navigation, Search/Filter, Layout, Media, Timeline, Drag-Drop, Onboarding
-
-## Research Methodology
-
-All component skills include researched library recommendations validated through:
-- Google Search Grounding (if available via MCP)
-- Context7 documentation lookup (if available via MCP)
-- Fallback to comprehensive research documented in init.md files
-
-See [skills/RESEARCH_GUIDE.md](./skills/RESEARCH_GUIDE.md) for methodology details.
-
-## Contributing
-
-This project is in active development. To contribute:
-
-1. Review [skill_best_practice.md](./docs/skill_best_practice.md)
-2. Check [CLAUDE.md](./CLAUDE.md) for repository-specific guidance
-3. Follow the evaluation-driven development process
-4. Test across models (Haiku, Sonnet, Opus)
 
 ## Documentation
 
-- **[SETUP.md](./SETUP.md)** - Complete marketplace installation and usage guide
+- **[commands/README.md](./commands/README.md)** - Skillchain command documentation
+- **[SETUP.md](./SETUP.md)** - Complete marketplace installation guide
 - **[CLAUDE.md](./CLAUDE.md)** - Repository guidance for Claude
-- **[skill_best_practice.md](./docs/skill_best_practice.md)** - Anthropic's comprehensive Skills authoring guide
 - **[CHANGELOG.md](./CHANGELOG.md)** - Version history and updates
 - **[skills/RESEARCH_GUIDE.md](./skills/RESEARCH_GUIDE.md)** - Library research methodology
 
@@ -229,10 +220,6 @@ This project is in active development. To contribute:
 ## License
 
 MIT License - See [LICENSE](./LICENSE) for details.
-
-## Version
-
-Current version: 0.1.0 - See [VERSION](./VERSION) file.
 
 ---
 

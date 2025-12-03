@@ -1,0 +1,15 @@
+name: pulumi-aws-example
+runtime: nodejs
+description: AWS ECS Fargate deployment with Pulumi
+
+template:
+  config:
+    aws:region:
+      description: AWS region
+      default: us-east-1
+    imageTag:
+      description: Docker image tag to deploy
+      default: latest
+    dbPassword:
+      description: Database password (encrypted)
+      secret: true

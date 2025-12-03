@@ -1,0 +1,195 @@
+/**
+ * KPI Card Styles
+ * Palo Alto Networks Security Dashboard
+ */
+
+.kpi-card {
+  background: var(--kpi-bg);
+  border: var(--border-width-thin) solid var(--kpi-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-height: var(--min-height-card);
+}
+
+.kpi-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-secondary);
+}
+
+/* Header */
+.kpi-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.kpi-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  color: var(--color-primary);
+}
+
+.kpi-card__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--kpi-label-color);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+/* Body */
+.kpi-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spacing-xs);
+}
+
+.kpi-card__value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--kpi-value-color);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+/* Trend Indicator */
+.kpi-card__trend {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+}
+
+.trend__icon {
+  font-weight: var(--font-weight-bold);
+}
+
+.trend__value {
+  font-weight: var(--font-weight-semibold);
+}
+
+.trend__label {
+  color: var(--color-text-tertiary);
+}
+
+/* Trend States */
+.trend--positive {
+  color: var(--kpi-trend-positive);
+}
+
+.trend--negative {
+  color: var(--kpi-trend-negative);
+}
+
+.trend--neutral {
+  color: var(--kpi-trend-neutral);
+}
+
+/* Severity Badges */
+.kpi-card__severity {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+.severity--critical {
+  background: rgba(200, 71, 39, 0.1);
+  color: var(--color-unit42-red);
+}
+
+.severity--high {
+  background: rgba(250, 88, 45, 0.1);
+  color: var(--color-cyber-orange);
+}
+
+.severity--medium {
+  background: rgba(255, 203, 6, 0.1);
+  color: var(--color-strata-yellow);
+}
+
+.severity--low {
+  background: rgba(0, 204, 102, 0.1);
+  color: var(--color-cortex-green);
+}
+
+.severity--info {
+  background: rgba(0, 192, 232, 0.1);
+  color: var(--color-prisma-blue);
+}
+
+/* Severity Border Accents */
+.kpi-card--critical {
+  border-inline-start: var(--border-width-accent) solid var(--color-unit42-red);
+}
+
+.kpi-card--high {
+  border-inline-start: var(--border-width-accent) solid var(--color-cyber-orange);
+}
+
+.kpi-card--medium {
+  border-inline-start: var(--border-width-accent) solid var(--color-strata-yellow);
+}
+
+.kpi-card--low {
+  border-inline-start: var(--border-width-accent) solid var(--color-cortex-green);
+}
+
+.kpi-card--info {
+  border-inline-start: var(--border-width-accent) solid var(--color-prisma-blue);
+}
+
+/* Loading State */
+.kpi-card--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpi-card__spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: var(--spinner-size);
+  height: var(--spinner-size);
+  border: var(--spinner-border-width) solid var(--color-border-primary);
+  border-top-color: var(--spinner-color);
+  border-radius: var(--radius-full);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .kpi-card {
+    padding: var(--spacing-md);
+    min-height: var(--min-height-card-mobile);
+  }
+
+  .kpi-card__value {
+    font-size: var(--font-size-2xl);
+  }
+}

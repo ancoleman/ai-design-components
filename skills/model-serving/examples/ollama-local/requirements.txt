@@ -1,0 +1,7 @@
+# Ollama Local Development Dependencies
+
+# HTTP client
+requests==2.31.0
+
+# Optional: Python SDK
+# ollama-python==0.1.0

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Streaming SSE Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .input-area {
+            padding: 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+        }
+
+        #prompt {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        #prompt:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        #sendBtn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #sendBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        #sendBtn:active {
+            transform: translateY(0);
+        }
+
+        #sendBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .response-area {
+            padding: 24px;
+            min-height: 300px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #9ca3af;
+        }
+
+        .status-dot.streaming {
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        #response {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            line-height: 1.6;
+            font-size: 16px;
+            color: #1f2937;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 200px;
+        }
+
+        #response:empty::before {
+            content: 'Response will appear here...';
+            color: #9ca3af;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: #667eea;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .examples {
+            padding: 24px;
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .examples h3 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .example-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .example-btn {
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 LLM Streaming Demo</h1>
+            <p>Server-Sent Events (SSE) for Real-Time AI Responses</p>
+        </div>
+
+        <div class="input-area">
+            <div class="input-wrapper">
+                <input
+                    type="text"
+                    id="prompt"
+                    placeholder="Ask me anything..."
+                    value="Explain quantum computing in simple terms"
+                />
+                <button id="sendBtn">Send</button>
+            </div>
+        </div>
+
+        <div class="response-area">
+            <div class="status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Ready</span>
+            </div>
+            <div id="error" class="error" style="display: none;"></div>
+            <div id="response"></div>
+        </div>
+
+        <div class="examples">
+            <h3>Try these examples:</h3>
+            <div class="example-buttons">
+                <button class="example-btn" data-prompt="Explain quantum computing in simple terms">Quantum Computing</button>
+                <button class="example-btn" data-prompt="Write a haiku about programming">Programming Haiku</button>
+                <button class="example-btn" data-prompt="List 5 tips for better sleep">Sleep Tips</button>
+                <button class="example-btn" data-prompt="Explain the difference between AI and ML">AI vs ML</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const promptInput = document.getElementById('prompt');
+        const sendBtn = document.getElementById('sendBtn');
+        const responseDiv = document.getElementById('response');
+        const errorDiv = document.getElementById('error');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+
+        let eventSource = null;
+        let cursorElement = null;
+
+        function updateStatus(status, text) {
+            statusDot.className = 'status-dot' + (status === 'streaming' ? ' streaming' : '');
+            statusText.textContent = text;
+        }
+
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            errorDiv.style.display = 'none';
+        }
+
+        function addCursor() {
+            cursorElement = document.createElement('span');
+            cursorElement.className = 'cursor';
+            responseDiv.appendChild(cursorElement);
+        }
+
+        function removeCursor() {
+            if (cursorElement) {
+                cursorElement.remove();
+                cursorElement = null;
+            }
+        }
+
+        function streamResponse(prompt) {
+            // Close existing connection
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            // Clear previous response
+            responseDiv.textContent = '';
+            hideError();
+
+            // Add cursor
+            addCursor();
+
+            // Update UI
+            sendBtn.disabled = true;
+            updateStatus('streaming', 'Streaming...');
+
+            // Create EventSource
+            const url = `/chat/stream?prompt=${encodeURIComponent(prompt)}`;
+            eventSource = new EventSource(url);
+
+            eventSource.addEventListener('token', (event) => {
+                // Remove cursor before adding content
+                removeCursor();
+
+                // Append token
+                responseDiv.textContent += event.data;
+
+                // Re-add cursor
+                addCursor();
+            });
+
+            eventSource.addEventListener('done', () => {
+                removeCursor();
+                eventSource.close();
+                eventSource = null;
+                sendBtn.disabled = false;
+                updateStatus('', 'Complete');
+            });
+
+            eventSource.addEventListener('error', (event) => {
+                removeCursor();
+                const errorMsg = event.data || 'Stream error occurred';
+                showError(errorMsg);
+                eventSource.close();
+                eventSource = null;
+                sendBtn.disabled = false;
+                updateStatus('', 'Error');
+            });
+
+            eventSource.onerror = () => {
+                removeCursor();
+                showError('Connection error. Please try again.');
+                eventSource.close();
+                eventSource = null;
+                sendBtn.disabled = false;
+                updateStatus('', 'Disconnected');
+            };
+        }
+
+        // Send button click
+        sendBtn.addEventListener('click', () => {
+            const prompt = promptInput.value.trim();
+            if (prompt) {
+                streamResponse(prompt);
+            }
+        });
+
+        // Enter key in input
+        promptInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+
+        // Example buttons
+        document.querySelectorAll('.example-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const prompt = btn.dataset.prompt;
+                promptInput.value = prompt;
+                streamResponse(prompt);
+            });
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (eventSource) {
+                eventSource.close();
+            }
+        });
+    </script>
+</body>
+</html>

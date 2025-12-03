@@ -1,0 +1,8 @@
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+pydantic[email]==2.9.2
+passlib[argon2]==1.7.4
+alembic==1.14.0
+python-dotenv==1.0.1

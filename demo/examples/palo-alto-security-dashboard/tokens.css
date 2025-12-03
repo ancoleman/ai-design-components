@@ -1,0 +1,299 @@
+/**
+ * Palo Alto Networks Design Tokens
+ * Generated from brand guidelines (May 2025)
+ *
+ * Usage: Include in your app and use CSS variables
+ * Theme switching: Set data-theme="dark" on <html>
+ */
+
+:root {
+  /* ========================================
+     BRAND COLORS - Palo Alto Networks
+     ======================================== */
+
+  /* Primary Brand */
+  --color-cyber-orange: #FA582D;
+  --color-orange-dark: #B23808;
+  --color-orange-light: #FF724D;
+
+  /* Sub-brand Colors */
+  --color-prisma-blue: #00C0E8;
+  --color-cortex-green: #00CC66;
+  --color-strata-yellow: #FFCB06;
+  --color-unit42-red: #C84727;
+
+  /* ========================================
+     SEMANTIC COLORS
+     ======================================== */
+
+  --color-primary: var(--color-cyber-orange);
+  --color-primary-hover: var(--color-orange-dark);
+  --color-primary-light: var(--color-orange-light);
+
+  --color-success: var(--color-cortex-green);
+  --color-warning: var(--color-strata-yellow);
+  --color-error: var(--color-unit42-red);
+  --color-info: var(--color-prisma-blue);
+
+  /* ========================================
+     LIGHT THEME (Default)
+     ======================================== */
+
+  /* Backgrounds */
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F8FAFC;
+  --color-bg-tertiary: #F1F5F9;
+  --color-bg-elevated: #FFFFFF;
+
+  /* Text */
+  --color-text-primary: #1E293B;
+  --color-text-secondary: #64748B;
+  --color-text-tertiary: #94A3B8;
+  --color-text-inverse: #FFFFFF;
+
+  /* Borders */
+  --color-border-primary: #E2E8F0;
+  --color-border-secondary: #CBD5E1;
+  --color-border-focus: var(--color-primary);
+
+  /* ========================================
+     CHART COLORS (Colorblind-safe)
+     ======================================== */
+
+  --chart-color-1: var(--color-cyber-orange);
+  --chart-color-2: var(--color-prisma-blue);
+  --chart-color-3: var(--color-cortex-green);
+  --chart-color-4: var(--color-strata-yellow);
+  --chart-color-5: var(--color-unit42-red);
+  --chart-color-6: #785EF0;
+
+  /* ========================================
+     TYPOGRAPHY
+     ======================================== */
+
+  --font-sans: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* ========================================
+     SPACING (4px base unit)
+     ======================================== */
+
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+
+  /* Semantic Spacing */
+  --spacing-xs: var(--space-1);
+  --spacing-sm: var(--space-2);
+  --spacing-md: var(--space-4);
+  --spacing-lg: var(--space-6);
+  --spacing-xl: var(--space-8);
+  --spacing-2xl: var(--space-12);
+
+  /* ========================================
+     BORDERS & RADIUS
+     ======================================== */
+
+  --border-width-thin: 1px;
+  --border-width-medium: 2px;
+  --border-width-accent: 4px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* ========================================
+     SHADOWS
+     ======================================== */
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+  /* Focus Shadow */
+  --shadow-focus: 0 0 0 3px rgba(250, 88, 45, 0.3);
+
+  /* ========================================
+     MOTION
+     ======================================== */
+
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --transition-fast: all var(--duration-fast) var(--ease-out);
+  --transition-normal: all var(--duration-normal) var(--ease-out);
+
+  /* ========================================
+     Z-INDEX SCALE
+     ======================================== */
+
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+
+  /* ========================================
+     COMPONENT TOKENS
+     ======================================== */
+
+  /* KPI Cards */
+  --kpi-bg: var(--color-bg-elevated);
+  --kpi-border: var(--color-border-primary);
+  --kpi-value-color: var(--color-text-primary);
+  --kpi-label-color: var(--color-text-secondary);
+  --kpi-trend-positive: var(--color-success);
+  --kpi-trend-negative: var(--color-error);
+  --kpi-trend-neutral: var(--color-text-tertiary);
+
+  /* Dashboard */
+  --dashboard-bg: var(--color-bg-secondary);
+  --dashboard-header-bg: var(--color-bg-primary);
+  --dashboard-header-border: var(--color-border-primary);
+
+  /* Toast */
+  --toast-bg: var(--color-bg-elevated);
+  --toast-text: var(--color-text-primary);
+  --toast-shadow: var(--shadow-lg);
+  --toast-radius: var(--radius-md);
+
+  /* Spinner */
+  --spinner-color: var(--color-primary);
+  --spinner-size: 40px;
+  --spinner-border-width: 3px;
+
+  /* ========================================
+     COMPONENT SIZE TOKENS
+     ======================================== */
+
+  /* Icon sizes */
+  --icon-size-sm: 1rem;      /* 16px */
+  --icon-size-md: 1.5rem;    /* 24px */
+  --icon-size-lg: 2rem;      /* 32px */
+  --icon-size-xl: 3rem;      /* 48px */
+
+  /* Legend/indicator sizes */
+  --indicator-size-sm: 0.5rem;   /* 8px */
+  --indicator-size-md: 0.75rem;  /* 12px */
+  --indicator-size-lg: 1rem;     /* 16px */
+
+  /* Min widths/heights */
+  --min-height-card: 140px;
+  --min-height-card-mobile: 120px;
+  --min-height-chart: 200px;
+  --min-height-empty: 200px;
+  --min-width-legend: 180px;
+  --max-width-text: 300px;
+
+  /* Button sizes */
+  --button-height-sm: 2rem;      /* 32px */
+  --button-height-md: 2.5rem;    /* 40px */
+  --button-height-lg: 3rem;      /* 48px */
+  --button-icon-size: 1.5rem;    /* 24px */
+}
+
+/* ========================================
+   DARK THEME
+   ======================================== */
+
+[data-theme="dark"] {
+  /* Backgrounds */
+  --color-bg-primary: #0F172A;
+  --color-bg-secondary: #1E293B;
+  --color-bg-tertiary: #334155;
+  --color-bg-elevated: #1E293B;
+
+  /* Text */
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-text-tertiary: #64748B;
+  --color-text-inverse: #0F172A;
+
+  /* Borders */
+  --color-border-primary: #334155;
+  --color-border-secondary: #475569;
+
+  /* Adjusted brand colors for dark mode */
+  --color-primary: var(--color-orange-light);
+
+  /* Shadows (deeper for dark mode) */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+
+  /* Dashboard */
+  --dashboard-bg: var(--color-bg-primary);
+  --dashboard-header-bg: var(--color-bg-secondary);
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+    --transition-fast: none;
+    --transition-normal: none;
+  }
+}
+
+/* ========================================
+   GLOBAL STYLES
+   ======================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--dashboard-bg);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

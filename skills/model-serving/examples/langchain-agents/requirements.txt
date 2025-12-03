@@ -1,0 +1,16 @@
+# LangChain Agent Dependencies
+
+# Core LangChain
+langchain==0.1.6
+langchain-core==0.1.21
+langchain-community==0.0.19
+
+# LLM providers
+langchain-openai==0.0.5
+
+# Vector store
+langchain-qdrant==0.1.0
+qdrant-client==1.7.3
+
+# LangChain Hub (for prompts)
+langchainhub==0.1.14

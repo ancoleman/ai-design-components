@@ -4,7 +4,7 @@
     "name": "Anton Coleman",
     "email": "acoleman@paloaltonetworks.com"
   },
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "Comprehensive UI/UX component design skills for AI-assisted development",
   "plugins": [
     {
@@ -66,6 +66,61 @@
       "skills": [
         "./skills/managing-media",
         "./skills/guiding-users"
+      ],
+      "strict": false
+    },
+    {
+      "name": "ui-assembly-skills",
+      "description": "Capstone skill for assembling component outputs into unified, production-ready systems with token validation and framework scaffolding",
+      "source": "./",
+      "skills": [
+        "./skills/assembling-components"
+      ],
+      "strict": false
+    },
+    {
+      "name": "backend-data-skills",
+      "description": "Database and data storage: relational, vector, time-series, document, graph, plus data ingestion",
+      "source": "./",
+      "skills": [
+        "./skills/ingesting-data",
+        "./skills/databases-relational",
+        "./skills/databases-vector",
+        "./skills/databases-timeseries",
+        "./skills/databases-document",
+        "./skills/databases-graph"
+      ],
+      "strict": false
+    },
+    {
+      "name": "backend-api-skills",
+      "description": "API development, messaging, and real-time communication",
+      "source": "./",
+      "skills": [
+        "./skills/api-patterns",
+        "./skills/message-queues",
+        "./skills/realtime-sync"
+      ],
+      "strict": false
+    },
+    {
+      "name": "backend-platform-skills",
+      "description": "Observability, security, and deployment infrastructure",
+      "source": "./",
+      "skills": [
+        "./skills/observability",
+        "./skills/auth-security",
+        "./skills/deploying-applications"
+      ],
+      "strict": false
+    },
+    {
+      "name": "backend-ai-skills",
+      "description": "AI/ML data engineering and model serving",
+      "source": "./",
+      "skills": [
+        "./skills/ai-data-engineering",
+        "./skills/model-serving"
       ],
       "strict": false
     }

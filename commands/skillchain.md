@@ -1,0 +1,613 @@
+---
+description: Start a guided skill chaining workflow to build UI components. Usage: /skillchain [goal] or /skillchain help
+allowed-tools: Skill, Read, Glob, Bash, Write
+argument-hint: [goal] e.g., "dashboard with charts", "login form", "data table" — or "help" for usage guide
+---
+
+# Skill Chain Orchestrator
+
+**Input:** $ARGUMENTS
+
+---
+
+## If "$ARGUMENTS" is "help" or empty, show this guide:
+
+```
+╔══════════════════════════════════════════════════════════════════╗
+║                    SKILL CHAIN HELP GUIDE                        ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                  ║
+║  USAGE: /skillchain [your goal]                                  ║
+║                                                                  ║
+║  EXAMPLES:                                                       ║
+║    /skillchain sales dashboard with revenue charts               ║
+║    /skillchain login form with validation                        ║
+║    /skillchain data table with search and filters                ║
+║    /skillchain AI chat interface                                 ║
+║    /skillchain file upload gallery                               ║
+║    /skillchain onboarding wizard                                 ║
+║                                                                  ║
+╠══════════════════════════════════════════════════════════════════╣
+║  AVAILABLE SKILLS (15 total)                                     ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                  ║
+║  FOUNDATION:                                                     ║
+║    theming-components    → Colors, tokens, dark mode, branding   ║
+║                                                                  ║
+║  DATA DISPLAY:                                                   ║
+║    visualizing-data      → Charts, graphs, data viz (24+ types)  ║
+║    building-tables       → Data grids, sorting, pagination       ║
+║    creating-dashboards   → Dashboard layouts, KPI cards          ║
+║                                                                  ║
+║  USER INPUT:                                                     ║
+║    building-forms        → Forms, validation, inputs (50+ types) ║
+║    implementing-search-filter → Search bars, faceted filters     ║
+║                                                                  ║
+║  INTERACTION:                                                    ║
+║    building-ai-chat      → Chat UI, streaming, AI interfaces     ║
+║    implementing-drag-drop → Kanban, sortable lists, reordering   ║
+║    providing-feedback    → Toasts, alerts, loading states        ║
+║                                                                  ║
+║  STRUCTURE:                                                      ║
+║    implementing-navigation → Menus, tabs, breadcrumbs, routing   ║
+║    designing-layouts     → Grids, responsive, sidebars           ║
+║    displaying-timelines  → Activity feeds, history, events       ║
+║                                                                  ║
+║  CONTENT:                                                        ║
+║    managing-media        → File upload, galleries, video/audio   ║
+║    guiding-users         → Onboarding, tutorials, tooltips       ║
+║                                                                  ║
+║  ASSEMBLY (Capstone):                                            ║
+║    assembling-components → Wires components, validates tokens    ║
+║                                                                  ║
+╠══════════════════════════════════════════════════════════════════╣
+║  WORKFLOW COMMANDS (use during skill chain)                      ║
+╠══════════════════════════════════════════════════════════════════╣
+║    "back"     → Return to previous step                          ║
+║    "skip"     → Use defaults, move to next step                  ║
+║    "status"   → Show current progress                            ║
+║    "done"     → Finish early with current selections             ║
+║    "restart"  → Start over from beginning                        ║
+║                                                                  ║
+╠══════════════════════════════════════════════════════════════════╣
+║  HOW IT WORKS                                                    ║
+╠══════════════════════════════════════════════════════════════════╣
+║                                                                  ║
+║  1. You describe what you want to build                          ║
+║  2. I identify required skills from your keywords                ║
+║  3. I invoke each skill in the correct order                     ║
+║  4. After each skill, I ask you questions based on its options   ║
+║  5. Your answers shape the final output                          ║
+║  6. All skills chain together for consistent, themed components  ║
+║                                                                  ║
+║  SKILL ORDER: theming → structure → content → interaction        ║
+║               → assembling-components (FINAL STEP)               ║
+║                                                                  ║
+╚══════════════════════════════════════════════════════════════════╝
+```
+
+If showing help, then STOP and wait for user to run `/skillchain [goal]`.
+
+---
+
+## Keyword → Skill Mapping
+
+Parse "$ARGUMENTS" for these keywords to determine which skills to invoke:
+
+### Primary Keywords
+
+| Keywords in Goal | Skills to Invoke (in order) |
+|------------------|----------------------------|
+| dashboard, analytics, metrics, admin, KPI, overview | theming → designing-layouts → creating-dashboards → visualizing-data → building-tables → building-forms → providing-feedback → assembling-components |
+| chart, graph, visualize, plot, bar, line, pie | theming → visualizing-data |
+| table, grid, records, data grid, list, rows | theming → building-tables |
+| form, login, signup, register, input, validation | theming → building-forms → providing-feedback |
+| search, filter, find, query, faceted | theming → implementing-search-filter |
+| chat, AI, assistant, chatbot, conversation, streaming | theming → building-ai-chat → building-forms |
+| upload, file, image, gallery, media, video, audio | theming → managing-media |
+| drag, drop, sortable, kanban, reorder, move | theming → implementing-drag-drop |
+| navigation, menu, nav, tabs, sidebar, routing, breadcrumb | theming → implementing-navigation → designing-layouts |
+| timeline, activity, history, feed, events, log | theming → displaying-timelines |
+| onboarding, tutorial, guide, tour, tooltip, help, wizard | theming → guiding-users |
+| layout, grid, columns, responsive, structure | theming → designing-layouts |
+| notification, toast, alert, loading, spinner, feedback | theming → providing-feedback → assembling-components |
+| theme, colors, brand, dark mode, styling, tokens | theming |
+| assemble, wire, integrate, scaffold, validate tokens, production | assembling-components |
+
+### Backend Keywords (v0.3.0)
+
+| Keywords in Goal | Skills to Invoke (in order) |
+|------------------|----------------------------|
+| database, sql, postgres, mysql, sqlite, orm, prisma, drizzle, sqlalchemy | api-patterns → databases-relational |
+| vector, embedding, rag, semantic search, qdrant, pgvector, similarity | building-ai-chat → databases-vector → ai-data-engineering |
+| timeseries, metrics, prometheus, grafana, clickhouse, influxdb | creating-dashboards → databases-timeseries → observability |
+| nosql, mongo, document, firestore, dynamodb, collection | api-patterns → databases-document |
+| graph, neo4j, cypher, relationships, nodes, edges | databases-graph |
+| api, rest, graphql, grpc, trpc, fastapi, hono, axum | api-patterns |
+| kafka, queue, message, event, rabbitmq, nats, temporal, celery | api-patterns → message-queues |
+| websocket, realtime, streaming, sse, collaborative, yjs, presence | api-patterns → realtime-sync |
+| deploy, kubernetes, k8s, helm, serverless, lambda, vercel, cloudflare | assembling-components → deploying-applications |
+| auth, login, security, jwt, oauth, passkeys, webauthn, authentication | api-patterns → auth-security |
+| monitoring, observability, logs, traces, opentelemetry, otel, lgtm | observability |
+| llm, model, serving, vllm, inference, bentoml, mlops | ai-data-engineering → model-serving |
+| ingest, import, etl, csv, s3, bucket, migration, cdc, extract, load, dlt | ingesting-data → [target-database-skill] |
+
+### Compound Detection
+
+If multiple keywords match, combine the skill chains. Common combinations:
+
+- "dashboard with charts and filters" → theming → layouts → dashboards → visualizing-data → forms
+- "table with search" → theming → tables → search-filter
+- "form with notifications" → theming → forms → feedback
+- "chat with file upload" → theming → ai-chat → media → forms
+- "kanban with drag drop" → theming → drag-drop → tables
+
+---
+
+## Skill Invocation Reference
+
+**CRITICAL: You must actually invoke each skill using the Skill tool.**
+
+### Plugin Groups and Skill Names
+
+```
+ui-foundation-skills:
+  - theming-components
+
+ui-data-skills:
+  - visualizing-data
+  - building-tables
+  - creating-dashboards
+
+ui-input-skills:
+  - building-forms
+  - implementing-search-filter
+
+ui-interaction-skills:
+  - building-ai-chat
+  - implementing-drag-drop
+  - providing-feedback
+
+ui-structure-skills:
+  - implementing-navigation
+  - designing-layouts
+  - displaying-timelines
+
+ui-content-skills:
+  - managing-media
+  - guiding-users
+
+ui-assembly-skills:
+  - assembling-components
+```
+
+### Invocation Syntax
+
+To invoke a skill, use:
+```
+Skill({ skill: "ui-data-skills:visualizing-data" })
+```
+
+Match skill to its plugin group:
+- theming-components → `ui-foundation-skills:theming-components`
+- visualizing-data → `ui-data-skills:visualizing-data`
+- building-tables → `ui-data-skills:building-tables`
+- creating-dashboards → `ui-data-skills:creating-dashboards`
+- building-forms → `ui-input-skills:building-forms`
+- implementing-search-filter → `ui-input-skills:implementing-search-filter`
+- building-ai-chat → `ui-interaction-skills:building-ai-chat`
+- implementing-drag-drop → `ui-interaction-skills:implementing-drag-drop`
+- providing-feedback → `ui-interaction-skills:providing-feedback`
+- implementing-navigation → `ui-structure-skills:implementing-navigation`
+- designing-layouts → `ui-structure-skills:designing-layouts`
+- displaying-timelines → `ui-structure-skills:displaying-timelines`
+- managing-media → `ui-content-skills:managing-media`
+- guiding-users → `ui-content-skills:guiding-users`
+- assembling-components → `ui-assembly-skills:assembling-components`
+
+---
+
+## Execution Flow
+
+### Step 1: Parse and Announce
+
+After parsing "$ARGUMENTS", tell the user:
+
+```
+🔗 Skill Chain Initiated
+
+Goal: [interpreted from $ARGUMENTS]
+
+I'll guide you through these skills:
+1. [skill] → [purpose]
+2. [skill] → [purpose]
+...
+
+Starting with theming to establish your design foundation.
+```
+
+### Step 2: Invoke theming-components (ALWAYS FIRST)
+
+```
+Skill({ skill: "ui-foundation-skills:theming-components" })
+```
+
+After it loads, ask:
+> **🎨 Theming Configuration**
+>
+> Before building components, let's set up your design tokens:
+>
+> 1. **Brand Color:** What's your primary color?
+>    - Hex code (e.g., "#3B82F6")
+>    - Or describe (e.g., "blue", "orange", "company brand")
+>    - Or "default" for standard blue
+>
+> 2. **Theme Modes:**
+>    - A) Light only
+>    - B) Light + Dark
+>    - C) Light + Dark + High Contrast (accessibility)
+>
+> Reply with: `[color], [A/B/C]` (e.g., "#FF6B35, B")
+
+### Step 3: Continue Through Skill Chain
+
+For each subsequent skill:
+
+1. **Invoke the skill** using the Skill tool
+2. **Wait for skill content to load** into context
+3. **Use the skill's decision trees** to ask relevant questions
+4. **Apply user's answers** to configure the output
+5. **Summarize** what was configured
+6. **Move to next skill** in the chain
+
+### Step 4: Questions Per Skill
+
+**After designing-layouts:**
+> **📐 Layout Configuration**
+>
+> Choose your layout structure:
+> - A) Header + grid of cards (dashboard style)
+> - B) Sidebar + main content (app style)
+> - C) Full-width sections (landing page style)
+> - D) Custom (describe what you need)
+>
+> Responsive? (Y/N)
+
+**After visualizing-data:**
+> **📊 Chart Configuration**
+>
+> Based on your goal, what data are you visualizing?
+> - Describe your metrics (revenue, users, etc.)
+> - Time period? (daily, monthly, yearly)
+> - Comparison type? (trends, categories, composition)
+>
+> I'll recommend the best chart type.
+
+**After building-tables:**
+> **📋 Table Configuration**
+>
+> - What columns do you need?
+> - Features: sortable? pagination? row selection?
+> - Approximate row count? (<100, 100-1000, 1000+)
+
+**After building-forms:**
+> **📝 Form Configuration**
+>
+> - What inputs do you need? (text, email, date, select, etc.)
+> - Validation requirements?
+> - Single page or multi-step wizard?
+
+**After implementing-search-filter:**
+> **🔍 Search/Filter Configuration**
+>
+> - Search type: text search, autocomplete, or faceted?
+> - Filter types: dropdowns, date range, checkboxes?
+> - Auto-apply or manual apply button?
+
+**After building-ai-chat:**
+> **💬 AI Chat Configuration**
+>
+> - Streaming responses? (Y/N)
+> - File/image upload in chat?
+> - Message history display style?
+
+**After providing-feedback:**
+> **🔔 Feedback Configuration**
+>
+> - Loading states: spinner, skeleton, or progress bar?
+> - Notifications: toast (auto-dismiss) or alert (manual)?
+> - Error display: inline or modal?
+
+### Step 5: Invoke assembling-components (FINAL STEP)
+
+```
+Skill({ skill: "ui-assembly-skills:assembling-components" })
+```
+
+After it loads, this skill:
+1. **Validates token integration** - Runs `validate_tokens.py` on all generated CSS
+2. **Wires component imports** - Creates barrel exports and proper import chains
+3. **Generates scaffolding** - Creates entry points (main.tsx, index.html)
+4. **Configures build system** - Sets up vite.config.ts, tsconfig.json, package.json
+
+Ask:
+> **🔧 Assembly Configuration**
+>
+> - Target framework:
+>   - A) React + Vite (SPA)
+>   - B) Next.js 14/15 (SSR/SSG)
+>   - C) Python FastAPI
+>   - D) Rust Axum
+>
+> - Output directory:
+>   - Default: `demo/examples/[project-name]/`
+>   - Or specify custom path
+>
+> - Run validation script? (Y/N)
+
+### Step 6: Generate Output
+
+After all skills in the chain are invoked and configured:
+
+1. **Summarize** all configurations made
+2. **Generate component code** using patterns from ALL invoked skills
+3. **Use CSS variables** from theming-components for all styling
+4. **Apply accessibility patterns** from each skill
+5. **Provide integration notes** for how pieces connect
+
+```
+✅ Skill Chain Complete!
+
+Summary:
+- Theming: [configuration]
+- [Skill 2]: [configuration]
+- [Skill 3]: [configuration]
+
+Generated components use CSS variables for automatic theme switching.
+All accessibility patterns applied.
+
+Would you like me to:
+A) Generate the full code
+B) Explain any part in detail
+C) Modify a specific configuration
+```
+
+---
+
+## Reference Files
+
+For detailed decision trees and prompts, read:
+- @demo/KEYWORD_TRIGGERS.md
+- @demo/DECISION_TREE.md
+- @demo/USER_PROMPTS.md
+- @demo/QUICKSTART.md
+
+---
+
+## CRITICAL: Theming Integration Requirements
+
+**Every generated component MUST follow these theming rules:**
+
+### 1. Token File Structure
+
+When generating code, ALWAYS create these files in this order:
+
+```
+project-name/
+├── tokens.css           # FIRST: All design tokens
+├── index.html           # Entry point, links tokens.css
+├── main.tsx             # App bootstrap, imports tokens.css
+├── App.tsx or Dashboard.tsx
+├── [Component].tsx      # Each component
+└── [Component].css      # Component styles using tokens
+```
+
+### 2. Token Import Chain
+
+**index.html must include:**
+```html
+<link rel="stylesheet" href="./tokens.css" />
+```
+
+**OR main.tsx must include:**
+```tsx
+import './tokens.css';
+```
+
+### 3. Component CSS Rules
+
+**EVERY component CSS file MUST:**
+
+1. **Use ONLY CSS variables for colors** - Never hardcode hex values
+   ```css
+   /* ✅ CORRECT */
+   .button { background: var(--color-primary); }
+
+   /* ❌ WRONG */
+   .button { background: #3B82F6; }
+   ```
+
+2. **Use ONLY CSS variables for spacing** - Never hardcode px values
+   ```css
+   /* ✅ CORRECT */
+   .card { padding: var(--spacing-md); gap: var(--spacing-sm); }
+
+   /* ❌ WRONG */
+   .card { padding: 16px; gap: 8px; }
+   ```
+
+3. **Use ONLY CSS variables for typography**
+   ```css
+   /* ✅ CORRECT */
+   .title {
+     font-size: var(--font-size-xl);
+     font-weight: var(--font-weight-semibold);
+     font-family: var(--font-sans);
+   }
+
+   /* ❌ WRONG */
+   .title { font-size: 20px; font-weight: 600; }
+   ```
+
+4. **Use ONLY CSS variables for shadows, borders, radii**
+   ```css
+   /* ✅ CORRECT */
+   .card {
+     border-radius: var(--radius-lg);
+     box-shadow: var(--shadow-md);
+     border: var(--border-width-thin) solid var(--color-border-primary);
+   }
+   ```
+
+5. **Use ONLY CSS variables for transitions**
+   ```css
+   /* ✅ CORRECT */
+   .button { transition: var(--transition-fast); }
+
+   /* ❌ WRONG */
+   .button { transition: all 150ms ease; }
+   ```
+
+### 4. Required Token Categories
+
+Every tokens.css MUST define these categories:
+
+```css
+:root {
+  /* 1. COLORS - Brand + Semantic + Component */
+  --color-primary: #...;
+  --color-bg-primary: #...;
+  --color-text-primary: #...;
+  --color-border-primary: #...;
+
+  /* 2. SPACING - 4px or 8px base scale */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* 3. TYPOGRAPHY */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-weight-normal: 400;
+  --font-weight-semibold: 600;
+
+  /* 4. BORDERS & RADIUS */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --border-width-thin: 1px;
+
+  /* 5. SHADOWS */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+
+  /* 6. MOTION */
+  --duration-fast: 150ms;
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --transition-fast: all var(--duration-fast) var(--ease-out);
+
+  /* 7. Z-INDEX */
+  --z-dropdown: 1000;
+  --z-modal: 1050;
+  --z-toast: 1080;
+}
+
+/* DARK THEME - Override semantic tokens */
+[data-theme="dark"] {
+  --color-bg-primary: #0F172A;
+  --color-text-primary: #F8FAFC;
+  /* ... all semantic color overrides */
+}
+```
+
+### 5. Component Token Mapping
+
+Each component type has specific tokens to use:
+
+| Component | Required Tokens |
+|-----------|-----------------|
+| **Cards/Containers** | `--color-bg-*`, `--radius-*`, `--shadow-*`, `--spacing-*` |
+| **Buttons** | `--color-primary`, `--radius-*`, `--font-weight-*`, `--transition-*` |
+| **Text** | `--color-text-*`, `--font-size-*`, `--font-weight-*`, `--line-height-*` |
+| **Inputs** | `--color-border-*`, `--color-bg-*`, `--radius-*`, `--spacing-*` |
+| **Charts** | `--chart-color-1` through `--chart-color-6`, `--color-text-*` |
+| **Toasts** | `--color-success`, `--color-error`, `--shadow-lg`, `--z-toast` |
+| **Modals** | `--z-modal`, `--shadow-xl`, `--color-bg-*`, `--radius-*` |
+
+### 6. Validation Checklist
+
+Before completing code generation, verify:
+
+- [ ] `tokens.css` exists and is imported first
+- [ ] No hardcoded color values in any CSS file
+- [ ] No hardcoded spacing values (px/rem) in any CSS file
+- [ ] All components reference CSS variables
+- [ ] Dark theme tokens are defined
+- [ ] `[data-theme="dark"]` overrides exist for all semantic colors
+- [ ] Theme toggle functionality works
+- [ ] Reduced motion media query included
+
+### 7. Theme Toggle Implementation
+
+Always include a working theme toggle:
+
+```tsx
+function ThemeToggle() {
+  const [theme, setTheme] = useState(() =>
+    localStorage.getItem('theme') || 'light'
+  );
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  return (
+    <button onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}>
+      {theme === 'light' ? '🌙' : '☀️'}
+    </button>
+  );
+}
+```
+
+### 8. Accessibility Token Requirements
+
+Always include:
+
+```css
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --transition-fast: none;
+    --transition-normal: none;
+  }
+}
+
+/* Focus states */
+:root {
+  --shadow-focus: 0 0 0 3px rgba(var(--color-primary-rgb), 0.3);
+}
+
+.interactive-element:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+```
+
+---
+
+## Begin Execution
+
+Now parse "$ARGUMENTS" and begin the skill chain workflow.
+
+If "$ARGUMENTS" is empty, "help", or unclear, show the help guide above.
+
+Otherwise, identify keywords, announce the skill chain, and invoke the first skill.
+
+**Remember: Theming integration is MANDATORY. Every component must use design tokens.**

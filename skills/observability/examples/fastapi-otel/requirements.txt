@@ -1,0 +1,18 @@
+# FastAPI + OpenTelemetry Example Dependencies
+
+# Web framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+httpx==0.26.0
+
+# OpenTelemetry core
+opentelemetry-api==1.22.0
+opentelemetry-sdk==1.22.0
+opentelemetry-exporter-otlp==1.22.0
+
+# OpenTelemetry auto-instrumentation
+opentelemetry-instrumentation-fastapi==0.43b0
+opentelemetry-instrumentation-httpx==0.43b0
+
+# Structured logging
+structlog==24.1.0

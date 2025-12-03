@@ -1,0 +1,15 @@
+# Feast Feature Store Example Dependencies
+
+# Core Feast
+feast==0.40.1
+
+# Data processing
+pandas==2.2.3
+numpy==2.1.3
+
+# Database backends (optional)
+redis==5.2.1
+psycopg2-binary==2.9.10
+
+# Utilities
+python-dotenv==1.0.1

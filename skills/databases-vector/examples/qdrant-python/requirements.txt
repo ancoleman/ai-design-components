@@ -1,0 +1,11 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+qdrant-client==1.7.0
+langchain==0.1.0
+langchain-openai==0.0.2
+openai==1.6.1
+python-dotenv==1.0.0
+tiktoken==0.5.2
+ragas==0.1.0
+pydantic==2.5.3
+pydantic-settings==2.1.0

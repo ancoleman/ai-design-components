@@ -1,0 +1,137 @@
+service: dynamodb-api
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+  environment:
+    TABLE_NAME: ${self:service}-${sls:stage}
+    AWS_REGION: ${self:provider.region}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:BatchWriteItem
+          Resource:
+            - !GetAtt AppDataTable.Arn
+            - !Sub "${AppDataTable.Arn}/index/*"
+
+functions:
+  # Health check
+  health:
+    handler: handler.health_check
+    events:
+      - http:
+          path: /health
+          method: get
+          cors: true
+
+  # User endpoints
+  createUser:
+    handler: handler.create_user
+    events:
+      - http:
+          path: /users
+          method: post
+          cors: true
+
+  getUser:
+    handler: handler.get_user
+    events:
+      - http:
+          path: /users/{email}
+          method: get
+          cors: true
+
+  # Order endpoints
+  createOrder:
+    handler: handler.create_order
+    events:
+      - http:
+          path: /orders
+          method: post
+          cors: true
+
+  getOrder:
+    handler: handler.get_order
+    events:
+      - http:
+          path: /orders/{orderId}
+          method: get
+          cors: true
+
+  listUserOrders:
+    handler: handler.list_user_orders
+    events:
+      - http:
+          path: /users/{userId}/orders
+          method: get
+          cors: true
+
+  updateOrderStatus:
+    handler: handler.update_order_status
+    events:
+      - http:
+          path: /orders/{orderId}/status
+          method: put
+          cors: true
+
+  listOrdersByStatus:
+    handler: handler.list_orders_by_status
+    events:
+      - http:
+          path: /orders/status/{status}
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    AppDataTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${sls:stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+          - AttributeName: status
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: StatusIndex
+            KeySchema:
+              - AttributeName: status
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+        Tags:
+          - Key: Environment
+            Value: ${sls:stage}
+          - Key: Service
+            Value: ${self:service}
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    layer: true

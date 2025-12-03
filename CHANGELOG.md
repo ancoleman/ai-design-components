@@ -5,6 +5,71 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2025-12-02
+
+### Added
+- New `ingesting-data` skill for data onboarding and ETL pipelines
+  - Cloud storage ingestion (S3, GCS, Azure Blob)
+  - File format handling (CSV, JSON, Parquet, Excel)
+  - API feed consumption (REST polling, webhooks, GraphQL subscriptions)
+  - Streaming sources (Kafka, Kinesis, Pub/Sub)
+  - Database migration and CDC patterns
+  - ETL tools reference (dlt, Meltano, Airbyte, Dagster)
+- Scripts for ingesting-data:
+  - `validate_csv_schema.py` - CSV schema validation
+  - `test_s3_connection.py` - S3 connectivity testing
+  - `generate_dlt_pipeline.py` - dlt pipeline scaffold generator
+
+### Changed
+- Updated skillchain.md with ingestion keyword mapping
+- backend-data-skills plugin now includes ingesting-data as first skill
+- Version bump to 0.3.1
+
+## [0.3.0] - 2025-12-02
+
+### Added
+- **13 Backend Skills** - Complete backend development capability:
+
+  **Database Skills (5):**
+  - `databases-relational` - PostgreSQL, MySQL, SQLite with Prisma/Drizzle/SQLAlchemy
+  - `databases-vector` - Qdrant, Pinecone, pgvector for RAG and semantic search
+  - `databases-timeseries` - ClickHouse, TimescaleDB, InfluxDB for metrics
+  - `databases-document` - MongoDB, Firestore, DynamoDB for flexible schemas
+  - `databases-graph` - Neo4j, memgraph with Cypher query patterns
+
+  **API & Communication Skills (3):**
+  - `api-patterns` - REST, GraphQL, gRPC, tRPC across Python/TypeScript/Rust/Go
+  - `message-queues` - Kafka, RabbitMQ, NATS, Temporal for async processing
+  - `realtime-sync` - WebSockets, SSE, Y.js, Liveblocks for live collaboration
+
+  **Platform Skills (3):**
+  - `observability` - OpenTelemetry, LGTM stack (Loki, Grafana, Tempo, Mimir)
+  - `auth-security` - OAuth 2.1, passkeys/WebAuthn, RBAC, secrets management
+  - `deploying-applications` - Kubernetes, serverless, edge deployment patterns
+
+  **AI/ML Skills (2):**
+  - `ai-data-engineering` - RAG pipelines, embedding strategies, chunking
+  - `model-serving` - vLLM, BentoML, Ollama for LLM deployment
+
+- 4 new plugin groups in marketplace.json:
+  - `backend-data-skills` - All database skills
+  - `backend-api-skills` - API, messaging, realtime
+  - `backend-platform-skills` - Observability, auth, deployment
+  - `backend-ai-skills` - AI data engineering, model serving
+
+- Backend keyword mappings in skillchain.md for automatic skill chaining
+- Multi-language support across all backend skills (Python, TypeScript, Rust, Go)
+- Scripts for auth-security:
+  - `generate_jwt_keys.py` - EdDSA/ES256 key pair generation
+  - `validate_oauth_config.py` - OAuth 2.1 compliance validation
+- Script for realtime-sync:
+  - `test_websocket_connection.py` - WebSocket connectivity testing
+
+### Changed
+- Total skill count: 15 frontend + 13 backend = 28 skills
+- All backend SKILL.md files under 500 lines (progressive disclosure applied)
+- Updated CLAUDE.md with backend skill references
+
 ## [0.2.0] - 2025-12-01
 
 ### Added
@@ -77,5 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Design tokens foundational system
 - AI chat interfaces (strategic priority)
 
+[0.3.1]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.1
+[0.3.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.0
 [0.2.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.2.0
 [0.1.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.1.0
