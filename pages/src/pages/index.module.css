@@ -13,6 +13,13 @@
   border-bottom: 1px solid rgba(250, 88, 45, 0.2);
 }
 
+.heroLogo {
+  width: 280px;
+  height: auto;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 4px 8px rgba(250, 88, 45, 0.3));
+}
+
 .heroTitle {
   font-size: 3rem;
   font-weight: 800;
@@ -140,6 +147,10 @@
 
 /* Responsive Design */
 @media screen and (max-width: 996px) {
+  .heroLogo {
+    width: 220px;
+  }
+
   .heroTitle {
     font-size: 2.5rem;
   }
@@ -181,6 +192,10 @@
 }
 
 @media screen and (max-width: 576px) {
+  .heroLogo {
+    width: 180px;
+  }
+
   .heroTitle {
     font-size: 2rem;
   }

@@ -13,9 +13,11 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero', styles.heroBanner)}>
       <div className="container">
-        <Heading as="h1" className={styles.heroTitle}>
-          AI Design Components
-        </Heading>
+        <img
+          src="/ai-design-components/img/logo.png"
+          alt="AI Design Components"
+          className={styles.heroLogo}
+        />
         <p className={styles.heroTagline}>Claude Skills for Full-Stack Development</p>
         <p className={styles.heroSubtitle}>
           76 skills covering UI/UX, Backend, DevOps, Security, Cloud, and AI/ML

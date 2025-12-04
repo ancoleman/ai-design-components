@@ -1,0 +1,39 @@
+.blogHeader {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-bottom: 1px solid rgba(250, 88, 45, 0.2);
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.blogHeaderContent {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.blogLogo {
+  width: 200px;
+  height: auto;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 4px 8px rgba(250, 88, 45, 0.3));
+}
+
+.blogTagline {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+@media screen and (max-width: 996px) {
+  .blogHeader {
+    padding: 2rem 0;
+  }
+
+  .blogLogo {
+    width: 160px;
+  }
+
+  .blogTagline {
+    font-size: 1rem;
+  }
+}
