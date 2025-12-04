@@ -1,0 +1,10 @@
+{
+  "label": "FinOps",
+  "position": 8,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "description": "3 FinOps and cost management skill master plans for cloud cost optimization, resource tagging, and security hardening"
+  }
+}

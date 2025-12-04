@@ -1,0 +1,115 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #7c3aed;
+  --ifm-color-primary-dark: #6d28d9;
+  --ifm-color-primary-darker: #5b21b6;
+  --ifm-color-primary-darkest: #4c1d95;
+  --ifm-color-primary-light: #8b5cf6;
+  --ifm-color-primary-lighter: #a78bfa;
+  --ifm-color-primary-lightest: #c4b5fd;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(124, 58, 237, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #a78bfa;
+  --ifm-color-primary-dark: #9333ea;
+  --ifm-color-primary-darker: #7c3aed;
+  --ifm-color-primary-darkest: #6d28d9;
+  --ifm-color-primary-light: #c4b5fd;
+  --ifm-color-primary-lighter: #ddd6fe;
+  --ifm-color-primary-lightest: #ede9fe;
+  --ifm-background-color: #0f172a;
+  --ifm-background-surface-color: #1e293b;
+  --docusaurus-highlighted-code-line-bg: rgba(167, 139, 250, 0.1);
+}
+
+/* Landing Page Enhancements */
+html[data-theme='dark'] {
+  --ifm-background-color: #0f172a;
+  --ifm-background-surface-color: #1e293b;
+}
+
+/* Smooth transitions for interactive elements */
+.button {
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+/* Link hover effects */
+a {
+  transition: color 0.2s ease;
+}
+
+/* Card shadows for depth */
+.card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Code block styling */
+code {
+  background-color: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+}
+
+/* Navbar adjustments */
+.navbar {
+  border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Footer styling */
+.footer {
+  background-color: var(--ifm-background-surface-color);
+  border-top: 1px solid rgba(124, 58, 237, 0.1);
+}
+
+/* Improve scrollbar appearance */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ifm-background-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.5);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.7);
+}
+
+/* Responsive typography */
+@media screen and (max-width: 996px) {
+  :root {
+    --ifm-font-size-base: 16px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  :root {
+    --ifm-font-size-base: 15px;
+  }
+}

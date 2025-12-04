@@ -1,0 +1,10 @@
+{
+  "label": "Security",
+  "position": 2,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "description": "6 security skill master plans"
+  }
+}

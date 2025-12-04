@@ -1,0 +1,10 @@
+{
+  "label": "Infrastructure",
+  "position": 1,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "description": "12 infrastructure and networking skill master plans"
+  }
+}

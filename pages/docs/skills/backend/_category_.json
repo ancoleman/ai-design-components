@@ -1,0 +1,10 @@
+{
+  "label": "Backend Skills",
+  "position": 3,
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "description": "14 production-ready backend and infrastructure skills covering API design, databases, real-time communication, observability, security, deployment, and AI/ML systems."
+  }
+}

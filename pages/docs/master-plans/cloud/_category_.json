@@ -1,0 +1,10 @@
+{
+  "label": "Cloud Patterns",
+  "position": 7,
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "description": "3 cloud provider architectural pattern skill master plans covering AWS, GCP, and Azure"
+  }
+}

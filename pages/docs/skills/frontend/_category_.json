@@ -1,0 +1,10 @@
+{
+  "label": "Frontend Skills",
+  "position": 2,
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "description": "15 production-ready UI/UX component skills for building modern web applications with React, TypeScript, and accessible patterns."
+  }
+}

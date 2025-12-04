@@ -1,0 +1,15 @@
+ancoleman:
+  name: Anton Coleman
+  title: Project Maintainer
+  url: https://github.com/ancoleman
+  image_url: https://github.com/ancoleman.png
+  page: true
+  socials:
+    github: ancoleman
+
+claude:
+  name: Claude
+  title: AI Assistant
+  url: https://claude.ai
+  image_url: https://www.anthropic.com/images/icons/apple-touch-icon.png
+  page: false
