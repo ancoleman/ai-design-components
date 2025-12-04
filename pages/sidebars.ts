@@ -10,6 +10,7 @@ const sidebars: SidebarsConfig = {
       label: 'Guides',
       items: [
         'guides/creating-skills',
+        'guides/skill-validation',
         'guides/research-methodology',
         'guides/best-practices',
         'guides/llm-ecosystem',
