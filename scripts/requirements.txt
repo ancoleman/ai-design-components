@@ -1,0 +1,11 @@
+# Skill Validation Scripts Dependencies
+# Install with: pip install -r scripts/requirements.txt
+
+# YAML parsing for validation rules
+PyYAML>=6.0
+
+# Rich terminal output
+rich>=14.0.0
+
+# Interactive TUI dashboard
+textual>=0.50.0
