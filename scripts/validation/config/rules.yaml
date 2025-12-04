@@ -1,0 +1,219 @@
+# Skill Validation Rules (Core)
+# Based on Anthropic's Skills Best Practices
+# https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+#
+# These rules are ENFORCED - violations cause errors or warnings.
+# For community suggestions, see community.yaml
+#
+# Version: 1.0.0
+
+version: "1.0.0"
+
+# =============================================================================
+# SKILL.md Requirements
+# =============================================================================
+skill_md:
+  # Maximum lines for SKILL.md body (after frontmatter)
+  max_lines: 500
+
+  # Required files
+  required_files:
+    - "SKILL.md"
+
+# =============================================================================
+# Frontmatter Requirements
+# =============================================================================
+frontmatter:
+  # Required fields
+  required_fields:
+    - name
+    - description
+
+  # Name field rules
+  name:
+    max_length: 64
+    # Pattern: lowercase letters, numbers, hyphens only
+    pattern: "^[a-z0-9-]+$"
+    pattern_description: "lowercase letters, numbers, and hyphens only"
+    # Cannot start or end with hyphen
+    no_leading_hyphen: true
+    no_trailing_hyphen: true
+    # Cannot have consecutive hyphens
+    no_consecutive_hyphens: true
+    # Reserved words that cannot appear in name
+    reserved_words:
+      - "anthropic"
+      - "claude"
+    # Preferred naming convention (warning if not followed)
+    preferred_format:
+      pattern: "ing(-|$)"
+      description: "gerund form (verb + -ing)"
+      severity: "warning"
+
+  # Description field rules
+  description:
+    max_length: 1024
+    min_length: 1
+    # Cannot contain XML-like tags
+    no_xml_tags: true
+    # Should include usage guidance (warning if not detected)
+    should_include_when:
+      keywords:
+        - "when"
+        - "When"
+        - "Use "
+        - "use "
+      severity: "warning"
+
+# =============================================================================
+# Reference Files
+# =============================================================================
+references:
+  # Maximum nesting depth (1 = references can't reference other references)
+  max_depth: 1
+
+  # Files over this line count should have Table of Contents
+  toc_threshold: 100
+  toc_required: false  # warning if missing, not error
+
+  # Patterns to detect ToC
+  toc_patterns:
+    - "^## Table of Contents"
+    - "^## Contents"
+    - "^# Table of Contents"
+
+# =============================================================================
+# Anti-Patterns to Detect
+# =============================================================================
+anti_patterns:
+  # Second person usage (you/your)
+  second_person:
+    enabled: true
+    severity: "warning"
+    patterns:
+      - "\\byou\\b"
+      - "\\byour\\b"
+      - "\\byou're\\b"
+      - "\\byou'll\\b"
+    message: "Use imperative form instead of second person"
+
+  # Time-sensitive information
+  time_sensitive:
+    enabled: true
+    severity: "warning"
+    patterns:
+      - "as of (january|february|march|april|may|june|july|august|september|october|november|december) 20[0-9][0-9]"
+      - "current(ly)? (version|release)"
+      - "latest (version|release)"
+    message: "Avoid time-sensitive information that becomes outdated"
+
+  # Windows-style paths
+  windows_paths:
+    enabled: true
+    severity: "warning"
+    patterns:
+      - "\\\\[a-zA-Z]"
+    message: "Use forward slashes for file paths"
+
+# =============================================================================
+# File Structure
+# =============================================================================
+structure:
+  # Expected directories (optional - just for validation hints)
+  optional_directories:
+    - "references"
+    - "examples"
+    - "scripts"
+    - "assets"
+
+  # Example file extensions to validate
+  example_extensions:
+    - ".ts"
+    - ".tsx"
+    - ".py"
+    - ".go"
+    - ".rs"
+    - ".js"
+    - ".jsx"
+
+# =============================================================================
+# Phase Definitions (for skill development roadmap)
+# =============================================================================
+phases:
+  phase_1:
+    name: "Critical Foundation"
+    priority: 1
+    skills:
+      - testing-strategies
+      - building-ci-pipelines
+      - kubernetes-operations
+      - infrastructure-as-code
+      - security-hardening
+      - secret-management
+
+  phase_2:
+    name: "High Priority"
+    priority: 2
+    skills:
+      - gitops-workflows
+      - linux-administration
+      - network-architecture
+      - load-balancing-patterns
+      - disaster-recovery
+      - performance-engineering
+      - compliance-frameworks
+      - vulnerability-management
+      - siem-logging
+      - implementing-tls
+      - service-mesh
+      - platform-engineering
+
+  phase_3:
+    name: "Medium Priority"
+    priority: 3
+    skills:
+      - security-architecture
+      - configuring-firewalls
+      - configuration-management
+      - incident-management
+      - writing-github-actions
+      - api-design-principles
+      - building-clis
+      - sdk-design
+      - documentation-generation
+      - debugging-techniques
+      - git-workflows
+      - data-architecture
+      - streaming-data
+      - data-transformation
+      - sql-optimization
+      - dns-management
+      - configuring-nginx
+      - writing-dockerfiles
+
+  phase_4:
+    name: "Enhancement"
+    priority: 4
+    skills:
+      - mlops-patterns
+      - prompt-engineering
+      - llm-evaluation
+      - embedding-optimization
+      - aws-patterns
+      - gcp-patterns
+      - azure-patterns
+      - cost-optimization
+      - resource-tagging
+      - shell-scripting
+      - designing-distributed-systems
+
+# =============================================================================
+# Severity Configuration
+# =============================================================================
+severity:
+  # Which severities cause validation failure
+  fail_on:
+    - "error"
+  # Which severities are reported but don't fail
+  warn_on:
+    - "warning"

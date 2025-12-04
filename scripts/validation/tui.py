@@ -1,32 +1,17 @@
-#!/usr/bin/env python3
 """
-Interactive Skill Validation Dashboard (Textual TUI)
+Interactive TUI (Terminal User Interface) for skill validation.
 
-A full interactive terminal UI for validating Claude Skills.
-
-Usage:
-    python validate_skills_tui.py                    # Launch dashboard
-    python validate_skills_tui.py --completed        # Only completed skills
-    python validate_skills_tui.py --phase 1          # Phase 1 skills only
-
-Controls:
-    ↑/↓ or j/k    Navigate skills
-    f             Filter by status (modal)
-    r             Re-run validation
-    q             Quit
+This module provides a rich, interactive terminal interface for
+exploring and validating skills using the Textual framework.
 """
 
-import argparse
-import sys
 from pathlib import Path
-from typing import Optional, List, Dict, Any
-from dataclasses import dataclass
+from typing import Optional, List
+from dataclasses import dataclass, field
 
 from textual.app import App, ComposeResult
 from textual.containers import Container, ScrollableContainer
-from textual.widgets import (
-    Header, Footer, Static, DataTable, Label, Button
-)
+from textual.widgets import Header, Footer, Static, DataTable, Label, Button
 from textual.binding import Binding
 from textual.screen import ModalScreen
 from textual import work
@@ -34,118 +19,126 @@ from textual.worker import Worker, get_current_worker
 
 from rich.text import Text
 
-# Import validation logic
-from validate_skill import (
-    ValidationResult, load_rules, validate_skill
-)
+from .validator import Validator
+from .rules import load_rules, load_community_practices, load_project_rules
+from .result import ValidationResult
 
 
 @dataclass
 class SkillData:
-    """Container for skill validation data."""
+    """Data for displaying a skill in the TUI."""
     name: str
+    path: str
     status: str  # 'pass', 'fail', 'pending'
-    errors: List[str]
-    warnings: List[str]
-    community: List[str]
+    errors: List[str] = field(default_factory=list)
+    warnings: List[str] = field(default_factory=list)
+    suggestions: List[str] = field(default_factory=list)
     result: Optional[ValidationResult] = None
 
 
 class DetailPanel(Static):
-    """Panel showing detailed errors/warnings for selected skill."""
+    """Panel showing details for the selected skill."""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.skill_data: Optional[SkillData] = None
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.skill: Optional[SkillData] = None
 
-    def update_skill(self, skill: Optional[SkillData]):
+    def update_skill(self, skill: SkillData) -> None:
         """Update the panel with skill details."""
-        self.skill_data = skill
-        if skill is None:
-            self.update("[dim]Select a skill to view details[/dim]")
-            return
+        self.skill = skill
 
-        content = []
+        lines = []
+        lines.append(f"[bold]{skill.name}[/bold]")
+        lines.append(f"Status: {self._format_status(skill.status)}")
+        lines.append("")
 
-        # Header
-        if skill.status == 'pass':
-            status_icon = "[green]✓[/green]"
-            status_text = "[green]PASSED[/green]"
-        elif skill.status == 'fail':
-            status_icon = "[red]✗[/red]"
-            status_text = "[red]FAILED[/red]"
+        # Separate warnings by source (core rules vs project rules)
+        core_warnings = []
+        project_warnings = []
+
+        if skill.result and skill.result.issues:
+            from .result import Severity
+            for issue in skill.result.issues:
+                if issue.severity == Severity.WARNING:
+                    if issue.rule_id and issue.rule_id.startswith("project."):
+                        project_warnings.append(issue.message)
+                    else:
+                        core_warnings.append(issue.message)
         else:
-            status_icon = "[yellow]○[/yellow]"
-            status_text = "[yellow]PENDING[/yellow]"
+            # Fallback if no detailed issues available
+            core_warnings = skill.warnings
 
-        content.append(f"{status_icon} [bold]{skill.name}[/bold] - {status_text}")
-        content.append("")
-
-        # Errors
         if skill.errors:
-            content.append("[red bold]Errors:[/red bold]")
-            for error in skill.errors:
-                content.append(f"  [red]•[/red] {error}")
-            content.append("")
+            lines.append(f"[bold red]Errors ({len(skill.errors)}):[/bold red]")
+            for err in skill.errors[:10]:  # Limit display
+                lines.append(f"  [red]• {err}[/red]")
+            if len(skill.errors) > 10:
+                lines.append(f"  [dim]... and {len(skill.errors) - 10} more[/dim]")
+            lines.append("")
 
-        # Warnings
-        if skill.warnings:
-            content.append("[yellow bold]Warnings:[/yellow bold]")
-            for warning in skill.warnings[:10]:  # Limit display
-                content.append(f"  [yellow]•[/yellow] {warning}")
-            if len(skill.warnings) > 10:
-                content.append(f"  [dim]... and {len(skill.warnings) - 10} more[/dim]")
-            content.append("")
+        if core_warnings:
+            lines.append(f"[bold yellow]Warnings ({len(core_warnings)}):[/bold yellow]")
+            for warn in core_warnings[:10]:
+                lines.append(f"  [yellow]• {warn}[/yellow]")
+            if len(core_warnings) > 10:
+                lines.append(f"  [dim]... and {len(core_warnings) - 10} more[/dim]")
+            lines.append("")
 
-        # Community suggestions
-        if skill.community:
-            content.append("[cyan bold]Community Suggestions:[/cyan bold]")
-            for suggestion in skill.community[:5]:
-                content.append(f"  [cyan]•[/cyan] {suggestion}")
-            if len(skill.community) > 5:
-                content.append(f"  [dim]... and {len(skill.community) - 5} more[/dim]")
+        if project_warnings:
+            lines.append(f"[bold magenta]Project Rules ({len(project_warnings)}):[/bold magenta]")
+            for warn in project_warnings[:10]:
+                lines.append(f"  [magenta]• {warn}[/magenta]")
+            if len(project_warnings) > 10:
+                lines.append(f"  [dim]... and {len(project_warnings) - 10} more[/dim]")
+            lines.append("")
 
-        if not skill.errors and not skill.warnings and not skill.community:
-            content.append("[green]No issues found![/green]")
+        if skill.suggestions:
+            lines.append(f"[bold blue]Suggestions ({len(skill.suggestions)}):[/bold blue]")
+            for sug in skill.suggestions[:5]:
+                lines.append(f"  [blue]• {sug}[/blue]")
+            if len(skill.suggestions) > 5:
+                lines.append(f"  [dim]... and {len(skill.suggestions) - 5} more[/dim]")
 
-        self.update("\n".join(content))
+        self.update("\n".join(lines))
+
+    def _format_status(self, status: str) -> str:
+        if status == 'pass':
+            return "[green]PASS[/green]"
+        elif status == 'fail':
+            return "[bold red]FAIL[/bold red]"
+        else:
+            return "[yellow]PENDING[/yellow]"
 
 
 class SummaryBar(Static):
     """Summary statistics bar."""
 
-    def update_stats(self, passed: int, failed: int, pending: int):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.passed = 0
+        self.failed = 0
+        self.pending = 0
+
+    def update_stats(self, passed: int, failed: int, pending: int) -> None:
+        """Update summary statistics."""
+        self.passed = passed
+        self.failed = failed
+        self.pending = pending
+
         total = passed + failed + pending
-        validated = passed + failed
-        pass_rate = (passed * 100 // validated) if validated > 0 else 0
-
-        if pass_rate == 100:
-            rate_style = "green bold"
-        elif pass_rate >= 80:
-            rate_style = "yellow bold"
-        else:
-            rate_style = "red bold"
-
-        text = Text()
-        text.append(f"  Total: {total}  │  ", style="dim")
-        text.append(f"✓ {passed}", style="green bold")
-        text.append("  │  ", style="dim")
-        text.append(f"✗ {failed}", style="red bold")
-        if pending > 0:
-            text.append("  │  ", style="dim")
-            text.append(f"○ {pending}", style="yellow bold")
-        text.append("  │  ", style="dim")
-        text.append(f"{pass_rate}%", style=rate_style)
-        text.append(" pass rate", style="dim")
-
-        self.update(text)
+        self.update(
+            f"[bold]Skills:[/bold] {total} total | "
+            f"[green]{passed} passed[/green] | "
+            f"[red]{failed} failed[/red] | "
+            f"[yellow]{pending} pending[/yellow]"
+        )
 
 
 class FilterModal(ModalScreen):
     """Modal for filtering skills."""
 
     BINDINGS = [
-        Binding("escape", "dismiss", "Close"),
+        Binding("escape", "dismiss", "Cancel"),
     ]
 
     def compose(self) -> ComposeResult:
@@ -249,17 +242,29 @@ class SkillValidationApp(App):
         Binding("k", "cursor_up", "Up", show=False),
     ]
 
-    def __init__(self, skills_dir: Path, rules: dict, mode: str = "all", phase: int = None):
+    def __init__(
+        self,
+        skills_dir: Path,
+        completed_only: bool = False,
+        phase: Optional[int] = None,
+        rules_only: bool = False,
+        skip_project_rules: bool = False,
+    ):
         super().__init__()
         self.skills_dir = skills_dir
-        self.rules = rules
-        self.mode = mode
+        self.completed_only = completed_only
         self.phase = phase
+        self.rules_only = rules_only
+        self.skip_project_rules = skip_project_rules
+
+        # State
         self.skills_data: List[SkillData] = []
         self.filtered_data: List[SkillData] = []
         self.current_filter = "all"
-        self.search_query = ""
         self.selected_skill: Optional[SkillData] = None
+
+        # Validator (created on mount)
+        self.validator: Optional[Validator] = None
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -275,13 +280,33 @@ class SkillValidationApp(App):
     def on_mount(self) -> None:
         """Initialize the app."""
         self.title = "Skill Validation Dashboard"
-        self.sub_title = f"Mode: {self.mode}"
+
+        mode_str = "completed" if self.completed_only else "all"
+        if self.phase:
+            mode_str = f"phase {self.phase}"
+        self.sub_title = f"Mode: {mode_str}"
 
         # Setup table
         table = self.query_one("#main-table", DataTable)
         table.cursor_type = "row"
         table.zebra_stripes = True
-        table.add_columns("#", "Skill Name", "Status", "Err", "Warn")
+        table.add_columns("#", "Skill Name", "Status", "Err", "Warn", "Proj", "Sug")
+
+        # Initialize validator
+        try:
+            rules = load_rules()
+            community = None if self.rules_only else load_community_practices()
+            project = None if self.skip_project_rules else load_project_rules()
+            self.validator = Validator(
+                rules=rules,
+                community=community,
+                project=project,
+                include_community=not self.rules_only,
+                include_project=not self.skip_project_rules
+            )
+        except Exception as e:
+            self.update_status(f"Error loading config: {e}")
+            return
 
         # Start validation
         self.run_validation()
@@ -291,25 +316,30 @@ class SkillValidationApp(App):
         """Run validation in background thread."""
         worker = get_current_worker()
 
+        if not self.validator:
+            return
+
         # Collect skills to validate
         skills_to_check = []
 
-        if self.mode == "completed":
-            for skill_dir in sorted(self.skills_dir.iterdir()):
-                if skill_dir.is_dir() and (skill_dir / 'SKILL.md').exists():
-                    skills_to_check.append(skill_dir)
-        elif self.mode == "phase" and self.phase:
-            phases = self.rules.get('phases', {})
-            phase_key = f'phase_{self.phase}'
-            phase_skills = phases.get(phase_key, {}).get('skills', [])
+        if self.phase is not None:
+            phase_skills = self.validator.rules.get_phase_skills(self.phase)
             for name in phase_skills:
                 skill_path = self.skills_dir / name
                 if skill_path.exists():
-                    skills_to_check.append(skill_path)
+                    if not self.completed_only or (skill_path / "SKILL.md").exists():
+                        skills_to_check.append(skill_path)
         else:
             for skill_dir in sorted(self.skills_dir.iterdir()):
                 if skill_dir.is_dir():
-                    skills_to_check.append(skill_dir)
+                    has_skill_md = (skill_dir / 'SKILL.md').exists()
+                    has_init_md = (skill_dir / 'init.md').exists()
+
+                    if self.completed_only:
+                        if has_skill_md:
+                            skills_to_check.append(skill_dir)
+                    elif has_skill_md or has_init_md:
+                        skills_to_check.append(skill_dir)
 
         # Validate each skill
         results = []
@@ -320,8 +350,6 @@ class SkillValidationApp(App):
                 return
 
             skill_name = skill_path.name
-            has_skill_md = (skill_path / 'SKILL.md').exists()
-            has_init_md = (skill_path / 'init.md').exists()
 
             # Update status
             self.call_from_thread(
@@ -329,26 +357,28 @@ class SkillValidationApp(App):
                 f"Validating {skill_name}... ({i+1}/{total})"
             )
 
+            has_skill_md = (skill_path / 'SKILL.md').exists()
+
             if has_skill_md:
-                result = validate_skill(skill_path, self.rules)
+                result = self.validator.validate_skill(skill_path)
                 skill_data = SkillData(
                     name=skill_name,
+                    path=str(skill_path),
                     status='pass' if result.passed else 'fail',
                     errors=result.errors,
                     warnings=result.warnings,
-                    community=result.community,
+                    suggestions=result.suggestions,
                     result=result
                 )
-            elif has_init_md:
+            else:
                 skill_data = SkillData(
                     name=skill_name,
+                    path=str(skill_path),
                     status='pending',
                     errors=[],
                     warnings=[],
-                    community=[]
+                    suggestions=[]
                 )
-            else:
-                continue
 
             results.append(skill_data)
 
@@ -367,10 +397,9 @@ class SkillValidationApp(App):
         self.update_status(f"Validated {len(results)} skills")
 
     def apply_filter(self) -> None:
-        """Apply current filter and search to data."""
+        """Apply current filter to data."""
         filtered = self.skills_data
 
-        # Apply status filter
         if self.current_filter == "pass":
             filtered = [s for s in filtered if s.status == 'pass']
         elif self.current_filter == "fail":
@@ -378,32 +407,48 @@ class SkillValidationApp(App):
         elif self.current_filter == "warn":
             filtered = [s for s in filtered if s.warnings]
 
-        # Apply search
-        if self.search_query:
-            query = self.search_query.lower()
-            filtered = [s for s in filtered if query in s.name.lower()]
-
         self.filtered_data = filtered
         self.refresh_table()
         self.update_summary()
 
     def refresh_table(self) -> None:
         """Refresh the data table."""
+        from .result import Severity
+
         table = self.query_one("#main-table", DataTable)
         table.clear()
 
         for i, skill in enumerate(self.filtered_data, 1):
             if skill.status == 'pass':
-                status = Text("✓ PASS", style="green")
+                status = Text("PASS", style="green")
             elif skill.status == 'fail':
-                status = Text("✗ FAIL", style="bold red")
+                status = Text("FAIL", style="bold red")
             else:
-                status = Text("○ PEND", style="yellow")
+                status = Text("PEND", style="yellow")
+
+            # Calculate separate counts for warnings vs project rules
+            core_warn_count = 0
+            proj_warn_count = 0
+
+            if skill.result and skill.result.issues:
+                for issue in skill.result.issues:
+                    if issue.severity == Severity.WARNING:
+                        if issue.rule_id and issue.rule_id.startswith("project."):
+                            proj_warn_count += 1
+                        else:
+                            core_warn_count += 1
+            else:
+                # Fallback if no detailed issues
+                core_warn_count = len(skill.warnings)
+
+            sug_count = len(skill.suggestions)
 
             errors = Text(str(len(skill.errors)), style="red" if skill.errors else "dim")
-            warnings = Text(str(len(skill.warnings)), style="yellow" if skill.warnings else "dim")
+            warnings = Text(str(core_warn_count), style="yellow" if core_warn_count else "dim")
+            proj = Text(str(proj_warn_count), style="magenta" if proj_warn_count else "dim")
+            sug = Text(str(sug_count), style="blue" if sug_count else "dim")
 
-            table.add_row(str(i), skill.name, status, errors, warnings, key=skill.name)
+            table.add_row(str(i), skill.name, status, errors, warnings, proj, sug, key=skill.name)
 
     def update_summary(self) -> None:
         """Update summary statistics."""
@@ -463,45 +508,28 @@ class SkillValidationApp(App):
         table.action_cursor_up()
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description='Interactive Skill Validation Dashboard',
-        formatter_class=argparse.RawDescriptionHelpFormatter
-    )
-    parser.add_argument('--completed', '-c', action='store_true',
-                        help='Only validate completed skills')
-    parser.add_argument('--phase', '-p', type=int, choices=[1, 2, 3, 4],
-                        help='Validate skills in specific phase')
-    parser.add_argument('--rules', '-r', type=Path,
-                        help='Path to validation rules YAML')
+def run_tui(
+    skills_dir: Path,
+    completed_only: bool = False,
+    phase: Optional[int] = None,
+    rules_only: bool = False,
+    skip_project_rules: bool = False,
+) -> None:
+    """
+    Launch the interactive TUI.
 
-    args = parser.parse_args()
-
-    # Determine paths
-    script_dir = Path(__file__).parent
-    rules_path = args.rules or (script_dir / 'validation-rules.yaml')
-    skills_dir = script_dir.parent / 'skills'
-
-    # Load rules
-    rules = load_rules(rules_path)
-
-    # Determine mode
-    if args.completed:
-        mode = "completed"
-    elif args.phase:
-        mode = "phase"
-    else:
-        mode = "all"
-
-    # Run app
+    Args:
+        skills_dir: Directory containing skills.
+        completed_only: Only show skills with SKILL.md.
+        phase: Only show skills in this phase.
+        rules_only: Skip community practice checks.
+        skip_project_rules: Skip project-specific rule checks.
+    """
     app = SkillValidationApp(
         skills_dir=skills_dir,
-        rules=rules,
-        mode=mode,
-        phase=args.phase
+        completed_only=completed_only,
+        phase=phase,
+        rules_only=rules_only,
+        skip_project_rules=skip_project_rules,
     )
     app.run()
-
-
-if __name__ == '__main__':
-    main()

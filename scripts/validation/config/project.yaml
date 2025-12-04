@@ -1,0 +1,94 @@
+# Project-Specific Rules for ai-design-components
+#
+# These rules are specific to this repository and its conventions.
+# They represent standards and practices we've adopted for our skills.
+#
+# Severity levels:
+#   - error: Fails validation (use sparingly)
+#   - warning: Reported but doesn't fail (default)
+#
+# Version: 1.0.0
+
+version: "1.0.0"
+project: "ai-design-components"
+
+# =============================================================================
+# Project Rules
+# =============================================================================
+rules:
+  # ---------------------------------------------------------------------------
+  # Research & Library Validation
+  # ---------------------------------------------------------------------------
+
+  # Skills should reference RESEARCH_GUIDE.md for library recommendations
+  research_guide_reference:
+    enabled: true
+    severity: "warning"
+    description: >
+      Skills that recommend libraries should reference the research methodology
+      in RESEARCH_GUIDE.md to ensure recommendations are validated and current.
+    check_type: "keyword"
+    keywords:
+      - "RESEARCH_GUIDE.md"
+      - "RESEARCH_GUIDE"
+      - "skills/RESEARCH_GUIDE"
+    # Also accept these alternative phrasings
+    alternative_keywords:
+      - "research methodology"
+      - "library validation"
+      - "validate recommendations"
+      - "Context7"
+      - "Google Search Grounding"
+    message: "Consider referencing skills/RESEARCH_GUIDE.md for library research methodology"
+    # Only apply to skills that mention libraries
+    conditional:
+      applies_when_contains:
+        - "library"
+        - "package"
+        - "dependency"
+        - "npm"
+        - "pip"
+        - "cargo"
+
+  # ---------------------------------------------------------------------------
+  # Future Rules (Disabled by Default)
+  # ---------------------------------------------------------------------------
+
+  # Example: Require version in frontmatter
+  # frontmatter_version:
+  #   enabled: false
+  #   severity: "warning"
+  #   description: "Skills should include version in frontmatter for tracking"
+  #   check_type: "frontmatter_field"
+  #   field: "version"
+  #   message: "Consider adding 'version' field to frontmatter"
+
+  # Example: Require changelog for major skills
+  # changelog_present:
+  #   enabled: false
+  #   severity: "warning"
+  #   description: "Major skills should have a CHANGELOG.md"
+  #   check_type: "file_exists"
+  #   file: "CHANGELOG.md"
+  #   message: "Consider adding CHANGELOG.md for version history"
+
+# =============================================================================
+# Rule Presets
+# =============================================================================
+presets:
+  # Minimal - just the essential project rules
+  minimal:
+    enabled_rules:
+      - "research_guide_reference"
+
+  # Standard - all enabled rules (default)
+  standard:
+    enabled_rules: "all"
+
+  # Strict - all rules including disabled ones
+  strict:
+    enabled_rules: "all"
+    enable_disabled: true
+
+# Active preset
+active_preset: "standard"

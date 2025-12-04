@@ -1,0 +1,249 @@
+# Community Practices for Skill Development
+#
+# These are community-developed best practices gathered from:
+# - Reddit (r/ClaudeAI, r/ClaudeCode)
+# - GitHub (travisvn/awesome-claude-skills, anthropics/skills)
+# - Medium articles and blog posts
+# - Community discussions and real-world usage patterns
+#
+# These are NOT official Anthropic guidelines but represent collective
+# wisdom from practitioners. They generate SUGGESTIONS, not errors.
+#
+# Version: 1.0.0
+
+version: "1.0.0"
+last_updated: "2025-12-04"
+
+sources:
+  - "reddit.com/r/ClaudeAI"
+  - "reddit.com/r/ClaudeCode"
+  - "github.com/travisvn/awesome-claude-skills"
+  - "github.com/anthropics/skills"
+
+# =============================================================================
+# Skill Design Patterns
+# =============================================================================
+skill_design:
+  # Single Responsibility - Skills should do one thing well
+  single_responsibility:
+    enabled: true
+    check_type: "manual"  # Cannot be auto-checked
+    description: "Skills should do one thing well, not be monolithic 'do-everything' skills"
+
+  # Condition-Based Descriptions
+  condition_based_description:
+    enabled: true
+    pattern: "(When |If |For )"
+    description: "Descriptions should use 'When [condition], do [action]' pattern"
+    message: "Consider using condition-based description: 'When [condition], do [action]'"
+
+  # Skills as SOPs (Standard Operating Procedures)
+  sop_structure:
+    enabled: true
+    check_type: "manual"
+    description: "Treat skills like SOPs: narrowly scoped, versioned, explicit inputs/outputs"
+    recommended_sections:
+      - "Purpose"
+      - "When to Use"
+      - "Inputs/Prerequisites"
+      - "Workflow/Steps"
+      - "Outputs/Deliverables"
+      - "Error Handling"
+
+# =============================================================================
+# Token Optimization
+# =============================================================================
+token_optimization:
+  # Metadata budget - Community recommends 30-50 tokens per skill description
+  description_token_estimate:
+    enabled: true
+    # Rough estimate: 1 token ~ 4 chars for English
+    recommended_max_chars: 200  # ~50 tokens
+    message: "Community recommends keeping descriptions under ~50 tokens for efficient loading"
+
+  # Assets directory for large files
+  use_assets_directory:
+    enabled: true
+    description: "Store HTML/CSS templates, images, and large files in assets/ to conserve context"
+    recommended_for:
+      - ".html"
+      - ".css"
+      - ".svg"
+      - ".png"
+      - ".jpg"
+      - ".json"
+
+  # Just-in-time loading pattern
+  jit_loading:
+    enabled: true
+    check_type: "manual"
+    description: "Keep lightweight identifiers (paths, links) and load data dynamically"
+
+# =============================================================================
+# Portability
+# =============================================================================
+portability:
+  # Use {baseDir} for paths
+  use_basedir_variable:
+    enabled: true
+    pattern: "\\{baseDir\\}"
+    description: "Use {baseDir} in file paths to make skills portable across projects"
+    check_for_hardcoded_paths: true
+    hardcoded_path_patterns:
+      - "/Users/"
+      - "/home/"
+      - "C:\\"
+      - "D:\\"
+    message: "Consider using {baseDir} instead of hardcoded paths for portability"
+
+# =============================================================================
+# Documentation & Clarity
+# =============================================================================
+documentation:
+  # Prerequisites section
+  include_prerequisites:
+    enabled: true
+    description: "Document prerequisites and dependencies clearly"
+    keywords:
+      - "Prerequisites"
+      - "Requirements"
+      - "Dependencies"
+      - "Requires"
+
+  # Error handling guidance
+  include_error_handling:
+    enabled: true
+    description: "Include error handling guidance in skills"
+    keywords:
+      - "Error"
+      - "error"
+      - "Troubleshooting"
+      - "If .* fails"
+      - "When .* fails"
+
+  # Edge cases
+  include_edge_cases:
+    enabled: true
+    description: "Document edge cases and how to handle them"
+    keywords:
+      - "edge case"
+      - "Edge case"
+      - "special case"
+      - "exception"
+      - "caveat"
+
+# =============================================================================
+# Development Workflow
+# =============================================================================
+workflow:
+  # Iterative development - manual first
+  manual_first:
+    enabled: false  # Cannot be auto-checked
+    description: "Do the task manually in a chat with Claude before building the skill"
+
+  # Version skills
+  version_skills:
+    enabled: true
+    description: "Include version information in skills for tracking changes"
+    keywords:
+      - "version"
+      - "Version"
+      - "v[0-9]"
+      - "Last Updated"
+
+  # Test across platforms
+  cross_platform_testing:
+    enabled: false  # Manual check
+    description: "Test skills across Claude.ai, Claude Code, and API"
+
+# =============================================================================
+# Structure Patterns
+# =============================================================================
+structure_patterns:
+  # XML tags for structure in instructions
+  use_xml_tags:
+    enabled: true
+    detect_patterns:
+      - "<[a-z_-]+>"
+    description: "Use XML tags to create clear boundaries in Level 2 instructions"
+    message: "Consider using XML tags for clear structure (e.g., <instructions>, <examples>)"
+
+  # Hierarchical memory pattern
+  hierarchical_structure:
+    enabled: true
+    check_type: "manual"
+    description: "Organize content hierarchically: overview -> details -> deep-dives"
+
+# =============================================================================
+# Skill Composition
+# =============================================================================
+composition:
+  # Skills should be composable
+  composable_design:
+    enabled: true
+    check_type: "manual"
+    description: "Design skills to be composable and stackable with other skills"
+
+  # Reference other skills
+  cross_skill_references:
+    enabled: true
+    description: "Reference related skills to enable composition"
+    keywords:
+      - "Related Skills"
+      - "See also"
+      - "Chains with"
+      - "Works with"
+      - "Integrates with"
+
+# =============================================================================
+# Quality Indicators
+# =============================================================================
+quality_indicators:
+  # Include examples
+  include_examples:
+    enabled: true
+    description: "Include clear examples, especially input/output pairs"
+    keywords:
+      - "Example"
+      - "example"
+      - "```"  # Code blocks often indicate examples
+
+  # Actionable triggers
+  actionable_triggers:
+    enabled: true
+    description: "Include specific trigger phrases users might say"
+    keywords:
+      - "Triggers"
+      - "Common Requests"
+      - "Use when"
+      - "Activated by"
+
+# =============================================================================
+# Presets
+# =============================================================================
+# Enable/disable groups of community practices
+presets:
+  # Minimal - just the most impactful practices
+  minimal:
+    enabled_practices:
+      - "condition_based_description"
+      - "use_basedir_variable"
+      - "include_examples"
+
+  # Standard - balanced set of practices (DEFAULT)
+  standard:
+    enabled_practices:
+      - "condition_based_description"
+      - "use_basedir_variable"
+      - "include_prerequisites"
+      - "include_error_handling"
+      - "include_examples"
+      - "cross_skill_references"
+      - "version_skills"
+
+  # Strict - all community practices enabled
+  strict:
+    enabled_practices: "all"
+
+# Active preset (can be overridden via CLI)
+active_preset: "standard"

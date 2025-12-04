@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - 2025-12-04
+
+### Added
+
+**Validation Package (`scripts/validation/`):**
+- New modular validation package with CI and TUI modes
+- **CI Mode**: Machine-readable output for pipelines
+  - Output formats: JSON, JUnit XML, TAP, Console, Markdown
+  - Exit codes: 0 (pass), 1 (failures), 2 (errors)
+  - Flags: `--completed`, `--phase`, `--rules-only`, `--fail-fast`, `--quiet`, `--verbose`
+- **TUI Mode**: Interactive terminal interface using Textual
+  - Real-time validation with progress indicators
+  - Filterable skill list (all/passed/failed/warnings)
+  - Detail panel with errors, warnings, project rules, and suggestions
+  - Keyboard navigation (j/k, arrows, vim-style)
+- **Three-tier rule system**:
+  - `rules.yaml` - Core validation rules (errors/warnings)
+  - `community.yaml` - Community practices (suggestions)
+  - `project.yaml` - Project-specific rules (ai-design-components conventions)
+- **Project Rules**: First rule requires skills mentioning libraries to reference `RESEARCH_GUIDE.md`
+- **Programmatic API**: `from validation import Validator, ValidationReport`
+
+**TUI Features:**
+- Column display: #, Skill Name, Status, Err, Warn, Proj, Sug
+- Color-coded severity: red (errors), yellow (warnings), magenta (project rules), blue (suggestions)
+- Separate "Project Rules" section in detail panel
+- Summary bar with pass/fail/pending counts
+
+### Changed
+- Validation now separates core warnings from project-specific rule warnings
+- TUI detail panel groups issues by source (core vs project rules)
+
+### Fixed
+- UTF-8 encoding errors when reading files with special characters (e.g., section symbols)
+
+---
+
 ## [0.4.1] - 2025-12-03
 
 ### 🚀 MILESTONE: 47 New Skill Master Plans (DevOps, Security, Cloud, AI/ML)
@@ -424,6 +461,7 @@ All init.md files include research from:
 - Design tokens foundational system
 - AI chat interfaces (strategic priority)
 
+[0.4.2]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.4.2
 [0.4.1]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.4.1
 [0.4.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.4.0
 [0.3.4]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.4
