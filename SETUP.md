@@ -391,7 +391,7 @@ All backend skills provide patterns for multiple languages:
 - **[README.md](./README.md)** - Project overview
 - **[commands/README.md](./commands/README.md)** - Skillchain documentation
 - **[CHANGELOG.md](./CHANGELOG.md)** - Version history
-- **[Anthropic Skills Docs](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills)** - Official documentation
+- **[Anthropic Skills Docs](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)** - Official documentation
 
 ---
 

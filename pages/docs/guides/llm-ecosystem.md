@@ -8,7 +8,7 @@ description: Interactive guide to Tool Calling, MCP, Agents, and Claude Skills
 
 An interactive guide to understanding the LLM tool ecosystem architecture.
 
-[**View Interactive Diagram →**](/ai-design-components/llm-ecosystem.html)
+[**View Interactive Diagram →**](/llm-ecosystem)
 
 ## Overview
 
@@ -157,7 +157,7 @@ Build from the bottom up: Foundation → Protocol → Orchestration → Applicat
 
 ## Learn More
 
-Visit the [**interactive diagram**](/ai-design-components/llm-ecosystem.html) for:
+Visit the [**interactive diagram**](/llm-ecosystem) for:
 - Visual Venn diagrams of each layer
 - Comprehensive comparison tables
 - Deep dive into agents

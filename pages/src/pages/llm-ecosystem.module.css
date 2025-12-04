@@ -549,21 +549,295 @@
   color: var(--ifm-color-primary);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Responsive - Tablet */
+@media (max-width: 996px) {
   .container {
-    padding: 25px;
+    padding: 30px 20px;
   }
 
   .title {
-    font-size: 2em;
+    font-size: 2.2em;
+  }
+
+  .tagline {
+    font-size: 1.2em;
+  }
+
+  .subtitle {
+    font-size: 1em;
+  }
+
+  .tabs {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tab {
+    padding: 12px 20px;
+    font-size: 0.9em;
+  }
+
+  .tabContent {
+    padding: 25px;
   }
 
   .vennCanvas {
-    height: 500px;
+    height: 550px;
+  }
+
+  .layerSelector {
+    gap: 10px;
+  }
+
+  .layerBtn {
+    padding: 10px 18px;
+    font-size: 0.8em;
   }
 
   .detailGrid {
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .takeawaysGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .comparisonTable {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .comparisonTable table {
+    min-width: 900px;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 15px;
+  }
+
+  .title {
+    font-size: 1.8em;
+    line-height: 1.2;
+  }
+
+  .tagline {
+    font-size: 1.1em;
+  }
+
+  .subtitle {
+    font-size: 0.95em;
+    line-height: 1.5;
+  }
+
+  .insightBox {
+    padding: 20px;
+    margin: 20px 0;
+  }
+
+  .insightBox h3 {
+    font-size: 1.2em;
+  }
+
+  .tabs {
+    margin: 25px 0 0 0;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 3px;
+  }
+
+  .tab {
+    padding: 10px 14px;
+    font-size: 0.75em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .tabContent {
+    padding: 20px 15px;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .layerSelector {
+    flex-direction: column;
+    gap: 8px;
+    margin: 20px 0;
+  }
+
+  .layerBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 0.85em;
+  }
+
+  .vennCanvas {
+    height: 400px;
+    padding: 20px 10px;
+    margin: 15px 0;
+  }
+
+  .vennShape {
+    padding: 10px;
+  }
+
+  .shapeLabel {
+    font-size: 0.85em;
+  }
+
+  .overlapRegion {
+    padding: 12px;
+    font-size: 0.8em;
+    max-width: 180px;
+  }
+
+  .overlapTitle {
+    font-size: 0.8em;
+    margin-bottom: 6px;
+  }
+
+  .legend {
+    padding: 18px;
+  }
+
+  .legendItems {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .detailPanel {
+    padding: 20px 15px;
+    margin: 20px 0;
+  }
+
+  .detailPanel h3 {
+    font-size: 1.3em;
+    margin-bottom: 18px;
+  }
+
+  .detailCard {
+    padding: 18px;
+  }
+
+  .detailCard h4 {
+    font-size: 1.05em;
+  }
+
+  .detailCard li {
+    padding: 8px 0;
+    font-size: 0.9em;
+  }
+
+  .workflowExample {
+    padding: 20px 15px;
+    margin: 18px 0;
+  }
+
+  .workflowExample h4 {
+    font-size: 1.1em;
+  }
+
+  .workflowStep {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .stepNumber {
+    min-width: 30px;
+    height: 30px;
+    font-size: 0.95em;
+  }
+
+  .stepContent {
+    font-size: 0.9em;
+  }
+
+  .arrow {
+    font-size: 1.5em;
+    margin: 18px 0;
+  }
+
+  .takeaways {
+    padding: 25px 15px;
+    margin-top: 35px;
+  }
+
+  .takeaways h2 {
+    font-size: 1.6em;
+    margin-bottom: 25px;
+  }
+
+  .takeawaysGrid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .takeawayCard {
+    padding: 20px;
+  }
+
+  .takeawayCard .emoji {
+    font-size: 2em;
+  }
+
+  .takeawayCard strong {
+    font-size: 1.1em;
+  }
+
+  .takeawayCard span {
+    font-size: 0.9em;
+  }
+
+  /* Comparison table mobile scroll hint */
+  .comparisonTable::after {
+    content: 'Scroll horizontally to view full table →';
+    display: block;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.85em;
+    color: var(--ifm-color-emphasis-600);
+    font-style: italic;
+  }
+}
+
+/* Responsive - Small Mobile */
+@media (max-width: 480px) {
+  .container {
+    padding: 15px 10px;
+  }
+
+  .title {
+    font-size: 1.5em;
+  }
+
+  .tagline {
+    font-size: 1em;
+  }
+
+  .tab {
+    padding: 8px 10px;
+    font-size: 0.7em;
+  }
+
+  .vennCanvas {
+    height: 320px;
+  }
+
+  .overlapRegion {
+    max-width: 140px;
+    padding: 10px;
+    font-size: 0.75em;
+  }
+
+  .insightBox {
+    padding: 15px;
+  }
+
+  .detailPanel {
+    padding: 15px 12px;
   }
 }

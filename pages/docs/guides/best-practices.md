@@ -438,9 +438,9 @@ examples/
 
 ## Resources
 
-- [Anthropic Skills Documentation](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills)
-- [Skills Best Practices](https://anthropic.mintlify.app/en/docs/agents-and-tools/agent-skills/best-practices)
-- [Skills Cookbook](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/cookbook)
+- [Anthropic Skills Documentation](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
+- [Skills Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
+- [Skills Cookbook](https://github.com/anthropics/claude-cookbooks/tree/main/skills)
 - [Anthropic Skills Repository](https://github.com/anthropics/skills)
 
 ---

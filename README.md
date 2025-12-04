@@ -17,7 +17,7 @@ AI Design Components is a comprehensive collection of Claude Skills covering **7
 - Multi-language support (TypeScript, Python, Go, Rust) across 9 skills
 - Research-backed recommendations using Google Search Grounding and Context7
 
-Built following [Anthropic's official Skills best practices](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills), these skills use progressive disclosure to minimize context usage while maximizing Claude's effectiveness.
+Built following [Anthropic's official Skills best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview), these skills use progressive disclosure to minimize context usage while maximizing Claude's effectiveness.
 
 ## Quick Start with Skillchain (v2.1)
 
@@ -267,9 +267,9 @@ skills/[skill-name]/
 
 ## Resources
 
-- [Anthropic Skills Documentation](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills)
-- [Skills Best Practices](https://anthropic.mintlify.app/en/docs/agents-and-tools/agent-skills/best-practices)
-- [Skills Cookbook](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/cookbook)
+- [Anthropic Skills Documentation](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
+- [Skills Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
+- [Skills Cookbook](https://github.com/anthropics/claude-cookbooks/tree/main/skills)
 - [Anthropic Skills Repository](https://github.com/anthropics/skills)
 
 ## License
@@ -278,4 +278,4 @@ MIT License - See [LICENSE](./LICENSE) for details.
 
 ---
 
-**Built with Claude** | Following [Anthropic's Skills best practices](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills)
+**Built with Claude** | Following [Anthropic's Skills best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
