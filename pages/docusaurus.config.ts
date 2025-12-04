@@ -83,7 +83,7 @@ const config: Config = {
       title: 'AI Design Components',
       logo: {
         alt: 'AI Design Components Logo',
-        src: 'img/logo.svg',
+        src: 'img/logo.png',
       },
       items: [
         {
