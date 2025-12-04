@@ -10,14 +10,14 @@
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+  border-bottom: 1px solid rgba(250, 88, 45, 0.2);
 }
 
 .heroTitle {
   font-size: 3rem;
   font-weight: 800;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #FF724D 0%, #FA582D 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -48,7 +48,7 @@
 .statsSection {
   padding: 3rem 0;
   background: var(--ifm-background-surface-color);
-  border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+  border-bottom: 1px solid rgba(250, 88, 45, 0.1);
 }
 
 .statsGrid {
@@ -64,19 +64,19 @@
   padding: 1.5rem;
   background: var(--ifm-background-color);
   border-radius: 12px;
-  border: 1px solid rgba(124, 58, 237, 0.2);
+  border: 1px solid rgba(250, 88, 45, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .statCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 8px 16px rgba(250, 88, 45, 0.2);
 }
 
 .statValue {
   font-size: 3rem;
   font-weight: 800;
-  color: #a78bfa;
+  color: #FF724D;
   line-height: 1;
   margin-bottom: 0.5rem;
 }
@@ -112,7 +112,7 @@
   padding: 2rem;
   background: var(--ifm-background-surface-color);
   border-radius: 12px;
-  border: 1px solid rgba(124, 58, 237, 0.2);
+  border: 1px solid rgba(250, 88, 45, 0.2);
   text-decoration: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   color: inherit;
@@ -120,8 +120,8 @@
 
 .quickLinkCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
-  border-color: rgba(124, 58, 237, 0.5);
+  box-shadow: 0 8px 24px rgba(250, 88, 45, 0.3);
+  border-color: rgba(250, 88, 45, 0.5);
   text-decoration: none;
   color: inherit;
 }

@@ -1,0 +1,569 @@
+/* LLM Ecosystem Page Styles */
+
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 50px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.title {
+  font-size: 2.8em;
+  margin-bottom: 10px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.tagline {
+  font-size: 1.4em;
+  color: var(--ifm-color-primary);
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 40px;
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+.accentLine {
+  height: 3px;
+  background: linear-gradient(90deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  margin: 30px 0;
+}
+
+/* Insight Box */
+.insightBox {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 8px;
+  margin: 30px 0;
+  box-shadow: 0 8px 32px rgba(250, 88, 45, 0.25);
+}
+
+.insightBox h3 {
+  margin-bottom: 18px;
+  font-size: 1.4em;
+  font-weight: 700;
+}
+
+.insightBox p,
+.insightBox ul {
+  line-height: 1.8;
+}
+
+.insightBox ul {
+  margin-top: 15px;
+  padding-left: 20px;
+  list-style: none;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin: 40px 0 0 0;
+  border-bottom: 3px solid var(--ifm-color-primary);
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 16px 32px;
+  background: transparent;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 700;
+  transition: all 0.3s;
+  color: var(--ifm-color-emphasis-600);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tab:hover {
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-primary);
+}
+
+.tabActive {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  color: white;
+  transform: translateY(3px);
+}
+
+.tabContent {
+  display: none;
+  padding: 40px;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 0 8px 8px 8px;
+}
+
+.tabContentActive {
+  display: block;
+}
+
+/* Layer Selector */
+.layerSelector {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+.layerBtn {
+  padding: 14px 28px;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-color);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: uppercase;
+  font-size: 0.85em;
+  letter-spacing: 0.5px;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.layerBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(250, 88, 45, 0.2);
+  border-color: var(--ifm-color-primary);
+}
+
+.layerBtnActive {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  color: white;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 4px 20px rgba(250, 88, 45, 0.4);
+}
+
+.layerIndicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+/* Venn Canvas */
+.vennCanvas {
+  position: relative;
+  height: 750px;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 8px;
+  padding: 40px;
+  margin: 20px 0;
+  overflow: visible;
+  border: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.vennLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.vennLayerActive {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.vennShape {
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 700;
+  transition: all 0.3s;
+  cursor: pointer;
+  padding: 20px;
+}
+
+.vennShape:hover {
+  transform: scale(1.05);
+  z-index: 100;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.shapeLabel {
+  position: relative;
+  z-index: 2;
+  font-size: 1.1em;
+}
+
+/* Overlap Region */
+.overlapRegion {
+  position: absolute;
+  background: var(--ifm-background-color);
+  border: 2px solid var(--ifm-color-primary);
+  border-radius: 8px;
+  padding: 18px;
+  font-size: 0.9em;
+  box-shadow: 0 4px 24px rgba(250, 88, 45, 0.2);
+  max-width: 240px;
+  z-index: 50;
+  transition: all 0.3s;
+}
+
+.overlapRegion:hover {
+  transform: scale(1.05);
+  z-index: 101;
+  box-shadow: 0 8px 32px rgba(250, 88, 45, 0.3);
+}
+
+.overlapTitle {
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--ifm-color-primary);
+  text-transform: uppercase;
+  font-size: 0.9em;
+  letter-spacing: 0.5px;
+}
+
+.overlapContent {
+  line-height: 1.6;
+}
+
+/* Color Classes */
+.colorToolCalling {
+  background: rgba(250, 88, 45, 0.15);
+  border-color: #FA582D;
+  color: #B23808;
+}
+
+.colorMcp {
+  background: rgba(0, 192, 232, 0.15);
+  border-color: #00C0E8;
+  color: #0088aa;
+}
+
+.colorLangchain {
+  background: rgba(0, 204, 102, 0.15);
+  border-color: #00CC66;
+  color: #008844;
+}
+
+.colorAgents {
+  background: rgba(200, 71, 39, 0.15);
+  border-color: #C84727;
+  color: #8a2f19;
+}
+
+.colorSkills {
+  background: rgba(255, 203, 6, 0.15);
+  border-color: #FFCB06;
+  color: #b38904;
+}
+
+.colorCommands {
+  background: rgba(255, 114, 77, 0.15);
+  border-color: #FF724D;
+  color: #cc4a26;
+}
+
+/* Detail Panel */
+.detailPanel {
+  background: var(--ifm-background-color);
+  border-radius: 8px;
+  padding: 35px;
+  margin: 30px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid var(--ifm-color-primary);
+}
+
+.detailPanel h3 {
+  margin-bottom: 25px;
+  font-size: 1.8em;
+  font-weight: 700;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin-top: 25px;
+}
+
+.detailCard {
+  background: var(--ifm-color-emphasis-100);
+  padding: 25px;
+  border-radius: 8px;
+  border-left: 4px solid var(--ifm-color-primary);
+  transition: all 0.3s;
+}
+
+.detailCard:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.detailCard h4 {
+  margin-bottom: 15px;
+  font-size: 1.2em;
+  font-weight: 700;
+}
+
+.detailCard ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.detailCard li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  line-height: 1.6;
+}
+
+.detailCard li:last-child {
+  border-bottom: none;
+}
+
+.detailCard li::before {
+  content: "▸ ";
+  color: var(--ifm-color-primary);
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+/* Comparison Table */
+.comparisonTable {
+  margin: 40px 0;
+  overflow-x: auto;
+}
+
+.comparisonTable table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--ifm-background-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.comparisonTable th {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  color: white;
+  padding: 20px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.95em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.comparisonTable td {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.comparisonTable tr:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+/* Feature Icons */
+.featureIcon {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.iconYes {
+  background: #00CC66;
+}
+
+.iconNo {
+  background: #C84727;
+}
+
+.iconPartial {
+  background: #FFCB06;
+}
+
+/* Workflow Example */
+.workflowExample {
+  background: var(--ifm-background-color);
+  border-radius: 8px;
+  padding: 30px;
+  margin: 25px 0;
+  border-left: 5px solid var(--ifm-color-primary);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.workflowExample h4 {
+  margin-bottom: 18px;
+  font-size: 1.3em;
+  color: var(--ifm-color-primary);
+  font-weight: 700;
+}
+
+.workflowSteps {
+  display: grid;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.workflowStep {
+  background: var(--ifm-color-emphasis-100);
+  padding: 18px;
+  border-radius: 8px;
+  border-left: 3px solid var(--ifm-color-primary);
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.stepNumber {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-size: 1.1em;
+}
+
+.stepContent {
+  flex: 1;
+}
+
+.stepContent strong {
+  color: var(--ifm-color-primary);
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Legend */
+.legend {
+  background: var(--ifm-color-emphasis-100);
+  padding: 25px;
+  border-radius: 8px;
+  margin: 30px 0;
+  border-left: 4px solid var(--ifm-color-primary);
+}
+
+.legend h4 {
+  margin-bottom: 15px;
+  color: var(--ifm-color-primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.legendItems {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.legendColor {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 2px solid;
+}
+
+/* Takeaways */
+.takeaways {
+  margin-top: 50px;
+  padding: 40px;
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  border-radius: 8px;
+  color: white;
+}
+
+.takeaways h2 {
+  text-align: center;
+  margin-bottom: 35px;
+  font-size: 2.2em;
+  font-weight: 700;
+}
+
+.takeawaysGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+.takeawayCard {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 28px;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.takeawayCard .emoji {
+  font-size: 2.5em;
+  margin-bottom: 12px;
+}
+
+.takeawayCard strong {
+  font-size: 1.3em;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.takeawayCard span {
+  opacity: 0.95;
+  line-height: 1.7;
+}
+
+/* Arrow */
+.arrow {
+  text-align: center;
+  margin: 25px 0;
+  font-size: 2em;
+  color: var(--ifm-color-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 25px;
+  }
+
+  .title {
+    font-size: 2em;
+  }
+
+  .vennCanvas {
+    height: 500px;
+  }
+
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+}

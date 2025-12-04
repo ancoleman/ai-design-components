@@ -112,7 +112,7 @@ const config: Config = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: '/ai-design-components/llm-ecosystem.html',
+          to: '/llm-ecosystem',
           label: 'LLM Ecosystem',
           position: 'right',
         },

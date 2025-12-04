@@ -1,37 +1,53 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * AI Design Components - Custom Theme
+ *
+ * Brand Colors:
+ * - Primary: Cyber Orange #FA582D
+ * - Dark: #B23808
+ * - Light: #FF724D
+ * - GTM Colors: Cloud Blue #00C0E8, Intelligence Green #00CC66,
+ *               Security Yellow #FFCB06, Fire Red #C84727
  */
 
-/* You can override the default Infima variables here. */
+/* Light mode colors */
 :root {
-  --ifm-color-primary: #7c3aed;
-  --ifm-color-primary-dark: #6d28d9;
-  --ifm-color-primary-darker: #5b21b6;
-  --ifm-color-primary-darkest: #4c1d95;
-  --ifm-color-primary-light: #8b5cf6;
-  --ifm-color-primary-lighter: #a78bfa;
-  --ifm-color-primary-lightest: #c4b5fd;
+  --ifm-color-primary: #FA582D;
+  --ifm-color-primary-dark: #E84A1F;
+  --ifm-color-primary-darker: #B23808;
+  --ifm-color-primary-darkest: #8A2A06;
+  --ifm-color-primary-light: #FF724D;
+  --ifm-color-primary-lighter: #FF9270;
+  --ifm-color-primary-lightest: #FFB8A3;
+
+  /* Brand accent colors */
+  --color-cloud-blue: #00C0E8;
+  --color-intelligence-green: #00CC66;
+  --color-security-yellow: #FFCB06;
+  --color-fire-red: #C84727;
+
   --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(124, 58, 237, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(250, 88, 45, 0.1);
+
+  /* Typography - Helvetica Neue family */
+  --ifm-font-family-base: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --ifm-heading-font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
+/* Dark mode colors - lighter orange for readability */
 [data-theme='dark'] {
-  --ifm-color-primary: #a78bfa;
-  --ifm-color-primary-dark: #9333ea;
-  --ifm-color-primary-darker: #7c3aed;
-  --ifm-color-primary-darkest: #6d28d9;
-  --ifm-color-primary-light: #c4b5fd;
-  --ifm-color-primary-lighter: #ddd6fe;
-  --ifm-color-primary-lightest: #ede9fe;
+  --ifm-color-primary: #FF724D;
+  --ifm-color-primary-dark: #FA582D;
+  --ifm-color-primary-darker: #E84A1F;
+  --ifm-color-primary-darkest: #B23808;
+  --ifm-color-primary-light: #FF9270;
+  --ifm-color-primary-lighter: #FFB8A3;
+  --ifm-color-primary-lightest: #FFDDD4;
   --ifm-background-color: #0f172a;
   --ifm-background-surface-color: #1e293b;
-  --docusaurus-highlighted-code-line-bg: rgba(167, 139, 250, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(255, 114, 77, 0.15);
 }
 
-/* Landing Page Enhancements */
+/* Dark theme background */
 html[data-theme='dark'] {
   --ifm-background-color: #0f172a;
   --ifm-background-surface-color: #1e293b;
@@ -44,7 +60,7 @@ html[data-theme='dark'] {
 
 .button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 12px rgba(250, 88, 45, 0.3);
 }
 
 /* Link hover effects */
@@ -59,28 +75,28 @@ a {
 }
 
 .card:hover {
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 8px 24px rgba(250, 88, 45, 0.2);
   transform: translateY(-2px);
 }
 
 /* Code block styling */
 code {
-  background-color: rgba(124, 58, 237, 0.1);
-  border: 1px solid rgba(124, 58, 237, 0.2);
+  background-color: rgba(250, 88, 45, 0.1);
+  border: 1px solid rgba(250, 88, 45, 0.2);
   border-radius: 4px;
   padding: 0.2em 0.4em;
 }
 
 /* Navbar adjustments */
 .navbar {
-  border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+  border-bottom: 1px solid rgba(250, 88, 45, 0.15);
   backdrop-filter: blur(10px);
 }
 
 /* Footer styling */
 .footer {
   background-color: var(--ifm-background-surface-color);
-  border-top: 1px solid rgba(124, 58, 237, 0.1);
+  border-top: 1px solid rgba(250, 88, 45, 0.15);
 }
 
 /* Improve scrollbar appearance */
@@ -93,12 +109,12 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(124, 58, 237, 0.5);
+  background: rgba(250, 88, 45, 0.5);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(124, 58, 237, 0.7);
+  background: rgba(250, 88, 45, 0.7);
 }
 
 /* Responsive typography */
@@ -113,3 +129,14 @@ code {
     --ifm-font-size-base: 15px;
   }
 }
+
+/* Brand accent color utilities */
+.text-cloud-blue { color: var(--color-cloud-blue); }
+.text-intelligence-green { color: var(--color-intelligence-green); }
+.text-security-yellow { color: var(--color-security-yellow); }
+.text-fire-red { color: var(--color-fire-red); }
+
+.bg-cloud-blue { background-color: var(--color-cloud-blue); }
+.bg-intelligence-green { background-color: var(--color-intelligence-green); }
+.bg-security-yellow { background-color: var(--color-security-yellow); }
+.bg-fire-red { background-color: var(--color-fire-red); }
