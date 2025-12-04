@@ -1,5 +1,9 @@
 # AI Design Components
 
+<p align="center">
+  <img src="https://ancoleman.github.io/ai-design-components/img/logo.png" alt="AI Design Components Logo" width="150">
+</p>
+
 > Full-stack development skills for AI-assisted development with Claude
 
 [![Version](https://img.shields.io/badge/version-0.4.1-blue.svg)](./VERSION)
