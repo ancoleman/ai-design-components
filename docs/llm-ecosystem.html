@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Tool Ecosystem - Professional Services Framework</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 50px;
+            box-shadow: 0 8px 40px rgba(250, 88, 45, 0.15);
+            border-top: 4px solid #FA582D;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.8em;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            text-align: center;
+            font-size: 1.4em;
+            color: #FA582D;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        /* Palo Alto Networks Brand Colors */
+        .pan-orange { color: #FA582D; }
+        .pan-orange-bg { background: #FA582D; }
+        .pan-orange-border { border-color: #FA582D; }
+        .pan-orange-dark { color: #B23808; }
+        .pan-orange-light { color: #FF724D; }
+        
+        /* GTM Sub-Brand Colors */
+        .prisma-blue { color: #00C0E8; }
+        .cortex-green { color: #00CC66; }
+        .strata-yellow { color: #FFCB06; }
+        .unit42-red { color: #C84727; }
+
+        /* Interactive Venn Diagram Styles */
+        .venn-section {
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .layer-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .layer-btn {
+            padding: 14px 28px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        .layer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(250, 88, 45, 0.2);
+            border-color: #FA582D;
+        }
+
+        .layer-btn.active {
+            background: linear-gradient(135deg, #FA582D 0%, #B23808 100%);
+            color: white;
+            border-color: #FA582D;
+            box-shadow: 0 4px 20px rgba(250, 88, 45, 0.4);
+        }
+
+        .layer-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .venn-canvas {
+            position: relative;
+            height: 750px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 4px;
+            padding: 40px;
+            margin: 20px 0;
+            overflow: visible;
+            border: 1px solid #e5e7eb;
+        }
+
+        .venn-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .venn-layer.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .venn-shape {
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 700;
+            transition: all 0.3s;
+            cursor: pointer;
+            padding: 20px;
+        }
+
+        .venn-shape:hover {
+            transform: scale(1.05);
+            z-index: 100;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .shape-label {
+            position: relative;
+            z-index: 2;
+            font-size: 1.1em;
+            text-shadow: 0 2px 4px rgba(255,255,255,0.9);
+        }
+
+        .overlap-region {
+            position: absolute;
+            background: rgba(255,255,255,0.98);
+            border: 2px solid #FA582D;
+            border-radius: 4px;
+            padding: 18px;
+            font-size: 0.9em;
+            box-shadow: 0 4px 24px rgba(250, 88, 45, 0.2);
+            max-width: 240px;
+            z-index: 50;
+            transition: all 0.3s;
+        }
+
+        .overlap-region:hover {
+            transform: scale(1.05);
+            z-index: 101;
+            box-shadow: 0 8px 32px rgba(250, 88, 45, 0.3);
+        }
+
+        .overlap-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #FA582D;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+
+        .overlap-content {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Detail Panel */
+        .detail-panel {
+            background: white;
+            border-radius: 4px;
+            padding: 35px;
+            margin: 30px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #FA582D;
+        }
+
+        .detail-panel h3 {
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .detail-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 4px;
+            border-left: 4px solid;
+            transition: all 0.3s;
+        }
+
+        .detail-card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .detail-card h4 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .detail-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-card li {
+            padding: 10px 0;
+            color: #333;
+            border-bottom: 1px solid #e5e7eb;
+            line-height: 1.6;
+        }
+
+        .detail-card li:last-child {
+            border-bottom: none;
+        }
+
+        .detail-card li:before {
+            content: "▸ ";
+            color: #FA582D;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Comprehensive Comparison Table */
+        .comparison-table {
+            margin: 40px 0;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        th {
+            background: linear-gradient(135deg, #FA582D 0%, #B23808 100%);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .feature-icon {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .icon-yes { background: #00CC66; }
+        .icon-no { background: #C84727; }
+        .icon-partial { background: #FFCB06; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 40px 0 0 0;
+            border-bottom: 3px solid #FA582D;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 16px 32px;
+            background: transparent;
+            border: none;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 700;
+            transition: all 0.3s;
+            color: #666;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab:hover {
+            background: #f8f9fa;
+            color: #FA582D;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #FA582D 0%, #B23808 100%);
+            color: white;
+            transform: translateY(3px);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px;
+            background: #f8f9fa;
+            border-radius: 0 4px 4px 4px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Insight Boxes */
+        .insight-box {
+            background: linear-gradient(135deg, #FA582D 0%, #B23808 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 4px;
+            margin: 30px 0;
+            box-shadow: 0 8px 32px rgba(250, 88, 45, 0.25);
+        }
+
+        .insight-box h3 {
+            margin-bottom: 18px;
+            font-size: 1.4em;
+            font-weight: 700;
+        }
+
+        .insight-box p, .insight-box ul {
+            line-height: 1.8;
+        }
+
+        .workflow-example {
+            background: white;
+            border-radius: 4px;
+            padding: 30px;
+            margin: 25px 0;
+            border-left: 5px solid #FA582D;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .workflow-example h4 {
+            margin-bottom: 18px;
+            font-size: 1.3em;
+            color: #FA582D;
+            font-weight: 700;
+        }
+
+        .workflow-steps {
+            display: grid;
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .workflow-step {
+            background: #f8f9fa;
+            padding: 18px;
+            border-radius: 4px;
+            border-left: 3px solid #FA582D;
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            min-width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FA582D 0%, #B23808 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+            font-size: 1.1em;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content strong {
+            color: #FA582D;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Color Definitions */
+        .color-tool-calling { 
+            background: rgba(250, 88, 45, 0.15);
+            border-color: #FA582D;
+            color: #B23808;
+        }
+        .color-mcp { 
+            background: rgba(0, 192, 232, 0.15);
+            border-color: #00C0E8;
+            color: #0088aa;
+        }
+        .color-langchain { 
+            background: rgba(0, 204, 102, 0.15);
+            border-color: #00CC66;
+            color: #008844;
+        }
+        .color-agents { 
+            background: rgba(200, 71, 39, 0.15);
+            border-color: #C84727;
+            color: #8a2f19;
+        }
+        .color-skills { 
+            background: rgba(255, 203, 6, 0.15);
+            border-color: #FFCB06;
+            color: #b38904;
+        }
+        .color-commands { 
+            background: rgba(255, 114, 77, 0.15);
+            border-color: #FF724D;
+            color: #cc4a26;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+
+            .venn-canvas {
+                height: 500px;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Brand accent line */
+        .accent-line {
+            height: 3px;
+            background: linear-gradient(90deg, #FA582D 0%, #B23808 100%);
+            margin: 30px 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #FA582D 0%, #B23808 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            font-size: 0.9em;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(250, 88, 45, 0.4);
+        }
+
+        .architecture-legend {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 4px;
+            margin: 30px 0;
+            border-left: 4px solid #FA582D;
+        }
+
+        .architecture-legend h4 {
+            margin-bottom: 15px;
+            color: #FA582D;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .legend-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 2px;
+            border: 2px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LLM Tool Ecosystem Architecture</h1>
+        <p class="tagline">We've Got Next</p>
+        <p class="subtitle">Professional Services Framework for Understanding Tool Calling, MCP, Agents, LangChain, and Claude-Specific Features</p>
+
+        <div class="accent-line"></div>
+
+        <div class="insight-box">
+            <h3>🎯 Executive Summary</h3>
+            <p><strong>These technologies operate at different architectural layers and serve distinct purposes.</strong> They're not competing alternatives—they're complementary systems designed to work together. Understanding where each fits enables you to build scalable, maintainable AI solutions for Professional Services delivery.</p>
+            <ul style="margin-top: 15px; padding-left: 20px;">
+                <li>• <strong>Foundation:</strong> Tool Calling enables LLMs to request structured actions</li>
+                <li>• <strong>Protocol:</strong> MCP standardizes integration across systems</li>
+                <li>• <strong>Orchestration:</strong> Agents & Frameworks coordinate complex workflows</li>
+                <li>• <strong>Application:</strong> Skills & Commands provide user-facing capabilities</li>
+            </ul>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('venn')">Interactive Venn</button>
+            <button class="tab" onclick="showTab('detailed')">Detailed Comparison</button>
+            <button class="tab" onclick="showTab('architecture')">Architecture Stack</button>
+            <button class="tab" onclick="showTab('agents')">Agents Deep Dive</button>
+            <button class="tab" onclick="showTab('workflows')">Integration Workflows</button>
+        </div>
+
+        <!-- Venn Diagram Tab -->
+        <div id="venn" class="tab-content active">
+            <div class="venn-section">
+                <h2 style="text-align: center; margin-bottom: 25px; color: #1a1a1a;">Select Architectural Layer</h2>
+                
+                <div class="layer-selector">
+                    <button class="layer-btn active" onclick="showLayer('foundation')" data-layer="foundation">
+                        <span class="layer-indicator" style="background: #FA582D;"></span>
+                        Foundation
+                    </button>
+                    <button class="layer-btn" onclick="showLayer('protocol')" data-layer="protocol">
+                        <span class="layer-indicator" style="background: #00C0E8;"></span>
+                        Protocol
+                    </button>
+                    <button class="layer-btn" onclick="showLayer('orchestration')" data-layer="orchestration">
+                        <span class="layer-indicator" style="background: #C84727;"></span>
+                        Orchestration
+                    </button>
+                    <button class="layer-btn" onclick="showLayer('application')" data-layer="application">
+                        <span class="layer-indicator" style="background: #FFCB06;"></span>
+                        Application
+                    </button>
+                    <button class="layer-btn" onclick="showLayer('all')" data-layer="all">
+                        <span class="layer-indicator" style="background: linear-gradient(45deg, #FA582D, #00C0E8, #00CC66, #C84727);"></span>
+                        All Layers
+                    </button>
+                </div>
+
+                <div class="venn-canvas">
+                    <!-- Foundation Layer (Tool Calling) -->
+                    <div class="venn-layer active" id="layer-foundation">
+                        <div class="venn-shape color-tool-calling" style="width: 450px; height: 450px; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+                            <div class="shape-label">
+                                <div style="font-size: 1.5em; margin-bottom: 12px; font-weight: 700;">Tool/Function Calling</div>
+                                <div style="font-size: 0.9em; font-weight: 600;">The Foundation Layer</div>
+                            </div>
+                        </div>
+                        
+                        <div class="overlap-region" style="left: 50%; top: 12%; transform: translateX(-50%);">
+                            <div class="overlap-title">Core Capability</div>
+                            <div class="overlap-content">
+                                • LLM generates structured JSON<br>
+                                • Specifies function + arguments<br>
+                                • ALL systems depend on this<br>
+                                • Model suggests, doesn't execute
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Protocol Layer (MCP) -->
+                    <div class="venn-layer" id="layer-protocol">
+                        <div class="venn-shape color-mcp" style="width: 400px; height: 400px; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+                            <div class="shape-label">
+                                <div style="font-size: 1.5em; margin-bottom: 12px; font-weight: 700;">MCP</div>
+                                <div style="font-size: 0.9em; font-weight: 600;">Protocol Layer</div>
+                            </div>
+                        </div>
+                        
+                        <div class="overlap-region" style="left: 18%; top: 22%;">
+                            <div class="overlap-title">Standardization</div>
+                            <div class="overlap-content">
+                                • Uses tool calling underneath<br>
+                                • Client-server architecture<br>
+                                • JSON-RPC transport<br>
+                                • Dynamic discovery
+                            </div>
+                        </div>
+
+                        <div class="overlap-region" style="right: 18%; top: 22%;">
+                            <div class="overlap-title">Universal Protocol</div>
+                            <div class="overlap-content">
+                                • "USB-C for AI"<br>
+                                • Solves N×M problem<br>
+                                • Vendor-agnostic<br>
+                                • Growing ecosystem
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Orchestration Layer (Agents + LangChain) -->
+                    <div class="venn-layer" id="layer-orchestration">
+                        <div class="venn-shape color-agents" style="width: 320px; height: 320px; left: 35%; top: 50%; transform: translate(-50%, -50%);">
+                            <div class="shape-label">
+                                <div style="font-size: 1.4em; margin-bottom: 10px; font-weight: 700;">AI Agents</div>
+                                <div style="font-size: 0.85em; font-weight: 600;">Autonomous Orchestration</div>
+                            </div>
+                        </div>
+
+                        <div class="venn-shape color-langchain" style="width: 320px; height: 320px; left: 65%; top: 50%; transform: translate(-50%, -50%);">
+                            <div class="shape-label">
+                                <div style="font-size: 1.4em; margin-bottom: 10px; font-weight: 700;">LangChain</div>
+                                <div style="font-size: 0.85em; font-weight: 600;">Framework Orchestration</div>
+                            </div>
+                        </div>
+
+                        <div class="overlap-region" style="left: 50%; top: 25%; transform: translateX(-50%);">
+                            <div class="overlap-title">Orchestration Layer</div>
+                            <div class="overlap-content">
+                                <strong>Agents:</strong> LLM-driven decisions<br>
+                                <strong>LangChain:</strong> Framework structure<br>
+                                Both manage complex workflows
+                            </div>
+                        </div>
+
+                        <div class="overlap-region" style="left: 50%; bottom: 12%; transform: translateX(-50%);">
+                            <div class="overlap-title">Both Use</div>
+                            <div class="overlap-content">
+                                • Tool calling for execution<br>
+                                • Can integrate MCP servers<br>
+                                • Memory management<br>
+                                • Planning & reasoning
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Application Layer (Skills + Commands) -->
+                    <div class="venn-layer" id="layer-application">
+                        <div class="venn-shape color-skills" style="width: 300px; height: 300px; left: 30%; top: 50%; transform: translate(-50%, -50%);">
+                            <div class="shape-label">
+                                <div style="font-size: 1.3em; margin-bottom: 10px; font-weight: 700;">Claude Skills</div>
+                                <div style="font-size: 0.8em; font-weight: 600;">Model-Invoked</div>
+                            </div>
+                        </div>
+
+                        <div class="venn-shape color-commands" style="width: 300px; height: 300px; left: 70%; top: 50%; transform: translate(-50%, -50%);">
+                            <div class="shape-label">
+                                <div style="font-size: 1.3em; margin-bottom: 10px; font-weight: 700;">/Commands</div>
+                                <div style="font-size: 0.8em; font-weight: 600;">User-Invoked</div>
+                            </div>
+                        </div>
+
+                        <div class="overlap-region" style="left: 50%; top: 28%; transform: translateX(-50%);">
+                            <div class="overlap-title">Invocation Difference</div>
+                            <div class="overlap-content">
+                                <strong>Skills:</strong> Automatic activation<br>
+                                <strong>Commands:</strong> Explicit /trigger<br>
+                                Both: Markdown-based workflows
+                            </div>
+                        </div>
+
+                        <div class="overlap-region" style="left: 50%; bottom: 12%; transform: translateX(-50%);">
+                            <div class="overlap-title">Claude-Specific</div>
+                            <div class="overlap-content">
+                                • Both use tool calling<br>
+                                • Can leverage MCP tools<br>
+                                • Filesystem-based storage<br>
+                                • Progressive disclosure
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- All Layers View -->
+                    <div class="venn-layer" id="layer-all">
+                        <!-- Concentric circles showing layers -->
+                        <div class="venn-shape color-tool-calling" style="width: 550px; height: 550px; left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: 0.5;">
+                            <div class="shape-label" style="position: absolute; top: 8%;">Tool Calling</div>
+                        </div>
+                        
+                        <div class="venn-shape color-mcp" style="width: 460px; height: 460px; left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: 0.5;">
+                            <div class="shape-label" style="position: absolute; top: 15%;">MCP</div>
+                        </div>
+                        
+                        <div class="venn-shape color-agents" style="width: 280px; height: 280px; left: 42%; top: 50%; transform: translate(-50%, -50%); opacity: 0.6;">
+                            <div class="shape-label" style="font-size: 0.95em;">Agents</div>
+                        </div>
+
+                        <div class="venn-shape color-langchain" style="width: 280px; height: 280px; left: 58%; top: 50%; transform: translate(-50%, -50%); opacity: 0.6;">
+                            <div class="shape-label" style="font-size: 0.95em;">LangChain</div>
+                        </div>
+                        
+                        <div class="venn-shape color-skills" style="width: 160px; height: 160px; left: 38%; top: 58%; transform: translate(-50%, -50%); opacity: 0.7;">
+                            <div class="shape-label" style="font-size: 0.85em;">Skills</div>
+                        </div>
+
+                        <div class="venn-shape color-commands" style="width: 160px; height: 160px; left: 62%; top: 58%; transform: translate(-50%, -50%); opacity: 0.7;">
+                            <div class="shape-label" style="font-size: 0.85em;">/Commands</div>
+                        </div>
+
+                        <div class="overlap-region" style="left: 50%; bottom: 8%; transform: translateX(-50%);">
+                            <div class="overlap-title">Complete Stack</div>
+                            <div class="overlap-content">
+                                Foundation → Protocol → Orchestration → Application<br>
+                                <strong>All layers work together</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="architecture-legend">
+                    <h4>Color Legend</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #FA582D; border-color: #FA582D;"></div>
+                            <span><strong>Tool Calling</strong> - Foundation</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00C0E8; border-color: #00C0E8;"></div>
+                            <span><strong>MCP</strong> - Protocol</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #C84727; border-color: #C84727;"></div>
+                            <span><strong>Agents</strong> - Orchestration</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00CC66; border-color: #00CC66;"></div>
+                            <span><strong>LangChain</strong> - Framework</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #FFCB06; border-color: #FFCB06;"></div>
+                            <span><strong>Skills</strong> - Application</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #FF724D; border-color: #FF724D;"></div>
+                            <span><strong>/Commands</strong> - Application</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Comparison Tab -->
+        <div id="detailed" class="tab-content">
+            <h2 style="margin-bottom: 30px; color: #1a1a1a;">Comprehensive Feature Comparison</h2>
+
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 200px;">Characteristic</th>
+                            <th>Tool Calling</th>
+                            <th>MCP</th>
+                            <th>Agents</th>
+                            <th>LangChain</th>
+                            <th>Claude Skills</th>
+                            <th>/Commands</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Architectural Layer</strong></td>
+                            <td>Model capability</td>
+                            <td>Protocol/standard</td>
+                            <td>Orchestration pattern</td>
+                            <td>Framework/library</td>
+                            <td>Application feature</td>
+                            <td>Application feature</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Primary Purpose</strong></td>
+                            <td>Generate structured function requests</td>
+                            <td>Standardize tool integration</td>
+                            <td>Autonomous task execution</td>
+                            <td>Orchestrate LLM applications</td>
+                            <td>Package domain expertise</td>
+                            <td>Reusable prompt workflows</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invocation</strong></td>
+                            <td>Model generates JSON</td>
+                            <td>Protocol-mediated</td>
+                            <td>Autonomous decision-making</td>
+                            <td>Framework-orchestrated</td>
+                            <td>Model-invoked (auto)</td>
+                            <td>User-invoked (manual)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Autonomy Level</strong></td>
+                            <td>None (suggestion only)</td>
+                            <td>Low (executes defined tools)</td>
+                            <td><strong>High (self-directed)</strong></td>
+                            <td>Medium (workflow-directed)</td>
+                            <td>Medium (context-triggered)</td>
+                            <td>None (user-triggered)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Planning Capability</strong></td>
+                            <td><span class="feature-icon icon-no"></span>No planning</td>
+                            <td><span class="feature-icon icon-no"></span>No planning</td>
+                            <td><span class="feature-icon icon-yes"></span>Multi-step planning</td>
+                            <td><span class="feature-icon icon-partial"></span>Chain/workflow planning</td>
+                            <td><span class="feature-icon icon-no"></span>Predefined instructions</td>
+                            <td><span class="feature-icon icon-no"></span>Single execution</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memory Management</strong></td>
+                            <td><span class="feature-icon icon-no"></span>Stateless</td>
+                            <td><span class="feature-icon icon-partial"></span>Session-based</td>
+                            <td><span class="feature-icon icon-yes"></span>Short & long-term memory</td>
+                            <td><span class="feature-icon icon-yes"></span>Framework-managed memory</td>
+                            <td><span class="feature-icon icon-partial"></span>Per-skill state</td>
+                            <td><span class="feature-icon icon-no"></span>Stateless</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tool Usage</strong></td>
+                            <td>Suggests tools to call</td>
+                            <td>Standardizes tool access</td>
+                            <td>Dynamically selects tools</td>
+                            <td>Orchestrates tool chains</td>
+                            <td>Can bundle tool scripts</td>
+                            <td>Can reference tools</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cross-Platform</strong></td>
+                            <td><span class="feature-icon icon-yes"></span>All LLM providers</td>
+                            <td><span class="feature-icon icon-yes"></span>Open standard</td>
+                            <td><span class="feature-icon icon-yes"></span>Framework-agnostic</td>
+                            <td><span class="feature-icon icon-yes"></span>Multi-provider</td>
+                            <td><span class="feature-icon icon-partial"></span>Claude only</td>
+                            <td><span class="feature-icon icon-no"></span>Claude Code only</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Execution Environment</strong></td>
+                            <td>Client-side code</td>
+                            <td>MCP server</td>
+                            <td>Agent runtime</td>
+                            <td>Framework runtime</td>
+                            <td>Claude VM</td>
+                            <td>Claude session</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Best For</strong></td>
+                            <td>Simple API calls</td>
+                            <td>Multi-system integration</td>
+                            <td>Complex autonomous tasks</td>
+                            <td>Structured workflows</td>
+                            <td>Recurring domain tasks</td>
+                            <td>Team workflow shortcuts</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="insight-box" style="margin-top: 40px;">
+                <h3>📊 Critical Distinction: Workflows vs. Agents</h3>
+                <p><strong>Anthropic defines two types of agentic systems:</strong></p>
+                <ul style="margin-top: 15px; line-height: 1.9;">
+                    <li>• <strong>Workflows:</strong> LLMs and tools orchestrated through predefined code paths (like LangChain chains, Claude Skills/Commands)</li>
+                    <li>• <strong>Agents:</strong> LLMs dynamically direct their own processes and tool usage, maintaining control over how they accomplish tasks</li>
+                </ul>
+                <p style="margin-top: 15px;"><strong>Trade-off:</strong> Workflows offer predictability and consistency. Agents provide flexibility and model-driven decision-making at scale.</p>
+            </div>
+        </div>
+
+        <!-- Architecture Tab -->
+        <div id="architecture" class="tab-content">
+            <h2 style="margin-bottom: 30px; color: #1a1a1a;">Architectural Stack & Dependencies</h2>
+
+            <div class="detail-panel" style="border-left-color: #FA582D;">
+                <h3 style="color: #FA582D;">Layer 1: Model Capability (Foundation)</h3>
+                <div class="detail-grid">
+                    <div class="detail-card" style="border-left-color: #FA582D;">
+                        <h4>Tool/Function Calling</h4>
+                        <ul>
+                            <li><strong>What:</strong> LLM capability to generate structured function calls</li>
+                            <li><strong>How:</strong> Model outputs JSON with function name + arguments</li>
+                            <li><strong>Execution:</strong> Model DOES NOT execute - your code must</li>
+                            <li><strong>Format:</strong> Provider-specific JSON schemas</li>
+                            <li><strong>Dependency:</strong> None - this IS the foundation</li>
+                            <li><strong>Universal:</strong> OpenAI, Anthropic, Google, Meta, etc.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 25px 0; font-size: 2em; color: #FA582D;">⬇</div>
+
+            <div class="detail-panel" style="border-left-color: #00C0E8;">
+                <h3 style="color: #00C0E8;">Layer 2: Protocol (Standardization)</h3>
+                <div class="detail-grid">
+                    <div class="detail-card" style="border-left-color: #00C0E8;">
+                        <h4>Model Context Protocol (MCP)</h4>
+                        <ul>
+                            <li><strong>What:</strong> Open standard for tool integration</li>
+                            <li><strong>Architecture:</strong> Client-server with JSON-RPC</li>
+                            <li><strong>Components:</strong> MCP Client, Server, Host</li>
+                            <li><strong>Transport:</strong> stdio, HTTP, SSE</li>
+                            <li><strong>Builds on:</strong> Tool calling (uses internally)</li>
+                            <li><strong>Value:</strong> Solves N×M problem, dynamic discovery</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 25px 0; font-size: 2em; color: #FA582D;">⬇</div>
+
+            <div class="detail-panel" style="border-left-color: #C84727;">
+                <h3 style="color: #C84727;">Layer 3: Orchestration (Coordination)</h3>
+                <div class="detail-grid">
+                    <div class="detail-card" style="border-left-color: #C84727;">
+                        <h4>AI Agents (Autonomous)</h4>
+                        <ul>
+                            <li><strong>What:</strong> LLM-driven autonomous systems</li>
+                            <li><strong>Components:</strong> Agent core (LLM), Memory, Planning, Tools</li>
+                            <li><strong>Decision-making:</strong> Model directs its own process</li>
+                            <li><strong>Capabilities:</strong> Multi-step reasoning, goal-oriented</li>
+                            <li><strong>Builds on:</strong> Tool calling + optionally MCP</li>
+                            <li><strong>Value:</strong> Autonomy, adaptability, complex tasks</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card" style="border-left-color: #00CC66;">
+                        <h4>LangChain (Structured)</h4>
+                        <ul>
+                            <li><strong>What:</strong> Framework for LLM applications</li>
+                            <li><strong>Components:</strong> Tools, Agents, Chains, Memory</li>
+                            <li><strong>Decision-making:</strong> Predefined workflows</li>
+                            <li><strong>Architecture:</strong> Modular Python/JS libraries</li>
+                            <li><strong>Builds on:</strong> Tool calling + MCP adapters</li>
+                            <li><strong>Value:</strong> Structure, predictability, composability</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 25px 0; font-size: 2em; color: #FA582D;">⬇</div>
+
+            <div class="detail-panel" style="border-left-color: #FFCB06;">
+                <h3 style="color: #B38904;">Layer 4: Application (User Experience)</h3>
+                <div class="detail-grid">
+                    <div class="detail-card" style="border-left-color: #FFCB06;">
+                        <h4>Claude Skills (Model-Invoked)</h4>
+                        <ul>
+                            <li><strong>What:</strong> Filesystem-based capability packages</li>
+                            <li><strong>Structure:</strong> SKILL.md + scripts/resources</li>
+                            <li><strong>Invocation:</strong> Automatic (context-triggered)</li>
+                            <li><strong>Discovery:</strong> Metadata scanning</li>
+                            <li><strong>Platforms:</strong> Claude.ai, Code, API</li>
+                            <li><strong>Value:</strong> Progressive disclosure, automation</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card" style="border-left-color: #FF724D;">
+                        <h4>Claude /Commands (User-Invoked)</h4>
+                        <ul>
+                            <li><strong>What:</strong> Reusable prompt workflows</li>
+                            <li><strong>Structure:</strong> Markdown with frontmatter</li>
+                            <li><strong>Invocation:</strong> Explicit /command trigger</li>
+                            <li><strong>Location:</strong> .claude/commands/</li>
+                            <li><strong>Platform:</strong> Claude Code only</li>
+                            <li><strong>Value:</strong> Team sharing, explicit control</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="insight-box" style="margin-top: 40px;">
+                <h3>🏗 Architecture Principles</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 20px;">
+                    <div>
+                        <strong>1. Layer Dependencies</strong><br>
+                        Each layer builds on the layer below. You can't use Layer 4 without Layer 1, but you can use Layer 1 independently.
+                    </div>
+                    <div>
+                        <strong>2. Composability</strong><br>
+                        Mix and match layers creatively. LangChain can wrap MCP tools which use tool calling. Agents can leverage Skills.
+                    </div>
+                    <div>
+                        <strong>3. Vendor Considerations</strong><br>
+                        Foundation: Provider-specific<br>
+                        Protocol: Open standard<br>
+                        Orchestration: Framework-dependent<br>
+                        Application: Product-specific
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agents Deep Dive Tab -->
+        <div id="agents" class="tab-content">
+            <h2 style="margin-bottom: 30px; color: #1a1a1a;">AI Agents: Deep Dive</h2>
+
+            <div class="insight-box">
+                <h3>🤖 What Are AI Agents?</h3>
+                <p><strong>AI Agents are systems where LLMs dynamically direct their own processes and tool usage,</strong> maintaining control over how they accomplish tasks. Unlike workflows with predefined paths, agents make autonomous decisions based on their "understanding" of the goal.</p>
+            </div>
+
+            <div class="detail-panel" style="border-left-color: #C84727;">
+                <h3 style="color: #C84727;">Core Agent Components</h3>
+                <div class="detail-grid">
+                    <div class="detail-card" style="border-left-color: #C84727;">
+                        <h4>1. Agent Core (Brain)</h4>
+                        <ul>
+                            <li>LLM serves as the reasoning engine</li>
+                            <li>Interprets goals and makes decisions</li>
+                            <li>Coordinates all other components</li>
+                            <li>Maintains control flow</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card" style="border-left-color: #FA582D;">
+                        <h4>2. Planning Module</h4>
+                        <ul>
+                            <li>Breaks down complex tasks into steps</li>
+                            <li>Creates execution strategies</li>
+                            <li>Adapts plans based on feedback</li>
+                            <li>Handles plan failures gracefully</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card" style="border-left-color: #00C0E8;">
+                        <h4>3. Memory System</h4>
+                        <ul>
+                            <li><strong>Short-term:</strong> Current task context</li>
+                            <li><strong>Long-term:</strong> Historical knowledge</li>
+                            <li>State tracking across interactions</li>
+                            <li>Experience accumulation</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card" style="border-left-color: #00CC66;">
+                        <h4>4. Tool Integration</h4>
+                        <ul>
+                            <li>Dynamic tool selection</li>
+                            <li>Uses tool calling underneath</li>
+                            <li>Can integrate MCP servers</li>
+                            <li>Adapts tool usage to context</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-example" style="border-left-color: #C84727; margin-top: 30px;">
+                <h4 style="color: #C84727;">Agent Execution Flow</h4>
+                <div class="workflow-steps">
+                    <div class="workflow-step" style="border-left-color: #C84727;">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>Goal Interpretation</strong><br>
+                            Agent receives high-level goal: "Analyze Q3 sales data and create executive report"
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #C84727;">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>Planning</strong><br>
+                            Agent creates plan: (1) Retrieve data, (2) Analyze trends, (3) Generate visualizations, (4) Write report
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #C84727;">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <strong>Tool Selection</strong><br>
+                            Agent decides: Use database MCP server → Python for analysis → Visualization library → Document creation
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #C84727;">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <strong>Execution & Adaptation</strong><br>
+                            Agent executes plan, monitors results, adapts if tools fail or data is unexpected
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #C84727;">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <strong>Memory Update</strong><br>
+                            Agent stores learnings: Q3 patterns, successful tool combinations, report preferences
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-panel" style="border-left-color: #FA582D; margin-top: 30px;">
+                <h3 style="color: #FA582D;">Agents vs. Traditional Approaches</h3>
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Traditional LLM Call</th>
+                                <th>Workflow (LangChain)</th>
+                                <th>Agent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Decision Making</strong></td>
+                                <td>None (single response)</td>
+                                <td>Predefined paths</td>
+                                <td>Dynamic, model-driven</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Multi-Step</strong></td>
+                                <td>No</td>
+                                <td>Yes (predefined)</td>
+                                <td>Yes (adaptive)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tool Usage</strong></td>
+                                <td>Manual integration</td>
+                                <td>Chain-defined</td>
+                                <td>Autonomous selection</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Memory</strong></td>
+                                <td>None</td>
+                                <td>Framework-managed</td>
+                                <td>Agent-managed</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Adaptation</strong></td>
+                                <td>None</td>
+                                <td>Limited (branching)</td>
+                                <td>High (replan dynamically)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Complexity</strong></td>
+                                <td>Low</td>
+                                <td>Medium</td>
+                                <td>High</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Predictability</strong></td>
+                                <td>High</td>
+                                <td>High</td>
+                                <td>Lower (non-deterministic)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="insight-box" style="margin-top: 30px;">
+                <h3>⚠️ Agent Challenges & Considerations</h3>
+                <div style="line-height: 1.9;">
+                    <p><strong>Agents trade predictability for flexibility:</strong></p>
+                    <ul style="margin-top: 15px; padding-left: 20px;">
+                        <li>• <strong>Non-deterministic:</strong> Same input may produce different execution paths</li>
+                        <li>• <strong>Hallucination risk:</strong> Agent may "invent" data or tool capabilities</li>
+                        <li>• <strong>Higher latency:</strong> Multiple LLM calls for planning and execution</li>
+                        <li>• <strong>Higher cost:</strong> More tokens consumed for reasoning and iteration</li>
+                        <li>• <strong>Debugging difficulty:</strong> Complex execution traces</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Recommendation:</strong> Use workflows (Skills/Commands/LangChain chains) for well-defined tasks. Use agents when flexibility and autonomous decision-making justify the complexity.</p>
+                </div>
+            </div>
+
+            <div class="workflow-example" style="border-left-color: #00CC66; margin-top: 30px;">
+                <h4 style="color: #00CC66;">Where Agents Fit: Professional Services Use Case</h4>
+                <p style="margin-bottom: 15px;"><strong>Scenario:</strong> Autonomous security configuration analysis for Palo Alto Networks implementations</p>
+                
+                <div class="workflow-steps">
+                    <div class="workflow-step" style="border-left-color: #00CC66;">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>Agent Framework (LangChain/LangGraph)</strong><br>
+                            Orchestrates multiple specialized sub-agents: ConfigAnalyzer, PolicyValidator, ComplianceChecker
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #00C0E8;">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>MCP Integration</strong><br>
+                            Agents connect to GitLab MCP (50+ repos), Qdrant MCP (vector search), Vertex AI MCP (embeddings)
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #FA582D;">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <strong>Tool Calling</strong><br>
+                            Foundation for all tool invocations - agents use this to execute searches, queries, API calls
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #FFCB06;">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <strong>Skills for Output</strong><br>
+                            Use Claude Skills for report generation (docx), presentation creation (pptx), documentation formatting
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; padding: 18px; background: #f8f9fa; border-radius: 4px;">
+                    <strong>Why Agents Here?</strong><br>
+                    Configuration analysis requires dynamic decision-making: which configs to compare, what patterns to identify, how deep to analyze. A predefined workflow can't handle the variability across 50+ repositories.
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflows Tab -->
+        <div id="workflows" class="tab-content">
+            <h2 style="margin-bottom: 30px; color: #1a1a1a;">Real-World Integration Workflows</h2>
+
+            <div class="workflow-example" style="border-left-color: #FA582D;">
+                <h4 style="color: #FA582D;">🏢 Scenario 1: Professional Services RAG System</h4>
+                <p><strong>Goal:</strong> Query 50+ GitLab repositories with contextual understanding for Palo Alto Networks implementations</p>
+                
+                <div class="workflow-steps">
+                    <div class="workflow-step" style="border-left-color: #FA582D;">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>Foundation: Tool Calling</strong><br>
+                            Claude uses tool calling to decide: retrieve from vector DB or generate from knowledge
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #00C0E8;">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>Protocol: MCP Servers</strong><br>
+                            GitLab MCP (code access), Qdrant MCP (vector search), Vertex AI MCP (embeddings), Slack MCP (team context)
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #C84727;">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <strong>Orchestration: Agent (Optional)</strong><br>
+                            For complex queries, agent decides: which repos to search, what patterns to identify, how to synthesize
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #FFCB06;">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <strong>Application: Claude Skills</strong><br>
+                            Security analysis skill auto-activates, applies best practices, generates formatted documentation
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-example" style="border-left-color: #00CC66;">
+                <h4 style="color: #00CC66;">⚙️ Scenario 2: Automated Consultant Training System</h4>
+                <p><strong>Goal:</strong> Build agentic AI development training for Professional Services consultants</p>
+                
+                <div class="workflow-steps">
+                    <div class="workflow-step" style="border-left-color: #C84727;">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>Agent Framework</strong><br>
+                            Multi-agent system: TeachingAgent (explains concepts), CodingAgent (demonstrates), QuizAgent (assesses)
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #00CC66;">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>LangChain Orchestration</strong><br>
+                            Manages agent communication, tracks learning progress, maintains conversation memory
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #00C0E8;">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <strong>MCP Integration</strong><br>
+                            GitHub MCP (example code), Notion MCP (course materials), Slack MCP (Q&A history)
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #FA582D;">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <strong>Tool Calling</strong><br>
+                            Foundation enabling all agents to access tools, execute code, retrieve materials
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-example" style="border-left-color: #00C0E8;">
+                <h4 style="color: #00C0E8;">🔧 Scenario 3: Claude Code Development Workflow</h4>
+                <p><strong>Goal:</strong> Streamline development with automated review, testing, and deployment</p>
+                
+                <div class="workflow-steps">
+                    <div class="workflow-step" style="border-left-color: #FF724D;">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>/Commands for Workflows</strong><br>
+                            /review, /test, /security-scan, /deploy - Team-shared explicit triggers
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #FFCB06;">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>Skills for Automation</strong><br>
+                            Security analysis skill auto-runs on commits, test generation skill activates on new features
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #00C0E8;">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <strong>MCP for Integration</strong><br>
+                            GitHub MCP (PRs), Linear MCP (tasks), Sentry MCP (errors), Jenkins MCP (CI/CD)
+                        </div>
+                    </div>
+                    <div class="workflow-step" style="border-left-color: #FA582D;">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <strong>Tool Calling</strong><br>
+                            Enables Claude to invoke all commands, skills, and MCP tools
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="insight-box" style="margin-top: 40px;">
+                <h3>⚡ Integration Best Practices</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 20px;">
+                    <div>
+                        <strong>Start Simple</strong><br>
+                        Begin with tool calling. Add MCP when you need multiple integrations. Add agents/frameworks when orchestration becomes complex.
+                    </div>
+                    <div>
+                        <strong>Right Abstraction</strong><br>
+                        Don't use agents for deterministic workflows. Don't reinvent what MCP solves. Choose the appropriate layer.
+                    </div>
+                    <div>
+                        <strong>Consider Lock-in</strong><br>
+                        Open standards (MCP, tool calling) vs. proprietary (Claude features) vs. framework-dependent (LangChain)
+                    </div>
+                    <div>
+                        <strong>Progressive Enhancement</strong><br>
+                        Foundation → Protocol → Orchestration → Application. Build from bottom up.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="accent-line" style="margin-top: 50px;"></div>
+        
+        <div style="margin-top: 40px; padding: 40px; background: linear-gradient(135deg, #FA582D 0%, #B23808 100%); border-radius: 4px; color: white;">
+            <h2 style="text-align: center; margin-bottom: 35px; font-size: 2.2em; font-weight: 700;">Key Takeaways</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;">
+                <div style="background: rgba(255,255,255,0.15); padding: 28px; border-radius: 4px; backdrop-filter: blur(10px);">
+                    <div style="font-size: 2.5em; margin-bottom: 12px;">🏗️</div>
+                    <strong style="font-size: 1.3em; display: block; margin-bottom: 10px;">Different Layers</strong>
+                    <span style="opacity: 0.95; line-height: 1.7;">Foundation → Protocol → Orchestration → Application. Each layer builds on the layers below.</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.15); padding: 28px; border-radius: 4px; backdrop-filter: blur(10px);">
+                    <div style="font-size: 2.5em; margin-bottom: 12px;">🤖</div>
+                    <strong style="font-size: 1.3em; display: block; margin-bottom: 10px;">Agents Are Different</strong>
+                    <span style="opacity: 0.95; line-height: 1.7;">Agents provide autonomy at the cost of predictability. Use for complex, adaptive tasks.</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.15); padding: 28px; border-radius: 4px; backdrop-filter: blur(10px);">
+                    <div style="font-size: 2.5em; margin-bottom: 12px;">🔗</div>
+                    <strong style="font-size: 1.3em; display: block; margin-bottom: 10px;">They Work Together</strong>
+                    <span style="opacity: 0.95; line-height: 1.7;">Combine layers strategically. Agents + MCP + Skills is powerful for Professional Services.</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.15); padding: 28px; border-radius: 4px; backdrop-filter: blur(10px);">
+                    <div style="font-size: 2.5em; margin-bottom: 12px;">⚖️</div>
+                    <strong style="font-size: 1.3em; display: block; margin-bottom: 10px;">Trade-offs Matter</strong>
+                    <span style="opacity: 0.95; line-height: 1.7;">Autonomy vs. control, flexibility vs. predictability, simplicity vs. power.</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 30px; color: #666;">
+            <p style="font-size: 0.95em; margin-bottom: 10px;">Professional Services Framework</p>
+            <p style="font-size: 0.85em;">© 2025 Palo Alto Networks. <em>We've Got Next.</em></p>
+        </div>
+    </div>
+
+    <script>
+        function showLayer(layerId) {
+            // Hide all layers
+            document.querySelectorAll('.venn-layer').forEach(layer => {
+                layer.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.layer-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected layer
+            document.getElementById('layer-' + layerId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.closest('.layer-btn').classList.add('active');
+        }
+
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
