@@ -1,5 +1,3 @@
-# AI Design Components
-
 <p align="center">
   <img src="https://ancoleman.github.io/ai-design-components/img/logo.png" alt="AI Design Components Logo" width="150">
 </p>
