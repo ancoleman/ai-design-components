@@ -74,16 +74,17 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/social-card.jpg',
     colorMode: {
       defaultMode: 'dark',
       respectPrefersColorScheme: false,
     },
     navbar: {
-      title: 'AI Design Components',
+      title: '',
       logo: {
-        alt: 'AI Design Components Logo',
+        alt: 'AI Design Components',
         src: 'img/logo.png',
+        style: { height: '40px' },
       },
       items: [
         {
