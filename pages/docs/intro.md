@@ -12,6 +12,11 @@ description: Comprehensive Claude Skills for full-stack development
 
 AI Design Components is a comprehensive collection of Claude Skills covering **76 skill domains** for full-stack development, DevOps, Security, Cloud, and AI/ML. With **29 production-ready skills** (SKILL.md) and **47 master plans** (init.md) ready for implementation, this project provides research-backed recommendations, decision frameworks, and production-ready code patterns.
 
+**v0.4.2 Highlights:**
+- New validation package with CI and TUI modes for skill quality checks
+- Three-tier rule system: core rules, community practices, project rules
+- JUnit XML, JSON, TAP output formats for CI/CD integration
+
 **v0.4.1 Highlights:**
 - 47 new skill master plans covering DevOps, Infrastructure, Security, Cloud, and AI/ML
 - Multi-language support (TypeScript, Python, Go, Rust) across 9 skills
@@ -196,6 +201,7 @@ All backend skills provide patterns for multiple languages:
 - [Skills Overview](./skills/overview.md) - Explore all available skills
 - [Skillchain Documentation](./skillchain/overview.md) - Learn about the skillchain framework
 - [Creating Skills](./guides/creating-skills.md) - Contribute new skills
+- [Skill Validation](./guides/skill-validation.md) - Validate skills with CI or TUI
 
 ## Resources
 

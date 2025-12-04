@@ -273,6 +273,7 @@ After installation, explore:
 - [Skills Overview](./skills/overview.md) - Learn about all available skills
 - [Skillchain Documentation](./skillchain/overview.md) - Master the skillchain workflow
 - [Creating Skills](./guides/creating-skills.md) - Contribute new skills
+- [Skill Validation](./guides/skill-validation.md) - Validate skills with CI or TUI
 - [Best Practices](./guides/best-practices.md) - Learn skill development best practices
 
 ## Resources
