@@ -1,0 +1,191 @@
+{
+  "layouts": {
+    "executive": {
+      "name": "Executive Dashboard",
+      "description": "High-level KPIs for executives and leadership",
+      "grid": {
+        "columns": 12,
+        "rowHeight": 100,
+        "breakpoints": { "lg": 1200, "md": 996, "sm": 768, "xs": 480 }
+      },
+      "widgets": [
+        {
+          "id": "revenue-kpi",
+          "type": "kpi-card",
+          "title": "Total Revenue",
+          "position": { "x": 0, "y": 0, "w": 3, "h": 1 },
+          "dataSource": "revenue_total",
+          "format": "currency"
+        },
+        {
+          "id": "users-kpi",
+          "type": "kpi-card",
+          "title": "Active Users",
+          "position": { "x": 3, "y": 0, "w": 3, "h": 1 },
+          "dataSource": "users_active",
+          "format": "number"
+        },
+        {
+          "id": "conversion-kpi",
+          "type": "kpi-card",
+          "title": "Conversion Rate",
+          "position": { "x": 6, "y": 0, "w": 3, "h": 1 },
+          "dataSource": "conversion_rate",
+          "format": "percentage"
+        },
+        {
+          "id": "growth-kpi",
+          "type": "kpi-card",
+          "title": "Growth Rate",
+          "position": { "x": 9, "y": 0, "w": 3, "h": 1 },
+          "dataSource": "growth_rate",
+          "format": "percentage"
+        },
+        {
+          "id": "revenue-chart",
+          "type": "line-chart",
+          "title": "Revenue Trend (6 Months)",
+          "position": { "x": 0, "y": 1, "w": 8, "h": 2 },
+          "dataSource": "revenue_timeseries",
+          "xAxis": "date",
+          "yAxis": "amount"
+        },
+        {
+          "id": "top-products",
+          "type": "bar-chart",
+          "title": "Top Products",
+          "position": { "x": 8, "y": 1, "w": 4, "h": 2 },
+          "dataSource": "products_ranking",
+          "xAxis": "product",
+          "yAxis": "sales"
+        }
+      ]
+    },
+    "analytics": {
+      "name": "Analytics Dashboard",
+      "description": "Detailed analytics with multiple chart types",
+      "grid": {
+        "columns": 12,
+        "rowHeight": 80
+      },
+      "widgets": [
+        {
+          "id": "traffic-sources",
+          "type": "pie-chart",
+          "title": "Traffic Sources",
+          "position": { "x": 0, "y": 0, "w": 4, "h": 2 },
+          "dataSource": "traffic_sources"
+        },
+        {
+          "id": "user-activity",
+          "type": "heatmap",
+          "title": "User Activity by Hour",
+          "position": { "x": 4, "y": 0, "w": 8, "h": 2 },
+          "dataSource": "hourly_activity"
+        },
+        {
+          "id": "funnel",
+          "type": "funnel-chart",
+          "title": "Conversion Funnel",
+          "position": { "x": 0, "y": 2, "w": 6, "h": 2 },
+          "dataSource": "conversion_funnel"
+        },
+        {
+          "id": "geographic",
+          "type": "map",
+          "title": "Users by Geography",
+          "position": { "x": 6, "y": 2, "w": 6, "h": 2 },
+          "dataSource": "geographic_distribution"
+        }
+      ]
+    },
+    "monitoring": {
+      "name": "System Monitoring",
+      "description": "Real-time infrastructure and application monitoring",
+      "grid": {
+        "columns": 12,
+        "rowHeight": 100
+      },
+      "widgets": [
+        {
+          "id": "cpu-gauge",
+          "type": "gauge",
+          "title": "CPU Usage",
+          "position": { "x": 0, "y": 0, "w": 3, "h": 1 },
+          "dataSource": "system_cpu_percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": [
+            { "value": 70, "color": "warning" },
+            { "value": 90, "color": "danger" }
+          ]
+        },
+        {
+          "id": "memory-gauge",
+          "type": "gauge",
+          "title": "Memory Usage",
+          "position": { "x": 3, "y": 0, "w": 3, "h": 1 },
+          "dataSource": "system_memory_percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": [
+            { "value": 80, "color": "warning" },
+            { "value": 95, "color": "danger" }
+          ]
+        },
+        {
+          "id": "request-rate",
+          "type": "line-chart",
+          "title": "Request Rate (5min)",
+          "position": { "x": 0, "y": 1, "w": 6, "h": 2 },
+          "dataSource": "http_requests_per_second",
+          "realtime": true,
+          "refreshInterval": 5000
+        },
+        {
+          "id": "error-log",
+          "type": "log-stream",
+          "title": "Recent Errors",
+          "position": { "x": 6, "y": 1, "w": 6, "h": 2 },
+          "dataSource": "error_logs",
+          "maxLines": 50,
+          "realtime": true
+        }
+      ]
+    },
+    "customizable": {
+      "name": "Customizable Grid",
+      "description": "User-customizable dashboard with drag-drop",
+      "grid": {
+        "columns": 12,
+        "rowHeight": 100,
+        "isDraggable": true,
+        "isResizable": true
+      },
+      "widgets": [
+        {
+          "id": "widget-1",
+          "type": "kpi-card",
+          "title": "Metric 1",
+          "position": { "x": 0, "y": 0, "w": 3, "h": 1 },
+          "dataSource": "metric_1"
+        }
+      ]
+    }
+  },
+  "widgetTypes": [
+    "kpi-card",
+    "line-chart",
+    "bar-chart",
+    "pie-chart",
+    "area-chart",
+    "gauge",
+    "table",
+    "heatmap",
+    "funnel-chart",
+    "map",
+    "log-stream",
+    "calendar",
+    "timeline"
+  ]
+}

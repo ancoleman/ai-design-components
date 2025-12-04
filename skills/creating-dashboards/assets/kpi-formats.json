@@ -1,0 +1,142 @@
+{
+  "formatters": {
+    "currency": {
+      "type": "number",
+      "prefix": "$",
+      "decimals": 2,
+      "thousandsSeparator": ",",
+      "examples": ["$1,234.56", "$10,000.00"]
+    },
+    "percentage": {
+      "type": "number",
+      "suffix": "%",
+      "decimals": 1,
+      "examples": ["45.2%", "99.9%"]
+    },
+    "number": {
+      "type": "number",
+      "decimals": 0,
+      "thousandsSeparator": ",",
+      "examples": ["1,234", "1,000,000"]
+    },
+    "compact": {
+      "type": "number",
+      "compact": true,
+      "examples": ["1.2K", "5.4M", "2.1B"]
+    },
+    "duration": {
+      "type": "duration",
+      "units": "auto",
+      "examples": ["2h 30m", "45s", "1d 3h"]
+    },
+    "bytes": {
+      "type": "bytes",
+      "units": "auto",
+      "examples": ["1.2 MB", "5.4 GB", "128 KB"]
+    },
+    "rate": {
+      "type": "rate",
+      "suffix": "/s",
+      "decimals": 1,
+      "examples": ["123.4/s", "5.2K/s"]
+    }
+  },
+  "trendIndicators": {
+    "increase": {
+      "positive": {
+        "icon": "↑",
+        "color": "#10b981",
+        "label": "up"
+      },
+      "negative": {
+        "icon": "↑",
+        "color": "#ef4444",
+        "label": "up"
+      }
+    },
+    "decrease": {
+      "positive": {
+        "icon": "↓",
+        "color": "#10b981",
+        "label": "down"
+      },
+      "negative": {
+        "icon": "↓",
+        "color": "#ef4444",
+        "label": "down"
+      }
+    },
+    "neutral": {
+      "icon": "→",
+      "color": "#6b7280",
+      "label": "unchanged"
+    }
+  },
+  "kpiTemplates": {
+    "revenue": {
+      "title": "Total Revenue",
+      "format": "currency",
+      "trend": "increase",
+      "trendType": "positive",
+      "comparisonPeriod": "previous_period",
+      "icon": "dollar-sign"
+    },
+    "users": {
+      "title": "Active Users",
+      "format": "compact",
+      "trend": "increase",
+      "trendType": "positive",
+      "comparisonPeriod": "previous_month",
+      "icon": "users"
+    },
+    "conversion": {
+      "title": "Conversion Rate",
+      "format": "percentage",
+      "trend": "increase",
+      "trendType": "positive",
+      "comparisonPeriod": "previous_week",
+      "icon": "trending-up"
+    },
+    "errorRate": {
+      "title": "Error Rate",
+      "format": "percentage",
+      "trend": "decrease",
+      "trendType": "positive",
+      "comparisonPeriod": "previous_day",
+      "icon": "alert-triangle",
+      "thresholds": [
+        { "max": 1, "color": "success" },
+        { "min": 1, "max": 5, "color": "warning" },
+        { "min": 5, "color": "danger" }
+      ]
+    },
+    "latency": {
+      "title": "P95 Latency",
+      "format": "duration",
+      "trend": "decrease",
+      "trendType": "positive",
+      "comparisonPeriod": "previous_hour",
+      "icon": "clock",
+      "thresholds": [
+        { "max": 100, "color": "success" },
+        { "min": 100, "max": 500, "color": "warning" },
+        { "min": 500, "color": "danger" }
+      ]
+    },
+    "throughput": {
+      "title": "Throughput",
+      "format": "rate",
+      "trend": "increase",
+      "trendType": "positive",
+      "comparisonPeriod": "previous_5min",
+      "icon": "activity"
+    }
+  },
+  "comparisonPeriods": [
+    { "id": "previous_hour", "label": "vs. Previous Hour", "offset": 3600 },
+    { "id": "previous_day", "label": "vs. Yesterday", "offset": 86400 },
+    { "id": "previous_week", "label": "vs. Last Week", "offset": 604800 },
+    { "id": "previous_month", "label": "vs. Last Month", "offset": 2592000 },
+    { "id": "previous_period", "label": "vs. Previous Period", "offset": "dynamic" }
+  ]
+}
