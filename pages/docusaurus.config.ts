@@ -46,7 +46,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/ancoleman/ai-design-components/tree/main/docs-site/',
+            'https://github.com/ancoleman/ai-design-components/tree/main/pages/',
         },
         blog: {
           showReadingTime: true,
@@ -59,7 +59,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/ancoleman/ai-design-components/tree/main/docs-site/',
+            'https://github.com/ancoleman/ai-design-components/tree/main/pages/',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
@@ -112,7 +112,7 @@ const config: Config = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'pathname:///llm-ecosystem.html',
+          href: '/ai-design-components/llm-ecosystem.html',
           label: 'LLM Ecosystem',
           position: 'right',
         },
