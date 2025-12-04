@@ -5,6 +5,107 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2025-12-03
+
+### 🚀 MILESTONE: 47 New Skill Master Plans (DevOps, Security, Cloud, AI/ML)
+
+**Major Achievement:** Created comprehensive init.md master plans for 47 new skills covering DevOps, Infrastructure, Security, Cloud, and AI/ML domains. Total of 90,839 lines of strategic planning documentation.
+
+### Added
+
+**47 New Skill Master Plans (init.md files):**
+
+**Infrastructure & Networking (12 skills):**
+- `infrastructure-as-code` - Terraform, Pulumi, CDK patterns (769 lines)
+- `kubernetes-operations` - K8s management, Helm, operators (2,083 lines)
+- `designing-distributed-systems` - Architecture patterns, CAP theorem (2,905 lines)
+- `configuration-management` - Ansible, Chef, Puppet (1,844 lines)
+- `network-architecture` - VPC design, subnets, routing (2,302 lines)
+- `load-balancing-patterns` - ALB, NLB, service mesh LB (2,224 lines)
+- `dns-management` - Route53, CloudDNS, record types (2,534 lines)
+- `service-mesh` - Istio, Linkerd, Cilium (2,051 lines)
+- `disaster-recovery` - RPO/RTO, backup strategies (2,843 lines)
+- `linux-administration` - System management, troubleshooting (2,559 lines)
+- `shell-scripting` - Bash/Zsh patterns (1,194 lines)
+- `configuring-nginx` - Reverse proxy, SSL, performance (1,917 lines)
+
+**Security (6 skills):**
+- `security-architecture` - Zero trust, defense in depth (1,570 lines)
+- `compliance-frameworks` - SOC2, ISO27001, HIPAA (2,333 lines)
+- `vulnerability-management` - Scanning, remediation (2,023 lines)
+- `siem-logging` - Security monitoring, alerting (2,666 lines)
+- `implementing-tls` - Certificate management, mTLS (2,093 lines)
+- `configuring-firewalls` - Network security rules (1,704 lines)
+
+**Developer Productivity (7 skills):**
+- `api-design-principles` - REST, GraphQL design patterns (2,781 lines)
+- `building-clis` - Python, Go, Rust CLI frameworks (2,368 lines) [MULTI-LANGUAGE]
+- `sdk-design` - Client library patterns (2,461 lines) [MULTI-LANGUAGE]
+- `documentation-generation` - API docs, code docs (3,140 lines)
+- `debugging-techniques` - Profiling, troubleshooting (1,711 lines) [MULTI-LANGUAGE]
+- `git-workflows` - Branching strategies, hooks (1,549 lines)
+- `writing-github-actions` - CI/CD workflows (1,996 lines)
+
+**DevOps & Platform (6 skills):**
+- `building-ci-pipelines` - GitHub Actions, GitLab CI, Jenkins (1,793 lines)
+- `gitops-workflows` - ArgoCD, Flux patterns (1,454 lines)
+- `testing-strategies` - Unit, integration, E2E testing (1,791 lines) [MULTI-LANGUAGE]
+- `platform-engineering` - IDP, Backstage, developer experience (2,876 lines)
+- `incident-management` - On-call, post-mortems, SRE (1,615 lines)
+- `writing-dockerfiles` - Multi-stage, security hardening (1,212 lines)
+
+**Data & Analytics (6 skills):**
+- `data-architecture` - Data mesh, lakehouse, medallion (2,359 lines)
+- `streaming-data` - Kafka, Flink, event streaming (1,624 lines) [MULTI-LANGUAGE]
+- `data-transformation` - dbt, ETL/ELT patterns (1,780 lines) [MULTI-LANGUAGE]
+- `sql-optimization` - Query tuning, indexing (1,106 lines)
+- `secret-management` - Vault, secrets rotation (1,427 lines)
+- `performance-engineering` - Profiling, optimization (1,714 lines)
+
+**AI/ML Operations (4 skills):**
+- `mlops-patterns` - MLflow, experiment tracking, feature stores (2,295 lines)
+- `prompt-engineering` - LLM prompting, chain-of-thought (1,577 lines)
+- `llm-evaluation` - RAGAS, benchmarks, safety testing (1,557 lines)
+- `embedding-optimization` - Chunking, model selection (1,416 lines)
+
+**Cloud Patterns (3 skills):**
+- `aws-patterns` - Well-Architected, service selection (2,475 lines)
+- `gcp-patterns` - BigQuery, Vertex AI, GKE (1,840 lines)
+- `azure-patterns` - Container Apps, Azure OpenAI (1,695 lines)
+
+**FinOps (3 skills):**
+- `cost-optimization` - FinOps practices, rightsizing (1,370 lines)
+- `resource-tagging` - Tag governance, enforcement (1,175 lines)
+- `security-hardening` - CIS benchmarks, hardening (1,068 lines)
+
+**Project Documentation:**
+- `docs/SKILL_ORCHESTRATION_PLAN.md` - Wave-based execution strategy for skill creation
+
+### Multi-Language Skills
+
+9 skills include implementations across TypeScript, Python, Go, and Rust:
+- `testing-strategies`, `building-clis`, `sdk-design`, `debugging-techniques`
+- `streaming-data`, `data-transformation`, `shell-scripting`, `sql-optimization`
+- All cloud pattern skills include Terraform, CDK, and native SDK examples
+
+### Research Methodology
+
+All init.md files include research from:
+- **Google Search Grounding**: 100+ queries for 2025 best practices
+- **Context7**: Library trust scores and documentation (e.g., Argo CD 91.8/100, MLflow 95/100)
+- Decision frameworks with actionable guidance
+- Production-ready tool recommendations
+
+### Statistics
+
+- **Total init.md files:** 47
+- **Total lines written:** 90,839
+- **Average lines per skill:** 1,933
+- **Skills with SKILL.md (production):** 29
+- **Total skill coverage:** 76 skills
+
+---
+
 ## [0.4.0] - 2025-12-03
 
 ### 🎉 MILESTONE: 100% Progressive Disclosure Coverage
@@ -323,6 +424,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Design tokens foundational system
 - AI chat interfaces (strategic priority)
 
+[0.4.1]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.4.1
+[0.4.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.4.0
+[0.3.4]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.4
 [0.3.3]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.3
 [0.3.2]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.2
 [0.3.1]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.3.1
