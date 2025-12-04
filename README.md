@@ -1,14 +1,21 @@
 # AI Design Components
 
-> Comprehensive UI/UX and Backend component design skills for AI-assisted development with Claude
+> Comprehensive Full-Stack, DevOps, Security, Cloud, and AI/ML skills for AI-assisted development with Claude
 
-[![Version](https://img.shields.io/badge/version-0.3.3-blue.svg)](./VERSION)
+[![Version](https://img.shields.io/badge/version-0.4.1-blue.svg)](./VERSION)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
-[![Skills](https://img.shields.io/badge/skills-29-purple.svg)](./skills)
+[![Skills](https://img.shields.io/badge/skills-76-purple.svg)](./skills)
+[![Production](https://img.shields.io/badge/production-29-green.svg)](./skills)
+[![Master Plans](https://img.shields.io/badge/master_plans-47-orange.svg)](./skills)
 
 ## Overview
 
-AI Design Components is a collection of Claude Skills that provide expert guidance for designing and implementing full-stack applications. With **29 skills** across frontend and backend development, these skills combine research-backed recommendations, decision frameworks, and production-ready code patterns.
+AI Design Components is a comprehensive collection of Claude Skills covering **76 skill domains** for full-stack development, DevOps, Security, Cloud, and AI/ML. With **29 production-ready skills** (SKILL.md) and **47 master plans** (init.md) ready for implementation, this project provides research-backed recommendations, decision frameworks, and production-ready code patterns.
+
+**v0.4.1 Highlights:**
+- 47 new skill master plans covering DevOps, Infrastructure, Security, Cloud, and AI/ML
+- Multi-language support (TypeScript, Python, Go, Rust) across 9 skills
+- Research-backed recommendations using Google Search Grounding and Context7
 
 Built following [Anthropic's official Skills best practices](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills), these skills use progressive disclosure to minimize context usage while maximizing Claude's effectiveness.
 
@@ -72,11 +79,21 @@ See [commands/README.md](./commands/README.md) for complete skillchain documenta
 
 ## Project Status
 
-- **Current Version:** 0.3.3
+- **Current Version:** 0.4.1
 - **Skillchain Version:** 2.1.0 (modular architecture)
-- **Frontend Skills:** 15/15 complete
-- **Backend Skills:** 14/14 complete
-- **Total Skills:** 29
+- **Production Skills (SKILL.md):** 29 complete
+  - Frontend Skills: 15/15
+  - Backend Skills: 14/14
+- **Master Plans (init.md):** 47 complete
+  - Infrastructure & Networking: 12 skills
+  - Security: 6 skills
+  - Developer Productivity: 7 skills
+  - DevOps & Platform: 6 skills
+  - Data & Analytics: 6 skills
+  - AI/ML Operations: 4 skills
+  - Cloud Patterns: 3 skills
+  - FinOps: 3 skills
+- **Total Skill Coverage:** 76
 
 ## Skill Categories
 
@@ -134,6 +151,99 @@ See [commands/README.md](./commands/README.md) for complete skillchain documenta
 #### 🧠 Backend AI Skills
 - `ai-data-engineering` - RAG pipelines, embeddings
 - `model-serving` - vLLM, BentoML, Ollama
+
+### Master Plan Skills (47) - Ready for Implementation
+
+These skills have comprehensive `init.md` master plans with research, decision frameworks, and implementation roadmaps.
+
+<details>
+<summary><b>🏗️ Infrastructure & Networking (12 skills)</b></summary>
+
+- `infrastructure-as-code` - Terraform, Pulumi, CDK patterns
+- `kubernetes-operations` - K8s management, Helm, operators
+- `designing-distributed-systems` - CAP theorem, architecture patterns
+- `configuration-management` - Ansible, Chef, Puppet
+- `network-architecture` - VPC design, subnets, routing
+- `load-balancing-patterns` - ALB, NLB, service mesh LB
+- `dns-management` - Route53, CloudDNS, record types
+- `service-mesh` - Istio, Linkerd, Cilium
+- `disaster-recovery` - RPO/RTO, backup strategies
+- `linux-administration` - System management, troubleshooting
+- `shell-scripting` - Bash/Zsh patterns
+- `configuring-nginx` - Reverse proxy, SSL, performance
+</details>
+
+<details>
+<summary><b>🔒 Security (6 skills)</b></summary>
+
+- `security-architecture` - Zero trust, defense in depth
+- `compliance-frameworks` - SOC2, ISO27001, HIPAA, PCI-DSS
+- `vulnerability-management` - Scanning, remediation workflows
+- `siem-logging` - Security monitoring, alerting
+- `implementing-tls` - Certificate management, mTLS
+- `configuring-firewalls` - Network security rules
+</details>
+
+<details>
+<summary><b>👨‍💻 Developer Productivity (7 skills)</b></summary>
+
+- `api-design-principles` - REST, GraphQL design patterns
+- `building-clis` - Python, Go, Rust CLI frameworks 🌐
+- `sdk-design` - Client library patterns 🌐
+- `documentation-generation` - API docs, code documentation
+- `debugging-techniques` - Profiling, troubleshooting 🌐
+- `git-workflows` - Branching strategies, hooks
+- `writing-github-actions` - CI/CD workflow authoring
+</details>
+
+<details>
+<summary><b>⚙️ DevOps & Platform (6 skills)</b></summary>
+
+- `building-ci-pipelines` - GitHub Actions, GitLab CI, Jenkins
+- `gitops-workflows` - ArgoCD, Flux patterns
+- `testing-strategies` - Unit, integration, E2E testing 🌐
+- `platform-engineering` - IDP, Backstage, developer experience
+- `incident-management` - On-call, post-mortems, SRE
+- `writing-dockerfiles` - Multi-stage, security hardening
+</details>
+
+<details>
+<summary><b>📊 Data & Analytics (6 skills)</b></summary>
+
+- `data-architecture` - Data mesh, lakehouse, medallion
+- `streaming-data` - Kafka, Flink, event streaming 🌐
+- `data-transformation` - dbt, ETL/ELT patterns 🌐
+- `sql-optimization` - Query tuning, indexing
+- `secret-management` - Vault, secrets rotation
+- `performance-engineering` - Profiling, optimization
+</details>
+
+<details>
+<summary><b>🤖 AI/ML Operations (4 skills)</b></summary>
+
+- `mlops-patterns` - MLflow, experiment tracking, feature stores
+- `prompt-engineering` - LLM prompting, chain-of-thought
+- `llm-evaluation` - RAGAS, benchmarks, safety testing
+- `embedding-optimization` - Chunking strategies, model selection
+</details>
+
+<details>
+<summary><b>☁️ Cloud Patterns (3 skills)</b></summary>
+
+- `aws-patterns` - Well-Architected, service selection
+- `gcp-patterns` - BigQuery, Vertex AI, GKE
+- `azure-patterns` - Container Apps, Azure OpenAI
+</details>
+
+<details>
+<summary><b>💰 FinOps (3 skills)</b></summary>
+
+- `cost-optimization` - FinOps practices, rightsizing
+- `resource-tagging` - Tag governance, enforcement
+- `security-hardening` - CIS benchmarks, hardening
+</details>
+
+🌐 = Multi-language support (TypeScript, Python, Go, Rust)
 
 ## Prerequisites
 
