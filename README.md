@@ -152,98 +152,20 @@ See [commands/README.md](./commands/README.md) for complete skillchain documenta
 - `ai-data-engineering` - RAG pipelines, embeddings
 - `model-serving` - vLLM, BentoML, Ollama
 
-### Master Plan Skills (47) - Ready for Implementation
+### Master Plan Skills (47)
 
-These skills have comprehensive `init.md` master plans with research, decision frameworks, and implementation roadmaps.
+47 additional skills have comprehensive `init.md` master plans ready for SKILL.md implementation, covering:
 
-<details>
-<summary><b>🏗️ Infrastructure & Networking (12 skills)</b></summary>
+- **Infrastructure & Networking** (12) - IaC, Kubernetes, distributed systems, networking
+- **Security** (6) - Architecture, compliance, vulnerability management
+- **Developer Productivity** (7) - API design, CLIs, SDKs, debugging
+- **DevOps & Platform** (6) - CI/CD, GitOps, testing, platform engineering
+- **Data & Analytics** (6) - Data architecture, streaming, transformation
+- **AI/ML Operations** (4) - MLOps, prompt engineering, LLM evaluation
+- **Cloud Patterns** (3) - AWS, GCP, Azure architectural patterns
+- **FinOps** (3) - Cost optimization, tagging, hardening
 
-- `infrastructure-as-code` - Terraform, Pulumi, CDK patterns
-- `kubernetes-operations` - K8s management, Helm, operators
-- `designing-distributed-systems` - CAP theorem, architecture patterns
-- `configuration-management` - Ansible, Chef, Puppet
-- `network-architecture` - VPC design, subnets, routing
-- `load-balancing-patterns` - ALB, NLB, service mesh LB
-- `dns-management` - Route53, CloudDNS, record types
-- `service-mesh` - Istio, Linkerd, Cilium
-- `disaster-recovery` - RPO/RTO, backup strategies
-- `linux-administration` - System management, troubleshooting
-- `shell-scripting` - Bash/Zsh patterns
-- `configuring-nginx` - Reverse proxy, SSL, performance
-</details>
-
-<details>
-<summary><b>🔒 Security (6 skills)</b></summary>
-
-- `security-architecture` - Zero trust, defense in depth
-- `compliance-frameworks` - SOC2, ISO27001, HIPAA, PCI-DSS
-- `vulnerability-management` - Scanning, remediation workflows
-- `siem-logging` - Security monitoring, alerting
-- `implementing-tls` - Certificate management, mTLS
-- `configuring-firewalls` - Network security rules
-</details>
-
-<details>
-<summary><b>👨‍💻 Developer Productivity (7 skills)</b></summary>
-
-- `api-design-principles` - REST, GraphQL design patterns
-- `building-clis` - Python, Go, Rust CLI frameworks 🌐
-- `sdk-design` - Client library patterns 🌐
-- `documentation-generation` - API docs, code documentation
-- `debugging-techniques` - Profiling, troubleshooting 🌐
-- `git-workflows` - Branching strategies, hooks
-- `writing-github-actions` - CI/CD workflow authoring
-</details>
-
-<details>
-<summary><b>⚙️ DevOps & Platform (6 skills)</b></summary>
-
-- `building-ci-pipelines` - GitHub Actions, GitLab CI, Jenkins
-- `gitops-workflows` - ArgoCD, Flux patterns
-- `testing-strategies` - Unit, integration, E2E testing 🌐
-- `platform-engineering` - IDP, Backstage, developer experience
-- `incident-management` - On-call, post-mortems, SRE
-- `writing-dockerfiles` - Multi-stage, security hardening
-</details>
-
-<details>
-<summary><b>📊 Data & Analytics (6 skills)</b></summary>
-
-- `data-architecture` - Data mesh, lakehouse, medallion
-- `streaming-data` - Kafka, Flink, event streaming 🌐
-- `data-transformation` - dbt, ETL/ELT patterns 🌐
-- `sql-optimization` - Query tuning, indexing
-- `secret-management` - Vault, secrets rotation
-- `performance-engineering` - Profiling, optimization
-</details>
-
-<details>
-<summary><b>🤖 AI/ML Operations (4 skills)</b></summary>
-
-- `mlops-patterns` - MLflow, experiment tracking, feature stores
-- `prompt-engineering` - LLM prompting, chain-of-thought
-- `llm-evaluation` - RAGAS, benchmarks, safety testing
-- `embedding-optimization` - Chunking strategies, model selection
-</details>
-
-<details>
-<summary><b>☁️ Cloud Patterns (3 skills)</b></summary>
-
-- `aws-patterns` - Well-Architected, service selection
-- `gcp-patterns` - BigQuery, Vertex AI, GKE
-- `azure-patterns` - Container Apps, Azure OpenAI
-</details>
-
-<details>
-<summary><b>💰 FinOps (3 skills)</b></summary>
-
-- `cost-optimization` - FinOps practices, rightsizing
-- `resource-tagging` - Tag governance, enforcement
-- `security-hardening` - CIS benchmarks, hardening
-</details>
-
-🌐 = Multi-language support (TypeScript, Python, Go, Rust)
+See **[docs/MASTER_PLANS.md](./docs/MASTER_PLANS.md)** for the complete list.
 
 ## Prerequisites
 
@@ -339,6 +261,7 @@ skills/[skill-name]/
 - **[SETUP.md](./SETUP.md)** - Complete marketplace installation guide
 - **[CLAUDE.md](./CLAUDE.md)** - Repository guidance for Claude
 - **[CHANGELOG.md](./CHANGELOG.md)** - Version history and updates
+- **[docs/MASTER_PLANS.md](./docs/MASTER_PLANS.md)** - 47 skill master plans (DevOps, Security, Cloud, AI/ML)
 - **[skills/RESEARCH_GUIDE.md](./skills/RESEARCH_GUIDE.md)** - Library research methodology
 - **[docs/architecture/](./docs/architecture/)** - Token efficiency and architecture docs
 
