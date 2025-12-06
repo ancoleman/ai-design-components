@@ -105,12 +105,6 @@ const config: Config = {
           position: 'left',
           label: 'Skillchain',
         },
-        {
-          type: 'docSidebar',
-          sidebarId: 'masterPlansSidebar',
-          position: 'left',
-          label: 'Master Plans',
-        },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
           to: '/llm-ecosystem',
@@ -150,10 +144,6 @@ const config: Config = {
             {
               label: 'Skillchain',
               to: '/docs/skillchain/overview',
-            },
-            {
-              label: 'Master Plans',
-              to: '/docs/master-plans/overview',
             },
             {
               label: 'Guides',

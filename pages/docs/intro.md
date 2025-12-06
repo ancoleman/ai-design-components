@@ -10,17 +10,13 @@ description: Comprehensive Claude Skills for full-stack development
 
 ## Overview
 
-AI Design Components is a comprehensive collection of Claude Skills covering **76 skill domains** for full-stack development, DevOps, Security, Cloud, and AI/ML. With **29 production-ready skills** (SKILL.md) and **47 master plans** (init.md) ready for implementation, this project provides research-backed recommendations, decision frameworks, and production-ready code patterns.
+AI Design Components is a comprehensive collection of **76 production-ready Claude Skills** covering full-stack development, DevOps, Security, Cloud, and AI/ML. This project provides research-backed recommendations, decision frameworks, and production-ready code patterns.
 
-**v0.4.2 Highlights:**
-- New validation package with CI and TUI modes for skill quality checks
-- Three-tier rule system: core rules, community practices, project rules
-- JUnit XML, JSON, TAP output formats for CI/CD integration
-
-**v0.4.1 Highlights:**
-- 47 new skill master plans covering DevOps, Infrastructure, Security, Cloud, and AI/ML
-- Multi-language support (TypeScript, Python, Go, Rust) across 9 skills
-- Research-backed recommendations using Google Search Grounding and Context7
+**v0.5.0 Highlights:**
+- All 76 skills now production-ready with complete SKILL.md documentation
+- 47 new skills covering DevOps, Infrastructure, Security, Cloud, Data Engineering, and AI/ML
+- Validation package with CI and TUI modes for skill quality checks
+- Multi-language support (TypeScript, Python, Go, Rust) across all applicable skills
 
 Built following [Anthropic's official Skills best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview), these skills use progressive disclosure to minimize context usage while maximizing Claude's effectiveness.
 
@@ -55,13 +51,13 @@ claude
 | **Blueprints** | Pre-configured chains for common patterns (dashboard, crud-api, rag-pipeline) |
 | **User Preferences** | Saves your choices to `~/.claude/skillchain-prefs.yaml` for smart defaults |
 | **Parallel Loading** | Independent skills load concurrently for faster workflows |
-| **Skill Versioning** | All 29 skills versioned (v1.0.0) with compatibility tracking |
+| **Skill Versioning** | All 76 skills versioned (v1.0.0) with compatibility tracking |
 | **Category Routing** | Automatic routing to frontend, backend, fullstack, or ai-ml orchestrators |
 
 ### Examples
 
 ```
-/skillchain help                              # Show all 29 skills + v2.1 features
+/skillchain help                              # Show all 76 skills + v2.1 features
 /skillchain sales dashboard with KPIs         # → Uses dashboard blueprint
 /skillchain REST API with postgres            # → Uses crud-api blueprint
 /skillchain RAG pipeline with embeddings      # → Uses rag-pipeline blueprint
@@ -70,21 +66,19 @@ claude
 
 ## Project Status
 
-- **Current Version:** 0.4.1
+- **Current Version:** 0.5.0
 - **Skillchain Version:** 2.1.0 (modular architecture)
-- **Production Skills (SKILL.md):** 29 complete
-  - Frontend Skills: 15/15
-  - Backend Skills: 14/14
-- **Master Plans (init.md):** 47 complete
-  - Infrastructure & Networking: 12 skills
-  - Security: 6 skills
-  - Developer Productivity: 7 skills
-  - DevOps & Platform: 6 skills
-  - Data & Analytics: 6 skills
-  - AI/ML Operations: 4 skills
-  - Cloud Patterns: 3 skills
-  - FinOps: 3 skills
-- **Total Skill Coverage:** 76
+- **Production Skills:** 76 complete
+  - Frontend Skills: 15
+  - Backend Skills: 14
+  - Infrastructure & Networking: 12
+  - Security: 7
+  - Developer Productivity: 7
+  - DevOps & Platform: 6
+  - Data Engineering: 6
+  - AI/ML Operations: 4
+  - Cloud Patterns: 3
+  - FinOps: 2
 
 ## Skill Categories
 
@@ -143,20 +137,18 @@ claude
 - `ai-data-engineering` - RAG pipelines, embeddings
 - `model-serving` - vLLM, BentoML, Ollama
 
-### Master Plan Skills (47)
+### Additional Skill Categories
 
-47 additional skills have comprehensive `init.md` master plans ready for SKILL.md implementation, covering:
+See [Skills Overview](./skills/overview.md) for the complete list of all 76 skills organized by category:
 
 - **Infrastructure & Networking** (12) - IaC, Kubernetes, distributed systems, networking
-- **Security** (6) - Architecture, compliance, vulnerability management
+- **Security** (7) - Architecture, compliance, TLS, hardening
 - **Developer Productivity** (7) - API design, CLIs, SDKs, debugging
 - **DevOps & Platform** (6) - CI/CD, GitOps, testing, platform engineering
-- **Data & Analytics** (6) - Data architecture, streaming, transformation
+- **Data Engineering** (6) - Data architecture, streaming, SQL optimization
 - **AI/ML Operations** (4) - MLOps, prompt engineering, LLM evaluation
 - **Cloud Patterns** (3) - AWS, GCP, Azure architectural patterns
-- **FinOps** (3) - Cost optimization, tagging, hardening
-
-See [Master Plans](./master-plans/overview.md) for the complete list.
+- **FinOps** (2) - Cost optimization, resource tagging
 
 ## Multi-Language Support
 
