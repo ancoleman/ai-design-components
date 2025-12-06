@@ -2,6 +2,54 @@
 
 **Universal validation strategies, timing patterns, and rules applicable across all languages and frameworks.**
 
+
+## Table of Contents
+
+- [Core Validation Principles](#core-validation-principles)
+  - [The Three Dimensions of Validation](#the-three-dimensions-of-validation)
+- [Validation Timing Strategies](#validation-timing-strategies)
+  - [1. On Submit (Default)](#1-on-submit-default)
+  - [2. On Blur (RECOMMENDED)](#2-on-blur-recommended)
+  - [3. On Change (Real-time)](#3-on-change-real-time)
+  - [4. Debounced On Change](#4-debounced-on-change)
+  - [5. Progressive Enhancement (Advanced)](#5-progressive-enhancement-advanced)
+  - [6. Hybrid Approach (Modern Best Practice)](#6-hybrid-approach-modern-best-practice)
+- [Validation Timing Comparison](#validation-timing-comparison)
+- [Validation Rule Categories](#validation-rule-categories)
+  - [1. Format Validation (Syntax)](#1-format-validation-syntax)
+  - [2. Content Validation (Constraints)](#2-content-validation-constraints)
+  - [3. Logical Validation (Business Rules)](#3-logical-validation-business-rules)
+  - [4. Async Validation (Server-Side)](#4-async-validation-server-side)
+- [Validation Patterns by Input Type](#validation-patterns-by-input-type)
+  - [Text Input](#text-input)
+  - [Email Input](#email-input)
+  - [Password Input](#password-input)
+  - [Number Input](#number-input)
+  - [Date Input](#date-input)
+  - [Select/Dropdown](#selectdropdown)
+  - [Checkbox](#checkbox)
+  - [File Upload](#file-upload)
+- [Error Message Best Practices](#error-message-best-practices)
+  - [Error Message Formula](#error-message-formula)
+  - [Examples](#examples)
+  - [Error Message Tone](#error-message-tone)
+  - [Positive Feedback (Success Messages)](#positive-feedback-success-messages)
+- [Validation Implementation Patterns](#validation-implementation-patterns)
+  - [Client-Side Validation](#client-side-validation)
+  - [Server-Side Validation](#server-side-validation)
+  - [Hybrid Approach (RECOMMENDED)](#hybrid-approach-recommended)
+- [Advanced Validation Patterns](#advanced-validation-patterns)
+  - [Schema-Based Validation](#schema-based-validation)
+  - [Conditional Validation](#conditional-validation)
+  - [Dynamic Validation](#dynamic-validation)
+  - [Multi-Step Form Validation](#multi-step-form-validation)
+- [Validation Anti-Patterns](#validation-anti-patterns)
+  - [What NOT to Do](#what-not-to-do)
+- [Validation Testing Checklist](#validation-testing-checklist)
+  - [Manual Testing](#manual-testing)
+  - [Automated Testing](#automated-testing)
+- [Summary: Validation Decision Guide](#summary-validation-decision-guide)
+
 ## Core Validation Principles
 
 ### The Three Dimensions of Validation

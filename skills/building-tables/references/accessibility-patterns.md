@@ -1,5 +1,40 @@
 # Table Accessibility Patterns
 
+
+## Table of Contents
+
+- [WCAG 2.1 Requirements](#wcag-21-requirements)
+- [Semantic HTML Structure](#semantic-html-structure)
+  - [Basic Table Structure](#basic-table-structure)
+  - [Required Elements](#required-elements)
+- [ARIA Grid Pattern](#aria-grid-pattern)
+  - [ARIA Attributes Explained](#aria-attributes-explained)
+- [Keyboard Navigation](#keyboard-navigation)
+  - [Essential Keyboard Support](#essential-keyboard-support)
+  - [Focus Management](#focus-management)
+- [Screen Reader Support](#screen-reader-support)
+  - [Status Announcements](#status-announcements)
+  - [Loading States](#loading-states)
+  - [Empty States](#empty-states)
+- [Interactive Features](#interactive-features)
+  - [Sortable Columns](#sortable-columns)
+  - [Row Selection](#row-selection)
+  - [Inline Editing](#inline-editing)
+- [Responsive Accessibility](#responsive-accessibility)
+  - [Mobile Touch Support](#mobile-touch-support)
+  - [Skip Links](#skip-links)
+- [Color and Contrast](#color-and-contrast)
+  - [High Contrast Support](#high-contrast-support)
+- [Testing Checklist](#testing-checklist)
+  - [Keyboard Testing](#keyboard-testing)
+  - [Screen Reader Testing](#screen-reader-testing)
+  - [Visual Testing](#visual-testing)
+  - [Mobile Testing](#mobile-testing)
+- [Tools and Resources](#tools-and-resources)
+  - [Automated Testing](#automated-testing)
+  - [Manual Testing Tools](#manual-testing-tools)
+  - [References](#references)
+
 ## WCAG 2.1 Requirements
 
 Tables must meet Level AA compliance:

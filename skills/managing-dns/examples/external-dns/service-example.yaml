@@ -1,0 +1,28 @@
+# Kubernetes Service with external-dns annotations
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: default
+  annotations:
+    # Hostname to create DNS record for
+    external-dns.alpha.kubernetes.io/hostname: nginx.example.com
+
+    # TTL (optional, defaults to provider default)
+    external-dns.alpha.kubernetes.io/ttl: "300"
+
+    # Multiple hostnames (comma-separated)
+    # external-dns.alpha.kubernetes.io/hostname: nginx.example.com,www.example.com
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+
+---
+# Result: DNS record automatically created
+# nginx.example.com.  300  IN  A  <LoadBalancer-External-IP>

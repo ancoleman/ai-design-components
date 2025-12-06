@@ -1,0 +1,62 @@
+CACHING PATTERNS
+================
+
+1. CACHE-ASIDE (Lazy Loading)
+──────────────────────────────
+
+READ:
+┌────────┐     ┌───────┐     ┌──────────┐
+│ Client │────►│ Cache │────►│ Database │
+└────────┘     └───────┘     └──────────┘
+     ▲             │               │
+     │         Hit?│           Miss│
+     │             ▼               ▼
+     └─────────────┴───────────────┘
+              (Store & Return)
+
+WRITE:
+┌────────┐     ┌──────────┐
+│ Client │────►│ Database │
+└────────┘     └──────────┘
+     │
+     └─► Invalidate Cache (optional)
+
+
+2. WRITE-THROUGH
+────────────────
+
+WRITE:
+┌────────┐     ┌───────┐     ┌──────────┐
+│ Client │────►│ Cache │────►│ Database │
+└────────┘     └───────┘     └──────────┘
+                    │             │
+                    └──(sync)─────┘
+
+READ:
+┌────────┐     ┌───────┐
+│ Client │────►│ Cache │ (Always hit)
+└────────┘     └───────┘
+
+
+3. WRITE-BEHIND (Write-Back)
+─────────────────────────────
+
+WRITE:
+┌────────┐     ┌───────┐
+│ Client │────►│ Cache │ (Return immediately)
+└────────┘     └───────┘
+                    │
+                    │ (async, batched)
+                    ▼
+               ┌──────────┐
+               │ Database │
+               └──────────┘
+
+Trade-off: Fast writes, risk of data loss
+
+
+INVALIDATION STRATEGIES
+────────────────────────
+- TTL (Time-To-Live): Expire after duration
+- Event-based: Invalidate on data change
+- Manual: Explicit invalidation on update

@@ -2,6 +2,27 @@
 
 Reusable component patterns for AI chat messages including bubbles, avatars, actions, and formatting.
 
+
+## Table of Contents
+
+- [Basic Message Structure](#basic-message-structure)
+- [Message Bubble Variants](#message-bubble-variants)
+  - [Minimal (iMessage-style)](#minimal-imessage-style)
+  - [Card-based (ChatGPT-style)](#card-based-chatgpt-style)
+- [Avatar Components](#avatar-components)
+- [Message Actions](#message-actions)
+- [Code Block Component](#code-block-component)
+- [Markdown Rendering](#markdown-rendering)
+- [Timestamp Display](#timestamp-display)
+- [Suggested Actions (Quick Replies)](#suggested-actions-quick-replies)
+- [Loading Skeleton](#loading-skeleton)
+- [Message Grouping](#message-grouping)
+- [Empty State](#empty-state)
+- [Best Practices](#best-practices)
+- [Component Library Integration](#component-library-integration)
+  - [shadcn/ui](#shadcnui)
+- [Resources](#resources)
+
 ## Basic Message Structure
 
 ```tsx

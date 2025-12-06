@@ -2,6 +2,19 @@
 
 Row selection, inline editing, expandable rows, and action buttons.
 
+
+## Table of Contents
+
+- [Row Selection](#row-selection)
+  - [Single Selection](#single-selection)
+  - [Multi-Selection](#multi-selection)
+- [Expandable Rows](#expandable-rows)
+- [Inline Editing](#inline-editing)
+- [Action Buttons](#action-buttons)
+- [Bulk Actions](#bulk-actions)
+- [Best Practices](#best-practices)
+- [Resources](#resources)
+
 ## Row Selection
 
 ### Single Selection

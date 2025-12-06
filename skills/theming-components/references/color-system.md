@@ -2,6 +2,17 @@
 
 Complete color token reference for the design system.
 
+
+## Table of Contents
+
+- [Color Scale Structure](#color-scale-structure)
+- [Semantic Color Tokens](#semantic-color-tokens)
+- [Dark Theme Overrides](#dark-theme-overrides)
+- [Accessibility Requirements](#accessibility-requirements)
+  - [Contrast Ratios](#contrast-ratios)
+  - [Validated Combinations](#validated-combinations)
+  - [Colorblind-Safe Considerations](#colorblind-safe-considerations)
+
 ## Color Scale Structure
 
 Each color has a 9-shade scale from lightest (50) to darkest (900):

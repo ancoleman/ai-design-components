@@ -1,0 +1,441 @@
+# Traefik IngressRoute Configuration for Kubernetes
+# Demonstrates advanced load balancing with Traefik CRDs including middleware and traffic management
+
+---
+# IngressRoute: HTTP to HTTPS redirect
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: http-redirect
+  namespace: default
+  labels:
+    app: web-application
+    component: ingress
+spec:
+  entryPoints:
+    - web  # HTTP entry point (port 80)
+  routes:
+    # Catch-all route to redirect HTTP to HTTPS
+    - match: HostRegexp(`{host:.+}`)
+      kind: Rule
+      services:
+        - name: noop@internal
+          kind: TraefikService
+      middlewares:
+        - name: redirect-to-https
+
+---
+# IngressRoute: Main HTTPS traffic with load balancing
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: web-app-https
+  namespace: default
+  labels:
+    app: web-application
+    component: ingress
+  annotations:
+    # Optional: External DNS annotation
+    external-dns.alpha.kubernetes.io/hostname: example.com
+spec:
+  entryPoints:
+    - websecure  # HTTPS entry point (port 443)
+
+  routes:
+    # Route 1: Homepage and static content
+    - match: Host(`example.com`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        # Primary backend service
+        - name: web-frontend
+          port: 80
+          weight: 10  # Traffic weight for load distribution
+          # Health check configuration
+          healthCheck:
+            path: /health
+            intervalSeconds: 10
+            timeoutSeconds: 3
+          # Load balancing strategy: wrr (Weighted Round Robin)
+          strategy: RoundRobin
+      middlewares:
+        - name: security-headers
+        - name: compression
+        - name: rate-limit
+
+    # Route 2: API traffic with different middleware
+    - match: Host(`example.com`) && PathPrefix(`/api`)
+      kind: Rule
+      priority: 100  # Higher priority routes are evaluated first
+      services:
+        # Multiple backends for API with weighted load balancing
+        - name: api-backend-v1
+          port: 8080
+          weight: 80  # 80% of traffic
+        - name: api-backend-v2
+          port: 8080
+          weight: 20  # 20% of traffic (canary deployment)
+      middlewares:
+        - name: api-auth
+        - name: api-rate-limit
+        - name: cors-headers
+        - name: strip-api-prefix
+
+    # Route 3: WebSocket traffic
+    - match: Host(`example.com`) && PathPrefix(`/ws`)
+      kind: Rule
+      services:
+        - name: websocket-backend
+          port: 8080
+      middlewares:
+        - name: websocket-headers
+
+  # TLS configuration
+  tls:
+    secretName: example-com-tls
+    # Optional: TLS options reference
+    options:
+      name: default
+
+---
+# IngressRoute: Multiple host routing
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: multi-host-routing
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    # Admin subdomain
+    - match: Host(`admin.example.com`)
+      kind: Rule
+      services:
+        - name: admin-backend
+          port: 80
+      middlewares:
+        - name: admin-auth
+        - name: ip-whitelist
+
+    # API subdomain
+    - match: Host(`api.example.com`)
+      kind: Rule
+      services:
+        - name: api-backend-v1
+          port: 8080
+      middlewares:
+        - name: api-rate-limit
+
+  tls:
+    secretName: wildcard-example-com-tls
+
+---
+# Middleware: HTTPS redirect
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-to-https
+  namespace: default
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+    port: "443"
+
+---
+# Middleware: Security headers
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: security-headers
+  namespace: default
+spec:
+  headers:
+    # Security headers
+    sslRedirect: true
+    stsSeconds: 31536000  # HSTS: 1 year
+    stsIncludeSubdomains: true
+    stsPreload: true
+    forceSTSHeader: true
+    frameDeny: true
+    contentTypeNosniff: true
+    browserXssFilter: true
+    customResponseHeaders:
+      X-Content-Type-Options: "nosniff"
+      X-Frame-Options: "SAMEORIGIN"
+      X-XSS-Protection: "1; mode=block"
+      Referrer-Policy: "strict-origin-when-cross-origin"
+
+---
+# Middleware: Compression
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: compression
+  namespace: default
+spec:
+  compress:
+    excludedContentTypes:
+      - "text/event-stream"
+      - "application/grpc"
+
+---
+# Middleware: Rate limiting (per IP)
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: rate-limit
+  namespace: default
+spec:
+  rateLimit:
+    average: 100  # Average requests per second
+    period: 1m
+    burst: 200    # Maximum burst size
+
+---
+# Middleware: API-specific rate limiting
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: api-rate-limit
+  namespace: default
+spec:
+  rateLimit:
+    average: 50
+    period: 1m
+    burst: 100
+
+---
+# Middleware: CORS headers
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: cors-headers
+  namespace: default
+spec:
+  headers:
+    accessControlAllowMethods:
+      - "GET"
+      - "POST"
+      - "PUT"
+      - "DELETE"
+      - "OPTIONS"
+    accessControlAllowOriginList:
+      - "https://example.com"
+      - "https://app.example.com"
+    accessControlAllowHeaders:
+      - "Content-Type"
+      - "Authorization"
+      - "X-Requested-With"
+    accessControlExposeHeaders:
+      - "Content-Length"
+      - "Content-Range"
+    accessControlAllowCredentials: true
+    accessControlMaxAge: 3600
+
+---
+# Middleware: Strip API prefix
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-api-prefix
+  namespace: default
+spec:
+  stripPrefix:
+    prefixes:
+      - "/api"
+    forceSlash: false
+
+---
+# Middleware: Basic authentication
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: api-auth
+  namespace: default
+spec:
+  basicAuth:
+    secret: api-auth-credentials  # Reference to Kubernetes Secret
+
+---
+# Middleware: Admin authentication
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: admin-auth
+  namespace: default
+spec:
+  basicAuth:
+    secret: admin-auth-credentials
+
+---
+# Middleware: IP whitelist for admin access
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ip-whitelist
+  namespace: default
+spec:
+  ipWhiteList:
+    sourceRange:
+      - "10.0.0.0/8"      # Internal network
+      - "192.168.0.0/16"  # Private network
+      - "172.16.0.0/12"   # Private network
+
+---
+# Middleware: WebSocket headers
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: websocket-headers
+  namespace: default
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+      X-Forwarded-For: ""
+
+---
+# TLS Options: Custom TLS configuration
+apiVersion: traefik.io/v1alpha1
+kind: TLSOption
+metadata:
+  name: default
+  namespace: default
+spec:
+  minVersion: VersionTLS12
+  maxVersion: VersionTLS13
+  cipherSuites:
+    - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+    - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+    - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+  curvePreferences:
+    - CurveP521
+    - CurveP384
+  sniStrict: true
+
+---
+# Service: Web frontend deployment
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-frontend
+  namespace: default
+  labels:
+    app: web-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: web-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+
+---
+# Service: API backend v1
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-backend-v1
+  namespace: default
+  labels:
+    app: api-backend
+    version: v1
+spec:
+  type: ClusterIP
+  selector:
+    app: api-backend
+    version: v1
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+
+---
+# Service: API backend v2 (canary)
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-backend-v2
+  namespace: default
+  labels:
+    app: api-backend
+    version: v2
+spec:
+  type: ClusterIP
+  selector:
+    app: api-backend
+    version: v2
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+
+---
+# Service: WebSocket backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: websocket-backend
+  namespace: default
+  labels:
+    app: websocket-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: websocket-backend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+
+---
+# Service: Admin backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-backend
+  namespace: default
+  labels:
+    app: admin-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: admin-backend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+
+---
+# Secret: TLS certificate
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-com-tls
+  namespace: default
+type: kubernetes.io/tls
+data:
+  # Base64-encoded certificate and key
+  tls.crt: LS0tLS1CRUdJTi... # Your certificate here
+  tls.key: LS0tLS1CRUdJTi... # Your private key here
+
+---
+# Secret: API authentication credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: api-auth-credentials
+  namespace: default
+type: Opaque
+stringData:
+  # Format: username:password (hashed with htpasswd)
+  users: |
+    api_user:$apr1$xyz...

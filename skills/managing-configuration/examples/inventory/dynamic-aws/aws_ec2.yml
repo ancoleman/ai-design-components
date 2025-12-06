@@ -1,0 +1,58 @@
+# AWS EC2 dynamic inventory
+# Prerequisites: Install collection: ansible-galaxy collection install amazon.aws
+# Requires AWS credentials configured (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, or ~/.aws/credentials)
+# Usage: ansible-playbook -i inventory/dynamic-aws/aws_ec2.yml site.yml
+
+plugin: aws_ec2
+
+# AWS regions to query
+regions:
+  - us-east-1
+  - us-west-2
+
+# Filter instances
+filters:
+  tag:Environment: production
+  instance-state-name: running
+
+# Create groups based on tags and attributes
+keyed_groups:
+  # Group by Role tag: role_webserver, role_database, etc.
+  - key: tags.Role
+    prefix: role
+    separator: "_"
+
+  # Group by Environment tag: env_production, env_staging
+  - key: tags.Environment
+    prefix: env
+
+  # Group by instance type: type_t3_micro, type_t3_small
+  - key: instance_type
+    prefix: type
+
+  # Group by availability zone: az_us_east_1a, az_us_east_1b
+  - key: placement.availability_zone
+    prefix: az
+
+  # Group by VPC: vpc_vpc_12345
+  - key: vpc_id
+    prefix: vpc
+
+# Hostnames priority
+hostnames:
+  - tag:Name           # Use Name tag if available
+  - dns-name          # Fall back to DNS name
+  - private-ip-address # Fall back to private IP
+
+# Compose variables for hosts
+compose:
+  ansible_host: private_ip_address
+  ansible_user: "'ubuntu'"  # Default SSH user
+  ec2_instance_type: instance_type
+  ec2_placement: placement.availability_zone
+
+# Enable cache for faster repeated queries
+cache: yes
+cache_plugin: jsonfile
+cache_timeout: 300
+cache_connection: /tmp/ansible_inventory_aws

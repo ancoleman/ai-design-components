@@ -2,6 +2,25 @@
 
 **WCAG 2.1 compliant design tokens for accessible interfaces**
 
+
+## Table of Contents
+
+- [WCAG Contrast Requirements](#wcag-contrast-requirements)
+- [Color Contrast Validation](#color-contrast-validation)
+  - [Pre-Validated Color Pairs](#pre-validated-color-pairs)
+  - [Validation Script](#validation-script)
+- [High-Contrast Theme](#high-contrast-theme)
+- [Reduced Motion](#reduced-motion)
+- [Focus Indicators](#focus-indicators)
+- [Color Blindness Considerations](#color-blindness-considerations)
+  - [Colorblind-Safe Palettes](#colorblind-safe-palettes)
+  - [Don't Rely on Color Alone](#dont-rely-on-color-alone)
+- [Accessibility Checklist](#accessibility-checklist)
+  - [Token Design](#token-design)
+  - [Implementation](#implementation)
+  - [Testing Tools](#testing-tools)
+- [Resources](#resources)
+
 ---
 
 ## WCAG Contrast Requirements

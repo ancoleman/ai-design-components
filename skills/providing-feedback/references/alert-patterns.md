@@ -1,5 +1,39 @@
 # Alert Banner Implementation Patterns
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Alert Types & Severity](#alert-types-severity)
+  - [Information Alert](#information-alert)
+  - [Success Alert](#success-alert)
+  - [Warning Alert](#warning-alert)
+  - [Error Alert](#error-alert)
+- [Positioning Strategies](#positioning-strategies)
+  - [Page-Level Alert (Top)](#page-level-alert-top)
+  - [Section-Level Alert](#section-level-alert)
+  - [Inline Alert (Within Content)](#inline-alert-within-content)
+- [Alert Anatomy](#alert-anatomy)
+  - [Standard Alert Structure](#standard-alert-structure)
+  - [Expandable Alert](#expandable-alert)
+- [Animation Patterns](#animation-patterns)
+  - [Slide Down Entry](#slide-down-entry)
+  - [Fade Out Dismissal](#fade-out-dismissal)
+- [Multi-Alert Management](#multi-alert-management)
+  - [Alert Stack](#alert-stack)
+  - [Priority Queue](#priority-queue)
+- [Responsive Design](#responsive-design)
+  - [Mobile Adaptation](#mobile-adaptation)
+  - [Compact Mode](#compact-mode)
+- [Accessibility](#accessibility)
+  - [ARIA Attributes](#aria-attributes)
+  - [Keyboard Navigation](#keyboard-navigation)
+  - [Screen Reader Announcements](#screen-reader-announcements)
+- [Implementation Examples](#implementation-examples)
+  - [With Radix UI Alert Dialog](#with-radix-ui-alert-dialog)
+  - [Custom Alert System](#custom-alert-system)
+- [Best Practices](#best-practices)
+
 ## Overview
 
 Alert banners are persistent notifications that appear at the top of a page or section to communicate important information that requires user awareness but not immediate action.

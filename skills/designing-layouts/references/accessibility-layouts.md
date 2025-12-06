@@ -1,5 +1,33 @@
 # Accessibility in Layouts
 
+
+## Table of Contents
+
+- [Semantic HTML Structure](#semantic-html-structure)
+  - [Landmark Regions](#landmark-regions)
+  - [Skip Links](#skip-links)
+- [Focus Management](#focus-management)
+  - [Focus Trap for Modals](#focus-trap-for-modals)
+  - [Focus Restoration](#focus-restoration)
+- [ARIA Attributes](#aria-attributes)
+  - [Live Regions](#live-regions)
+  - [Expanded/Collapsed States](#expandedcollapsed-states)
+  - [Describedby and Labelledby](#describedby-and-labelledby)
+- [Keyboard Navigation](#keyboard-navigation)
+  - [Keyboard Patterns](#keyboard-patterns)
+  - [Grid Navigation](#grid-navigation)
+- [Responsive Accessibility](#responsive-accessibility)
+  - [Touch Target Sizing](#touch-target-sizing)
+  - [Focus Indicators](#focus-indicators)
+- [Screen Reader Helpers](#screen-reader-helpers)
+  - [Visually Hidden](#visually-hidden)
+  - [Announcing Changes](#announcing-changes)
+- [Testing Accessibility](#testing-accessibility)
+  - [Accessibility Checklist](#accessibility-checklist)
+  - [Testing Tools](#testing-tools)
+- [Common Patterns](#common-patterns)
+  - [Responsive Table](#responsive-table)
+
 ## Semantic HTML Structure
 
 ### Landmark Regions

@@ -1,0 +1,141 @@
+# Linkerd Traffic Split Example
+#
+# Demonstrates: HTTPRoute-based traffic splitting for canary deployment
+#
+# Dependencies:
+#   kubectl annotate namespace production linkerd.io/inject=enabled
+#
+# Usage:
+#   kubectl apply -f traffic-split.yaml
+
+---
+# Backend v1 deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-v1
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: backend
+        version: v1
+    spec:
+      containers:
+      - name: backend
+        image: backend:v1
+        ports:
+        - containerPort: 8080
+---
+# Backend v2 deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-v2
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: backend
+        version: v2
+    spec:
+      containers:
+      - name: backend
+        image: backend:v2
+        ports:
+        - containerPort: 8080
+---
+# Service for v1
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-v1
+  namespace: production
+spec:
+  selector:
+    app: backend
+    version: v1
+  ports:
+  - port: 8080
+---
+# Service for v2
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-v2
+  namespace: production
+spec:
+  selector:
+    app: backend
+    version: v2
+  ports:
+  - port: 8080
+---
+# Main backend service
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: production
+spec:
+  selector:
+    app: backend
+  ports:
+  - port: 8080
+---
+# HTTPRoute: 90% to v1, 10% to v2
+apiVersion: policy.linkerd.io/v1beta2
+kind: HTTPRoute
+metadata:
+  name: backend-canary
+  namespace: production
+spec:
+  parentRefs:
+  - name: backend
+    kind: Service
+    group: core
+    port: 8080
+  rules:
+  - backendRefs:
+    - name: backend-v1
+      port: 8080
+      weight: 90
+    - name: backend-v2
+      port: 8080
+      weight: 10
+---
+# ServiceProfile: Configure retries and timeouts
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: backend.production.svc.cluster.local
+  namespace: production
+spec:
+  routes:
+  - name: GET /api/users
+    condition:
+      method: GET
+      pathRegex: /api/users
+    timeout: 3s
+    retryBudget:
+      retryRatio: 0.2
+      minRetriesPerSecond: 10
+      ttl: 10s
+  - name: POST /api/users
+    condition:
+      method: POST
+      pathRegex: /api/users
+    timeout: 5s
+    isRetryable: false

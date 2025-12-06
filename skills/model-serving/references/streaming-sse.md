@@ -2,6 +2,31 @@
 
 Complete guide for streaming LLM responses using Server-Sent Events (SSE) across multiple backends.
 
+
+## Table of Contents
+
+- [Why SSE for LLM Streaming](#why-sse-for-llm-streaming)
+- [Protocol Overview](#protocol-overview)
+- [Python + FastAPI](#python-fastapi)
+  - [Basic Implementation](#basic-implementation)
+  - [OpenAI-Compatible vLLM Streaming](#openai-compatible-vllm-streaming)
+- [TypeScript + Hono (Edge)](#typescript-hono-edge)
+  - [Cloudflare Workers](#cloudflare-workers)
+- [Rust + Axum](#rust-axum)
+- [Frontend Integration](#frontend-integration)
+  - [React + EventSource (Native)](#react-eventsource-native)
+  - [Fetch API (POST with SSE)](#fetch-api-post-with-sse)
+- [Advanced Patterns](#advanced-patterns)
+  - [Reconnection with Event ID](#reconnection-with-event-id)
+  - [Error Handling](#error-handling)
+- [Production Considerations](#production-considerations)
+  - [Nginx Configuration](#nginx-configuration)
+  - [Load Balancing](#load-balancing)
+  - [Timeouts](#timeouts)
+- [Comparison with Alternatives](#comparison-with-alternatives)
+- [Common Pitfalls](#common-pitfalls)
+- [Resources](#resources)
+
 ## Why SSE for LLM Streaming
 
 **Advantages over WebSockets:**

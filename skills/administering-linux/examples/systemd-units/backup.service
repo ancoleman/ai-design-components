@@ -1,0 +1,37 @@
+# Example Systemd Service: Backup Task
+#
+# This service is triggered by backup.timer
+# Can also be run manually: sudo systemctl start backup.service
+
+[Unit]
+Description=Daily Backup Service
+Documentation=man:systemd.service(5)
+
+[Service]
+Type=oneshot
+User=backup
+Group=backup
+
+# Main backup command
+ExecStart=/usr/local/bin/backup.sh
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=backup
+
+# Timeout for backup completion
+TimeoutStartSec=3600
+
+# Working directory
+WorkingDirectory=/var/backups
+
+# Environment
+Environment="BACKUP_DIR=/var/backups"
+Environment="RETENTION_DAYS=30"
+
+# Security
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/backups

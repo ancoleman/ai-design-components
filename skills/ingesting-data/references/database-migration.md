@@ -1,5 +1,20 @@
 # Database Migration & CDC
 
+
+## Table of Contents
+
+- [Schema Migration Tools](#schema-migration-tools)
+  - [Python (Alembic)](#python-alembic)
+  - [TypeScript (Drizzle)](#typescript-drizzle)
+- [Bulk Data Migration](#bulk-data-migration)
+  - [Python - Table to Table](#python-table-to-table)
+  - [With Transformation](#with-transformation)
+- [Change Data Capture (CDC)](#change-data-capture-cdc)
+  - [PostgreSQL Logical Replication](#postgresql-logical-replication)
+  - [Debezium (Docker)](#debezium-docker)
+- [Initial Load + CDC Pattern](#initial-load-cdc-pattern)
+- [Data Validation](#data-validation)
+
 ## Schema Migration Tools
 
 ### Python (Alembic)

@@ -1,0 +1,358 @@
+# LGTM Stack Docker Compose
+# Production-ready observability platform with unified telemetry collection
+#
+# Components:
+# - Grafana Alloy: OpenTelemetry collector (receives OTLP, forwards to backends)
+# - Loki: Log aggregation and querying
+# - Tempo: Distributed tracing backend
+# - Mimir: Prometheus-compatible metrics with long-term storage
+# - Grafana: Unified visualization and dashboard UI
+#
+# Quick Start:
+#   docker-compose up -d
+#   Access Grafana: http://localhost:3000 (admin/admin)
+#   Send telemetry to: localhost:4317 (OTLP gRPC) or localhost:4318 (OTLP HTTP)
+
+version: '3.8'
+
+# Shared network for all LGTM services
+networks:
+  lgtm:
+    driver: bridge
+
+# Persistent volumes for data storage
+volumes:
+  loki-data:
+    driver: local
+  tempo-data:
+    driver: local
+  mimir-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+services:
+  # ============================================================================
+  # Grafana Alloy - OpenTelemetry Collector
+  # ============================================================================
+  # Receives telemetry via OTLP protocol and forwards to Loki, Tempo, and Mimir
+  # Acts as the single entry point for all application telemetry
+  alloy:
+    image: grafana/alloy:latest
+    container_name: lgtm-alloy
+    restart: unless-stopped
+
+    ports:
+      - "4317:4317"  # OTLP gRPC (recommended for production)
+      - "4318:4318"  # OTLP HTTP (easier for debugging)
+      - "12345:12345"  # Alloy UI for debugging config
+
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+
+    networks:
+      - lgtm
+
+    depends_on:
+      loki:
+        condition: service_healthy
+      tempo:
+        condition: service_healthy
+      mimir:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:12345/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ============================================================================
+  # Loki - Log Aggregation System
+  # ============================================================================
+  # Stores and indexes logs with label-based querying (LogQL)
+  # Optimized for Kubernetes-style structured logs
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: lgtm-loki
+    restart: unless-stopped
+
+    ports:
+      - "3100:3100"  # HTTP API for queries and ingestion
+
+    volumes:
+      - ./loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki  # Persistent storage for log chunks and index
+
+    command: -config.file=/etc/loki/local-config.yaml
+
+    networks:
+      - lgtm
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3100/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+    # Resource limits to prevent memory issues with high log volume
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  # ============================================================================
+  # Tempo - Distributed Tracing Backend
+  # ============================================================================
+  # Stores and queries traces with TraceQL
+  # Supports Jaeger, Zipkin, and OpenTelemetry trace formats
+  tempo:
+    image: grafana/tempo:2.4.0
+    container_name: lgtm-tempo
+    restart: unless-stopped
+
+    ports:
+      - "3200:3200"   # HTTP API for queries
+      - "4317"        # OTLP gRPC (internal, routed through Alloy)
+      - "4318"        # OTLP HTTP (internal, routed through Alloy)
+      - "9411:9411"   # Zipkin compatible endpoint
+      - "14268:14268" # Jaeger ingest endpoint
+
+    volumes:
+      - ./tempo/tempo-config.yaml:/etc/tempo.yaml:ro
+      - tempo-data:/var/tempo  # Persistent storage for trace data
+
+    command: -config.file=/etc/tempo.yaml
+
+    networks:
+      - lgtm
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3200/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+    # Tempo can be memory-intensive with high trace volume
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  # ============================================================================
+  # Mimir - Prometheus-Compatible Metrics Storage
+  # ============================================================================
+  # Horizontally scalable, multi-tenant metrics backend
+  # Drop-in replacement for Prometheus with long-term storage
+  mimir:
+    image: grafana/mimir:2.11.0
+    container_name: lgtm-mimir
+    restart: unless-stopped
+
+    ports:
+      - "9009:9009"  # HTTP API for queries and ingestion
+
+    volumes:
+      - ./mimir/mimir-config.yaml:/etc/mimir.yaml:ro
+      - mimir-data:/data  # Persistent storage for metrics blocks
+
+    command:
+      - -config.file=/etc/mimir.yaml
+      - -target=all
+
+    networks:
+      - lgtm
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9009/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+    # Mimir requires significant memory for compaction and queries
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  # ============================================================================
+  # Grafana - Unified Observability UI
+  # ============================================================================
+  # Pre-configured with Loki, Tempo, and Mimir datasources
+  # Provides dashboards, explore views, and alerting
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: lgtm-grafana
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"  # Web UI
+
+    environment:
+      # Authentication settings
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+
+      # Enable explore view for ad-hoc queries
+      - GF_EXPLORE_ENABLED=true
+
+      # Auto-provision datasources and dashboards
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+
+      # Feature toggles
+      - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor,correlations,traceToMetrics,traceToLogs
+
+      # Performance settings
+      - GF_LOG_LEVEL=info
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+
+    volumes:
+      # Auto-provision datasources (Loki, Tempo, Mimir)
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+
+      # Auto-provision dashboards (if any)
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+
+      # Persistent storage for user settings, dashboards, and plugins
+      - grafana-data:/var/lib/grafana
+
+    networks:
+      - lgtm
+
+    depends_on:
+      loki:
+        condition: service_healthy
+      tempo:
+        condition: service_healthy
+      mimir:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ============================================================================
+  # Prometheus (Optional) - Alternative to Mimir for simpler setups
+  # ============================================================================
+  # Uncomment if you prefer traditional Prometheus over Mimir
+  # Note: Prometheus has limited long-term storage compared to Mimir
+  #
+  # prometheus:
+  #   image: prom/prometheus:v2.50.1
+  #   container_name: lgtm-prometheus
+  #   restart: unless-stopped
+  #
+  #   ports:
+  #     - "9090:9090"
+  #
+  #   volumes:
+  #     - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #     - prometheus-data:/prometheus
+  #
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--storage.tsdb.path=/prometheus'
+  #     - '--storage.tsdb.retention.time=15d'
+  #     - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+  #     - '--web.console.templates=/usr/share/prometheus/consoles'
+  #
+  #   networks:
+  #     - lgtm
+  #
+  #   healthcheck:
+  #     test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+# ============================================================================
+# Usage Instructions
+# ============================================================================
+#
+# 1. Start the stack:
+#    docker-compose up -d
+#
+# 2. Check service health:
+#    docker-compose ps
+#    docker-compose logs -f  # Follow logs from all services
+#
+# 3. Access Grafana:
+#    URL: http://localhost:3000
+#    Username: admin
+#    Password: admin
+#
+# 4. Configure your application to send telemetry:
+#    OTLP gRPC endpoint: localhost:4317 (production recommended)
+#    OTLP HTTP endpoint: localhost:4318 (easier for testing)
+#
+#    Example (Python):
+#      from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+#      exporter = OTLPSpanExporter(endpoint="localhost:4317", insecure=True)
+#
+#    Example (TypeScript):
+#      import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
+#      const exporter = new OTLPTraceExporter({ url: 'http://localhost:4317' });
+#
+# 5. Verify telemetry in Grafana:
+#    - Navigate to Explore
+#    - Select datasource: Loki (logs), Tempo (traces), or Mimir (metrics)
+#    - Run queries using LogQL, TraceQL, or PromQL
+#
+# 6. Stop the stack:
+#    docker-compose down
+#
+#    To remove volumes (WARNING: deletes all data):
+#    docker-compose down -v
+#
+# ============================================================================
+# Production Considerations
+# ============================================================================
+#
+# 1. Resource Limits:
+#    - Adjust memory limits based on telemetry volume
+#    - Monitor with: docker stats
+#
+# 2. Data Retention:
+#    - Configure retention in respective config files
+#    - Default: Loki (31d), Tempo (7d), Mimir (15d)
+#
+# 3. Security:
+#    - Change default Grafana password: GF_SECURITY_ADMIN_PASSWORD
+#    - Enable TLS for OTLP endpoints in production
+#    - Use authentication for datasource endpoints
+#
+# 4. Scaling:
+#    - For high volume, run multiple Alloy collectors
+#    - Consider Kubernetes deployment for auto-scaling
+#    - Use object storage (S3, GCS) for long-term data
+#
+# 5. Networking:
+#    - In production, expose only necessary ports (3000, 4317, 4318)
+#    - Use reverse proxy (nginx, Traefik) for TLS termination
+#
+# 6. Monitoring the Monitors:
+#    - Check health endpoints: /ready, /health
+#    - Set up alerts for stack component failures
+#    - Monitor disk usage for volumes
+#
+# ============================================================================

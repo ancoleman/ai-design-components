@@ -275,11 +275,11 @@ After ingestion, chain to appropriate database skill:
 
 | Destination | Chain to Skill |
 |-------------|----------------|
-| PostgreSQL, MySQL | [Relational Databases](./databases-relational) |
-| MongoDB, DynamoDB | [Document Databases](./databases-document) |
-| Qdrant, Pinecone | [Vector Databases](./databases-vector) (after embedding) |
-| ClickHouse, TimescaleDB | [Time-Series Databases](./databases-timeseries) |
-| Neo4j | [Graph Databases](./databases-graph) |
+| PostgreSQL, MySQL | [Relational Databases](./using-relational-databases) |
+| MongoDB, DynamoDB | [Document Databases](./using-document-databases) |
+| Qdrant, Pinecone | [Vector Databases](./using-vector-databases) (after embedding) |
+| ClickHouse, TimescaleDB | [Time-Series Databases](./using-timeseries-databases) |
+| Neo4j | [Graph Databases](./using-graph-databases) |
 
 For vector databases, chain through `ai-data-engineering` for embedding:
 ```
@@ -382,9 +382,9 @@ pipeline.run(api_source("https://api.example.com/data"))
 ## Related Skills
 
 - [AI Data Engineering](./ai-data-engineering) - RAG pipeline ingestion
-- [Relational Databases](./databases-relational) - Target for structured data
-- [Time-Series Databases](./databases-timeseries) - Target for metrics/events
-- [Vector Databases](./databases-vector) - Target for embeddings (after processing)
+- [Relational Databases](./using-relational-databases) - Target for structured data
+- [Time-Series Databases](./using-timeseries-databases) - Target for metrics/events
+- [Vector Databases](./using-vector-databases) - Target for embeddings (after processing)
 
 ## References
 

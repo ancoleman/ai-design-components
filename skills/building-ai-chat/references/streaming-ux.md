@@ -2,6 +2,31 @@
 
 Best practices for user experience when streaming LLM responses token-by-token.
 
+
+## Table of Contents
+
+- [Core Principles](#core-principles)
+- [Visual Patterns](#visual-patterns)
+  - [Loading States](#loading-states)
+  - [Progressive Token Display](#progressive-token-display)
+  - [Markdown Rendering While Streaming](#markdown-rendering-while-streaming)
+- [Interaction Patterns](#interaction-patterns)
+  - [Stop Generation Button](#stop-generation-button)
+  - [Regenerate Response](#regenerate-response)
+  - [Typing Indicator (User)](#typing-indicator-user)
+- [Performance Optimizations](#performance-optimizations)
+  - [Throttle Re-renders](#throttle-re-renders)
+  - [Virtual Scrolling for Long Responses](#virtual-scrolling-for-long-responses)
+  - [Debounced Auto-scroll](#debounced-auto-scroll)
+- [Error Handling](#error-handling)
+  - [Network Error Display](#network-error-display)
+  - [Partial Response Recovery](#partial-response-recovery)
+- [Accessibility](#accessibility)
+  - [Screen Reader Announcements](#screen-reader-announcements)
+  - [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Best Practices](#best-practices)
+- [Anti-Patterns](#anti-patterns)
+
 ## Core Principles
 
 1. **Show immediate feedback** - Don't wait for first token

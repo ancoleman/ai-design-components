@@ -282,7 +282,7 @@ ai-design-components/
 │   │   └── SKILL.md
 │   ├── visualizing-data/
 │   │   └── SKILL.md
-│   ├── databases-relational/
+│   ├── using-relational-databases/
 │   │   └── SKILL.md
 │   └── ...                       # 26 more skills
 ├── commands/

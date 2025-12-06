@@ -5,6 +5,128 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2025-12-05
+
+### 🎉 MAJOR MILESTONE: All 76 Skills Production-Ready
+
+**Historic Achievement:** Converted all 47 master plans into complete SKILL.md implementations. The project now has **76 production-ready skills** with full documentation, code examples, and decision frameworks.
+
+### Added
+
+**47 New SKILL.md Implementations:**
+
+All skills follow Anthropic's best practices with progressive disclosure, multi-language support, and decision frameworks.
+
+**DevOps Skills (6):**
+- `testing-strategies` - Unit, integration, E2E testing patterns
+- `building-ci-pipelines` - GitHub Actions, GitLab CI, Jenkins pipelines
+- `implementing-gitops` - ArgoCD, Flux, GitOps workflows
+- `platform-engineering` - Internal Developer Platforms (IDPs), Backstage
+- `managing-incidents` - Incident response, postmortems, on-call
+- `writing-dockerfiles` - Multi-stage builds, security hardening, distroless
+
+**Infrastructure Skills (12):**
+- `operating-kubernetes` - K8s deployments, operators, Helm management
+- `writing-infrastructure-code` - Terraform, Pulumi, CloudFormation patterns
+- `administering-linux` - System management, systemd, troubleshooting
+- `architecting-networks` - VPC design, subnets, routing, firewalls
+- `load-balancing-patterns` - L4/L7 LBs, health checks, algorithms
+- `planning-disaster-recovery` - RTO/RPO, backup strategies, failover testing
+- `configuring-nginx` - Reverse proxy, SSL termination, performance tuning
+- `shell-scripting` - Bash best practices, error handling, portability
+- `managing-dns` - Route53, zones, record types, DNSSEC
+- `implementing-service-mesh` - Istio, Linkerd, mTLS, traffic management
+- `managing-configuration` - Configuration management, environment variables
+- `designing-distributed-systems` - CAP theorem, consistency patterns, scaling
+
+**Security Skills (7):**
+- `architecting-security` - Zero trust, defense in depth, least privilege
+- `implementing-compliance` - SOC 2, GDPR, HIPAA, ISO 27001 controls
+- `managing-vulnerabilities` - CVE management, scanning, remediation
+- `implementing-tls` - Certificate management, mTLS, ACME automation
+- `configuring-firewalls` - iptables, cloud firewalls, segmentation
+- `siem-logging` - SIEM platforms, threat detection, log aggregation
+- `security-hardening` - CIS benchmarks, OS hardening, secure configuration
+
+**Developer Productivity Skills (7):**
+- `designing-apis` - REST, GraphQL, OpenAPI design principles
+- `building-clis` - Python (Click, Typer), Go (Cobra), Rust (Clap)
+- `designing-sdks` - Client library patterns, versioning, documentation
+- `generating-documentation` - Docusaurus, OpenAPI, auto-generated docs
+- `debugging-techniques` - Profiling, logging, troubleshooting strategies
+- `managing-git-workflows` - Branching strategies, hooks, conflict resolution
+- `writing-github-actions` - Workflows, reusable actions, matrix builds
+
+**Data Engineering Skills (6):**
+- `architecting-data` - Data lake, warehouse, lakehouse, medallion architecture
+- `streaming-data` - Kafka, Flink, event-driven architectures
+- `transforming-data` - dbt, ETL/ELT patterns, data quality
+- `optimizing-sql` - Query optimization, indexing, execution plans
+- `secret-management` - Vault, secret rotation, Kubernetes secrets
+- `performance-engineering` - Profiling, benchmarking, optimization
+
+**AI/ML Skills (4):**
+- `implementing-mlops` - MLflow, experiment tracking, model registries
+- `prompt-engineering` - LLM prompting techniques, chain-of-thought
+- `evaluating-llms` - RAGAS, benchmarks, safety testing
+- `embedding-optimization` - Chunking strategies, model selection, caching
+
+**Cloud Skills (3):**
+- `deploying-on-aws` - Well-Architected Framework, service selection
+- `deploying-on-gcp` - BigQuery, Cloud Run, Vertex AI patterns
+- `deploying-on-azure` - Container Apps, Azure OpenAI, Cosmos DB
+
+**FinOps Skills (2):**
+- `optimizing-costs` - FinOps practices, rightsizing, commitment discounts
+- `resource-tagging` - Tag governance, cost allocation, enforcement
+
+**GitHub Pages Documentation (8 New Categories):**
+
+Complete documentation site with 47 new skill pages:
+- `/docs/skills/devops/` - 6 DevOps skill docs
+- `/docs/skills/infrastructure/` - 12 Infrastructure skill docs
+- `/docs/skills/security/` - 7 Security skill docs
+- `/docs/skills/developer-productivity/` - 7 Developer Productivity docs
+- `/docs/skills/data-engineering/` - 6 Data Engineering docs
+- `/docs/skills/ai-ml/` - 4 AI/ML docs
+- `/docs/skills/cloud/` - 3 Cloud docs
+- `/docs/skills/finops/` - 2 FinOps docs
+
+**Plugin Marketplace Updates:**
+- Added 8 new plugin groups in marketplace.json:
+  - `devops-skills` - CI/CD, GitOps, testing, Docker
+  - `infrastructure-skills` - K8s, IaC, networking, distributed systems
+  - `security-skills` - Architecture, compliance, TLS, SIEM
+  - `developer-productivity-skills` - APIs, CLIs, SDKs, docs
+  - `data-engineering-skills` - Architecture, streaming, SQL, secrets
+  - `ai-ml-skills` - MLOps, prompts, evaluation, embeddings
+  - `cloud-provider-skills` - AWS, GCP, Azure
+  - `finops-skills` - Cost optimization, tagging
+
+### Changed
+
+- **Skill Count:** 29 production → **76 production** (162% increase)
+- **Master Plans:** 47 → 0 (all converted to production SKILL.md)
+- **Documentation:** Added 8 new category pages with 47 skill docs
+- **Sidebar:** Updated with all 10 skill categories
+- **README:** Simplified to reflect all skills now production-ready
+
+### Fixed
+
+- MDX compilation errors in 12 documentation files (angle bracket escaping)
+- JSX variable reference errors in GitOps documentation
+- Broken link in security-hardening.md
+
+### Statistics
+
+- **New SKILL.md files:** 47
+- **New documentation pages:** 47
+- **New category configs:** 8
+- **Plugin groups:** 11 → 19
+- **Total production skills:** 76
+
+---
+
 ## [0.4.2] - 2025-12-04
 
 ### Added
@@ -154,25 +276,25 @@ All init.md files include research from:
 **110 new files created across 17 skills to complete progressive disclosure:**
 
 **Phase 0 - Low Priority (7 skills, 20 files):**
-- `databases-timeseries/references/questdb.md` - QuestDB high-throughput guide
+- `using-timeseries-databases/references/questdb.md` - QuestDB high-throughput guide
 - `visualizing-data/examples/javascript/accessible-chart.tsx` - WCAG 2.1 AA compliant chart
-- `auth-security/references/` - 3 files (api-security, managed-auth-comparison, self-hosted-auth)
-- `databases-relational/references/` - 3 files (mysql-guide, sqlite-guide, serverless-databases)
+- `securing-authentication/references/` - 3 files (api-security, managed-auth-comparison, self-hosted-auth)
+- `using-relational-databases/references/` - 3 files (mysql-guide, sqlite-guide, serverless-databases)
 - `implementing-navigation/examples/` - 3 files (mobile-navigation, django_urls, fastapi_routes)
 - `model-serving/` - 3 files (streaming-sse.md, k8s-vllm-deployment/, langchain-rag-qdrant/)
-- `databases-vector/` - 4 files (hybrid-search.md, rust-axum-vector/, typescript-rag/, evaluate_rag.py)
+- `using-vector-databases/` - 4 files (hybrid-search.md, rust-axum-vector/, typescript-rag/, evaluate_rag.py)
 
 **Phase 1 - Medium Priority (4 skills, 22 files):**
 - `assembling-components/` - 7 files (Python/React/Rust templates + 4 dashboard examples)
-- `api-patterns/examples/` - 5 files (go-gin, graphql-strawberry, grpc-tonic, rust-axum, typescript-trpc)
-- `message-queues/` - 5 files (BullMQ/Celery guides + 3 complete workflow examples)
-- `observability/` - 4 files (axum-tracing, lgtm-docker-compose, 2 automation scripts)
+- `implementing-api-patterns/examples/` - 5 files (go-gin, graphql-strawberry, grpc-tonic, rust-axum, typescript-trpc)
+- `using-message-queues/` - 5 files (BullMQ/Celery guides + 3 complete workflow examples)
+- `implementing-observability/` - 4 files (axum-tracing, lgtm-docker-compose, 2 automation scripts)
 
 **Phase 2 - High Priority (4 skills, 30 files):**
 - `creating-dashboards/` - 10 files (grid layouts, KPI formats, themes, 5 dashboard examples, 2 scripts)
 - `building-ai-chat/` - 8 files (4 reference guides + 4 complete chat examples)
 - `ai-data-engineering/` - 4 files (chunking strategies, data versioning, orchestration, Qdrant setup)
-- `databases-document/` - 8 files (aggregation, indexing, patterns, anti-patterns, 2 examples)
+- `using-document-databases/` - 8 files (aggregation, indexing, patterns, anti-patterns, 2 examples)
 
 **Phase 3 - Critical Priority (2 skills, 38 files):**
 - `building-tables/` - 14 files (6 reference guides + 6 examples + 2 scripts)
@@ -461,6 +583,7 @@ All init.md files include research from:
 - Design tokens foundational system
 - AI chat interfaces (strategic priority)
 
+[0.5.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.5.0
 [0.4.2]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.4.2
 [0.4.1]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.4.1
 [0.4.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.4.0

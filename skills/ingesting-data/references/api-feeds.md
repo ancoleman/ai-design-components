@@ -1,5 +1,19 @@
 # API Feed Ingestion
 
+
+## Table of Contents
+
+- [REST API Polling](#rest-api-polling)
+  - [Python with httpx (async)](#python-with-httpx-async)
+  - [TypeScript with fetch](#typescript-with-fetch)
+- [Webhook Receivers](#webhook-receivers)
+  - [Python (FastAPI)](#python-fastapi)
+  - [TypeScript (Hono)](#typescript-hono)
+- [GraphQL Subscriptions](#graphql-subscriptions)
+  - [Python (gql)](#python-gql)
+- [Rate Limiting & Backoff](#rate-limiting-backoff)
+- [Best Practices](#best-practices)
+
 ## REST API Polling
 
 ### Python with httpx (async)

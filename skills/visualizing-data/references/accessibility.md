@@ -2,6 +2,28 @@
 
 Ensure all visualizations meet Web Content Accessibility Guidelines Level AA standards.
 
+
+## Table of Contents
+
+- [Core Requirements](#core-requirements)
+  - [1. Text Alternatives (WCAG 1.1.1 - Level A)](#1-text-alternatives-wcag-111-level-a)
+  - [2. Color Contrast (WCAG 1.4.3 - Level AA)](#2-color-contrast-wcag-143-level-aa)
+  - [3. Don't Rely on Color Alone (WCAG 1.4.1 - Level A)](#3-dont-rely-on-color-alone-wcag-141-level-a)
+  - [4. Keyboard Navigation (WCAG 2.1.1 - Level A)](#4-keyboard-navigation-wcag-211-level-a)
+  - [5. Data Table Alternative](#5-data-table-alternative)
+  - [6. Screen Reader Support](#6-screen-reader-support)
+- [Testing Checklist](#testing-checklist)
+  - [Automated Testing](#automated-testing)
+  - [Manual Testing](#manual-testing)
+- [Common Accessibility Pitfalls](#common-accessibility-pitfalls)
+  - [❌ Avoid:](#avoid)
+  - [✅ Do:](#do)
+- [ARIA Patterns for Charts](#aria-patterns-for-charts)
+  - [Static Charts](#static-charts)
+  - [Interactive Charts](#interactive-charts)
+  - [Data Points with Landmarks](#data-points-with-landmarks)
+- [Resources](#resources)
+
 ## Core Requirements
 
 ### 1. Text Alternatives (WCAG 1.1.1 - Level A)

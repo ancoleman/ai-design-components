@@ -1,0 +1,55 @@
+# Pod Security Standards - Restricted
+# Most secure configuration for applications
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-app
+  namespace: production
+spec:
+  # Pod-level security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+    seccompProfile:
+      type: RuntimeDefault
+
+  containers:
+  - name: app
+    image: nginx:1.21
+
+    # Container-level security context
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1000
+      capabilities:
+        drop:
+        - ALL
+      seccompProfile:
+        type: RuntimeDefault
+
+    # Writable directories (since root filesystem is read-only)
+    volumeMounts:
+    - name: tmp
+      mountPath: /tmp
+    - name: cache
+      mountPath: /var/cache/nginx
+
+  volumes:
+  - name: tmp
+    emptyDir: {}
+  - name: cache
+    emptyDir: {}

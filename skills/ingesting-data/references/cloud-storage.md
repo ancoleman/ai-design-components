@@ -1,5 +1,17 @@
 # Cloud Storage Ingestion Patterns
 
+
+## Table of Contents
+
+- [S3 (AWS)](#s3-aws)
+  - [Python with boto3](#python-with-boto3)
+  - [TypeScript with AWS SDK v3](#typescript-with-aws-sdk-v3)
+- [GCS (Google Cloud)](#gcs-google-cloud)
+  - [Python with gcsfs](#python-with-gcsfs)
+- [Azure Blob Storage](#azure-blob-storage)
+  - [Python with adlfs](#python-with-adlfs)
+- [Best Practices](#best-practices)
+
 ## S3 (AWS)
 
 ### Python with boto3

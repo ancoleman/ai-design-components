@@ -1,5 +1,30 @@
 # Table Performance Optimization
 
+
+## Table of Contents
+
+- [Performance Tier Overview](#performance-tier-overview)
+  - [Tier 1: Client-Side Operations (<1,000 rows)](#tier-1-client-side-operations-1000-rows)
+  - [Tier 2: Server-Side Operations (1,000-10,000 rows)](#tier-2-server-side-operations-1000-10000-rows)
+  - [Tier 3: Virtual Scrolling (10,000-100,000 rows)](#tier-3-virtual-scrolling-10000-100000-rows)
+  - [Tier 4: Extreme Scale (100,000+ rows)](#tier-4-extreme-scale-100000-rows)
+- [Rendering Optimizations](#rendering-optimizations)
+  - [Reduce React Re-renders](#reduce-react-re-renders)
+  - [Batch DOM Updates](#batch-dom-updates)
+  - [CSS-based Optimizations](#css-based-optimizations)
+- [Memory Management](#memory-management)
+  - [Prevent Memory Leaks](#prevent-memory-leaks)
+  - [Efficient Data Structures](#efficient-data-structures)
+- [Network Optimizations](#network-optimizations)
+  - [Request Deduplication](#request-deduplication)
+  - [Response Compression](#response-compression)
+- [Benchmarking Tools](#benchmarking-tools)
+  - [Performance Measurement](#performance-measurement)
+  - [React DevTools Profiler](#react-devtools-profiler)
+- [Common Performance Pitfalls](#common-performance-pitfalls)
+  - [❌ Avoid These Patterns](#avoid-these-patterns)
+- [Performance Checklist](#performance-checklist)
+
 ## Performance Tier Overview
 
 ### Tier 1: Client-Side Operations (<1,000 rows)

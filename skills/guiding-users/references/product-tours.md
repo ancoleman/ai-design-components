@@ -2,6 +2,50 @@
 
 **Purpose:** This document provides detailed patterns for implementing product tours that guide users through key features with sequential spotlights and modal overlays.
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [When to Use Product Tours](#when-to-use-product-tours)
+- [Core Components](#core-components)
+  - [1. Spotlight/Beacon](#1-spotlightbeacon)
+  - [2. Modal/Tooltip Content](#2-modaltooltip-content)
+  - [3. Navigation Controls](#3-navigation-controls)
+  - [4. Progress Tracking](#4-progress-tracking)
+- [Best Practices](#best-practices)
+  - [Length and Pacing](#length-and-pacing)
+  - [Content Guidelines](#content-guidelines)
+  - [Positioning](#positioning)
+- [Implementation Patterns](#implementation-patterns)
+  - [Pattern 1: Modal Tour (Traditional)](#pattern-1-modal-tour-traditional)
+  - [Pattern 2: Contextual Beacons](#pattern-2-contextual-beacons)
+  - [Pattern 3: Hybrid Tour](#pattern-3-hybrid-tour)
+- [User Controls](#user-controls)
+  - [Skip Functionality](#skip-functionality)
+  - [Pause and Resume](#pause-and-resume)
+  - [Tour Completion](#tour-completion)
+- [Accessibility](#accessibility)
+  - [Keyboard Navigation](#keyboard-navigation)
+  - [Screen Reader Support](#screen-reader-support)
+  - [Focus Management](#focus-management)
+  - [Reduced Motion](#reduced-motion)
+- [Timing and Triggering](#timing-and-triggering)
+  - [When to Show](#when-to-show)
+  - [Smart Triggering](#smart-triggering)
+- [Analytics and Optimization](#analytics-and-optimization)
+  - [Key Metrics](#key-metrics)
+  - [Optimization Strategies](#optimization-strategies)
+  - [A/B Testing](#ab-testing)
+- [react-joyride Implementation](#react-joyride-implementation)
+  - [Basic Setup](#basic-setup)
+  - [Custom Styling with Design Tokens](#custom-styling-with-design-tokens)
+  - [Advanced Features](#advanced-features)
+- [Common Pitfalls](#common-pitfalls)
+  - [Mistakes to Avoid](#mistakes-to-avoid)
+  - [Solutions](#solutions)
+- [Related Patterns](#related-patterns)
+- [References](#references)
+
 ## Overview
 
 Product tours are step-by-step walkthroughs that introduce users to your product's core functionality through a series of focused interactions. Each step highlights a specific UI element and explains its purpose or usage.

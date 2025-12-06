@@ -616,7 +616,7 @@ skills:
       exclusions: []
 
     invocation: "backend-api-skills:message-queues"
-    dependencies: ["api-patterns"]
+    dependencies: ["implementing-api-patterns"]
 
     questions:
       source: "skill"  # 5+ questions
@@ -638,7 +638,7 @@ skills:
       exclusions: []
 
     invocation: "backend-api-skills:realtime-sync"
-    dependencies: ["api-patterns"]
+    dependencies: ["implementing-api-patterns"]
 
     questions:
       source: "skill"  # 5+ questions
@@ -660,7 +660,7 @@ skills:
       exclusions: []
 
     invocation: "backend-platform-skills:auth-security"
-    dependencies: ["api-patterns"]
+    dependencies: ["implementing-api-patterns"]
 
     questions:
       source: "skill"  # 5+ questions
@@ -726,7 +726,7 @@ skills:
       requires_any: [ai, rag, llm, search]
 
     invocation: "backend-ai-skills:ai-data-engineering"
-    dependencies: ["databases-vector"]
+    dependencies: ["using-vector-databases"]
 
     questions:
       source: "skill"  # 5+ questions

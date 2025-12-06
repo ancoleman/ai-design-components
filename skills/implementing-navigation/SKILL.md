@@ -233,10 +233,10 @@ Essential navigation tests:
 
 ## Next Steps
 
-1. Analyze your information architecture
+1. Analyze the information architecture
 2. Select appropriate navigation pattern
 3. Implement with accessibility first
 4. Add progressive enhancement
 5. Test across devices and assistive technologies
 
-For detailed implementation guides, explore the referenced documentation files based on your specific needs.
+For detailed implementation guides, explore the referenced documentation files based on specific requirements.

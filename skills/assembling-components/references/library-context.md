@@ -2,6 +2,37 @@
 
 > **Critical Reference**: This document provides the assembling-components skill with deep awareness of the AI Design Components library structure, enabling intelligent assembly that generic LLM knowledge cannot provide.
 
+
+## Table of Contents
+
+- [Why This Context Matters](#why-this-context-matters)
+- [Skill Chain Architecture](#skill-chain-architecture)
+  - [Standard Skill Chain Flow](#standard-skill-chain-flow)
+  - [Skill Outputs Reference](#skill-outputs-reference)
+- [Token System Reference](#token-system-reference)
+  - [Token Naming Conventions](#token-naming-conventions)
+- [Component Integration Patterns](#component-integration-patterns)
+  - [Import Chain (Critical Order)](#import-chain-critical-order)
+  - [Component Directory Structure](#component-directory-structure)
+  - [State Integration Patterns](#state-integration-patterns)
+- [Skill-Specific Assembly Rules](#skill-specific-assembly-rules)
+  - [After theming-components Skill](#after-theming-components-skill)
+  - [After designing-layouts Skill](#after-designing-layouts-skill)
+  - [After creating-dashboards Skill](#after-creating-dashboards-skill)
+  - [After visualizing-data Skill](#after-visualizing-data-skill)
+  - [After providing-feedback Skill](#after-providing-feedback-skill)
+- [Validation Checklist (Library-Specific)](#validation-checklist-library-specific)
+  - [Token Compliance](#token-compliance)
+  - [Theme System](#theme-system)
+  - [Component Integration](#component-integration)
+  - [Accessibility](#accessibility)
+- [Common Integration Patterns](#common-integration-patterns)
+  - [Theme Toggle Button](#theme-toggle-button)
+  - [KPI Card with Severity](#kpi-card-with-severity)
+  - [Toast Notifications](#toast-notifications)
+- [Version Compatibility](#version-compatibility)
+- [Summary](#summary)
+
 ## Why This Context Matters
 
 LLMs are already proficient at general application assembly. This skill's unique value comes from:

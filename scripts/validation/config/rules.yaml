@@ -107,12 +107,12 @@ anti_patterns:
       - "latest (version|release)"
     message: "Avoid time-sensitive information that becomes outdated"
 
-  # Windows-style paths
+  # Windows-style paths - disabled due to false positives with escape sequences
   windows_paths:
-    enabled: true
+    enabled: false
     severity: "warning"
     patterns:
-      - "\\\\[a-zA-Z]"
+      - "[A-Z]:\\\\"
     message: "Use forward slashes for file paths"
 
 # =============================================================================
@@ -146,8 +146,8 @@ phases:
     skills:
       - testing-strategies
       - building-ci-pipelines
-      - kubernetes-operations
-      - infrastructure-as-code
+      - operating-kubernetes
+      - writing-infrastructure-code
       - security-hardening
       - secret-management
 
@@ -155,39 +155,39 @@ phases:
     name: "High Priority"
     priority: 2
     skills:
-      - gitops-workflows
-      - linux-administration
-      - network-architecture
+      - implementing-gitops
+      - administering-linux
+      - architecting-networks
       - load-balancing-patterns
-      - disaster-recovery
+      - planning-disaster-recovery
       - performance-engineering
-      - compliance-frameworks
-      - vulnerability-management
+      - implementing-compliance
+      - managing-vulnerabilities
       - siem-logging
       - implementing-tls
-      - service-mesh
+      - implementing-service-mesh
       - platform-engineering
 
   phase_3:
     name: "Medium Priority"
     priority: 3
     skills:
-      - security-architecture
+      - architecting-security
       - configuring-firewalls
-      - configuration-management
-      - incident-management
+      - managing-configuration
+      - managing-incidents
       - writing-github-actions
-      - api-design-principles
+      - designing-apis
       - building-clis
-      - sdk-design
-      - documentation-generation
+      - designing-sdks
+      - generating-documentation
       - debugging-techniques
-      - git-workflows
-      - data-architecture
+      - managing-git-workflows
+      - architecting-data
       - streaming-data
-      - data-transformation
-      - sql-optimization
-      - dns-management
+      - transforming-data
+      - optimizing-sql
+      - managing-dns
       - configuring-nginx
       - writing-dockerfiles
 
@@ -195,14 +195,14 @@ phases:
     name: "Enhancement"
     priority: 4
     skills:
-      - mlops-patterns
+      - implementing-mlops
       - prompt-engineering
-      - llm-evaluation
+      - evaluating-llms
       - embedding-optimization
-      - aws-patterns
-      - gcp-patterns
-      - azure-patterns
-      - cost-optimization
+      - deploying-on-aws
+      - deploying-on-gcp
+      - deploying-on-azure
+      - optimizing-costs
       - resource-tagging
       - shell-scripting
       - designing-distributed-systems

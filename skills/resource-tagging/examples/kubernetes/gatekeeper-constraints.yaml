@@ -1,0 +1,234 @@
+# OPA Gatekeeper Constraint Template and Constraints for Kubernetes Label Enforcement
+#
+# Enforces required labels on Kubernetes resources using OPA Gatekeeper
+#
+# Prerequisites:
+#   kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/release-3.14/deploy/gatekeeper.yaml
+#
+# Usage:
+#   kubectl apply -f gatekeeper-constraints.yaml
+
+---
+# Constraint Template: Required Labels
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequiredlabels
+  annotations:
+    description: "Requires resources to have specified labels"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredLabels
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            labels:
+              type: array
+              description: "List of required label keys"
+              items:
+                type: string
+            message:
+              type: string
+              description: "Custom error message"
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequiredlabels
+
+        violation[{"msg": msg, "details": {"missing_labels": missing}}] {
+          provided := {label | input.review.object.metadata.labels[label]}
+          required := {label | label := input.parameters.labels[_]}
+          missing := required - provided
+          count(missing) > 0
+          msg := sprintf("%s. Missing required labels: %v", [input.parameters.message, missing])
+        }
+
+---
+# Constraint: Require standard labels on Pods
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: require-pod-labels
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    message: "Pods must have required labels"
+    labels:
+      - "environment"
+      - "owner"
+      - "project"
+      - "app"
+
+---
+# Constraint: Require standard labels on Deployments
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: require-deployment-labels
+spec:
+  match:
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["Deployment"]
+  parameters:
+    message: "Deployments must have required labels"
+    labels:
+      - "environment"
+      - "owner"
+      - "project"
+      - "app"
+
+---
+# Constraint: Require standard labels on StatefulSets
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: require-statefulset-labels
+spec:
+  match:
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["StatefulSet"]
+  parameters:
+    message: "StatefulSets must have required labels"
+    labels:
+      - "environment"
+      - "owner"
+      - "project"
+      - "app"
+
+---
+# Constraint: Require standard labels on Services
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: require-service-labels
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Service"]
+  parameters:
+    message: "Services must have required labels"
+    labels:
+      - "environment"
+      - "owner"
+      - "project"
+      - "app"
+
+---
+# Constraint Template: Validate Label Values
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8slabelvalues
+  annotations:
+    description: "Validates label values match allowed patterns"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sLabelValues
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            labelKey:
+              type: string
+              description: "Label key to validate"
+            allowedValues:
+              type: array
+              description: "List of allowed values"
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8slabelvalues
+
+        violation[{"msg": msg}] {
+          label_key := input.parameters.labelKey
+          label_value := input.review.object.metadata.labels[label_key]
+          allowed := {value | value := input.parameters.allowedValues[_]}
+          not allowed[label_value]
+          msg := sprintf("Label '%v' has invalid value '%v'. Allowed values: %v", [label_key, label_value, allowed])
+        }
+
+---
+# Constraint: Validate Environment label values
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sLabelValues
+metadata:
+  name: validate-environment-label
+spec:
+  match:
+    kinds:
+      - apiGroups: ["", "apps"]
+        kinds: ["Pod", "Deployment", "StatefulSet"]
+  parameters:
+    labelKey: "environment"
+    allowedValues:
+      - "prod"
+      - "staging"
+      - "dev"
+      - "test"
+
+---
+# Example: Valid deployment (passes all constraints)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-valid-deployment
+  labels:
+    environment: prod
+    owner: platform-team@company.com
+    project: ecommerce
+    app: api-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api-server
+  template:
+    metadata:
+      labels:
+        environment: prod
+        owner: platform-team@company.com
+        project: ecommerce
+        app: api-server
+    spec:
+      containers:
+      - name: api
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+---
+# Example: Invalid deployment (missing required labels)
+# This will be REJECTED by Gatekeeper
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-invalid-deployment
+  labels:
+    app: api-server
+    # MISSING: environment, owner, project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-server
+  template:
+    metadata:
+      labels:
+        app: api-server
+    spec:
+      containers:
+      - name: api
+        image: nginx:latest

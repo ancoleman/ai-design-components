@@ -1,5 +1,23 @@
 # Table Selection Framework
 
+
+## Table of Contents
+
+- [Primary Decision Tree](#primary-decision-tree)
+- [Feature Complexity Matrix](#feature-complexity-matrix)
+- [Library Selection Guide](#library-selection-guide)
+  - [When to Use Native HTML Tables](#when-to-use-native-html-tables)
+  - [When to Use TanStack Table](#when-to-use-tanstack-table)
+  - [When to Use AG Grid](#when-to-use-ag-grid)
+  - [When to Use Material-UI DataGrid](#when-to-use-material-ui-datagrid)
+- [Performance Tiers Explained](#performance-tiers-explained)
+  - [Tier 1: All Client-Side (<1,000 rows)](#tier-1-all-client-side-1000-rows)
+  - [Tier 2: Server-Assisted (1,000-10,000 rows)](#tier-2-server-assisted-1000-10000-rows)
+  - [Tier 3: Full Virtualization (10,000+ rows)](#tier-3-full-virtualization-10000-rows)
+  - [Tier 4: Streaming & Workers (100,000+ rows)](#tier-4-streaming-workers-100000-rows)
+- [Decision Flowchart Summary](#decision-flowchart-summary)
+- [Common Pitfalls to Avoid](#common-pitfalls-to-avoid)
+
 ## Primary Decision Tree
 
 Start with data volume to determine your implementation approach:

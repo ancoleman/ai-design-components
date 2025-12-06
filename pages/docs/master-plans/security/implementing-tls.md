@@ -225,9 +225,9 @@ openssl verify -CAfile ca.crt server.crt
 ## Integration Points
 
 **With Other Skills:**
-- `security-architecture` - Encryption as security control
-- `kubernetes-operations` - cert-manager for automated certificates
-- `service-mesh` - mTLS for service-to-service encryption
+- `architecting-security` - Encryption as security control
+- `operating-kubernetes` - cert-manager for automated certificates
+- `implementing-service-mesh` - mTLS for service-to-service encryption
 - `configuring-nginx` - NGINX TLS termination
 - `load-balancing-patterns` - LB TLS termination
 
@@ -244,4 +244,4 @@ record             OR      + Let's       traffic
 ## Learn More
 
 - [Full Master Plan (init.md)](https://github.com/ancoleman/ai-design-components/blob/main/skills/implementing-tls/init.md)
-- Related: `security-architecture`, `service-mesh`, `configuring-nginx`
+- Related: `architecting-security`, `implementing-service-mesh`, `configuring-nginx`

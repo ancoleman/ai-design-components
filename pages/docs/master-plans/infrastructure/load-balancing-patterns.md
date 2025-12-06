@@ -148,12 +148,12 @@ Cloud-native application?
 ## Integration Points
 
 **With Other Skills:**
-- `network-architecture` - LB networking, hybrid connectivity
-- `kubernetes-operations` - Ingress controllers, service mesh
-- `infrastructure-as-code` - Terraform/Pulumi for LB provisioning
+- `architecting-networks` - LB networking, hybrid connectivity
+- `operating-kubernetes` - Ingress controllers, service mesh
+- `writing-infrastructure-code` - Terraform/Pulumi for LB provisioning
 - `security-hardening` - WAF integration, TLS/SSL
-- `dns-management` - GeoDNS, DNS-based load balancing
-- `observability` - LB metrics, request tracing
+- `managing-dns` - GeoDNS, DNS-based load balancing
+- `implementing-observability` - LB metrics, request tracing
 
 **Workflow Example:**
 ```
@@ -167,4 +167,4 @@ GeoDNS   (AWS)     (K8s)        (Pods)
 ## Learn More
 
 - [Full Master Plan (init.md)](https://github.com/ancoleman/ai-design-components/blob/main/skills/load-balancing-patterns/init.md)
-- Related: `network-architecture`, `kubernetes-operations`, `dns-management`
+- Related: `architecting-networks`, `operating-kubernetes`, `managing-dns`

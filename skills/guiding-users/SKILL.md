@@ -354,7 +354,7 @@ Track and improve:
 
 ## Working Examples
 
-Start with the example matching your use case:
+Start with the example matching the use case:
 
 ```
 first-time-tour.tsx           # Product walkthrough with react-joyride
@@ -423,7 +423,7 @@ This skill works with other component skills:
 
 ## Next Steps
 
-1. Map your user journey and identify key moments
+1. Map the user journey and identify key moments
 2. Choose appropriate guidance mechanisms for each moment
 3. Install react-joyride or preferred library
 4. Start with one critical flow (usually first-time experience)

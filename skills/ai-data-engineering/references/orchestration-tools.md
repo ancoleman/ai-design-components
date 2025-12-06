@@ -2,6 +2,38 @@
 
 Comparison of Dagster, Prefect, Airflow 3.0, and dbt for orchestrating AI/ML data workflows.
 
+
+## Table of Contents
+
+- [Quick Comparison](#quick-comparison)
+- [Dagster (Recommended for AI Pipelines)](#dagster-recommended-for-ai-pipelines)
+  - [Why Dagster for AI?](#why-dagster-for-ai)
+  - [Basic Pipeline](#basic-pipeline)
+  - [Run Pipeline](#run-pipeline)
+- [Prefect (Developer-Friendly)](#prefect-developer-friendly)
+  - [Basic Workflow](#basic-workflow)
+  - [Deployments](#deployments)
+- [Airflow 3.0](#airflow-30)
+  - [DAG Definition](#dag-definition)
+- [dbt (SQL Transformations Only)](#dbt-sql-transformations-only)
+  - [Use in AI Pipelines](#use-in-ai-pipelines)
+- [Decision Framework](#decision-framework)
+- [Scheduling Patterns](#scheduling-patterns)
+  - [Dagster Schedules](#dagster-schedules)
+  - [Prefect Schedules](#prefect-schedules)
+  - [Airflow Schedules](#airflow-schedules)
+- [Monitoring and Alerting](#monitoring-and-alerting)
+  - [Dagster Sensors](#dagster-sensors)
+  - [Prefect Automations](#prefect-automations)
+- [Performance Optimization](#performance-optimization)
+  - [Parallel Task Execution](#parallel-task-execution)
+- [Best Practices](#best-practices)
+- [AI Pipeline Example Comparison](#ai-pipeline-example-comparison)
+  - [Dagster (Asset-Centric)](#dagster-asset-centric)
+  - [Prefect (Task-Centric)](#prefect-task-centric)
+  - [Airflow (Operator-Centric)](#airflow-operator-centric)
+- [Resources](#resources)
+
 ## Quick Comparison
 
 | Tool | Best For | Language | Complexity | Learning Curve |

@@ -2,6 +2,27 @@
 
 **Modern user experience patterns for forms (2024-2025), covering progressive disclosure, smart defaults, mobile-first design, and cognitive load reduction.**
 
+
+## Table of Contents
+
+- [Core UX Principles for Forms](#core-ux-principles-for-forms)
+  - [The Three Goals of Excellent Form UX](#the-three-goals-of-excellent-form-ux)
+- [Modern Form UX Patterns (2024-2025)](#modern-form-ux-patterns-2024-2025)
+  - [1. Progressive Disclosure](#1-progressive-disclosure)
+  - [2. Smart Defaults](#2-smart-defaults)
+  - [3. Inline Validation with Positive Feedback](#3-inline-validation-with-positive-feedback)
+  - [4. Mobile-First Considerations](#4-mobile-first-considerations)
+  - [5. Reduce Cognitive Load](#5-reduce-cognitive-load)
+  - [6. Error Prevention](#6-error-prevention)
+  - [7. Autosave and Recovery](#7-autosave-and-recovery)
+- [UX Anti-Patterns (What NOT to Do)](#ux-anti-patterns-what-not-to-do)
+  - [Common UX Mistakes](#common-ux-mistakes)
+- [UX Testing Checklist](#ux-testing-checklist)
+  - [Manual Testing](#manual-testing)
+  - [Analytics to Monitor](#analytics-to-monitor)
+- [Summary: UX Best Practices](#summary-ux-best-practices)
+- [Next Steps](#next-steps)
+
 ## Core UX Principles for Forms
 
 ### The Three Goals of Excellent Form UX

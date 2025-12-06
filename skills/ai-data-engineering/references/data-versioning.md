@@ -2,6 +2,30 @@
 
 Version control for datasets, embeddings, and model artifacts using LakeFS and DVC.
 
+
+## Table of Contents
+
+- [Why Data Versioning](#why-data-versioning)
+- [LakeFS (Recommended)](#lakefs-recommended)
+  - [Key Features](#key-features)
+  - [Installation](#installation)
+  - [Basic Workflow](#basic-workflow)
+  - [RAG Pipeline Integration](#rag-pipeline-integration)
+  - [Compare Experiments](#compare-experiments)
+- [DVC (Alternative)](#dvc-alternative)
+  - [Installation](#installation)
+  - [Basic Workflow](#basic-workflow)
+  - [DVC Pipelines](#dvc-pipelines)
+- [Comparison: LakeFS vs DVC](#comparison-lakefs-vs-dvc)
+- [Embedding Versioning Best Practices](#embedding-versioning-best-practices)
+  - [1. Version Embedding Model + Data Together](#1-version-embedding-model-data-together)
+  - [2. Immutable Embeddings](#2-immutable-embeddings)
+  - [3. Tag Important Versions](#3-tag-important-versions)
+- [Experiment Tracking Integration](#experiment-tracking-integration)
+  - [MLflow + LakeFS](#mlflow-lakefs)
+- [Reproducibility Checklist](#reproducibility-checklist)
+- [Resources](#resources)
+
 ## Why Data Versioning
 
 **The Problem:**

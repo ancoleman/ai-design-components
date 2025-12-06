@@ -5,7 +5,7 @@ description: Data ingestion patterns for loading data from cloud storage, APIs, 
 
 # Data Ingestion Patterns
 
-This skill provides patterns for getting data INTO your systems from external sources.
+This skill provides patterns for getting data INTO systems from external sources.
 
 ## When to Use This Skill
 

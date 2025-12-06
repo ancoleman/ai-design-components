@@ -369,7 +369,7 @@ Useful for:
 
 ## Benchmarking
 
-Use `scripts/benchmark_inference.py` to measure your deployment:
+Use `scripts/benchmark_inference.py` to measure the deployment:
 
 ```bash
 python scripts/benchmark_inference.py \

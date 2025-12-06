@@ -1,5 +1,45 @@
 # Inference Optimization Guide
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Quantization Techniques](#quantization-techniques)
+  - [LLM Quantization](#llm-quantization)
+  - [AWQ (Activation-aware Weight Quantization)](#awq-activation-aware-weight-quantization)
+  - [GPTQ](#gptq)
+  - [FP8 Quantization (H100 GPUs)](#fp8-quantization-h100-gpus)
+- [Batching Strategies](#batching-strategies)
+  - [Continuous Batching (vLLM)](#continuous-batching-vllm)
+  - [Adaptive Batching (BentoML)](#adaptive-batching-bentoml)
+  - [Manual Batching](#manual-batching)
+- [GPU Optimization](#gpu-optimization)
+  - [Memory Management](#memory-management)
+  - [Tensor Parallelism](#tensor-parallelism)
+  - [Pipeline Parallelism](#pipeline-parallelism)
+- [KV Cache Optimization](#kv-cache-optimization)
+  - [PagedAttention (vLLM)](#pagedattention-vllm)
+  - [KV Cache Quantization](#kv-cache-quantization)
+- [Attention Optimization](#attention-optimization)
+  - [Flash Attention](#flash-attention)
+  - [Multi-Query Attention (MQA)](#multi-query-attention-mqa)
+- [Kernel Optimization](#kernel-optimization)
+  - [Custom CUDA Kernels (vLLM)](#custom-cuda-kernels-vllm)
+  - [TensorRT-LLM](#tensorrt-llm)
+- [Caching Strategies](#caching-strategies)
+  - [Response Caching](#response-caching)
+  - [Prefix Caching](#prefix-caching)
+  - [Embedding Caching](#embedding-caching)
+- [Profiling and Monitoring](#profiling-and-monitoring)
+  - [GPU Monitoring](#gpu-monitoring)
+  - [vLLM Metrics](#vllm-metrics)
+  - [Profiling with PyTorch](#profiling-with-pytorch)
+- [Benchmarking](#benchmarking)
+  - [Throughput Benchmark](#throughput-benchmark)
+  - [Latency Benchmark](#latency-benchmark)
+- [Production Optimization Checklist](#production-optimization-checklist)
+- [Resources](#resources)
+
 ## Overview
 
 Optimize LLM and ML model inference for production through quantization, batching, caching, and GPU tuning.

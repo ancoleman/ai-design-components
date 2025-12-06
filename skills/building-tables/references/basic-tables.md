@@ -2,6 +2,19 @@
 
 Foundational patterns for HTML tables, simple React tables, and accessibility compliance.
 
+
+## Table of Contents
+
+- [Semantic HTML Table](#semantic-html-table)
+- [Basic React Table](#basic-react-table)
+- [Responsive Wrapper](#responsive-wrapper)
+- [Empty State](#empty-state)
+- [Loading State](#loading-state)
+- [Accessibility](#accessibility)
+- [Best Practices](#best-practices)
+- [Sticky Header](#sticky-header)
+- [Resources](#resources)
+
 ## Semantic HTML Table
 
 ```html

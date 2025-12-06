@@ -307,7 +307,7 @@ function CachedWidget({ id, fetcher, ttl = 60000 }) {
 }
 ```
 
-To analyze and optimize your dashboard performance, run:
+To analyze and optimize dashboard performance, run:
 ```bash
 python scripts/optimize-dashboard-performance.py --analyze dashboard-config.json
 ```

@@ -1,0 +1,27 @@
+title: Multiple Failed Login Attempts from Single Source
+id: 8a9e3c7f-4b2d-4e8a-9f1c-2d5e6f7a8b9c
+status: stable
+description: Detects potential brute force attacks (10+ failed logins in 10 minutes from same source IP)
+author: Security Team
+date: 2025/12/03
+modified: 2025/12/03
+references:
+  - https://attack.mitre.org/techniques/T1110/
+tags:
+  - attack.credential_access
+  - attack.t1110
+  - attack.t1110.001
+logsource:
+  category: authentication
+  product: linux
+detection:
+  selection:
+    event.type: authentication
+    event.outcome: failure
+  timeframe: 10m
+  condition: selection | count() by source.ip > 10
+falsepositives:
+  - Misconfigured monitoring systems
+  - Legitimate password reset attempts
+  - Security scanners (Nessus, Qualys)
+level: high

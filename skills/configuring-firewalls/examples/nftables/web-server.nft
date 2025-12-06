@@ -1,0 +1,85 @@
+#!/usr/sbin/nft -f
+# nftables configuration for web server
+#
+# Features:
+# - Default deny with explicit allow
+# - Stateful firewall (established/related auto-allowed)
+# - SSH from specific IP range only
+# - HTTP/HTTPS from anywhere
+# - Rate limiting on SSH
+# - Logging of dropped packets
+#
+# Installation:
+# 1. Copy to /etc/nftables.conf
+# 2. Edit SSH_ALLOWED_IPS set to your office IP range
+# 3. Run: sudo nft -f /etc/nftables.conf
+# 4. Enable persistence: sudo systemctl enable nftables
+
+flush ruleset
+
+table inet filter {
+    # Define set of allowed SSH IPs (office/VPN)
+    set ssh_allowed_ips {
+        type ipv4_addr
+        flags interval  # Allows CIDR ranges
+        elements = { 203.0.113.0/24 }  # CHANGE THIS to your office IP
+    }
+
+    chain input {
+        type filter hook input priority 0; policy drop;
+
+        # Accept loopback traffic
+        iif "lo" accept comment "Accept loopback"
+
+        # Accept established and related connections (stateful)
+        ct state established,related accept comment "Accept established connections"
+
+        # Drop invalid packets
+        ct state invalid drop comment "Drop invalid packets"
+
+        # Allow ICMP (ping)
+        meta l4proto icmp accept comment "Accept ICMP ping"
+        meta l4proto ipv6-icmp accept comment "Accept ICMPv6"
+
+        # Allow SSH from allowed IPs only with rate limiting
+        tcp dport 22 ip saddr @ssh_allowed_ips \
+            ct state new limit rate 5/minute \
+            accept comment "SSH from office with rate limit"
+
+        # Allow HTTP from anywhere
+        tcp dport 80 accept comment "Accept HTTP"
+
+        # Allow HTTPS from anywhere
+        tcp dport 443 accept comment "Accept HTTPS"
+
+        # Log dropped packets (rate limited to avoid log flooding)
+        log prefix "nftables-drop: " limit rate 5/minute level info
+
+        # Default drop (policy is drop)
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+        # No forwarding needed for web server
+    }
+
+    chain output {
+        type filter hook output priority 0; policy accept;
+        # Allow all outbound traffic
+    }
+}
+
+# Optional: NAT table for port forwarding (uncomment if needed)
+# table inet nat {
+#     chain prerouting {
+#         type nat hook prerouting priority -100; policy accept;
+#         # Example: Forward external 8080 to internal 80
+#         # tcp dport 8080 dnat to :80
+#     }
+#
+#     chain postrouting {
+#         type nat hook postrouting priority 100; policy accept;
+#         # Example: Masquerade outbound traffic
+#         # oifname "eth0" masquerade
+#     }
+# }

@@ -2,6 +2,33 @@
 
 **How component skills consume design tokens for themeable styling**
 
+
+## Table of Contents
+
+- [Quick Reference](#quick-reference)
+- [Integration Pattern](#integration-pattern)
+  - [Step 1: Define Component Tokens](#step-1-define-component-tokens)
+  - [Step 2: Use Tokens in Component](#step-2-use-tokens-in-component)
+  - [Step 3: Theme Switching Works Automatically](#step-3-theme-switching-works-automatically)
+- [Complete Examples](#complete-examples)
+  - [Button Component (forms skill)](#button-component-forms-skill)
+  - [Chart Component (data-viz skill)](#chart-component-data-viz-skill)
+- [Integration Checklist](#integration-checklist)
+  - [✅ Design Phase](#design-phase)
+  - [✅ Implementation Phase](#implementation-phase)
+  - [✅ Documentation Phase](#documentation-phase)
+  - [✅ Testing Phase](#testing-phase)
+- [Common Patterns](#common-patterns)
+  - [Pattern 1: Variants](#pattern-1-variants)
+  - [Pattern 2: States](#pattern-2-states)
+  - [Pattern 3: Size Variants](#pattern-3-size-variants)
+- [Complete Skill Documentation Template](#complete-skill-documentation-template)
+- [Anti-Patterns to Avoid](#anti-patterns-to-avoid)
+  - [❌ Hardcoded Values](#hardcoded-values)
+  - [❌ Physical Properties](#physical-properties)
+  - [❌ Direct Primitive References](#direct-primitive-references)
+- [Resources](#resources)
+
 This guide shows component skills how to properly use design tokens for all visual styling.
 
 ---

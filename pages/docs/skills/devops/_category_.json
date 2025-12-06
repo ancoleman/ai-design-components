@@ -1,0 +1,10 @@
+{
+  "label": "DevOps Skills",
+  "position": 4,
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "description": "6 production-ready DevOps skills covering CI/CD, GitOps, testing, platform engineering, and containerization."
+  }
+}

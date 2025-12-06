@@ -2,6 +2,24 @@
 
 > Complete scaffolding template for modern async APIs using FastAPI with Pydantic validation.
 
+
+## Table of Contents
+
+- [Project Structure](#project-structure)
+- [Core Files](#core-files)
+  - [pyproject.toml](#pyprojecttoml)
+  - [requirements.txt](#requirementstxt)
+  - [src/project_name/main.py](#srcproject_namemainpy)
+  - [src/project_name/config.py](#srcproject_nameconfigpy)
+  - [src/project_name/api/routes/health.py](#srcproject_nameapirouteshealthpy)
+  - [src/project_name/api/routes/dashboard.py](#srcproject_nameapiroutesdashboardpy)
+  - [src/project_name/templates/base.html](#srcproject_nametemplatesbasehtml)
+  - [src/project_name/templates/dashboard.html](#srcproject_nametemplatesdashboardhtml)
+  - [Dockerfile](#dockerfile)
+  - [docker-compose.yml](#docker-composeyml)
+- [Commands](#commands)
+- [Integration Checklist](#integration-checklist)
+
 ## Project Structure
 
 ```

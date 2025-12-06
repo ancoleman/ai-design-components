@@ -2,6 +2,19 @@
 
 Enterprise features: virtual scrolling, cell editing, aggregation, pivoting, and Excel export.
 
+
+## Table of Contents
+
+- [Virtual Scrolling (Large Datasets)](#virtual-scrolling-large-datasets)
+- [Cell Editing (AG Grid)](#cell-editing-ag-grid)
+- [Aggregation (Group By)](#aggregation-group-by)
+- [Pivot Tables](#pivot-tables)
+- [Column Pinning](#column-pinning)
+- [Column Resizing](#column-resizing)
+- [Excel Export](#excel-export)
+- [Context Menu](#context-menu)
+- [Resources](#resources)
+
 ## Virtual Scrolling (Large Datasets)
 
 **Why:** Render only visible rows for 100K+ row performance.

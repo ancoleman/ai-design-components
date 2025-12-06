@@ -1,0 +1,19 @@
+# KEDA RabbitMQ Scaler Example
+# Scale to zero when queue is empty
+
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: rabbitmq-scaler
+  namespace: production
+spec:
+  scaleTargetRef:
+    name: message-processor
+  minReplicaCount: 0   # Scale to zero when queue empty
+  maxReplicaCount: 30
+  triggers:
+  - type: rabbitmq
+    metadata:
+      host: amqp://user:password@rabbitmq.default.svc.cluster.local:5672
+      queueName: tasks
+      queueLength: "10"  # Scale up when >10 messages

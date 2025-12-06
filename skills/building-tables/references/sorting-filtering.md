@@ -1,5 +1,26 @@
 # Sorting and Filtering Patterns
 
+
+## Table of Contents
+
+- [Sorting Implementation](#sorting-implementation)
+  - [Single Column Sorting](#single-column-sorting)
+  - [Multi-Column Sorting](#multi-column-sorting)
+  - [Custom Sort Functions](#custom-sort-functions)
+- [Filtering Implementation](#filtering-implementation)
+  - [Text Filtering](#text-filtering)
+  - [Column-Specific Filters](#column-specific-filters)
+  - [Advanced Filter Logic](#advanced-filter-logic)
+  - [Filter UI Components](#filter-ui-components)
+- [Combined Sort and Filter](#combined-sort-and-filter)
+- [Server-Side Operations](#server-side-operations)
+  - [API Integration](#api-integration)
+  - [Backend Implementation (Node.js)](#backend-implementation-nodejs)
+- [Performance Optimizations](#performance-optimizations)
+  - [Debounced Filtering](#debounced-filtering)
+  - [Memoized Sort and Filter](#memoized-sort-and-filter)
+  - [Virtual Filtering](#virtual-filtering)
+
 ## Sorting Implementation
 
 ### Single Column Sorting

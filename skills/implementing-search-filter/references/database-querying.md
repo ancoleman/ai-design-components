@@ -1,5 +1,22 @@
 # Database Querying Patterns
 
+
+## Table of Contents
+
+- [SQLAlchemy Dynamic Queries](#sqlalchemy-dynamic-queries)
+  - [Basic Filter Building](#basic-filter-building)
+  - [Advanced Text Search with PostgreSQL](#advanced-text-search-with-postgresql)
+  - [Faceted Search with Aggregations](#faceted-search-with-aggregations)
+- [Django ORM Patterns](#django-orm-patterns)
+  - [Django Filter Backend](#django-filter-backend)
+  - [Django Full-Text Search](#django-full-text-search)
+- [Query Optimization](#query-optimization)
+  - [Index Strategies](#index-strategies)
+  - [Query Performance Monitoring](#query-performance-monitoring)
+  - [Query Result Caching](#query-result-caching)
+- [Security Considerations](#security-considerations)
+  - [SQL Injection Prevention](#sql-injection-prevention)
+
 ## SQLAlchemy Dynamic Queries
 
 ### Basic Filter Building

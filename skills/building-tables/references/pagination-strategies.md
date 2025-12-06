@@ -1,5 +1,27 @@
 # Pagination Strategies
 
+
+## Table of Contents
+
+- [Client-Side Pagination](#client-side-pagination)
+  - [Basic Implementation](#basic-implementation)
+  - [Pagination Controls Component](#pagination-controls-component)
+  - [Smart Page Numbers](#smart-page-numbers)
+- [Server-Side Pagination](#server-side-pagination)
+  - [API Integration](#api-integration)
+  - [Backend Implementation](#backend-implementation)
+  - [Cursor-Based Pagination](#cursor-based-pagination)
+- [Infinite Scroll](#infinite-scroll)
+  - [Implementation with Intersection Observer](#implementation-with-intersection-observer)
+  - [Manual Load More Button](#manual-load-more-button)
+- [Virtual Scrolling with Pagination](#virtual-scrolling-with-pagination)
+- [Performance Considerations](#performance-considerations)
+  - [Optimistic Updates](#optimistic-updates)
+  - [Cache Management](#cache-management)
+- [Accessibility for Pagination](#accessibility-for-pagination)
+  - [ARIA Labels and Roles](#aria-labels-and-roles)
+  - [Keyboard Navigation](#keyboard-navigation)
+
 ## Client-Side Pagination
 
 For datasets under 1,000 rows where all data is loaded upfront.

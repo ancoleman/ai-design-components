@@ -1,0 +1,153 @@
+# Envoy Proxy Load Balancer Configuration
+# This configuration demonstrates core load balancing patterns with health checking and circuit breaking
+
+static_resources:
+  listeners:
+  # HTTP listener on port 8080
+  - name: listener_0
+    address:
+      socket_address:
+        address: 0.0.0.0
+        port_value: 8080
+    filter_chains:
+    - filters:
+      # HTTP Connection Manager - handles HTTP/1.1 and HTTP/2
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: ingress_http
+          codec_type: AUTO
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: backend
+              domains: ["*"]
+              routes:
+              # Route all traffic to the service cluster
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: service_cluster
+                  # Timeout for the entire request (including retries)
+                  timeout: 15s
+                  # Retry policy for transient failures
+                  retry_policy:
+                    retry_on: "5xx,reset,connect-failure,refused-stream"
+                    num_retries: 3
+                    per_try_timeout: 5s
+          http_filters:
+          # Router filter - required for routing
+          - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+
+  clusters:
+  # Backend service cluster with multiple endpoints
+  - name: service_cluster
+    type: STRICT_DNS
+    # DNS refresh rate
+    dns_lookup_family: V4_ONLY
+
+    # Load balancing policy: ROUND_ROBIN
+    # Alternatives: LEAST_REQUEST, RANDOM, RING_HASH, MAGLEV
+    lb_policy: ROUND_ROBIN
+
+    # Least Request LB settings (uncomment to use)
+    # lb_policy: LEAST_REQUEST
+    # least_request_lb_config:
+    #   choice_count: 2  # P2C (Power of Two Choices)
+
+    # Connection pool settings
+    circuit_breakers:
+      thresholds:
+      - priority: DEFAULT
+        # Maximum connections to all hosts in the cluster
+        max_connections: 1000
+        # Maximum pending requests (queued when all connections are in use)
+        max_pending_requests: 1000
+        # Maximum concurrent requests
+        max_requests: 1000
+        # Maximum active retries
+        max_retries: 3
+
+    # Outlier detection (circuit breaking based on consecutive failures)
+    outlier_detection:
+      # Number of consecutive 5xx errors before ejection
+      consecutive_5xx: 5
+      # Time interval for checking ejection
+      interval: 10s
+      # Minimum percentage of hosts that must be ejected
+      base_ejection_time: 30s
+      # Maximum percentage of hosts that can be ejected
+      max_ejection_percent: 50
+      # Number of consecutive gateway failures before ejection
+      consecutive_gateway_failure: 5
+      # Success rate-based outlier detection
+      enforcing_consecutive_5xx: 100
+      enforcing_consecutive_gateway_failure: 100
+
+    # Health check configuration
+    health_checks:
+    - timeout: 1s
+      interval: 5s
+      # Number of healthy checks before marking healthy
+      healthy_threshold: 2
+      # Number of unhealthy checks before marking unhealthy
+      unhealthy_threshold: 3
+      http_health_check:
+        path: "/health"
+        # Expected HTTP status codes for healthy response
+        expected_statuses:
+        - start: 200
+          end: 299
+
+    # Upstream connection settings
+    connect_timeout: 5s
+
+    # Backend endpoints (servers)
+    load_assignment:
+      cluster_name: service_cluster
+      endpoints:
+      # Locality-aware endpoint group (zone A)
+      - lb_endpoints:
+        # Backend server 1
+        - endpoint:
+            address:
+              socket_address:
+                address: backend-1.example.com
+                port_value: 8000
+            health_check_config:
+              port_value: 8000
+          # Optional: per-endpoint load balancing weight
+          load_balancing_weight: 1
+
+        # Backend server 2
+        - endpoint:
+            address:
+              socket_address:
+                address: backend-2.example.com
+                port_value: 8000
+            health_check_config:
+              port_value: 8000
+          load_balancing_weight: 1
+
+        # Backend server 3
+        - endpoint:
+            address:
+              socket_address:
+                address: backend-3.example.com
+                port_value: 8000
+            health_check_config:
+              port_value: 8000
+          load_balancing_weight: 2  # This server gets 2x traffic
+
+        # Locality information for zone-aware routing
+        locality:
+          zone: "us-east-1a"
+
+# Admin interface for monitoring and management
+admin:
+  address:
+    socket_address:
+      address: 127.0.0.1
+      port_value: 9901

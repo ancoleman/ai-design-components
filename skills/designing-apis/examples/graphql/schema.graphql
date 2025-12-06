@@ -1,0 +1,100 @@
+# User Management GraphQL Schema
+# Demonstrates GraphQL design patterns
+
+scalar DateTime
+scalar Email
+
+type User {
+  id: ID!
+  username: String!
+  email: Email!
+  bio: String
+  createdAt: DateTime!
+
+  # Relationships with pagination
+  posts(limit: Int, offset: Int): [Post!]!
+  followers(first: Int, after: String): UserConnection!
+}
+
+type Post {
+  id: ID!
+  title: String!
+  content: String!
+  published: Boolean!
+  createdAt: DateTime!
+
+  # Relationships
+  author: User!
+  comments: [Comment!]!
+}
+
+type Comment {
+  id: ID!
+  content: String!
+  createdAt: DateTime!
+
+  author: User!
+  post: Post!
+}
+
+# Relay-style connection for pagination
+type UserConnection {
+  edges: [UserEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+# Input types for mutations
+input CreateUserInput {
+  username: String!
+  email: Email!
+  password: String!
+  bio: String
+}
+
+input UpdateUserInput {
+  email: Email
+  bio: String
+}
+
+input CreatePostInput {
+  title: String!
+  content: String!
+}
+
+# Queries
+type Query {
+  user(id: ID!): User
+  users(limit: Int, offset: Int, status: String): [User!]!
+
+  post(id: ID!): Post
+  posts(authorId: ID, published: Boolean): [Post!]!
+}
+
+# Mutations
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  updateUser(id: ID!, input: UpdateUserInput!): User!
+  deleteUser(id: ID!): Boolean!
+
+  createPost(input: CreatePostInput!): Post!
+  publishPost(id: ID!): Post!
+}
+
+# Real-time subscriptions
+type Subscription {
+  postCreated: Post!
+  commentAdded(postId: ID!): Comment!
+}

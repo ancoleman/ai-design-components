@@ -2,6 +2,19 @@
 
 Strategies for handling datasets from 100 to 100,000+ points.
 
+
+## Table of Contents
+
+- [Performance Tiers by Data Volume](#performance-tiers-by-data-volume)
+- [Strategy 1: Downsampling (<10K points)](#strategy-1-downsampling-10k-points)
+- [Strategy 2: Canvas Rendering (10K-100K points)](#strategy-2-canvas-rendering-10k-100k-points)
+- [Strategy 3: Virtualization (Chart Viewport)](#strategy-3-virtualization-chart-viewport)
+- [Strategy 4: Server-Side Aggregation (>100K points)](#strategy-4-server-side-aggregation-100k-points)
+- [Strategy 5: Progressive Loading](#strategy-5-progressive-loading)
+- [Strategy 6: Web Workers (Heavy Computation)](#strategy-6-web-workers-heavy-computation)
+- [Performance Benchmarks](#performance-benchmarks)
+- [Optimization Checklist](#optimization-checklist)
+
 ## Performance Tiers by Data Volume
 
 | Data Points | Rendering | Library | FPS Target | Notes |

@@ -2,6 +2,26 @@
 
 > Complete scaffolding template for high-performance web applications using Axum with tower middleware.
 
+
+## Table of Contents
+
+- [Project Structure](#project-structure)
+- [Core Files](#core-files)
+  - [Cargo.toml](#cargotoml)
+  - [src/main.rs](#srcmainrs)
+  - [src/config.rs](#srcconfigrs)
+  - [src/error.rs](#srcerrorrs)
+  - [src/routes/mod.rs](#srcroutesmodrs)
+  - [src/routes/health.rs](#srcrouteshealthrs)
+  - [src/routes/dashboard.rs](#srcroutesdashboardrs)
+  - [src/models/mod.rs](#srcmodelsmodrs)
+  - [src/models/dashboard.rs](#srcmodelsdashboardrs)
+  - [templates/base.html (Tera)](#templatesbasehtml-tera)
+  - [Dockerfile](#dockerfile)
+  - [docker-compose.yml](#docker-composeyml)
+- [Commands](#commands)
+- [Integration Checklist](#integration-checklist)
+
 ## Project Structure
 
 ```

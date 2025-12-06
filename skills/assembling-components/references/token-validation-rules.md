@@ -2,6 +2,31 @@
 
 > Complete reference for CSS design token validation rules used by `validate_tokens.py`.
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Severity Levels](#severity-levels)
+- [Validation Rules](#validation-rules)
+  - [1. Colors (Error)](#1-colors-error)
+  - [2. Spacing (Error)](#2-spacing-error)
+  - [3. Font Sizes (Error)](#3-font-sizes-error)
+  - [4. Border Radius (Warning)](#4-border-radius-warning)
+  - [5. Box Shadows (Warning)](#5-box-shadows-warning)
+  - [6. Transitions (Info - Strict Mode Only)](#6-transitions-info-strict-mode-only)
+  - [7. Z-Index (Warning)](#7-z-index-warning)
+- [Exceptions (Always Allowed)](#exceptions-always-allowed)
+  - [CSS Keywords](#css-keywords)
+  - [Small Values](#small-values)
+  - [Layout Values](#layout-values)
+  - [Context-Specific](#context-specific)
+  - [Exception Properties](#exception-properties)
+- [Script Usage](#script-usage)
+- [CI/CD Integration](#cicd-integration)
+  - [GitHub Actions](#github-actions)
+  - [Pre-commit Hook](#pre-commit-hook)
+- [Output Example](#output-example)
+
 ## Overview
 
 The token validation script scans CSS files for hardcoded values that should use design tokens. This ensures consistent theming and makes dark mode, brand customization, and accessibility features work correctly.

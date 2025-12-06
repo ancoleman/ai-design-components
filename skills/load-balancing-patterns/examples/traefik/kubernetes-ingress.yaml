@@ -1,0 +1,526 @@
+# Standard Kubernetes Ingress with Traefik-specific annotations
+# This demonstrates using the standard Ingress resource with Traefik annotations
+# for load balancing, rather than Traefik's CRDs
+
+---
+# Ingress: Main application with path-based routing
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: default
+  labels:
+    app: web-application
+  annotations:
+    # Ingress class to use Traefik
+    kubernetes.io/ingress.class: traefik
+
+    # TLS certificate resolver
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+    # Traefik-specific: Entry points
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+
+    # Traefik-specific: Redirect HTTP to HTTPS
+    traefik.ingress.kubernetes.io/redirect-scheme: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+
+    # Traefik-specific: Middleware chain
+    traefik.ingress.kubernetes.io/router.middlewares: default-security-headers@kubernetescrd,default-compression@kubernetescrd,default-rate-limit@kubernetescrd
+
+    # Traefik-specific: TLS options
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.options: default@kubernetescrd
+
+spec:
+  # TLS configuration
+  tls:
+    - hosts:
+        - example.com
+        - www.example.com
+      secretName: example-com-tls
+
+  # Routing rules
+  rules:
+    # Rule 1: Main domain
+    - host: example.com
+      http:
+        paths:
+          # Path 1: Homepage
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-frontend
+                port:
+                  number: 80
+
+          # Path 2: API endpoints
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: api-backend
+                port:
+                  number: 8080
+
+          # Path 3: Static assets
+          - path: /static
+            pathType: Prefix
+            backend:
+              service:
+                name: static-assets
+                port:
+                  number: 80
+
+    # Rule 2: WWW subdomain (mirror of main)
+    - host: www.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-frontend
+                port:
+                  number: 80
+
+---
+# Ingress: API subdomain with weighted load balancing
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-subdomain-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: traefik
+
+    # Weighted load balancing between v1 and v2 (canary deployment)
+    # Note: This requires TraefikService CRD for proper weighted routing
+    # Standard Ingress doesn't support weights, but we can use multiple backends
+    traefik.ingress.kubernetes.io/service.weighted: "true"
+
+    # Rate limiting for API
+    traefik.ingress.kubernetes.io/router.middlewares: default-api-rate-limit@kubernetescrd,default-cors-headers@kubernetescrd
+
+spec:
+  tls:
+    - hosts:
+        - api.example.com
+      secretName: api-example-com-tls
+
+  rules:
+    - host: api.example.com
+      http:
+        paths:
+          # All API traffic
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-backend-v1
+                port:
+                  number: 8080
+
+---
+# Ingress: Admin interface with IP whitelisting
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: admin-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: traefik
+
+    # IP whitelist middleware
+    traefik.ingress.kubernetes.io/router.middlewares: default-ip-whitelist@kubernetescrd,default-admin-auth@kubernetescrd
+
+    # Priority (higher number = higher priority)
+    traefik.ingress.kubernetes.io/router.priority: "100"
+
+spec:
+  tls:
+    - hosts:
+        - admin.example.com
+      secretName: admin-example-com-tls
+
+  rules:
+    - host: admin.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: admin-backend
+                port:
+                  number: 8080
+
+---
+# Ingress: WebSocket support
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: websocket-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: traefik
+
+    # WebSocket-specific headers
+    traefik.ingress.kubernetes.io/router.middlewares: default-websocket-headers@kubernetescrd
+
+    # Sticky sessions for WebSocket connections
+    traefik.ingress.kubernetes.io/affinity: "true"
+    traefik.ingress.kubernetes.io/session-cookie-name: "ws-sticky"
+
+spec:
+  tls:
+    - hosts:
+        - ws.example.com
+      secretName: ws-example-com-tls
+
+  rules:
+    - host: ws.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: websocket-backend
+                port:
+                  number: 8080
+
+---
+# Ingress: Regex path matching
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: regex-path-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: traefik
+
+    # Enable regex path matching
+    traefik.ingress.kubernetes.io/router.pathmatcher: PathRegexp
+
+spec:
+  rules:
+    - host: example.com
+      http:
+        paths:
+          # Match versioned API paths: /api/v1/*, /api/v2/*, etc.
+          - path: /api/v[0-9]+
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: versioned-api-backend
+                port:
+                  number: 8080
+
+---
+# Ingress: Custom error pages
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: error-pages-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: traefik
+
+    # Custom error page middleware
+    traefik.ingress.kubernetes.io/router.middlewares: default-error-pages@kubernetescrd
+
+spec:
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-frontend
+                port:
+                  number: 80
+
+---
+# TraefikService: Weighted load balancing (requires Traefik CRD)
+# This is used to implement proper canary deployments with weight distribution
+apiVersion: traefik.io/v1alpha1
+kind: TraefikService
+metadata:
+  name: api-weighted-service
+  namespace: default
+spec:
+  weighted:
+    services:
+      - name: api-backend-v1
+        port: 8080
+        weight: 80  # 80% traffic to v1
+      - name: api-backend-v2
+        port: 8080
+        weight: 20  # 20% traffic to v2 (canary)
+
+---
+# TraefikService: Mirroring traffic for testing
+apiVersion: traefik.io/v1alpha1
+kind: TraefikService
+metadata:
+  name: api-mirrored-service
+  namespace: default
+spec:
+  mirroring:
+    name: api-backend-v1
+    port: 8080
+    # Mirror 10% of traffic to v2 for testing (responses are ignored)
+    mirrors:
+      - name: api-backend-v2
+        port: 8080
+        percent: 10
+
+---
+# Middleware: Security headers (defined earlier in traefik-ingress.yaml)
+# Referenced here for clarity
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: security-headers
+  namespace: default
+spec:
+  headers:
+    sslRedirect: true
+    stsSeconds: 31536000
+    stsIncludeSubdomains: true
+    stsPreload: true
+    frameDeny: true
+    contentTypeNosniff: true
+    browserXssFilter: true
+
+---
+# Middleware: Compression
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: compression
+  namespace: default
+spec:
+  compress:
+    excludedContentTypes:
+      - "text/event-stream"
+
+---
+# Middleware: Rate limiting
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: rate-limit
+  namespace: default
+spec:
+  rateLimit:
+    average: 100
+    period: 1m
+    burst: 200
+
+---
+# Middleware: API-specific rate limiting
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: api-rate-limit
+  namespace: default
+spec:
+  rateLimit:
+    average: 50
+    period: 1m
+    burst: 100
+
+---
+# Middleware: CORS headers
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: cors-headers
+  namespace: default
+spec:
+  headers:
+    accessControlAllowMethods:
+      - "GET"
+      - "POST"
+      - "PUT"
+      - "DELETE"
+      - "OPTIONS"
+    accessControlAllowOriginList:
+      - "https://example.com"
+      - "https://app.example.com"
+    accessControlAllowCredentials: true
+
+---
+# Middleware: IP whitelist
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ip-whitelist
+  namespace: default
+spec:
+  ipWhiteList:
+    sourceRange:
+      - "10.0.0.0/8"
+      - "192.168.0.0/16"
+
+---
+# Middleware: Admin authentication
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: admin-auth
+  namespace: default
+spec:
+  basicAuth:
+    secret: admin-auth-credentials
+
+---
+# Middleware: WebSocket headers
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: websocket-headers
+  namespace: default
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+
+---
+# Middleware: Error pages
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: error-pages
+  namespace: default
+spec:
+  errors:
+    status:
+      - "400-599"
+    service:
+      name: error-page-service
+      port: 80
+    query: "/{status}.html"
+
+---
+# Service: Error pages
+apiVersion: v1
+kind: Service
+metadata:
+  name: error-page-service
+  namespace: default
+spec:
+  selector:
+    app: error-pages
+  ports:
+    - port: 80
+      targetPort: 80
+
+---
+# Service: Web frontend
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-frontend
+  namespace: default
+spec:
+  selector:
+    app: web-frontend
+  ports:
+    - port: 80
+      targetPort: 8080
+
+---
+# Service: API backend v1
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-backend-v1
+  namespace: default
+  labels:
+    version: v1
+spec:
+  selector:
+    app: api-backend
+    version: v1
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+# Service: API backend v2
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-backend-v2
+  namespace: default
+  labels:
+    version: v2
+spec:
+  selector:
+    app: api-backend
+    version: v2
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+# Service: Static assets
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-assets
+  namespace: default
+spec:
+  selector:
+    app: static-assets
+  ports:
+    - port: 80
+      targetPort: 8080
+
+---
+# Service: Admin backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-backend
+  namespace: default
+spec:
+  selector:
+    app: admin-backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+# Service: WebSocket backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: websocket-backend
+  namespace: default
+spec:
+  selector:
+    app: websocket-backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+# Service: Versioned API backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: versioned-api-backend
+  namespace: default
+spec:
+  selector:
+    app: versioned-api-backend
+  ports:
+    - port: 8080
+      targetPort: 8080

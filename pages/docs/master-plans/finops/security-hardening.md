@@ -77,12 +77,12 @@ Debugging → Debian slim (~80MB)
 
 ## Integration Points
 
-- `auth-security` - Hardening complements authentication patterns
-- `kubernetes-operations` - Pod security, RBAC, network policies
-- `infrastructure-as-code` - IaC security scanning with Checkov
+- `securing-authentication` - Hardening complements authentication patterns
+- `operating-kubernetes` - Pod security, RBAC, network policies
+- `writing-infrastructure-code` - IaC security scanning with Checkov
 - `building-ci-pipelines` - Security scanning in CI (shift-left)
 - `secret-management` - Secure secret handling (no hardcoded credentials)
-- `observability` - Security monitoring and alerting
+- `implementing-observability` - Security monitoring and alerting
 
 ## Learn More
 

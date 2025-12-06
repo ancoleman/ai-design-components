@@ -1,0 +1,17 @@
+# AWS EBS SSD StorageClass
+# High-performance storage for databases
+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-ssd
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp3              # General Purpose SSD v3
+  iopsPerGB: "50"
+  throughput: "1000"     # MB/s
+  encrypted: "true"
+  kmsKeyId: "arn:aws:kms:us-east-1:123456789:key/your-key-id"
+volumeBindingMode: WaitForFirstConsumer  # Topology-aware
+allowVolumeExpansion: true
+reclaimPolicy: Delete

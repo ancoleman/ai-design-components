@@ -1,0 +1,104 @@
+asyncapi: 3.0.0
+
+info:
+  title: Order Processing Events API
+  version: 1.0.0
+  description: |
+    Event-driven API for order processing using Kafka.
+    Demonstrates AsyncAPI patterns for event-driven architecture.
+
+servers:
+  production:
+    host: kafka.example.com:9092
+    protocol: kafka
+    description: Production Kafka cluster
+
+channels:
+  orders/created:
+    address: orders.created
+    description: Channel for order creation events
+    messages:
+      orderCreated:
+        $ref: '#/components/messages/OrderCreated'
+
+  orders/fulfilled:
+    address: orders.fulfilled
+    description: Channel for order fulfillment events
+    messages:
+      orderFulfilled:
+        $ref: '#/components/messages/OrderFulfilled'
+
+operations:
+  publishOrderCreated:
+    action: send
+    channel:
+      $ref: '#/channels/orders~1created'
+    summary: Publish order creation event
+
+  subscribeOrderCreated:
+    action: receive
+    channel:
+      $ref: '#/channels/orders~1created'
+    summary: Subscribe to order creation events
+
+components:
+  messages:
+    OrderCreated:
+      name: OrderCreated
+      title: Order Created Event
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/OrderCreatedPayload'
+
+    OrderFulfilled:
+      name: OrderFulfilled
+      title: Order Fulfilled Event
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/OrderFulfilledPayload'
+
+  schemas:
+    OrderCreatedPayload:
+      type: object
+      required: [eventId, eventType, timestamp, data]
+      properties:
+        eventId:
+          type: string
+        eventType:
+          type: string
+          const: order.created
+        timestamp:
+          type: string
+          format: date-time
+        data:
+          type: object
+          required: [orderId, userId, totalAmount]
+          properties:
+            orderId:
+              type: string
+            userId:
+              type: string
+            totalAmount:
+              type: number
+
+    OrderFulfilledPayload:
+      type: object
+      required: [eventId, eventType, timestamp, data]
+      properties:
+        eventId:
+          type: string
+        eventType:
+          type: string
+          const: order.fulfilled
+        timestamp:
+          type: string
+          format: date-time
+        data:
+          type: object
+          required: [orderId, fulfilledAt]
+          properties:
+            orderId:
+              type: string
+            fulfilledAt:
+              type: string
+              format: date-time

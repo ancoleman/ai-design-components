@@ -1,0 +1,67 @@
+# Example Systemd Service: Web Application
+#
+# Installation:
+#   sudo cp webapp.service /etc/systemd/system/myapp.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable myapp.service
+#   sudo systemctl start myapp.service
+
+[Unit]
+Description=My Web Application Server
+Documentation=https://docs.example.com/myapp
+After=network.target postgresql.service redis.service
+Requires=postgresql.service
+Wants=redis.service
+
+[Service]
+Type=simple
+User=myapp
+Group=myapp
+WorkingDirectory=/opt/myapp
+
+# Environment variables
+Environment="NODE_ENV=production"
+Environment="PORT=8080"
+Environment="LOG_LEVEL=info"
+Environment="DATABASE_URL=postgresql://localhost/myapp"
+
+# Or load from file
+# EnvironmentFile=/etc/myapp/environment
+
+# Main command
+ExecStart=/opt/myapp/bin/server
+
+# Reload configuration without full restart
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Pre-start checks
+ExecStartPre=/usr/bin/test -f /opt/myapp/bin/server
+ExecStartPre=/bin/mkdir -p /var/run/myapp
+
+# Restart policy
+Restart=on-failure
+RestartSec=5s
+StartLimitBurst=5
+StartLimitIntervalSec=10m
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=myapp
+
+# Security hardening
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/myapp /var/log/myapp
+PrivateDevices=true
+ProtectKernelTunables=true
+
+# Resource limits
+MemoryMax=2G
+CPUQuota=200%
+TasksMax=512
+
+[Install]
+WantedBy=multi-user.target

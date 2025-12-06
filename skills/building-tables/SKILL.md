@@ -195,7 +195,7 @@ Reference the design-tokens skill for theme switching.
 
 ## Working Examples
 
-Start with the example matching your needs:
+Start with the example matching the requirements:
 
 ```
 simple-responsive-table.tsx    # Basic HTML table
@@ -225,7 +225,7 @@ node scripts/validate_accessibility.js
 
 ## Next Steps
 
-1. Determine your data volume and feature requirements
+1. Determine the data volume and feature requirements
 2. Select the appropriate implementation tier
 3. Choose between TanStack Table (flexibility) or AG Grid (features)
 4. Start with the matching example file

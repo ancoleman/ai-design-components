@@ -1,5 +1,24 @@
 # Autocomplete and Typeahead Patterns
 
+
+## Table of Contents
+
+- [Basic Autocomplete Implementation](#basic-autocomplete-implementation)
+  - [React Autocomplete with Downshift](#react-autocomplete-with-downshift)
+  - [Highlight Matching Text](#highlight-matching-text)
+- [Async Autocomplete with API](#async-autocomplete-with-api)
+  - [Debounced API Autocomplete](#debounced-api-autocomplete)
+- [Advanced Autocomplete Features](#advanced-autocomplete-features)
+  - [Multi-Section Autocomplete](#multi-section-autocomplete)
+  - [Recent Searches and Suggestions](#recent-searches-and-suggestions)
+- [Search-as-you-type Implementation](#search-as-you-type-implementation)
+  - [Real-time Search Results](#real-time-search-results)
+- [Performance Optimization](#performance-optimization)
+  - [Virtual Scrolling for Large Lists](#virtual-scrolling-for-large-lists)
+  - [Memoized Filtering](#memoized-filtering)
+- [Accessibility Features](#accessibility-features)
+  - [ARIA Live Regions](#aria-live-regions)
+
 ## Basic Autocomplete Implementation
 
 ### React Autocomplete with Downshift

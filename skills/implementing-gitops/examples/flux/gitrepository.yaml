@@ -1,0 +1,29 @@
+# GitRepository Source
+# Defines a Git repository as a source for Flux
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: myapp
+  namespace: flux-system
+spec:
+  # Reconciliation interval
+  interval: 1m
+
+  # Git repository URL
+  url: https://github.com/myorg/myapp
+
+  # Branch, tag, or commit to track
+  ref:
+    branch: main
+
+  # Secret for authentication (optional)
+  secretRef:
+    name: git-credentials
+
+  # Files to ignore during sync
+  ignore: |
+    # Exclude documentation and metadata
+    .git/
+    .github/
+    *.md
+    docs/

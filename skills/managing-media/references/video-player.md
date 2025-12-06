@@ -1,5 +1,30 @@
 # Video Player Implementation
 
+
+## Table of Contents
+
+- [Native HTML5 Video](#native-html5-video)
+  - [Basic Implementation](#basic-implementation)
+  - [Attributes](#attributes)
+- [Custom Controls](#custom-controls)
+  - [Why Custom Controls?](#why-custom-controls)
+  - [Implementation with video.js](#implementation-with-videojs)
+- [Captions and Subtitles](#captions-and-subtitles)
+  - [VTT Format](#vtt-format)
+  - [Implementation](#implementation)
+- [Adaptive Streaming](#adaptive-streaming)
+  - [HLS (HTTP Live Streaming)](#hls-http-live-streaming)
+  - [DASH (Dynamic Adaptive Streaming)](#dash-dynamic-adaptive-streaming)
+  - [Implementation](#implementation)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Picture-in-Picture](#picture-in-picture)
+  - [API](#api)
+- [Accessibility](#accessibility)
+  - [Requirements](#requirements)
+  - [ARIA](#aria)
+- [Performance Optimization](#performance-optimization)
+- [See Also](#see-also)
+
 ## Native HTML5 Video
 
 ### Basic Implementation

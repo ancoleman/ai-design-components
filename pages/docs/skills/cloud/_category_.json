@@ -1,0 +1,10 @@
+{
+  "label": "Cloud Skills",
+  "position": 10,
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "description": "3 production-ready cloud provider skills for AWS, GCP, and Azure."
+  }
+}

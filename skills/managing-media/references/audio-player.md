@@ -2,6 +2,15 @@
 
 Custom audio players with waveform visualization, playlists, and controls.
 
+
+## Table of Contents
+
+- [Native HTML5 Audio](#native-html5-audio)
+- [Custom Audio Player](#custom-audio-player)
+- [Waveform Visualization](#waveform-visualization)
+- [Playlist](#playlist)
+- [Resources](#resources)
+
 ## Native HTML5 Audio
 
 ```tsx

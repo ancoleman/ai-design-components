@@ -1,5 +1,40 @@
 # Media Performance Optimization
 
+
+## Table of Contents
+
+- [Image Optimization](#image-optimization)
+  - [File Formats](#file-formats)
+  - [Responsive Images](#responsive-images)
+  - [Compression](#compression)
+  - [Lazy Loading](#lazy-loading)
+  - [Placeholders](#placeholders)
+- [Video Optimization](#video-optimization)
+  - [Encoding](#encoding)
+  - [Adaptive Streaming](#adaptive-streaming)
+  - [Preload Strategies](#preload-strategies)
+  - [Poster Images](#poster-images)
+- [Audio Optimization](#audio-optimization)
+  - [Formats](#formats)
+  - [Bitrate](#bitrate)
+- [Document Optimization](#document-optimization)
+  - [PDF](#pdf)
+- [CDN Integration](#cdn-integration)
+  - [Benefits](#benefits)
+  - [Popular CDNs](#popular-cdns)
+  - [Example (Cloudinary):](#example-cloudinary)
+- [Performance Budgets](#performance-budgets)
+  - [Target Metrics](#target-metrics)
+- [Monitoring](#monitoring)
+  - [Core Web Vitals](#core-web-vitals)
+  - [Testing Tools](#testing-tools)
+- [Best Practices Checklist](#best-practices-checklist)
+  - [Images](#images)
+  - [Video](#video)
+  - [Audio](#audio)
+  - [Documents](#documents)
+- [See Also](#see-also)
+
 ## Image Optimization
 
 ### File Formats

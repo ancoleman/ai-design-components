@@ -203,11 +203,11 @@ shfmt -w script.sh  # Format in-place
 ## Integration Points
 
 **With Other Skills:**
-- `linux-administration` - Automate system tasks
+- `administering-linux` - Automate system tasks
 - `building-ci-pipelines` - CI/CD build scripts
-- `configuration-management` - Wrapper scripts for Ansible/Terraform
-- `kubernetes-operations` - kubectl automation scripts
-- `infrastructure-as-code` - IaC helper scripts
+- `managing-configuration` - Wrapper scripts for Ansible/Terraform
+- `operating-kubernetes` - kubectl automation scripts
+- `writing-infrastructure-code` - IaC helper scripts
 
 **Use Cases:**
 - Docker entrypoint scripts
@@ -219,4 +219,4 @@ shfmt -w script.sh  # Format in-place
 ## Learn More
 
 - [Full Master Plan (init.md)](https://github.com/ancoleman/ai-design-components/blob/main/skills/shell-scripting/init.md)
-- Related: `linux-administration`, `building-ci-pipelines`, `configuration-management`
+- Related: `administering-linux`, `building-ci-pipelines`, `managing-configuration`

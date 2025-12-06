@@ -1,5 +1,32 @@
 # Layout Performance Optimization
 
+
+## Table of Contents
+
+- [Avoiding Layout Thrashing](#avoiding-layout-thrashing)
+  - [The Problem](#the-problem)
+  - [The Solution](#the-solution)
+  - [Using requestAnimationFrame](#using-requestanimationframe)
+- [CSS Containment](#css-containment)
+  - [Layout Containment](#layout-containment)
+  - [Size Containment](#size-containment)
+  - [Style Containment](#style-containment)
+- [Optimizing Large Lists](#optimizing-large-lists)
+  - [Virtual Scrolling](#virtual-scrolling)
+  - [Intersection Observer for Lazy Loading](#intersection-observer-for-lazy-loading)
+- [Optimizing CSS](#optimizing-css)
+  - [Efficient Selectors](#efficient-selectors)
+  - [Reduce Paint Complexity](#reduce-paint-complexity)
+- [Responsive Images Performance](#responsive-images-performance)
+  - [Native Lazy Loading](#native-lazy-loading)
+  - [Progressive Image Loading](#progressive-image-loading)
+- [Memory Management](#memory-management)
+  - [Cleanup Event Listeners](#cleanup-event-listeners)
+  - [Optimize Re-renders](#optimize-re-renders)
+- [Critical CSS](#critical-css)
+  - [Inline Critical Styles](#inline-critical-styles)
+- [Performance Monitoring](#performance-monitoring)
+
 ## Avoiding Layout Thrashing
 
 Layout thrashing occurs when JavaScript repeatedly reads and writes to the DOM, forcing multiple reflows.

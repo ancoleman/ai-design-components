@@ -1,0 +1,131 @@
+name: Trivy Container Scanning
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * *'  # Daily scan
+
+env:
+  IMAGE_NAME: myapp
+  REGISTRY: ghcr.io
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      packages: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: sarif
+          output: trivy-results.sarif
+          severity: HIGH,CRITICAL
+          exit-code: 1
+
+      - name: Upload Trivy results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif
+
+      - name: Generate SBOM
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:latest image \
+            --format cyclonedx \
+            --output /tmp/sbom.json \
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker cp $(docker ps -lq):/tmp/sbom.json sbom.json
+
+      - name: Upload SBOM as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sbom
+          path: sbom.json
+          retention-days: 90
+
+      - name: Scan SBOM
+        run: |
+          docker run --rm -v $(pwd):/workspace \
+            aquasec/trivy:latest sbom \
+            /workspace/sbom.json \
+            --severity HIGH,CRITICAL
+
+      - name: Create vulnerability report
+        if: failure()
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:latest image \
+            --format json \
+            --output trivy-report.json \
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+          cat > vulnerability-summary.md << EOF
+          ## Vulnerability Scan Results
+
+          **Image:** ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          **Scan Date:** $(date)
+
+          ### Summary
+          $(jq -r '
+            [.Results[].Vulnerabilities[]] |
+            {
+              total: length,
+              critical: ([.[] | select(.Severity == "CRITICAL")] | length),
+              high: ([.[] | select(.Severity == "HIGH")] | length)
+            } |
+            "- Total: \(.total)\n- Critical: \(.critical)\n- High: \(.high)"
+          ' trivy-report.json)
+
+          ### Action Required
+          Fix HIGH and CRITICAL vulnerabilities before merging.
+          EOF
+
+      - name: Comment on PR
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('vulnerability-summary.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+  trivy-config-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy misconfiguration scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: config
+          scan-ref: .
+          format: sarif
+          output: trivy-config-results.sarif
+          exit-code: 1
+
+      - name: Upload config scan results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: trivy-config-results.sarif

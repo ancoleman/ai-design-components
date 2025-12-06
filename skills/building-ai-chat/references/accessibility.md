@@ -2,6 +2,30 @@
 
 WCAG 2.1 AA compliance for AI chat interfaces with screen reader support, keyboard navigation, and ARIA patterns.
 
+
+## Table of Contents
+
+- [Core Requirements](#core-requirements)
+  - [1. Semantic HTML and ARIA](#1-semantic-html-and-aria)
+  - [2. Keyboard Navigation](#2-keyboard-navigation)
+  - [3. Focus Management](#3-focus-management)
+- [Screen Reader Announcements](#screen-reader-announcements)
+  - [Status Announcements](#status-announcements)
+  - [Progress Updates](#progress-updates)
+- [Visual Accessibility](#visual-accessibility)
+  - [Color Contrast](#color-contrast)
+  - [Focus Indicators](#focus-indicators)
+  - [Text Sizing](#text-sizing)
+- [Alternative Text for Images](#alternative-text-for-images)
+- [Loading States](#loading-states)
+- [Error Messages](#error-messages)
+- [Code Block Accessibility](#code-block-accessibility)
+- [Mobile Accessibility](#mobile-accessibility)
+  - [Touch Targets](#touch-targets)
+  - [Reduced Motion](#reduced-motion)
+- [Testing Checklist](#testing-checklist)
+- [Resources](#resources)
+
 ## Core Requirements
 
 ### 1. Semantic HTML and ARIA

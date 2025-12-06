@@ -1,0 +1,55 @@
+REPLICATION TOPOLOGIES
+======================
+
+1. LEADER-FOLLOWER (Single-Leader)
+───────────────────────────────────
+
+   ┌─────────┐
+   │ Leader  │ ◄─── All writes
+   └────┬────┘
+        │ (replicates)
+   ┌────┴────┬────────┐
+   │         │        │
+   ▼         ▼        ▼
+Follower  Follower Follower
+(reads)   (reads)  (reads)
+
+Use: Most common, strong consistency
+Examples: PostgreSQL, MySQL, MongoDB
+
+
+2. MULTI-LEADER
+───────────────
+
+   ┌─────────┐      ┌─────────┐
+   │ Leader  │◄────►│ Leader  │
+   │ (US)    │      │ (EU)    │
+   └────┬────┘      └────┬────┘
+        │                │
+   (replicates)     (replicates)
+        │                │
+   Followers        Followers
+
+Use: Multi-datacenter, low write latency
+Challenges: Conflict resolution needed
+Examples: Cassandra, CouchDB
+
+
+3. LEADERLESS (Dynamo-style)
+─────────────────────────────
+
+   ┌─────────┐      ┌─────────┐
+   │  Node   │◄────►│  Node   │
+   │  (R/W)  │      │  (R/W)  │
+   └────┬────┘      └────┬────┘
+        │   ╲        ╱   │
+        │    ╲      ╱    │
+        │     ╲    ╱     │
+   ┌────┴────┐ ╲  ╱ ┌────┴────┐
+   │  Node   │  ╳  │  Node   │
+   │  (R/W)  │ ╱  ╲│  (R/W)  │
+   └─────────┘╱    ╲└─────────┘
+
+Use: High availability, partition tolerance
+Quorum: W + R > N
+Examples: Cassandra, Riak, DynamoDB

@@ -302,10 +302,10 @@ This skill provides deployment strategies for:
 
 ## Related Skills
 
-- [API Patterns](./api-patterns) - Deploy backend APIs
-- [Observability](./observability) - Deploy monitoring infrastructure
+- [API Patterns](./implementing-api-patterns) - Deploy backend APIs
+- [Observability](./implementing-observability) - Deploy monitoring infrastructure
 - [Model Serving](./model-serving) - Deploy LLM serving infrastructure
-- [Relational Databases](./databases-relational) - Deploy PostgreSQL/MySQL
+- [Relational Databases](./using-relational-databases) - Deploy PostgreSQL/MySQL
 
 ## References
 

@@ -1,0 +1,247 @@
+version: '3.8'
+
+# ELK Stack (Elasticsearch, Logstash, Kibana) Docker Compose Deployment
+# Production-ready SIEM architecture for centralized log aggregation and analysis
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    hostname: elasticsearch
+    restart: always
+    ports:
+      - "9200:9200"     # HTTP API
+      - "9300:9300"     # Node communication
+    environment:
+      # Cluster Configuration
+      - node.name=elasticsearch-node-1
+      - cluster.name=elk-siem-cluster
+      - discovery.type=single-node
+
+      # Memory Settings (adjust based on available resources)
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - bootstrap.memory_lock=true
+
+      # Security Configuration (for production, use proper certificates)
+      - xpack.security.enabled=true
+      - xpack.security.enrollment.enabled=true
+      - ELASTIC_PASSWORD=SecureElasticPassword123!
+
+      # Disable SSL for internal communication (enable in production)
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+
+      # License (basic features are free)
+      - xpack.license.self_generated.type=basic
+    ulimits:
+      # Required for Elasticsearch performance
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+      - elasticsearch_logs:/usr/share/elasticsearch/logs
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - elk
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    hostname: logstash
+    restart: always
+    ports:
+      - "5000:5000/tcp"   # TCP input for log shippers
+      - "5000:5000/udp"   # UDP input for syslog
+      - "5044:5044"       # Beats input (Filebeat, Metricbeat)
+      - "9600:9600"       # Monitoring API
+    environment:
+      # Elasticsearch output configuration
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=SecureElasticPassword123!
+
+      # Pipeline Configuration
+      - "LS_JAVA_OPTS=-Xmx1g -Xms1g"
+      - pipeline.workers=2
+      - pipeline.batch.size=125
+      - pipeline.batch.delay=50
+
+      # Monitoring
+      - xpack.monitoring.enabled=true
+      - xpack.monitoring.elasticsearch.hosts=http://elasticsearch:9200
+    volumes:
+      # Pipeline configuration files
+      - ./logstash-config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - ./logstash-config/pipeline/:/usr/share/logstash/pipeline/:ro
+
+      # Patterns and templates
+      - logstash_data:/usr/share/logstash/data
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9600/_node/stats || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - elk
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    hostname: kibana
+    restart: always
+    ports:
+      - "5601:5601"       # Web interface
+    environment:
+      # Elasticsearch connection
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=SecureElasticPassword123!
+
+      # Kibana Configuration
+      - SERVER_NAME=kibana-siem
+      - SERVER_HOST=0.0.0.0
+
+      # Security settings
+      - xpack.security.enabled=true
+      - xpack.encryptedSavedObjects.encryptionKey=min-32-char-encryption-key-here-change-in-production
+
+      # SIEM features enabled
+      - xpack.securitySolution.enabled=true
+
+      # Monitoring
+      - monitoring.ui.container.elasticsearch.enabled=true
+    volumes:
+      - kibana_data:/usr/share/kibana/data
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    networks:
+      - elk
+
+  # Filebeat - Log shipper for collecting logs from files
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.11.0
+    hostname: filebeat
+    restart: always
+    user: root
+    command: filebeat -e -strict.perms=false
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=SecureElasticPassword123!
+      - KIBANA_HOST=http://kibana:5601
+    volumes:
+      # Filebeat configuration
+      - ./filebeat-config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+
+      # Collect Docker logs from all containers
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+      # System logs (optional)
+      - /var/log:/var/log:ro
+
+      # Filebeat data
+      - filebeat_data:/usr/share/filebeat/data
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    networks:
+      - elk
+
+volumes:
+  # Elasticsearch volumes
+  elasticsearch_data:
+    driver: local
+  elasticsearch_logs:
+    driver: local
+
+  # Logstash volumes
+  logstash_data:
+    driver: local
+
+  # Kibana volumes
+  kibana_data:
+    driver: local
+
+  # Filebeat volumes
+  filebeat_data:
+    driver: local
+
+networks:
+  elk:
+    driver: bridge
+
+# Resource Requirements (Recommended for Production):
+# - Elasticsearch: 4GB RAM minimum, 8GB recommended, 16GB+ for high volume
+# - Logstash: 2GB RAM minimum, 4GB recommended
+# - Kibana: 2GB RAM minimum
+#
+# Total System: 8GB RAM minimum, 16GB+ recommended for production
+#
+# Storage Requirements:
+# - Plan for 1.5-2x raw log size (with indexing overhead)
+# - Example: 100GB/day logs = 150-200GB/day storage needed
+# - Implement index lifecycle management (ILM) for retention
+#
+# Deployment Instructions:
+# 1. Create config directories:
+#    mkdir -p logstash-config/pipeline filebeat-config
+#
+# 2. Create basic Logstash pipeline (logstash-config/pipeline/main.conf):
+#    input {
+#      beats { port => 5044 }
+#      tcp { port => 5000 codec => json }
+#    }
+#    filter {
+#      # Add your parsing logic here
+#    }
+#    output {
+#      elasticsearch {
+#        hosts => ["http://elasticsearch:9200"]
+#        user => "elastic"
+#        password => "SecureElasticPassword123!"
+#        index => "logs-%{+YYYY.MM.dd}"
+#      }
+#    }
+#
+# 3. Create Filebeat config (filebeat-config/filebeat.yml):
+#    filebeat.inputs:
+#    - type: container
+#      paths:
+#        - '/var/lib/docker/containers/*/*.log'
+#    output.logstash:
+#      hosts: ["logstash:5044"]
+#
+# 4. Start the stack:
+#    docker-compose up -d
+#
+# 5. Access Kibana at http://localhost:5601
+#    Username: elastic
+#    Password: SecureElasticPassword123!
+#
+# Security Notes:
+# - Change all default passwords before production deployment
+# - Enable SSL/TLS for Elasticsearch and Kibana in production
+# - Use proper certificate management (Let's Encrypt, internal CA)
+# - Configure firewall rules to restrict access to ports
+# - Enable Elasticsearch authentication and role-based access control (RBAC)
+# - Regularly update images to latest security patches

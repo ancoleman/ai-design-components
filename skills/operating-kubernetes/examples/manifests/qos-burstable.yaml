@@ -1,0 +1,23 @@
+# Burstable QoS Example
+# Requests less than limits for cost-effective scaling
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: burstable-pod
+  labels:
+    qos: burstable
+    app: web-server
+spec:
+  containers:
+  - name: app
+    image: nginx:1.21
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"      # 0.25 CPU cores
+      limits:
+        memory: "512Mi"  # 2x request = can burst
+        cpu: "500m"      # 2x request = can burst
+    ports:
+    - containerPort: 80

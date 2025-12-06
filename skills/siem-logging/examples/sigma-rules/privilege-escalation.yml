@@ -1,0 +1,30 @@
+title: Suspicious Sudo Execution by Service Account
+id: 7b8c9d0e-1f2a-3b4c-5d6e-7f8a9b0c1d2e
+status: stable
+description: Detects sudo execution by non-privileged users (web servers, service accounts) indicating potential privilege escalation
+author: Security Team
+date: 2025/12/03
+modified: 2025/12/03
+references:
+  - https://attack.mitre.org/techniques/T1548/003/
+tags:
+  - attack.privilege_escalation
+  - attack.t1548.003
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection:
+    process.name: sudo
+    user.name:
+      - 'www-data'
+      - 'nobody'
+      - 'nginx'
+      - 'apache'
+      - 'postgres'
+      - 'mysql'
+  condition: selection
+falsepositives:
+  - Legitimate administrative scripts running as service accounts
+  - Configuration management tools (Ansible, Puppet)
+level: high

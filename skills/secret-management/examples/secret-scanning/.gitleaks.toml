@@ -1,0 +1,100 @@
+# Gitleaks Configuration
+#
+# Place in repository root as .gitleaks.toml
+#
+# Usage:
+#   gitleaks detect --config .gitleaks.toml --verbose
+
+title = "Gitleaks Secret Scanning Configuration"
+
+[extend]
+# Use default Gitleaks rules
+useDefault = true
+
+# Custom rules for project-specific secrets
+[[rules]]
+id = "project-api-key"
+description = "Project API Key"
+regex = '''(?i)(api[_-]?key|apikey)['"` ]*[:=]['"` ]*[a-zA-Z0-9]{20,}'''
+tags = ["api", "key"]
+
+[[rules]]
+id = "database-connection-string"
+description = "Database Connection String"
+regex = '''(?i)(postgresql|mysql|mongodb|redis)://[^\s'"]+'''
+tags = ["database", "connection-string"]
+
+[[rules]]
+id = "private-key-file"
+description = "Private Key File"
+regex = '''-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----'''
+tags = ["private-key"]
+
+[[rules]]
+id = "jwt-token"
+description = "JSON Web Token"
+regex = '''eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'''
+tags = ["jwt"]
+
+[[rules]]
+id = "aws-access-key"
+description = "AWS Access Key ID"
+regex = '''AKIA[0-9A-Z]{16}'''
+tags = ["aws", "access-key"]
+
+[[rules]]
+id = "github-token"
+description = "GitHub Personal Access Token"
+regex = '''ghp_[a-zA-Z0-9]{36}'''
+tags = ["github", "token"]
+
+[[rules]]
+id = "slack-webhook"
+description = "Slack Webhook URL"
+regex = '''https://hooks\.slack\.com/services/[A-Z0-9/]+'''
+tags = ["slack", "webhook"]
+
+# Allowlist for false positives
+[allowlist]
+description = "Global allowlist for test files and example placeholders"
+
+# Allowlist specific file paths
+paths = [
+  '''.*/test/.*''',          # Test directories
+  '''.*/tests/.*''',
+  '''.*/examples/.*''',      # Example code
+  '''.*/docs/.*''',          # Documentation
+  '''.*_test\.py$''',        # Python test files
+  '''.*_test\.go$''',        # Go test files
+  '''.*\.test\.ts$''',       # TypeScript test files
+  '''.*\.spec\.ts$''',       # TypeScript spec files
+  '''.*\.md$''',             # Markdown documentation
+]
+
+# Allowlist specific regex patterns (test keys, placeholders)
+regexes = [
+  '''sk_test_[a-zA-Z0-9]{24}''',           # Stripe test keys
+  '''pk_test_[a-zA-Z0-9]{24}''',
+  '''EXAMPLE_[A-Z_]+''',                   # Placeholder examples
+  '''YOUR_[A-Z_]+_HERE''',
+  '''<YOUR_[A-Z_]+>''',
+  '''REPLACE_WITH_[A-Z_]+''',
+  '''TODO:.*''',                           # TODO comments
+  '''FIXME:.*''',                          # FIXME comments
+  '''dummy[_-]?secret''',                  # Dummy test secrets
+  '''fake[_-]?password''',
+  '''test[_-]?token''',
+  '''localhost''',                         # Local development
+  '''127\.0\.0\.1''',
+]
+
+# Allowlist specific commits (use sparingly, for emergency overrides)
+commits = [
+  # "abc123def456",  # Example: Migration commit with sanitized test data
+]
+
+# Entropy detection configuration (optional)
+# [allowlist.regexTarget]
+# regexes = [
+#   '''[a-zA-Z0-9]{16,}''',  # Generic high-entropy strings
+# ]

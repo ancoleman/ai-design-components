@@ -1,0 +1,34 @@
+# RBAC Least Privilege Example
+# ServiceAccount with minimal permissions
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: my-app-sa
+  namespace: production
+automountServiceAccountToken: false  # Don't auto-mount unless needed
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: configmap-reader
+  namespace: production
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list"]
+  resourceNames: ["app-config"]  # Further restrict to specific resource
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-configmap-access
+  namespace: production
+subjects:
+- kind: ServiceAccount
+  name: my-app-sa
+  namespace: production
+roleRef:
+  kind: Role
+  name: configmap-reader
+  apiGroup: rbac.authorization.k8s.io

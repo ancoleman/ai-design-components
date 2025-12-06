@@ -222,11 +222,11 @@ Storage cost optimization?
 ## Integration Points
 
 **With Other Skills:**
-- `observability` - Application metrics and traces (complementary to logs)
-- `security-architecture` - Implement detective security controls
-- `compliance-frameworks` - Log retention for compliance
+- `implementing-observability` - Application metrics and traces (complementary to logs)
+- `architecting-security` - Implement detective security controls
+- `implementing-compliance` - Log retention for compliance
 - `incident-response` - Alert triage and investigation
-- `kubernetes-operations` - Container and K8s logs
+- `operating-kubernetes` - Container and K8s logs
 
 **Workflow Example:**
 ```
@@ -241,4 +241,4 @@ Logs Generated → Aggregation → Detection → Alert → Incident Response
 ## Learn More
 
 - [Full Master Plan (init.md)](https://github.com/ancoleman/ai-design-components/blob/main/skills/siem-logging/init.md)
-- Related: `observability`, `security-architecture`, `compliance-frameworks`
+- Related: `implementing-observability`, `architecting-security`, `implementing-compliance`

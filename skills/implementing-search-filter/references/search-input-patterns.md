@@ -1,5 +1,31 @@
 # Search Input Patterns
 
+
+## Table of Contents
+
+- [Basic Search Input](#basic-search-input)
+  - [Minimal Implementation](#minimal-implementation)
+- [Advanced Search Input](#advanced-search-input)
+  - [With Clear Button and Loading State](#with-clear-button-and-loading-state)
+- [Search with Keyboard Shortcuts](#search-with-keyboard-shortcuts)
+  - [Global Search Hotkey (Cmd/Ctrl + K)](#global-search-hotkey-cmdctrl-k)
+- [Debouncing Strategies](#debouncing-strategies)
+  - [Custom Debounce Hook](#custom-debounce-hook)
+  - [Cancellable Search Requests](#cancellable-search-requests)
+- [Search Input States](#search-input-states)
+  - [Visual States](#visual-states)
+- [Mobile Search Patterns](#mobile-search-patterns)
+  - [Expandable Search](#expandable-search)
+  - [Full-Screen Search Modal](#full-screen-search-modal)
+- [Accessibility Patterns](#accessibility-patterns)
+  - [ARIA Attributes](#aria-attributes)
+  - [Announcing Results](#announcing-results)
+- [Performance Metrics](#performance-metrics)
+  - [Optimal Debounce Timing](#optimal-debounce-timing)
+  - [Search Latency Targets](#search-latency-targets)
+- [Error Handling](#error-handling)
+  - [User-Friendly Error Messages](#user-friendly-error-messages)
+
 ## Basic Search Input
 
 ### Minimal Implementation

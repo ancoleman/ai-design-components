@@ -123,20 +123,20 @@ claude
 
 #### Backend Data Skills
 - `ingesting-data` - ETL, data ingestion from S3/APIs/files
-- `databases-relational` - PostgreSQL, MySQL, SQLite
-- `databases-vector` - Qdrant, Pinecone, pgvector
-- `databases-timeseries` - ClickHouse, TimescaleDB, InfluxDB
-- `databases-document` - MongoDB, Firestore, DynamoDB
-- `databases-graph` - Neo4j, memgraph
+- `using-relational-databases` - PostgreSQL, MySQL, SQLite
+- `using-vector-databases` - Qdrant, Pinecone, pgvector
+- `using-timeseries-databases` - ClickHouse, TimescaleDB, InfluxDB
+- `using-document-databases` - MongoDB, Firestore, DynamoDB
+- `using-graph-databases` - Neo4j, memgraph
 
 #### Backend API Skills
-- `api-patterns` - REST, GraphQL, gRPC, tRPC
-- `message-queues` - Kafka, RabbitMQ, NATS, Temporal
-- `realtime-sync` - WebSockets, SSE, Y.js
+- `implementing-api-patterns` - REST, GraphQL, gRPC, tRPC
+- `using-message-queues` - Kafka, RabbitMQ, NATS, Temporal
+- `implementing-realtime-sync` - WebSockets, SSE, Y.js
 
 #### Backend Platform Skills
-- `observability` - OpenTelemetry, LGTM stack
-- `auth-security` - OAuth 2.1, passkeys, RBAC
+- `implementing-observability` - OpenTelemetry, LGTM stack
+- `securing-authentication` - OAuth 2.1, passkeys, RBAC
 - `deploying-applications` - Kubernetes, serverless, edge
 
 #### Backend AI Skills

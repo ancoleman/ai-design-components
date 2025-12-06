@@ -2,6 +2,33 @@
 
 **Complete guide to implementing light/dark mode and custom brand themes**
 
+
+## Table of Contents
+
+- [How Theme Switching Works](#how-theme-switching-works)
+  - [1. Define Themes with Token Overrides](#1-define-themes-with-token-overrides)
+  - [2. Set Theme Attribute](#2-set-theme-attribute)
+  - [3. All Components Update Automatically](#3-all-components-update-automatically)
+- [Implementation Patterns](#implementation-patterns)
+  - [Vanilla JavaScript](#vanilla-javascript)
+  - [React Theme Provider](#react-theme-provider)
+- [Creating Custom Themes](#creating-custom-themes)
+  - [Brand Theme Example](#brand-theme-example)
+- [System Preference Detection](#system-preference-detection)
+  - [Respect User's OS Preference](#respect-users-os-preference)
+- [Multi-Theme Selector](#multi-theme-selector)
+- [Theme Persistence](#theme-persistence)
+  - [LocalStorage (Basic)](#localstorage-basic)
+  - [Cookie (Server-Side Rendering)](#cookie-server-side-rendering)
+- [Avoiding Flash of Unstyled Content (FOUC)](#avoiding-flash-of-unstyled-content-fouc)
+  - [Problem](#problem)
+  - [Solution 1: Inline Script (Fastest)](#solution-1-inline-script-fastest)
+  - [Solution 2: Server-Side Rendering](#solution-2-server-side-rendering)
+- [Theme Transition Animation](#theme-transition-animation)
+- [Testing Themes](#testing-themes)
+  - [Manual Testing Checklist](#manual-testing-checklist)
+  - [Automated Testing](#automated-testing)
+
 ---
 
 ## How Theme Switching Works

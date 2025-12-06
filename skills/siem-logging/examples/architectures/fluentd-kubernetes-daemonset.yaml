@@ -1,0 +1,524 @@
+---
+# Fluentd DaemonSet for Kubernetes Log Collection
+# Deploys Fluentd on every node to collect container and system logs
+# Forwards logs to Elasticsearch for SIEM analysis
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fluentd
+  namespace: kube-system
+  labels:
+    app: fluentd
+    component: log-collector
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: fluentd
+  labels:
+    app: fluentd
+    component: log-collector
+rules:
+  # Allow reading pod logs
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - namespaces
+    verbs:
+      - get
+      - list
+      - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: fluentd
+  labels:
+    app: fluentd
+    component: log-collector
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: fluentd
+subjects:
+  - kind: ServiceAccount
+    name: fluentd
+    namespace: kube-system
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config
+  namespace: kube-system
+  labels:
+    app: fluentd
+    component: log-collector
+data:
+  # Main Fluentd configuration
+  fluent.conf: |
+    # Input: Collect container logs from Kubernetes
+    <source>
+      @type tail
+      @id in_tail_container_logs
+      path /var/log/containers/*.log
+      pos_file /var/log/fluentd-containers.log.pos
+      tag kubernetes.*
+      read_from_head true
+      <parse>
+        # Parse Docker JSON log format
+        @type json
+        time_format %Y-%m-%dT%H:%M:%S.%NZ
+        time_key time
+        keep_time_key true
+      </parse>
+    </source>
+
+    # Input: Collect systemd journal logs
+    <source>
+      @type systemd
+      @id in_systemd
+      path /var/log/journal
+      matches [{ "_SYSTEMD_UNIT": "kubelet.service" }, { "_SYSTEMD_UNIT": "docker.service" }]
+      read_from_head true
+      tag systemd
+      <storage>
+        @type local
+        persistent true
+        path /var/log/fluentd-journald-cursor.json
+      </storage>
+      <entry>
+        fields_strip_underscores true
+        fields_lowercase true
+      </entry>
+    </source>
+
+    # Filter: Extract Kubernetes metadata (pod name, namespace, labels)
+    <filter kubernetes.**>
+      @type kubernetes_metadata
+      @id filter_kube_metadata
+      kubernetes_url "#{ENV['FLUENT_FILTER_KUBERNETES_URL'] || 'https://' + ENV.fetch('KUBERNETES_SERVICE_HOST') + ':' + ENV.fetch('KUBERNETES_SERVICE_PORT') + '/api'}"
+      verify_ssl "#{ENV['KUBERNETES_VERIFY_SSL'] || true}"
+      ca_file "#{ENV['KUBERNETES_CA_FILE']}"
+      skip_labels "#{ENV['FLUENT_KUBERNETES_METADATA_SKIP_LABELS'] || 'false'}"
+      skip_container_metadata "#{ENV['FLUENT_KUBERNETES_METADATA_SKIP_CONTAINER_METADATA'] || 'false'}"
+      skip_master_url "#{ENV['FLUENT_KUBERNETES_METADATA_SKIP_MASTER_URL'] || 'false'}"
+      skip_namespace_metadata "#{ENV['FLUENT_KUBERNETES_METADATA_SKIP_NAMESPACE_METADATA'] || 'false'}"
+    </filter>
+
+    # Filter: Enrich with security-relevant fields
+    <filter kubernetes.**>
+      @type record_transformer
+      @id filter_security_enrichment
+      enable_ruby true
+      <record>
+        # Add cluster identifier
+        cluster_name "#{ENV['CLUSTER_NAME'] || 'kubernetes-cluster'}"
+
+        # Add environment tag
+        environment "#{ENV['ENVIRONMENT'] || 'production'}"
+
+        # Extract security-relevant fields
+        security_context ${record.dig("kubernetes", "pod_security_context")}
+
+        # Add timestamp in ISO8601 format
+        timestamp ${time.iso8601}
+
+        # Flag potential security events
+        is_privileged ${record.dig("kubernetes", "container_security_context", "privileged") || false}
+        is_host_network ${record.dig("kubernetes", "host_network") || false}
+        is_host_pid ${record.dig("kubernetes", "host_pid") || false}
+      </record>
+    </filter>
+
+    # Filter: Parse application logs (JSON format)
+    <filter kubernetes.**>
+      @type parser
+      @id filter_parser
+      key_name log
+      reserve_data true
+      remove_key_name_field false
+      <parse>
+        @type multi_format
+        # Try JSON parsing first
+        <pattern>
+          format json
+          time_key timestamp
+          keep_time_key true
+        </pattern>
+        # Fallback to plain text
+        <pattern>
+          format none
+        </pattern>
+      </parse>
+    </filter>
+
+    # Filter: Detect security events in logs
+    <filter kubernetes.**>
+      @type grep
+      @id filter_security_events
+      <regexp>
+        key log
+        pattern /(authentication|authorization|permission denied|access denied|failed login|privilege escalation|unauthorized)/i
+      </regexp>
+      <and>
+        <regexp>
+          key log
+          pattern /.+/
+        </regexp>
+      </and>
+    </filter>
+
+    # Filter: Rate limiting to prevent log storms
+    <filter kubernetes.**>
+      @type throttle
+      @id filter_throttle
+      group_key kubernetes.namespace_name
+      group_bucket_period_s 60
+      group_bucket_limit 10000
+      group_reset_rate_s 600
+    </filter>
+
+    # Output: Forward to Elasticsearch
+    <match kubernetes.**>
+      @type elasticsearch
+      @id out_es
+      @log_level info
+
+      # Elasticsearch connection
+      host "#{ENV['FLUENT_ELASTICSEARCH_HOST'] || 'elasticsearch.kube-system.svc.cluster.local'}"
+      port "#{ENV['FLUENT_ELASTICSEARCH_PORT'] || '9200'}"
+      scheme "#{ENV['FLUENT_ELASTICSEARCH_SCHEME'] || 'http'}"
+
+      # Authentication
+      user "#{ENV['FLUENT_ELASTICSEARCH_USER'] || 'elastic'}"
+      password "#{ENV['FLUENT_ELASTICSEARCH_PASSWORD'] || 'changeme'}"
+
+      # Index naming: logs-kubernetes-YYYY.MM.DD
+      logstash_format true
+      logstash_prefix "#{ENV['FLUENT_ELASTICSEARCH_INDEX_PREFIX'] || 'logs-kubernetes'}"
+      logstash_dateformat %Y.%m.%d
+      include_timestamp true
+
+      # Index lifecycle management
+      type_name _doc
+
+      # Performance tuning
+      flush_interval 10s
+      flush_thread_count 2
+
+      # Retry configuration
+      request_timeout 30s
+      reload_connections false
+      reconnect_on_error true
+      reload_on_failure true
+
+      # Buffer configuration
+      <buffer>
+        @type file
+        path /var/log/fluentd-buffers/kubernetes.system.buffer
+        flush_mode interval
+        retry_type exponential_backoff
+        flush_interval 10s
+        retry_forever false
+        retry_max_interval 30s
+        chunk_limit_size 5M
+        queue_limit_length 32
+        overflow_action block
+      </buffer>
+    </match>
+
+    # Output: Forward systemd logs to Elasticsearch
+    <match systemd>
+      @type elasticsearch
+      @id out_es_systemd
+      @log_level info
+
+      host "#{ENV['FLUENT_ELASTICSEARCH_HOST'] || 'elasticsearch.kube-system.svc.cluster.local'}"
+      port "#{ENV['FLUENT_ELASTICSEARCH_PORT'] || '9200'}"
+      scheme "#{ENV['FLUENT_ELASTICSEARCH_SCHEME'] || 'http'}"
+      user "#{ENV['FLUENT_ELASTICSEARCH_USER'] || 'elastic'}"
+      password "#{ENV['FLUENT_ELASTICSEARCH_PASSWORD'] || 'changeme'}"
+
+      logstash_format true
+      logstash_prefix "#{ENV['FLUENT_ELASTICSEARCH_INDEX_PREFIX'] || 'logs-systemd'}"
+      logstash_dateformat %Y.%m.%d
+      include_timestamp true
+      type_name _doc
+
+      <buffer>
+        @type file
+        path /var/log/fluentd-buffers/systemd.buffer
+        flush_mode interval
+        retry_type exponential_backoff
+        flush_interval 10s
+        retry_max_interval 30s
+        chunk_limit_size 5M
+        queue_limit_length 32
+      </buffer>
+    </match>
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd
+  namespace: kube-system
+  labels:
+    app: fluentd
+    component: log-collector
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      app: fluentd
+      component: log-collector
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: fluentd
+        component: log-collector
+        version: v1
+      annotations:
+        # Force pod restart on config change
+        checksum/config: "{{ include (print $.Template.BasePath \"/configmap.yaml\") . | sha256sum }}"
+    spec:
+      serviceAccountName: fluentd
+      priorityClassName: system-node-critical
+      tolerations:
+        # Run on all nodes including master
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
+        # Tolerate all taints to ensure logs from all nodes
+        - operator: Exists
+          effect: NoSchedule
+        - operator: Exists
+          effect: NoExecute
+
+      containers:
+      - name: fluentd
+        image: fluent/fluentd-kubernetes-daemonset:v1.16-debian-elasticsearch8-1
+        imagePullPolicy: IfNotPresent
+
+        # Environment variables for configuration
+        env:
+          # Elasticsearch connection
+          - name: FLUENT_ELASTICSEARCH_HOST
+            value: "elasticsearch.kube-system.svc.cluster.local"
+          - name: FLUENT_ELASTICSEARCH_PORT
+            value: "9200"
+          - name: FLUENT_ELASTICSEARCH_SCHEME
+            value: "http"
+          - name: FLUENT_ELASTICSEARCH_USER
+            value: "elastic"
+          - name: FLUENT_ELASTICSEARCH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: elasticsearch-credentials
+                key: password
+                optional: true
+
+          # Index configuration
+          - name: FLUENT_ELASTICSEARCH_INDEX_PREFIX
+            value: "logs-kubernetes"
+
+          # Cluster identification
+          - name: CLUSTER_NAME
+            value: "production-cluster"
+          - name: ENVIRONMENT
+            value: "production"
+
+          # Kubernetes API configuration
+          - name: FLUENT_FILTER_KUBERNETES_URL
+            value: "https://kubernetes.default.svc:443"
+          - name: KUBERNETES_VERIFY_SSL
+            value: "true"
+          - name: KUBERNETES_CA_FILE
+            value: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+
+          # Performance tuning
+          - name: FLUENT_CONTAINER_TAIL_PARSER_TYPE
+            value: "json"
+          - name: FLUENT_CONTAINER_TAIL_EXCLUDE_PATH
+            value: '["/var/log/containers/fluentd-*.log"]'
+
+        # Resource limits (adjust based on log volume)
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+
+        # Volume mounts
+        volumeMounts:
+          # Fluentd configuration
+          - name: config
+            mountPath: /fluentd/etc/fluent.conf
+            subPath: fluent.conf
+            readOnly: true
+
+          # Container logs directory
+          - name: varlog
+            mountPath: /var/log
+            readOnly: true
+
+          # Docker container logs
+          - name: varlibdockercontainers
+            mountPath: /var/lib/docker/containers
+            readOnly: true
+
+          # Systemd journal logs
+          - name: systemd
+            mountPath: /var/log/journal
+            readOnly: true
+
+          # Buffer storage (persistent)
+          - name: fluentd-buffer
+            mountPath: /var/log/fluentd-buffers
+
+        # Liveness probe
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 24231
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        # Readiness probe
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 24231
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+      # Volumes
+      volumes:
+        # Fluentd configuration from ConfigMap
+        - name: config
+          configMap:
+            name: fluentd-config
+            defaultMode: 0644
+
+        # Host paths for log collection
+        - name: varlog
+          hostPath:
+            path: /var/log
+            type: Directory
+
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+            type: DirectoryOrCreate
+
+        - name: systemd
+          hostPath:
+            path: /var/log/journal
+            type: DirectoryOrCreate
+
+        # Persistent buffer storage
+        - name: fluentd-buffer
+          hostPath:
+            path: /var/lib/fluentd-buffer
+            type: DirectoryOrCreate
+
+---
+# Secret for Elasticsearch credentials (create manually)
+# kubectl create secret generic elasticsearch-credentials \
+#   --from-literal=password='SecureElasticPassword123!' \
+#   -n kube-system
+apiVersion: v1
+kind: Secret
+metadata:
+  name: elasticsearch-credentials
+  namespace: kube-system
+  labels:
+    app: fluentd
+type: Opaque
+data:
+  # Base64 encoded password: SecureElasticPassword123!
+  # Change this in production: echo -n 'YourPassword' | base64
+  password: U2VjdXJlRWxhc3RpY1Bhc3N3b3JkMTIzIQ==
+
+---
+# Deployment Instructions:
+#
+# 1. Prerequisites:
+#    - Kubernetes cluster (1.20+)
+#    - Elasticsearch deployed (in-cluster or external)
+#    - kubectl configured with cluster access
+#
+# 2. Update Elasticsearch credentials:
+#    kubectl create secret generic elasticsearch-credentials \
+#      --from-literal=password='YourSecurePassword' \
+#      -n kube-system --dry-run=client -o yaml | kubectl apply -f -
+#
+# 3. Customize environment variables:
+#    Edit the DaemonSet spec to update:
+#    - FLUENT_ELASTICSEARCH_HOST (if Elasticsearch is external)
+#    - CLUSTER_NAME (your cluster identifier)
+#    - ENVIRONMENT (production, staging, development)
+#
+# 4. Deploy Fluentd:
+#    kubectl apply -f fluentd-kubernetes-daemonset.yaml
+#
+# 5. Verify deployment:
+#    kubectl get daemonset -n kube-system fluentd
+#    kubectl get pods -n kube-system -l app=fluentd
+#
+# 6. Check logs:
+#    kubectl logs -n kube-system -l app=fluentd --tail=100
+#
+# 7. Verify data in Elasticsearch:
+#    curl -u elastic:password http://elasticsearch:9200/_cat/indices?v
+#    # Should see indices like: logs-kubernetes-2024.12.05
+#
+# Resource Planning:
+# - CPU: 100m request, 500m limit per node (adjust based on log volume)
+# - Memory: 256Mi request, 512Mi limit per node
+# - Buffer Storage: 10-20GB per node for high-volume clusters
+# - Network: Plan for 1-10 MB/s outbound traffic to Elasticsearch per node
+#
+# Security Considerations:
+# - Use TLS for Elasticsearch connection in production (update scheme to https)
+# - Store credentials in Kubernetes Secrets (not in ConfigMap)
+# - Enable RBAC (ClusterRole provides minimal required permissions)
+# - Consider network policies to restrict Fluentd to Elasticsearch communication
+# - Regularly rotate Elasticsearch credentials
+# - Use pod security policies/admission controllers to enforce security context
+#
+# Performance Tuning:
+# - Adjust flush_interval based on log volume and latency requirements
+# - Increase buffer sizes for high-volume clusters
+# - Use SSD for buffer storage on nodes
+# - Monitor Fluentd memory usage and adjust limits if needed
+# - Consider using multiple Fluentd deployments for different log types
+#
+# Monitoring:
+# - Fluentd exposes metrics on port 24231 (/metrics endpoint)
+# - Monitor buffer queue length, retry counts, and flush times
+# - Set up alerts for Fluentd pod crashes or high memory usage
+# - Track log ingestion rate and compare with expected volume
+#
+# Troubleshooting:
+# - Check pod logs: kubectl logs -n kube-system <fluentd-pod> --tail=100
+# - Verify RBAC permissions: kubectl auth can-i get pods --as=system:serviceaccount:kube-system:fluentd
+# - Test Elasticsearch connectivity from pod:
+#   kubectl exec -n kube-system <fluentd-pod> -- curl -u elastic:password http://elasticsearch:9200/_cluster/health
+# - Check buffer directory: kubectl exec -n kube-system <fluentd-pod> -- ls -lh /var/log/fluentd-buffers

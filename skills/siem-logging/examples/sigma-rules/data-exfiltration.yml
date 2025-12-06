@@ -1,0 +1,31 @@
+title: Large Data Upload to External Domain
+id: 9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f
+status: stable
+description: Detects uploads >100MB to non-whitelisted external domains, indicating potential data exfiltration
+author: Security Team
+date: 2025/12/03
+modified: 2025/12/03
+references:
+  - https://attack.mitre.org/techniques/T1041/
+tags:
+  - attack.exfiltration
+  - attack.t1041
+logsource:
+  category: network_traffic
+  product: proxy
+detection:
+  selection:
+    http.request.method: POST
+    http.request.bytes: '>100000000'
+  filter_whitelist:
+    destination.domain:
+      - 'backup.company.com'
+      - 's3.amazonaws.com'
+      - 'blob.core.windows.net'
+      - 'storage.googleapis.com'
+  condition: selection and not filter_whitelist
+falsepositives:
+  - Large file uploads to legitimate cloud storage
+  - Backup operations
+  - Software deployment to cloud platforms
+level: critical

@@ -1,0 +1,10 @@
+{
+  "label": "Developer Productivity Skills",
+  "position": 7,
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "description": "7 production-ready developer productivity skills covering API design, CLI development, SDK creation, documentation, and Git workflows."
+  }
+}

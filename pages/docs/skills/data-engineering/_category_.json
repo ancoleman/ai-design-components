@@ -1,0 +1,10 @@
+{
+  "label": "Data Engineering Skills",
+  "position": 8,
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "description": "6 production-ready data engineering skills covering data architecture, streaming, transformations, SQL optimization, and performance engineering."
+  }
+}

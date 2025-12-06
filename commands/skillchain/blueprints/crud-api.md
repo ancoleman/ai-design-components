@@ -2,7 +2,7 @@
 
 ## Overview
 
-Pre-configured skill chain for building production-ready RESTful CRUD APIs with database persistence, authentication, and optional observability/deployment.
+Pre-configured skill chain for building production-ready RESTful CRUD APIs with database persistence, authentication, and optional implementing-observability/deployment.
 
 **Use this blueprint when building:**
 - RESTful APIs with database CRUD operations

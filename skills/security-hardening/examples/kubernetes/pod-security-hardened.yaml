@@ -1,0 +1,108 @@
+# Hardened Kubernetes Pod Example
+# Demonstrates best practices for pod security
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hardened-app
+  namespace: production
+  labels:
+    app: hardened-app
+    security: restricted
+spec:
+  # Service account (not default)
+  serviceAccountName: hardened-app-sa
+  automountServiceAccountToken: false  # Don't mount unless needed
+
+  # Pod-level security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534        # nobody user
+    runAsGroup: 65534       # nobody group
+    fsGroup: 65534          # filesystem group
+    seccompProfile:
+      type: RuntimeDefault  # Apply default seccomp profile
+    supplementalGroups: [1000]
+
+  containers:
+  - name: app
+    image: myregistry.io/myapp:v1.0.0
+    imagePullPolicy: Always
+
+    # Container-level security context
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 65534
+      capabilities:
+        drop:
+          - ALL                    # Drop all capabilities
+        # Only add if absolutely needed:
+        # add:
+        #   - NET_BIND_SERVICE
+
+    # Resource limits (required)
+    resources:
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
+        ephemeral-storage: "1Gi"
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+        ephemeral-storage: "500Mi"
+
+    # Liveness probe
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+
+    # Readiness probe
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+
+    # Writable volumes for read-only filesystem
+    volumeMounts:
+    - name: tmp
+      mountPath: /tmp
+    - name: cache
+      mountPath: /app/.cache
+
+    # Environment variables (no secrets!)
+    env:
+    - name: APP_ENV
+      value: "production"
+    - name: LOG_LEVEL
+      value: "info"
+
+  # Volumes
+  volumes:
+  - name: tmp
+    emptyDir:
+      sizeLimit: "100Mi"
+  - name: cache
+    emptyDir:
+      sizeLimit: "500Mi"
+
+  # Tolerations (if needed for node selectors)
+  # tolerations:
+  # - key: "app"
+  #   operator: "Equal"
+  #   value: "hardened"
+  #   effect: "NoSchedule"
+
+  # Node selector (optional)
+  # nodeSelector:
+  #   security: "hardened"

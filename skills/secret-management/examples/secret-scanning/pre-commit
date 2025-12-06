@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# Pre-commit hook for Gitleaks secret scanning
+#
+# Installation:
+#   chmod +x pre-commit
+#   cp pre-commit .git/hooks/pre-commit
+#
+# Or use pre-commit framework:
+#   pip install pre-commit
+#   pre-commit install
+
+set -e
+
+echo "🔍 Running Gitleaks secret scan..."
+
+# Check if gitleaks is installed
+if ! command -v gitleaks &> /dev/null; then
+  echo "❌ Gitleaks not installed!"
+  echo "Install with:"
+  echo "  brew install gitleaks  # macOS"
+  echo "  Or download from: https://github.com/gitleaks/gitleaks/releases"
+  exit 1
+fi
+
+# Run Gitleaks on staged files only
+gitleaks protect --staged --verbose --redact
+
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+  echo ""
+  echo "❌ Secret detected! Commit blocked."
+  echo ""
+  echo "To fix:"
+  echo "  1. Remove the secret from your code"
+  echo "  2. Store it in Vault:"
+  echo "     vault kv put secret/myapp/config api_key=<YOUR_SECRET>"
+  echo "  3. Reference it in code:"
+  echo "     Python:     vault_client.secrets.kv.v2.read_secret_version('myapp/config')"
+  echo "     JavaScript: await vaultClient.read('secret/data/myapp/config')"
+  echo ""
+  echo "If this is a false positive:"
+  echo "  Add to .gitleaks.toml allowlist or use # gitleaks:allow comment"
+  echo ""
+  echo "To bypass (NOT recommended):"
+  echo "  git commit --no-verify"
+  echo ""
+  exit 1
+fi
+
+echo "✅ No secrets detected. Proceeding with commit."
+exit 0

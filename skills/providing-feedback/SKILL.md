@@ -233,7 +233,7 @@ This skill enhances all other component skills:
 | **Radix UI** | Modal | Small | Design systems, headless |
 | **Headless UI** | Modal | Small | Tailwind projects |
 
-Choose based on your project requirements. See `references/library-comparison.md` for detailed analysis.
+Choose based on project requirements. See `references/library-comparison.md` for detailed analysis.
 
 ## Key Principles
 

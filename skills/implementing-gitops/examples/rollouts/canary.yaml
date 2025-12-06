@@ -1,0 +1,72 @@
+# Canary Deployment with Argo Rollouts
+# Gradually shifts traffic to new version with automated analysis
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: myapp
+  namespace: myapp
+spec:
+  replicas: 5
+  strategy:
+    canary:
+      steps:
+      - setWeight: 20
+      - pause: {duration: 1m}
+      - analysis:
+          templates:
+          - templateName: success-rate
+          args:
+          - name: service-name
+            value: myapp-canary
+      - setWeight: 50
+      - pause: {duration: 1m}
+      - setWeight: 80
+      - pause: {duration: 1m}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: myapp:v2
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+
+---
+# AnalysisTemplate: Success Rate Check
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate
+  namespace: myapp
+spec:
+  args:
+  - name: service-name
+  metrics:
+  - name: success-rate
+    interval: 5m
+    count: 3
+    successCondition: result[0] >= 0.95
+    failureLimit: 2
+    provider:
+      prometheus:
+        address: http://prometheus.monitoring:9090
+        query: |
+          sum(rate(
+            http_requests_total{service="{{args.service-name}}",status=~"2.."}[5m]
+          )) /
+          sum(rate(
+            http_requests_total{service="{{args.service-name}}"}[5m]
+          ))

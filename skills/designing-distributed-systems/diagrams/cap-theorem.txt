@@ -1,0 +1,36 @@
+CAP THEOREM DECISION TREE
+=========================
+
+Network Partitions WILL Occur → Always Design for P (Partition Tolerance)
+
+During Partition, Choose:
+
+┌─────────────────────────────────────────────────────────────┐
+│                    CP (Consistency + Partition Tolerance)    │
+├─────────────────────────────────────────────────────────────┤
+│ Behavior: Reject writes if quorum unavailable              │
+│ Use When: Correctness > Availability                       │
+│ Examples:                                                    │
+│   - Bank account balance                                    │
+│   - Inventory stock count                                   │
+│   - Seat/ticket booking                                     │
+│   - Distributed locks                                       │
+│                                                              │
+│ Systems: HBase, MongoDB (default), etcd, Consul            │
+│ Trade-off: System unavailable during partition             │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│                    AP (Availability + Partition Tolerance)   │
+├─────────────────────────────────────────────────────────────┤
+│ Behavior: Accept writes, resolve conflicts later           │
+│ Use When: Availability > Strict Consistency                │
+│ Examples:                                                    │
+│   - Social media (likes, follows, posts)                   │
+│   - Shopping cart                                           │
+│   - Product catalog                                         │
+│   - Analytics                                               │
+│                                                              │
+│ Systems: Cassandra, DynamoDB, Riak, Couchbase              │
+│ Trade-off: Stale reads, conflict resolution needed         │
+└─────────────────────────────────────────────────────────────┘

@@ -2,6 +2,30 @@
 
 Comprehensive guide to color usage in charts.
 
+
+## Table of Contents
+
+- [Color Scale Types](#color-scale-types)
+  - [1. Categorical (Qualitative)](#1-categorical-qualitative)
+  - [2. Sequential (Single-Hue)](#2-sequential-single-hue)
+  - [3. Diverging (Two-Hue)](#3-diverging-two-hue)
+- [Colorblind Considerations](#colorblind-considerations)
+  - [Types of Colorblindness](#types-of-colorblindness)
+  - [Colorblind-Safe Strategies](#colorblind-safe-strategies)
+- [Testing Tools](#testing-tools)
+- [WCAG Contrast Requirements](#wcag-contrast-requirements)
+- [Color Palette Selection Guide](#color-palette-selection-guide)
+  - [For Business Dashboards](#for-business-dashboards)
+  - [For Scientific Publications](#for-scientific-publications)
+  - [For Financial Charts](#for-financial-charts)
+  - [For Geographic/Heatmaps](#for-geographicheatmaps)
+  - [For Correlation Matrices](#for-correlation-matrices)
+- [Implementation Examples](#implementation-examples)
+  - [Using Categorical Palette (React)](#using-categorical-palette-react)
+  - [Using Sequential Scale (Python)](#using-sequential-scale-python)
+  - [Using Diverging Scale (D3)](#using-diverging-scale-d3)
+- [Design Token Integration](#design-token-integration)
+
 ## Color Scale Types
 
 ### 1. Categorical (Qualitative)

@@ -1,0 +1,69 @@
+---
+# Simple web server playbook
+# Usage: ansible-playbook -i inventory/hosts simple-webserver.yml
+
+- name: Configure web servers
+  hosts: webservers
+  become: yes
+
+  vars:
+    nginx_port: 80
+    nginx_user: www-data
+
+  pre_tasks:
+    - name: Update package cache (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+  tasks:
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+      notify: Restart nginx
+
+    - name: Create web root directory
+      ansible.builtin.file:
+        path: /var/www/html
+        state: directory
+        owner: "{{ nginx_user }}"
+        group: "{{ nginx_user }}"
+        mode: '0755'
+
+    - name: Deploy index page
+      ansible.builtin.copy:
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head><title>Welcome</title></head>
+          <body>
+            <h1>Server: {{ ansible_hostname }}</h1>
+            <p>Managed by Ansible</p>
+          </body>
+          </html>
+        dest: /var/www/html/index.html
+        owner: "{{ nginx_user }}"
+        group: "{{ nginx_user }}"
+        mode: '0644'
+
+    - name: Ensure nginx is started and enabled
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
+
+  post_tasks:
+    - name: Verify nginx responds
+      ansible.builtin.uri:
+        url: "http://localhost:{{ nginx_port }}"
+        status_code: 200
+      retries: 3
+      delay: 2
+
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted

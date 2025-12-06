@@ -1,0 +1,47 @@
+# Kustomization Controller
+# Applies Kustomize manifests from GitRepository source
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: myapp
+  namespace: flux-system
+spec:
+  # Reconciliation interval
+  interval: 10m
+
+  # Retry interval on failure
+  retryInterval: 2m
+
+  # Timeout for operations
+  timeout: 5m
+
+  # Path within repository
+  path: "./k8s/prod"
+
+  # Source reference
+  sourceRef:
+    kind: GitRepository
+    name: myapp
+
+  # Target namespace for resources
+  targetNamespace: myapp
+
+  # Remove resources not in Git
+  prune: true
+
+  # Wait for resources to be ready
+  wait: true
+
+  # Force apply on conflicts
+  force: true
+
+  # Health checks for critical resources
+  healthChecks:
+  - apiVersion: apps/v1
+    kind: Deployment
+    name: myapp
+    namespace: myapp
+  - apiVersion: apps/v1
+    kind: StatefulSet
+    name: myapp-db
+    namespace: myapp

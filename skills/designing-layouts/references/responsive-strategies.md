@@ -1,5 +1,36 @@
 # Responsive Design Strategies
 
+
+## Table of Contents
+
+- [Mobile-First Approach](#mobile-first-approach)
+  - [Benefits](#benefits)
+  - [Implementation](#implementation)
+- [Breakpoint Strategy](#breakpoint-strategy)
+  - [Content-Based Breakpoints](#content-based-breakpoints)
+  - [Standard Breakpoint System](#standard-breakpoint-system)
+  - [CSS Custom Properties for Breakpoints](#css-custom-properties-for-breakpoints)
+- [Fluid Typography](#fluid-typography)
+  - [Clamp() for Responsive Text](#clamp-for-responsive-text)
+  - [Viewport Units with Limits](#viewport-units-with-limits)
+- [Container Queries](#container-queries)
+  - [Component-Level Responsiveness](#component-level-responsiveness)
+  - [Named Containers](#named-containers)
+- [Responsive Images](#responsive-images)
+  - [Modern Picture Element](#modern-picture-element)
+  - [Responsive Background Images](#responsive-background-images)
+- [Responsive Tables](#responsive-tables)
+  - [Overflow Scrolling](#overflow-scrolling)
+  - [Stacked Layout on Mobile](#stacked-layout-on-mobile)
+- [Responsive Navigation](#responsive-navigation)
+  - [Progressive Disclosure Pattern](#progressive-disclosure-pattern)
+- [Performance Optimization](#performance-optimization)
+  - [Responsive Loading](#responsive-loading)
+  - [CSS Grid with Subgrid](#css-grid-with-subgrid)
+- [Testing Responsive Designs](#testing-responsive-designs)
+  - [Viewport Testing Checklist](#viewport-testing-checklist)
+  - [Orientation Testing](#orientation-testing)
+
 ## Mobile-First Approach
 
 Start with mobile layout and progressively enhance for larger screens.

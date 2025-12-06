@@ -1,0 +1,258 @@
+# Kubecost Helm Values
+#
+# Deploy Kubecost for Kubernetes cost visibility and optimization
+#
+# Installation:
+#   helm repo add kubecost https://kubecost.github.io/cost-analyzer/
+#   helm repo update
+#   helm install kubecost kubecost/cost-analyzer \
+#     --namespace kubecost \
+#     --create-namespace \
+#     --values kubecost-values.yaml \
+#     --set kubecostToken="YOUR_TOKEN_HERE"
+
+# Kubecost Product Configuration
+kubecostProductConfigs:
+  # Cloud integration for accurate pricing
+  cloudIntegrationSecret: cloud-integration  # Create secret with cloud credentials
+
+  # Cost allocation by labels
+  labelMappingConfigs:
+    enabled: true
+    owner_label: "team"           # Label for team ownership
+    product_label: "product"      # Label for product/application
+    department_label: "department" # Label for department
+    environment_label: "environment" # Label for environment (prod, staging, dev)
+
+  # Currency (default USD)
+  currencyCode: "USD"
+
+  # Default cluster name
+  clusterName: "production-cluster"
+
+  # Athena/BigQuery integration for cloud billing (optional)
+  athenaProjectID: ""
+  athenaBucketName: ""
+  athenaRegion: "us-east-1"
+  athenaDatabase: ""
+  athenaTable: ""
+
+# Enable multi-cluster aggregation
+kubecostAggregator:
+  enabled: true
+  cloudCost:
+    enabled: true  # Aggregate cloud costs (AWS/Azure/GCP)
+
+# Prometheus configuration
+prometheus:
+  server:
+    # Persistent storage for metrics
+    persistentVolume:
+      enabled: true
+      size: 100Gi
+      storageClass: "gp3"  # AWS gp3 SSD (change for other clouds)
+
+    # Retention period (30 days)
+    retention: 30d
+
+    # Resource requests/limits
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        cpu: 2000m
+        memory: 8Gi
+
+# Grafana (for custom dashboards)
+grafana:
+  enabled: true
+
+  # Persistent storage for Grafana
+  persistence:
+    enabled: true
+    size: 10Gi
+
+  # Admin password (change this!)
+  adminPassword: "CHANGE_ME_PLEASE"
+
+  # Resource requests/limits
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+# Kubecost Frontend (UI)
+kubecostFrontend:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+# Kubecost Cost-Model (backend)
+kubecostModel:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+  # Warm cache for faster queries
+  warmCache: true
+
+  # Warm savings cache (RI/SP recommendations)
+  warmSavingsCache: true
+
+# Network Costs (enable for accurate network cost tracking)
+networkCosts:
+  enabled: true
+  podMonitor:
+    enabled: true
+
+# Service Monitor (for Prometheus metrics)
+serviceMonitor:
+  enabled: true
+
+  # Namespace for service monitor
+  namespace: kubecost
+
+  # Additional labels
+  additionalLabels:
+    prometheus: kube-prometheus
+
+# Ingress (expose Kubecost UI)
+ingress:
+  enabled: true
+  className: nginx  # or "alb" for AWS ALB
+
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+  hosts:
+    - host: kubecost.company.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+  tls:
+    - secretName: kubecost-tls
+      hosts:
+        - kubecost.company.com
+
+# Budget Alerts (Slack notifications)
+notifications:
+  alertConfigs:
+    enabled: true
+
+    # Kubecost frontend URL (for alert links)
+    frontendUrl: https://kubecost.company.com
+
+    # Global Slack webhook URL
+    globalSlackWebhookUrl: "${SLACK_WEBHOOK_URL}"  # Set via environment variable
+
+    # Alert definitions
+    alerts:
+      # Budget alert per namespace
+      - type: budget
+        threshold: 1000  # USD per day
+        window: 1d
+        aggregation: namespace
+        filter: environment=prod
+
+      # Budget alert per team
+      - type: budget
+        threshold: 5000  # USD per week
+        window: 7d
+        aggregation: label:team
+
+      # Spend change alert (detect anomalies)
+      - type: spendChange
+        relativeThreshold: 0.20  # Alert if spend increases >20%
+        window: 1d
+        baselineWindow: 7d
+        aggregation: namespace
+
+      # Efficiency alert (low cluster efficiency)
+      - type: efficiency
+        efficiencyThreshold: 0.50  # Alert if efficiency <50%
+        window: 7d
+        aggregation: cluster
+
+# Recommendations Engine
+recommendations:
+  enabled: true
+
+  # Container resource request recommendations
+  containerResourceRequests:
+    enabled: true
+    targetCPUUtilization: 0.65      # Target 65% CPU utilization
+    targetRAMUtilization: 0.80      # Target 80% RAM utilization
+    window: 7d                       # Analyze past 7 days
+
+  # Cluster rightsizing recommendations
+  clusterSizing:
+    enabled: true
+    recommendationWindow: 7d
+
+  # Node group sizing recommendations
+  nodeGroupSizing:
+    enabled: true
+
+# Cost Analyzer Persistence
+persistentVolume:
+  enabled: true
+  size: 32Gi
+  storageClass: "gp3"  # AWS gp3 SSD
+
+  # Annotations for EBS CSI driver (AWS)
+  annotations:
+    "volume.beta.kubernetes.io/storage-class": "gp3"
+
+# RBAC
+rbac:
+  enabled: true
+
+# Service Account
+serviceAccount:
+  create: true
+  name: kubecost
+
+  # Annotations for IAM role (AWS EKS)
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::123456789012:role/kubecost-role"
+
+# Node Affinity (run Kubecost on specific nodes)
+nodeSelector: {}
+  # node-type: on-demand  # Run on on-demand nodes (not spot)
+
+tolerations: []
+  # - key: node-type
+  #   operator: Equal
+  #   value: on-demand
+  #   effect: NoSchedule
+
+# Pod Priority Class
+priorityClassName: ""
+
+# Resource quotas (prevent Kubecost from consuming too many resources)
+global:
+  grafana:
+    enabled: true
+    domainName: kubecost.company.com
+
+  prometheus:
+    enabled: true
+    fqdn: http://kubecost-prometheus-server.kubecost.svc.cluster.local
+
+  # Disable thanos (multi-cluster) if not needed
+  thanos:
+    enabled: false

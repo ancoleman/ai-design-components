@@ -118,19 +118,37 @@ class SummaryBar(Static):
         self.passed = 0
         self.failed = 0
         self.pending = 0
+        self.warnings = 0
+        self.suggestions = 0
+        self.project_rules = 0
 
-    def update_stats(self, passed: int, failed: int, pending: int) -> None:
+    def update_stats(
+        self,
+        passed: int,
+        failed: int,
+        pending: int,
+        warnings: int = 0,
+        suggestions: int = 0,
+        project_rules: int = 0,
+    ) -> None:
         """Update summary statistics."""
         self.passed = passed
         self.failed = failed
         self.pending = pending
+        self.warnings = warnings
+        self.suggestions = suggestions
+        self.project_rules = project_rules
 
         total = passed + failed + pending
         self.update(
             f"[bold]Skills:[/bold] {total} total | "
             f"[green]{passed} passed[/green] | "
             f"[red]{failed} failed[/red] | "
-            f"[yellow]{pending} pending[/yellow]"
+            f"[yellow]{pending} pending[/yellow]  "
+            f"[bold]Issues:[/bold] "
+            f"[yellow]{warnings} warn[/yellow] | "
+            f"[magenta]{project_rules} proj[/magenta] | "
+            f"[blue]{suggestions} sug[/blue]"
         )
 
 
@@ -452,12 +470,39 @@ class SkillValidationApp(App):
 
     def update_summary(self) -> None:
         """Update summary statistics."""
+        from .result import Severity
+
         passed = sum(1 for s in self.skills_data if s.status == 'pass')
         failed = sum(1 for s in self.skills_data if s.status == 'fail')
         pending = sum(1 for s in self.skills_data if s.status == 'pending')
 
+        # Calculate total warnings, project rules, and suggestions across all skills
+        total_warnings = 0
+        total_project_rules = 0
+        total_suggestions = 0
+
+        for skill in self.skills_data:
+            if skill.result and skill.result.issues:
+                for issue in skill.result.issues:
+                    if issue.severity == Severity.WARNING:
+                        if issue.rule_id and issue.rule_id.startswith("project."):
+                            total_project_rules += 1
+                        else:
+                            total_warnings += 1
+                    elif issue.severity == Severity.SUGGESTION:
+                        total_suggestions += 1
+            else:
+                # Fallback if no detailed issues
+                total_warnings += len(skill.warnings)
+                total_suggestions += len(skill.suggestions)
+
         summary = self.query_one("#summary-bar", SummaryBar)
-        summary.update_stats(passed, failed, pending)
+        summary.update_stats(
+            passed, failed, pending,
+            warnings=total_warnings,
+            suggestions=total_suggestions,
+            project_rules=total_project_rules
+        )
 
     def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
         """Handle row selection."""

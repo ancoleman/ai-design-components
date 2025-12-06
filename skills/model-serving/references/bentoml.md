@@ -1,5 +1,37 @@
 # BentoML - ML Model Deployment Made Easy
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Basic Workflow](#basic-workflow)
+  - [1. Train and Save Model](#1-train-and-save-model)
+  - [2. Create Service](#2-create-service)
+  - [3. Serve Locally](#3-serve-locally)
+  - [4. Build and Deploy](#4-build-and-deploy)
+- [Adaptive Batching](#adaptive-batching)
+  - [How It Works](#how-it-works)
+  - [Configuration](#configuration)
+- [Multi-Framework Support](#multi-framework-support)
+  - [PyTorch](#pytorch)
+  - [XGBoost](#xgboost)
+  - [TensorFlow](#tensorflow)
+- [Configuration](#configuration)
+  - [Service Configuration](#service-configuration)
+  - [bentofile.yaml](#bentofileyaml)
+- [Deployment Patterns](#deployment-patterns)
+  - [Docker](#docker)
+  - [Kubernetes](#kubernetes)
+  - [AWS Lambda](#aws-lambda)
+- [Observability](#observability)
+  - [Built-in Metrics](#built-in-metrics)
+  - [Logging](#logging)
+  - [Distributed Tracing](#distributed-tracing)
+- [Testing](#testing)
+- [Best Practices](#best-practices)
+- [Resources](#resources)
+
 ## Overview
 
 BentoML is a Python-native framework for building production-ready ML model serving APIs with adaptive batching, multi-framework support, and easy deployment to Kubernetes, AWS, GCP, and Azure.

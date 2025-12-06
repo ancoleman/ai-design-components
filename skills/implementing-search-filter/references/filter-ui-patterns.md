@@ -1,5 +1,31 @@
 # Filter UI Patterns
 
+
+## Table of Contents
+
+- [Checkbox Filters](#checkbox-filters)
+  - [Basic Multi-Select Filter](#basic-multi-select-filter)
+  - [Collapsible Filter Groups](#collapsible-filter-groups)
+- [Range Filters](#range-filters)
+  - [Price Range Slider](#price-range-slider)
+  - [Date Range Picker](#date-range-picker)
+- [Dropdown Filters](#dropdown-filters)
+  - [Single Select Dropdown](#single-select-dropdown)
+  - [Searchable Dropdown with Downshift](#searchable-dropdown-with-downshift)
+- [Filter Chips](#filter-chips)
+  - [Active Filter Display](#active-filter-display)
+- [Faceted Search](#faceted-search)
+  - [Dynamic Count Updates](#dynamic-count-updates)
+- [Mobile Filter Patterns](#mobile-filter-patterns)
+  - [Filter Drawer](#filter-drawer)
+- [Sort Options](#sort-options)
+  - [Sort Dropdown](#sort-dropdown)
+- [Filter State Management](#filter-state-management)
+  - [Using URL Parameters](#using-url-parameters)
+- [Accessibility Considerations](#accessibility-considerations)
+  - [Filter Region ARIA](#filter-region-aria)
+  - [Keyboard Navigation](#keyboard-navigation)
+
 ## Checkbox Filters
 
 ### Basic Multi-Select Filter

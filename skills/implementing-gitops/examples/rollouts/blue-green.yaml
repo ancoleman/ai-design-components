@@ -1,0 +1,70 @@
+# Blue-Green Deployment with Argo Rollouts
+# Deploys new version alongside old, switches traffic atomically
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: myapp
+  namespace: myapp
+spec:
+  replicas: 5
+  strategy:
+    blueGreen:
+      # Active service routes to current version
+      activeService: myapp-active
+      # Preview service routes to new version
+      previewService: myapp-preview
+      # Require manual promotion
+      autoPromotionEnabled: false
+      # Wait before scaling down old version
+      scaleDownDelaySeconds: 300
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: myapp:v2
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+
+---
+# Active Service (production traffic)
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-active
+  namespace: myapp
+spec:
+  selector:
+    app: myapp
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: LoadBalancer
+
+---
+# Preview Service (testing new version)
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-preview
+  namespace: myapp
+spec:
+  selector:
+    app: myapp
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP

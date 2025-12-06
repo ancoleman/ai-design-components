@@ -1,0 +1,228 @@
+# Kubernetes NetworkPolicy Examples
+#
+# These policies implement a default-deny-all approach with explicit allow rules.
+# This is recommended for production environments to minimize attack surface.
+#
+# Prerequisites:
+# - CNI plugin that supports NetworkPolicies (Calico, Cilium, Weave)
+# - Kubernetes 1.7+
+#
+# Usage:
+# kubectl apply -f default-deny-allow-dns.yaml -n <namespace>
+
+---
+# 1. Default Deny All Ingress Traffic
+# This policy denies ALL incoming traffic to ALL pods in the namespace.
+# You must then create explicit allow policies for required communication.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: production
+spec:
+  podSelector: {}  # Applies to all pods in namespace
+  policyTypes:
+    - Ingress
+
+---
+# 2. Default Deny All Egress Traffic
+# This policy denies ALL outgoing traffic from ALL pods in the namespace.
+# You must then create explicit allow policies for required communication.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-egress
+  namespace: production
+spec:
+  podSelector: {}  # Applies to all pods in namespace
+  policyTypes:
+    - Egress
+
+---
+# 3. Allow DNS Queries (Essential)
+# Without this, pods cannot resolve domain names.
+# This must be applied after default-deny-egress.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: production
+spec:
+  podSelector: {}  # Applies to all pods
+  policyTypes:
+    - Egress
+  egress:
+    # Allow DNS queries to kube-dns/CoreDNS in kube-system namespace
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+
+---
+# 4. Allow Frontend to Backend Communication
+# Frontend pods can send traffic to backend pods on port 8080
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: production
+spec:
+  podSelector:
+    matchLabels:
+      app: backend  # Target: backend pods
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: frontend  # Source: frontend pods
+      ports:
+        - protocol: TCP
+          port: 8080
+
+---
+# 5. Allow Backend to Database Communication
+# Backend pods can send traffic to database pods on port 5432 (PostgreSQL)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-to-database
+  namespace: production
+spec:
+  podSelector:
+    matchLabels:
+      app: database  # Target: database pods
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: backend  # Source: backend pods
+      ports:
+        - protocol: TCP
+          port: 5432
+
+---
+# 6. Allow Ingress Controller to Frontend
+# Ingress controller (from ingress-nginx namespace) can access frontend pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-frontend
+  namespace: production
+spec:
+  podSelector:
+    matchLabels:
+      app: frontend  # Target: frontend pods
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+
+---
+# 7. Allow Backend to External API (Egress)
+# Backend pods can make HTTPS requests to external APIs
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-external-https
+  namespace: production
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+    - Egress
+  egress:
+    # Allow HTTPS to any destination (external APIs)
+    - to:
+        - namespaceSelector: {}  # Any namespace
+      ports:
+        - protocol: TCP
+          port: 443
+    # Note: For stricter control, specify exact IP ranges or use DNS-based policies
+
+---
+# 8. Allow Prometheus Scraping (Monitoring)
+# Prometheus (in monitoring namespace) can scrape metrics from all pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-prometheus-scraping
+  namespace: production
+spec:
+  podSelector: {}  # All pods
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: monitoring
+          podSelector:
+            matchLabels:
+              app: prometheus
+      ports:
+        - protocol: TCP
+          port: 9090  # Metrics port (adjust as needed)
+
+---
+# 9. Allow Same-Namespace Communication
+# All pods in the namespace can communicate with each other
+# (Useful for development, not recommended for production)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-same-namespace
+  namespace: development
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector: {}  # From any pod in same namespace
+  egress:
+    - to:
+        - podSelector: {}  # To any pod in same namespace
+
+---
+# 10. Deny Specific Source (Block Compromised Pod)
+# Deny traffic from a specific pod label (e.g., compromised pod)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-compromised-pod
+  namespace: production
+spec:
+  podSelector: {}  # Applies to all pods
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchExpressions:
+              - key: compromised
+                operator: DoesNotExist  # Allow only if 'compromised' label is NOT present

@@ -4,8 +4,8 @@
     "name": "Anton Coleman",
     "email": "acoleman@paloaltonetworks.com"
   },
-  "version": "0.3.2",
-  "description": "Comprehensive UI/UX component design skills for AI-assisted development",
+  "version": "0.5.0",
+  "description": "Comprehensive full-stack development skills for AI-assisted development covering UI/UX, backend, DevOps, infrastructure, security, and AI/ML",
   "plugins": [
     {
       "name": "ui-foundation-skills",
@@ -84,11 +84,11 @@
       "source": "./",
       "skills": [
         "./skills/ingesting-data",
-        "./skills/databases-relational",
-        "./skills/databases-vector",
-        "./skills/databases-timeseries",
-        "./skills/databases-document",
-        "./skills/databases-graph"
+        "./skills/using-relational-databases",
+        "./skills/using-vector-databases",
+        "./skills/using-timeseries-databases",
+        "./skills/using-document-databases",
+        "./skills/using-graph-databases"
       ],
       "strict": false
     },
@@ -97,9 +97,9 @@
       "description": "API development, messaging, and real-time communication",
       "source": "./",
       "skills": [
-        "./skills/api-patterns",
-        "./skills/message-queues",
-        "./skills/realtime-sync"
+        "./skills/implementing-api-patterns",
+        "./skills/using-message-queues",
+        "./skills/implementing-realtime-sync"
       ],
       "strict": false
     },
@@ -108,8 +108,8 @@
       "description": "Observability, security, and deployment infrastructure",
       "source": "./",
       "skills": [
-        "./skills/observability",
-        "./skills/auth-security",
+        "./skills/implementing-observability",
+        "./skills/securing-authentication",
         "./skills/deploying-applications"
       ],
       "strict": false
@@ -121,6 +121,117 @@
       "skills": [
         "./skills/ai-data-engineering",
         "./skills/model-serving"
+      ],
+      "strict": false
+    },
+    {
+      "name": "devops-skills",
+      "description": "CI/CD pipelines, GitOps workflows, testing strategies, platform engineering, and containerization",
+      "source": "./",
+      "skills": [
+        "./skills/testing-strategies",
+        "./skills/building-ci-pipelines",
+        "./skills/implementing-gitops",
+        "./skills/platform-engineering",
+        "./skills/managing-incidents",
+        "./skills/writing-dockerfiles"
+      ],
+      "strict": false
+    },
+    {
+      "name": "infrastructure-skills",
+      "description": "Kubernetes operations, infrastructure as code, networking, service mesh, and distributed systems",
+      "source": "./",
+      "skills": [
+        "./skills/operating-kubernetes",
+        "./skills/writing-infrastructure-code",
+        "./skills/administering-linux",
+        "./skills/architecting-networks",
+        "./skills/load-balancing-patterns",
+        "./skills/planning-disaster-recovery",
+        "./skills/configuring-nginx",
+        "./skills/shell-scripting",
+        "./skills/managing-dns",
+        "./skills/implementing-service-mesh",
+        "./skills/managing-configuration",
+        "./skills/designing-distributed-systems"
+      ],
+      "strict": false
+    },
+    {
+      "name": "security-skills",
+      "description": "Security architecture, compliance frameworks, vulnerability management, TLS, firewalls, and SIEM",
+      "source": "./",
+      "skills": [
+        "./skills/architecting-security",
+        "./skills/implementing-compliance",
+        "./skills/managing-vulnerabilities",
+        "./skills/implementing-tls",
+        "./skills/configuring-firewalls",
+        "./skills/siem-logging",
+        "./skills/security-hardening"
+      ],
+      "strict": false
+    },
+    {
+      "name": "developer-productivity-skills",
+      "description": "API design, CLI development, SDK creation, documentation generation, debugging, and Git workflows",
+      "source": "./",
+      "skills": [
+        "./skills/designing-apis",
+        "./skills/building-clis",
+        "./skills/designing-sdks",
+        "./skills/generating-documentation",
+        "./skills/debugging-techniques",
+        "./skills/managing-git-workflows",
+        "./skills/writing-github-actions"
+      ],
+      "strict": false
+    },
+    {
+      "name": "data-engineering-skills",
+      "description": "Data architecture, streaming pipelines, transformations, SQL optimization, and performance engineering",
+      "source": "./",
+      "skills": [
+        "./skills/architecting-data",
+        "./skills/streaming-data",
+        "./skills/transforming-data",
+        "./skills/optimizing-sql",
+        "./skills/secret-management",
+        "./skills/performance-engineering"
+      ],
+      "strict": false
+    },
+    {
+      "name": "ai-ml-skills",
+      "description": "MLOps patterns, prompt engineering, LLM evaluation, and embedding optimization",
+      "source": "./",
+      "skills": [
+        "./skills/implementing-mlops",
+        "./skills/prompt-engineering",
+        "./skills/evaluating-llms",
+        "./skills/embedding-optimization"
+      ],
+      "strict": false
+    },
+    {
+      "name": "cloud-provider-skills",
+      "description": "Cloud-specific patterns and best practices for AWS, GCP, and Azure",
+      "source": "./",
+      "skills": [
+        "./skills/deploying-on-aws",
+        "./skills/deploying-on-gcp",
+        "./skills/deploying-on-azure"
+      ],
+      "strict": false
+    },
+    {
+      "name": "finops-skills",
+      "description": "Cloud cost optimization and resource tagging strategies",
+      "source": "./",
+      "skills": [
+        "./skills/optimizing-costs",
+        "./skills/resource-tagging"
       ],
       "strict": false
     }

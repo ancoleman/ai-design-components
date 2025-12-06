@@ -1,0 +1,38 @@
+# Basic ArgoCD Application
+# Deploys myapp from Git repository with automated sync
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp
+  namespace: argocd
+  labels:
+    app: myapp
+    environment: production
+spec:
+  # Project to which application belongs
+  project: default
+
+  # Source repository configuration
+  source:
+    repoURL: https://github.com/myorg/myapp.git
+    targetRevision: HEAD
+    path: k8s/base
+
+  # Destination cluster and namespace
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp
+
+  # Sync policy configuration
+  syncPolicy:
+    automated:
+      prune: true      # Remove resources not in Git
+      selfHeal: true   # Revert manual changes
+    syncOptions:
+    - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

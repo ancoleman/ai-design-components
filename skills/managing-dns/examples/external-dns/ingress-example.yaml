@@ -1,0 +1,50 @@
+# Kubernetes Ingress with external-dns annotations
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: default
+  annotations:
+    # Hostname for DNS record
+    external-dns.alpha.kubernetes.io/hostname: app.example.com,www.example.com
+
+    # TTL
+    external-dns.alpha.kubernetes.io/ttl: "300"
+
+    # Ingress controller annotation (example: nginx)
+    kubernetes.io/ingress.class: nginx
+
+    # SSL/TLS (cert-manager example)
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - hosts:
+        - app.example.com
+        - www.example.com
+      secretName: app-tls
+  rules:
+    - host: app.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app
+                port:
+                  number: 80
+    - host: www.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app
+                port:
+                  number: 80
+
+---
+# Result: DNS records automatically created
+# app.example.com.  300  IN  A  <Ingress-Controller-IP>
+# www.example.com.  300  IN  A  <Ingress-Controller-IP>

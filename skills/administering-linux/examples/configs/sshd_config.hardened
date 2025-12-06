@@ -1,0 +1,80 @@
+# Hardened SSH Configuration
+#
+# Installation:
+#   1. Backup original: sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+#   2. Copy this file: sudo cp sshd_config.hardened /etc/ssh/sshd_config
+#   3. Test configuration: sudo sshd -t
+#   4. Keep a backup SSH session open!
+#   5. Restart: sudo systemctl restart sshd
+#
+# IMPORTANT: Test thoroughly before deploying to production!
+
+# Port (change from default 22 for obscurity, not security)
+Port 2222
+
+# Protocol 2 only (Protocol 1 is insecure)
+Protocol 2
+
+# Disable root login
+PermitRootLogin no
+
+# Key-based authentication only
+PubkeyAuthentication yes
+PasswordAuthentication no
+PermitEmptyPasswords no
+ChallengeResponseAuthentication no
+
+# Restrict users and groups
+AllowUsers deploy admin
+AllowGroups sshusers
+
+# Authentication settings
+MaxAuthTries 3
+LoginGraceTime 30s
+MaxSessions 10
+MaxStartups 10:30:60
+
+# Disable unused features
+X11Forwarding no
+PermitTunnel no
+AllowAgentForwarding no
+AllowTcpForwarding no
+GatewayPorts no
+
+# Use strong ciphers (modern defaults are good, but can be explicit)
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+
+# Use strong MACs
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256
+
+# Use strong key exchange algorithms
+KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+
+# Host key algorithms
+HostKeyAlgorithms ssh-ed25519,rsa-sha2-512,rsa-sha2-256
+
+# Logging
+SyslogFacility AUTH
+LogLevel VERBOSE
+
+# Keep connections alive
+ClientAliveInterval 300
+ClientAliveCountMax 2
+
+# Disable GSSAPI (if not needed)
+GSSAPIAuthentication no
+
+# Use PAM
+UsePAM yes
+
+# Print last login
+PrintLastLog yes
+
+# Print MOTD
+PrintMotd no
+
+# Accept locale environment
+AcceptEnv LANG LC_*
+
+# Subsystem
+Subsystem sftp /usr/lib/openssh/sftp-server

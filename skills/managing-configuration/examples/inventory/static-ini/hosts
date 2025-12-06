@@ -1,0 +1,45 @@
+# Static inventory in INI format
+# Usage: ansible-playbook -i inventory/static-ini/hosts site.yml
+
+[webservers]
+web1.example.com ansible_host=10.0.1.10
+web2.example.com ansible_host=10.0.1.11
+web3.example.com ansible_host=10.0.1.12
+
+[appservers]
+app1.example.com ansible_host=10.0.2.10
+app2.example.com ansible_host=10.0.2.11
+
+[databases]
+db1.example.com ansible_host=10.0.3.10
+db2.example.com ansible_host=10.0.3.11
+
+[loadbalancers]
+lb1.example.com ansible_host=10.0.4.10
+
+# Group variables
+[webservers:vars]
+nginx_worker_processes=4
+app_env=production
+
+[databases:vars]
+postgres_version=15
+postgres_max_connections=200
+
+# Parent groups
+[frontend:children]
+webservers
+loadbalancers
+
+[backend:children]
+appservers
+databases
+
+[production:children]
+frontend
+backend
+
+[production:vars]
+ansible_user=deploy
+ansible_become=yes
+ansible_python_interpreter=/usr/bin/python3

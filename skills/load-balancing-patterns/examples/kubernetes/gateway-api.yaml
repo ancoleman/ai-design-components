@@ -1,0 +1,583 @@
+# Kubernetes Gateway API Configuration
+# Gateway API is the successor to Ingress, providing more expressive traffic routing
+# Requires Gateway API CRDs installed: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
+
+---
+# GatewayClass: Defines the controller implementation
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: traefik-gateway-class
+spec:
+  controllerName: traefik.io/gateway-controller
+  description: "Traefik-based Gateway implementation"
+
+---
+# Gateway: Entry point for traffic (replaces LoadBalancer/NodePort services)
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: production-gateway
+  namespace: default
+  labels:
+    environment: production
+spec:
+  gatewayClassName: traefik-gateway-class
+
+  # Listeners define the ports and protocols
+  listeners:
+    # HTTP listener (port 80)
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All  # Allow routes from all namespaces
+
+    # HTTPS listener (port 443)
+    - name: https
+      protocol: HTTPS
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: example-com-tls
+            namespace: default
+
+    # Additional HTTPS listener with SNI
+    - name: https-api
+      protocol: HTTPS
+      port: 443
+      hostname: api.example.com
+      allowedRoutes:
+        namespaces:
+          from: Same
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: api-example-com-tls
+
+---
+# HTTPRoute: Main application routing with load balancing
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: app-route
+  namespace: default
+  labels:
+    app: web-application
+spec:
+  # Attach to the Gateway
+  parentRefs:
+    - name: production-gateway
+      namespace: default
+      sectionName: https
+
+  # Hostname matching
+  hostnames:
+    - "example.com"
+    - "www.example.com"
+
+  # Routing rules
+  rules:
+    # Rule 1: Homepage with round-robin load balancing
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+          headers:
+            - name: X-Version
+              value: stable
+      backendRefs:
+        # Multiple backends for load balancing
+        - name: web-frontend-v1
+          port: 80
+          weight: 100  # All traffic to v1
+      filters:
+        # Add response header
+        - type: ResponseHeaderModifier
+          responseHeaderModifier:
+            add:
+              - name: X-Backend-Version
+                value: v1
+
+    # Rule 2: API path with weighted traffic splitting (canary)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        # Weighted load balancing: 90% to v1, 10% to v2
+        - name: api-backend-v1
+          port: 8080
+          weight: 90
+        - name: api-backend-v2
+          port: 8080
+          weight: 10
+      filters:
+        # Strip /api prefix before forwarding
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+
+    # Rule 3: Static content with header-based routing
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /static
+          headers:
+            - name: X-Cache-Control
+              type: Exact
+              value: no-cache
+      backendRefs:
+        - name: static-backend-nocache
+          port: 80
+          weight: 100
+
+    # Rule 4: Exact path match for health check
+    - matches:
+        - path:
+            type: Exact
+            value: /health
+      backendRefs:
+        - name: health-check-backend
+          port: 8080
+
+---
+# HTTPRoute: API subdomain with advanced routing
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: api-route
+  namespace: default
+spec:
+  parentRefs:
+    - name: production-gateway
+      sectionName: https-api
+
+  hostnames:
+    - "api.example.com"
+
+  rules:
+    # Rule 1: Versioned API routing (v1)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v1
+      backendRefs:
+        - name: api-backend-v1
+          port: 8080
+      filters:
+        # Add API version header
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            add:
+              - name: X-API-Version
+                value: "1"
+            remove:
+              - Authorization  # Example: remove sensitive headers
+
+    # Rule 2: Versioned API routing (v2)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v2
+      backendRefs:
+        - name: api-backend-v2
+          port: 8080
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            add:
+              - name: X-API-Version
+                value: "2"
+
+    # Rule 3: Query parameter-based routing
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /search
+          queryParams:
+            - name: beta
+              value: "true"
+      backendRefs:
+        - name: api-backend-v2-beta
+          port: 8080
+
+    # Rule 4: Default route (no version specified)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: api-backend-v1
+          port: 8080
+          weight: 80
+        - name: api-backend-v2
+          port: 8080
+          weight: 20
+
+---
+# HTTPRoute: Traffic mirroring for testing
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mirrored-route
+  namespace: default
+spec:
+  parentRefs:
+    - name: production-gateway
+
+  hostnames:
+    - "test.example.com"
+
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        # Primary backend
+        - name: api-backend-v1
+          port: 8080
+          weight: 100
+        # Mirror backend (responses ignored)
+        - name: api-backend-v2
+          port: 8080
+          weight: 0  # Weight 0 means mirror only
+      filters:
+        - type: RequestMirror
+          requestMirror:
+            backendRef:
+              name: api-backend-v2
+              port: 8080
+
+---
+# HTTPRoute: Redirect rules
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: redirect-route
+  namespace: default
+spec:
+  parentRefs:
+    - name: production-gateway
+      sectionName: http  # HTTP listener
+
+  hostnames:
+    - "example.com"
+
+  rules:
+    # Redirect HTTP to HTTPS
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301
+
+---
+# HTTPRoute: Header-based routing for A/B testing
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: ab-test-route
+  namespace: default
+spec:
+  parentRefs:
+    - name: production-gateway
+
+  hostnames:
+    - "app.example.com"
+
+  rules:
+    # Rule 1: Beta users (based on cookie)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+          headers:
+            - name: Cookie
+              type: RegularExpression
+              value: ".*beta=true.*"
+      backendRefs:
+        - name: app-backend-beta
+          port: 80
+
+    # Rule 2: Premium users (based on header)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+          headers:
+            - name: X-User-Tier
+              value: premium
+      backendRefs:
+        - name: app-backend-premium
+          port: 80
+
+    # Rule 3: Default users
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: app-backend-standard
+          port: 80
+
+---
+# HTTPRoute: Method-based routing
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: method-route
+  namespace: default
+spec:
+  parentRefs:
+    - name: production-gateway
+
+  hostnames:
+    - "api.example.com"
+
+  rules:
+    # Route GET requests to read-only backend
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /data
+          method: GET
+      backendRefs:
+        - name: api-backend-readonly
+          port: 8080
+
+    # Route POST/PUT/DELETE to read-write backend
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /data
+          method: POST
+      backendRefs:
+        - name: api-backend-readwrite
+          port: 8080
+
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /data
+          method: PUT
+      backendRefs:
+        - name: api-backend-readwrite
+          port: 8080
+
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /data
+          method: DELETE
+      backendRefs:
+        - name: api-backend-readwrite
+          port: 8080
+
+---
+# ReferenceGrant: Allow cross-namespace references
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-gateway-to-backend
+  namespace: backend-namespace
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: default
+  to:
+    - group: ""
+      kind: Service
+
+---
+# Backend Services (Kubernetes Services)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-frontend-v1
+  namespace: default
+spec:
+  selector:
+    app: web-frontend
+    version: v1
+  ports:
+    - port: 80
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-backend-v1
+  namespace: default
+spec:
+  selector:
+    app: api-backend
+    version: v1
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-backend-v2
+  namespace: default
+spec:
+  selector:
+    app: api-backend
+    version: v2
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-backend-v2-beta
+  namespace: default
+spec:
+  selector:
+    app: api-backend
+    version: v2-beta
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-backend-nocache
+  namespace: default
+spec:
+  selector:
+    app: static-assets
+    cache: disabled
+  ports:
+    - port: 80
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: health-check-backend
+  namespace: default
+spec:
+  selector:
+    app: health-check
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-backend-beta
+  namespace: default
+spec:
+  selector:
+    app: web-app
+    version: beta
+  ports:
+    - port: 80
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-backend-premium
+  namespace: default
+spec:
+  selector:
+    app: web-app
+    tier: premium
+  ports:
+    - port: 80
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-backend-standard
+  namespace: default
+spec:
+  selector:
+    app: web-app
+    tier: standard
+  ports:
+    - port: 80
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-backend-readonly
+  namespace: default
+spec:
+  selector:
+    app: api-backend
+    mode: readonly
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-backend-readwrite
+  namespace: default
+spec:
+  selector:
+    app: api-backend
+    mode: readwrite
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+# TLS Secret for HTTPS
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-com-tls
+  namespace: default
+type: kubernetes.io/tls
+data:
+  tls.crt: LS0tLS1CRUdJTi...  # Base64 encoded certificate
+  tls.key: LS0tLS1CRUdJTi...  # Base64 encoded private key
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: api-example-com-tls
+  namespace: default
+type: kubernetes.io/tls
+data:
+  tls.crt: LS0tLS1CRUdJTi...
+  tls.key: LS0tLS1CRUdJTi...

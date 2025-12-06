@@ -1,0 +1,141 @@
+# Reusable Deployment Workflow Example
+# Demonstrates: Reusable workflow with inputs, secrets, and outputs
+
+name: Reusable Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: string
+      version:
+        description: 'Version to deploy'
+        required: false
+        type: string
+        default: 'latest'
+      dry-run:
+        description: 'Perform dry run without actual deployment'
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      aws-access-key-id:
+        required: true
+      aws-secret-access-key:
+        required: true
+      api-token:
+        required: false
+    outputs:
+      deployment-url:
+        description: "URL of the deployed application"
+        value: ${{ jobs.deploy.outputs.url }}
+      deployment-id:
+        description: "Deployment ID"
+        value: ${{ jobs.deploy.outputs.id }}
+
+jobs:
+  validate:
+    name: Validate Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v5.0.0
+
+      - name: Validate environment
+        run: |
+          VALID_ENVS="dev staging production"
+          if [[ ! " $VALID_ENVS " =~ " ${{ inputs.environment }} " ]]; then
+            echo "Invalid environment: ${{ inputs.environment }}"
+            echo "Valid environments: $VALID_ENVS"
+            exit 1
+          fi
+
+      - name: Validate version
+        run: |
+          if [[ "${{ inputs.version }}" != "latest" && ! "${{ inputs.version }}" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version format: ${{ inputs.version }}"
+            exit 1
+          fi
+
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    needs: validate
+    runs-on: ubuntu-latest
+    # Only one deployment per environment at a time
+    concurrency:
+      group: deploy-${{ inputs.environment }}
+      cancel-in-progress: false
+    environment:
+      name: ${{ inputs.environment }}
+      url: https://${{ inputs.environment }}.example.com
+    outputs:
+      url: https://${{ inputs.environment }}.example.com
+      id: ${{ steps.deploy.outputs.deployment-id }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v5.0.0
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.aws-access-key-id }}
+          aws-secret-access-key: ${{ secrets.aws-secret-access-key }}
+          aws-region: us-east-1
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: dist-${{ inputs.version }}
+          path: dist/
+
+      - name: Deploy to S3
+        id: deploy
+        run: |
+          if [[ "${{ inputs.dry-run }}" == "true" ]]; then
+            echo "DRY RUN: Would deploy to s3://my-bucket-${{ inputs.environment }}"
+            DEPLOYMENT_ID="dry-run-${{ github.run_id }}"
+          else
+            aws s3 sync dist/ s3://my-bucket-${{ inputs.environment }}/ --delete
+            DEPLOYMENT_ID=$(date +%s)
+          fi
+          echo "deployment-id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+
+      - name: Invalidate CloudFront cache
+        if: inputs.dry-run != true
+        run: |
+          DIST_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[0]=='${{ inputs.environment }}.example.com'].Id" --output text)
+          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
+
+      - name: Notify deployment
+        if: secrets.api-token != ''
+        env:
+          API_TOKEN: ${{ secrets.api-token }}
+        run: |
+          curl -X POST https://api.example.com/deployments \
+            -H "Authorization: Bearer $API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "environment": "${{ inputs.environment }}",
+              "version": "${{ inputs.version }}",
+              "url": "https://${{ inputs.environment }}.example.com",
+              "status": "success"
+            }'
+
+  smoke-test:
+    name: Smoke Test
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: inputs.dry-run != true
+    steps:
+      - name: Test deployment
+        run: |
+          URL="${{ needs.deploy.outputs.url }}"
+          echo "Testing $URL..."
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $URL)
+          if [[ "$RESPONSE" != "200" ]]; then
+            echo "Deployment test failed with status $RESPONSE"
+            exit 1
+          fi
+          echo "Deployment test passed!"

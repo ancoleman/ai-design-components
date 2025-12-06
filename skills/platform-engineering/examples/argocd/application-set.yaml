@@ -1,0 +1,78 @@
+# Argo CD ApplicationSet Example
+# This ApplicationSet automatically deploys services across multiple environments
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: microservices
+  namespace: argocd
+spec:
+  generators:
+    # Git Generator: Discovers directories in Git repository
+    - git:
+        repoURL: https://github.com/my-org/infrastructure
+        revision: HEAD
+        directories:
+          - path: services/*
+    # Matrix Generator: Combine with environments
+    - matrix:
+        generators:
+          - git:
+              repoURL: https://github.com/my-org/infrastructure
+              revision: HEAD
+              directories:
+                - path: services/*
+          - list:
+              elements:
+                - environment: development
+                  cluster: dev-cluster
+                  namespace: dev
+                  replicaCount: "1"
+                - environment: staging
+                  cluster: staging-cluster
+                  namespace: staging
+                  replicaCount: "2"
+                - environment: production
+                  cluster: prod-cluster
+                  namespace: prod
+                  replicaCount: "3"
+
+  template:
+    metadata:
+      name: '{{path.basename}}-{{environment}}'
+      labels:
+        service: '{{path.basename}}'
+        environment: '{{environment}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/my-org/infrastructure
+        targetRevision: HEAD
+        path: '{{path}}/{{environment}}'
+        helm:
+          valueFiles:
+            - values.yaml
+            - values-{{environment}}.yaml
+          parameters:
+            - name: image.tag
+              value: '{{path.basename}}-latest'
+            - name: replicaCount
+              value: '{{replicaCount}}'
+      destination:
+        server: '{{cluster}}'
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+          allowEmpty: false
+        syncOptions:
+          - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m

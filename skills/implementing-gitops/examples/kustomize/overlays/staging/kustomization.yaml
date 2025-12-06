@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+
+namespace: myapp-staging
+namePrefix: staging-
+
+commonLabels:
+  environment: staging
+
+replicas:
+- name: myapp
+  count: 2
+
+images:
+- name: myapp
+  newTag: staging-v1.2.3
+
+patches:
+- patch: |-
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: myapp-config
+    data:
+      LOG_LEVEL: info
+      ENVIRONMENT: staging

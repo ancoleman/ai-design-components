@@ -2,6 +2,24 @@
 
 > Complete scaffolding template for single-page applications using Vite and React with TypeScript.
 
+
+## Table of Contents
+
+- [Project Structure](#project-structure)
+- [Core Files](#core-files)
+  - [index.html](#indexhtml)
+  - [package.json](#packagejson)
+  - [vite.config.ts](#viteconfigts)
+  - [tsconfig.json](#tsconfigjson)
+  - [tsconfig.node.json](#tsconfignodejson)
+  - [src/main.tsx](#srcmaintsx)
+  - [src/App.tsx](#srcapptsx)
+  - [src/context/theme-provider.tsx](#srccontexttheme-providertsx)
+  - [src/lib/utils.ts](#srclibutilsts)
+- [Barrel Export Pattern](#barrel-export-pattern)
+- [Commands](#commands)
+- [Integration Checklist](#integration-checklist)
+
 ## Project Structure
 
 ```

@@ -1,0 +1,149 @@
+---
+# Brute Force Attack Detection Rule (Splunk SPL Format)
+# Platform: Splunk Enterprise Security
+# Category: Credential Access
+# MITRE ATT&CK: T1110 - Brute Force
+
+name: Multiple Failed Authentication Attempts - Brute Force Detection
+severity: high
+description: |
+  Detects potential brute force authentication attacks by identifying multiple failed
+  login attempts from a single source IP address within a short time window. This rule
+  correlates failed authentication events to identify credential stuffing, password
+  spraying, and traditional brute force attacks.
+
+mitre_attack:
+  tactic: Credential Access
+  technique: T1110 - Brute Force
+  sub_technique:
+    - T1110.001 - Password Guessing
+    - T1110.003 - Password Spraying
+    - T1110.004 - Credential Stuffing
+
+splunk_search: |
+  index=auth sourcetype=linux_secure OR sourcetype=windows:security OR sourcetype=aws:cloudtrail
+  (action=failure OR EventCode=4625 OR errorCode=Failed)
+  | bucket _time span=10m
+  | stats count as failed_attempts
+      dc(user) as unique_users
+      values(user) as targeted_users
+      earliest(_time) as first_attempt
+      latest(_time) as last_attempt
+      by src_ip, _time
+  | where failed_attempts >= 10
+  | eval duration=last_attempt-first_attempt
+  | eval attack_pattern=case(
+      unique_users > 10, "Password Spraying",
+      unique_users <= 3, "Brute Force",
+      1=1, "Credential Stuffing"
+  )
+  | table _time, src_ip, failed_attempts, unique_users, targeted_users, duration, attack_pattern
+  | sort -failed_attempts
+
+# Alternative search for cloud environments (Azure AD, AWS Cognito, Okta)
+cloud_search: |
+  index=azure_ad OR index=okta OR index=aws_cognito
+  eventName=signin OR eventType=user.session.start
+  result=failure OR outcome=FAILURE
+  | bucket _time span=10m
+  | stats count as failed_attempts
+      dc(userPrincipalName) as unique_users
+      values(userPrincipalName) as targeted_users
+      values(appDisplayName) as targeted_apps
+      by src_ip, _time
+  | where failed_attempts >= 10
+
+detection_logic:
+  threshold: 10 failed authentication attempts
+  time_window: 10 minutes
+  aggregation_field: source IP address
+  correlation:
+    - Multiple failed attempts from same source
+    - Optionally followed by successful authentication (indicates breach)
+    - Pattern analysis (password spraying vs. targeted brute force)
+
+tuning_recommendations:
+  reduce_false_positives:
+    - Whitelist legitimate security scanners (Nessus, Qualys, vulnerability scanners)
+    - Exclude monitoring system IPs (Nagios, Zabbix, health checks)
+    - Increase threshold to 15-20 for high-traffic environments
+    - Add user whitelist for service accounts with expected failures
+    - Filter out internal IP ranges for password self-service portals
+
+  whitelist_example: |
+    | search NOT src_ip IN ("10.0.0.100", "192.168.1.50")
+    | search NOT user IN ("monitoring-svc", "health-check")
+    | search NOT src_ip="scanner.company.com"
+
+  threshold_tuning:
+    conservative: 5 attempts in 5 minutes (high alert volume)
+    balanced: 10 attempts in 10 minutes (recommended default)
+    relaxed: 20 attempts in 15 minutes (low alert volume, may miss attacks)
+
+alert_configuration:
+  trigger_condition: Search completes with results
+  throttling: Suppress duplicate alerts from same src_ip for 1 hour
+  priority: high
+
+  notable_event_fields:
+    - src_ip (source IP address)
+    - failed_attempts (total count)
+    - unique_users (number of distinct users targeted)
+    - targeted_users (list of usernames)
+    - attack_pattern (classification)
+    - duration (time span of attack)
+
+response_actions:
+  automated:
+    - Block source IP at firewall (if exceeds 50 attempts)
+    - Add IP to threat intelligence watchlist
+    - Trigger MFA step-up for targeted user accounts
+
+  manual_investigation:
+    - Verify if successful authentication followed failed attempts
+    - Check geolocation of source IP (unexpected country = higher risk)
+    - Review targeted user accounts for privilege level
+    - Correlate with other security events (data exfiltration, lateral movement)
+    - Check if source IP has history of malicious activity
+
+false_positives:
+  common_causes:
+    - Misconfigured monitoring systems repeatedly checking authentication
+    - Legitimate users forgetting passwords (especially after password policy changes)
+    - Automated deployment scripts with incorrect credentials
+    - Load balancers or health checks with authentication probes
+    - Security vulnerability scanners (Nessus, Qualys, OpenVAS)
+    - Password manager browser extensions with incorrect saved credentials
+
+  mitigation:
+    - Build whitelist of known-safe IPs over 2-week baseline period
+    - Exclude service accounts from detection (create separate rule)
+    - Increase threshold during password policy changes
+    - Document and whitelist security scanner IP ranges
+
+baseline_period: |
+  Run rule in "log-only" mode for 2-4 weeks before enabling alerting.
+  Analyze false positive patterns and build whitelist:
+
+  index=auth sourcetype=linux_secure action=failure
+  | stats count by src_ip, user
+  | where count > 100
+  | table src_ip, user, count
+  | outputlookup baseline_auth_failures.csv
+
+metrics:
+  target_alert_volume: 5-15 alerts per day
+  target_true_positive_rate: 30-50%
+  mean_time_to_investigate: 10-15 minutes
+  recommended_review_frequency: Weekly tuning for first month, then monthly
+
+references:
+  - https://attack.mitre.org/techniques/T1110/
+  - https://docs.splunk.com/Documentation/ES/latest/Admin/Correlationsearches
+  - https://www.owasp.org/index.php/Blocking_Brute_Force_Attacks
+  - https://www.cisecurity.org/controls/account-monitoring-and-control
+
+author: Security Team
+date_created: 2025-12-05
+last_modified: 2025-12-05
+version: 1.0

@@ -353,7 +353,7 @@ Reference the design-tokens skill for theme switching.
 
 ## Working Examples
 
-Start with the example matching your needs:
+Start with the example matching the requirements:
 
 ```
 social-activity-feed.tsx       # Social feed with reactions
@@ -390,7 +390,7 @@ node scripts/benchmark_timeline.js --events 10000 --virtual
 
 ## Next Steps
 
-1. Identify your timeline use case (activity, events, schedule)
+1. Identify the timeline use case (activity, events, schedule)
 2. Select the appropriate component type
 3. Choose a library or build custom with tokens
 4. Start with the matching example file

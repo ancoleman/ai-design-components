@@ -1,0 +1,128 @@
+# Crossplane Composition Example
+# This composition abstracts PostgreSQL database provisioning across environments
+
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: postgres-database
+  labels:
+    crossplane.io/xrd: xpostgresqldatabases.platform.example.com
+    provider: aws
+spec:
+  compositeTypeRef:
+    apiVersion: platform.example.com/v1alpha1
+    kind: XPostgreSQLDatabase
+
+  resources:
+    # Development: In-cluster PostgreSQL
+    - name: dev-postgresql
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: apps/v1
+              kind: StatefulSet
+              metadata:
+                name: postgres
+              spec:
+                serviceName: postgres
+                replicas: 1
+                selector:
+                  matchLabels:
+                    app: postgres
+                template:
+                  metadata:
+                    labels:
+                      app: postgres
+                  spec:
+                    containers:
+                    - name: postgres
+                      image: postgres:15
+                      env:
+                      - name: POSTGRES_DB
+                        valueFrom:
+                          fieldRef:
+                            fieldPath: metadata.name
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.environment
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+          transforms:
+            - type: string
+              string:
+                fmt: "%s-namespace"
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.atProvider.manifest.status.readyReplicas
+          toFieldPath: status.ready
+
+    # Production: AWS RDS PostgreSQL
+    - name: prod-rds
+      base:
+        apiVersion: database.aws.upbound.io/v1beta1
+        kind: Instance
+        spec:
+          forProvider:
+            engine: postgres
+            engineVersion: "15"
+            instanceClass: db.t3.micro
+            allocatedStorage: 20
+            skipFinalSnapshot: false
+            publiclyAccessible: false
+            storageEncrypted: true
+            backupRetentionPeriod: 7
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.size
+          toFieldPath: spec.forProvider.instanceClass
+          transforms:
+            - type: map
+              map:
+                small: db.t3.micro
+                medium: db.t3.small
+                large: db.t3.medium
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.parameters.storage
+          toFieldPath: spec.forProvider.allocatedStorage
+        - type: ToCompositeFieldPath
+          fromFieldPath: status.atProvider.endpoint
+          toFieldPath: status.endpoint
+
+    # Connection Secret
+    - name: connection-secret
+      base:
+        apiVersion: kubernetes.crossplane.io/v1alpha1
+        kind: Object
+        spec:
+          forProvider:
+            manifest:
+              apiVersion: v1
+              kind: Secret
+              metadata:
+                name: database-credentials
+              type: Opaque
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.claimRef.namespace
+          toFieldPath: spec.forProvider.manifest.metadata.namespace
+        - type: CombineFromComposite
+          combine:
+            variables:
+              - fromFieldPath: status.endpoint
+              - fromFieldPath: spec.parameters.database
+            strategy: string
+            string:
+              fmt: "postgresql://user:password@%s:5432/%s"
+          toFieldPath: spec.forProvider.manifest.data.connectionString
+          policy:
+            fromFieldPath: Required
+
+  # Automatically determine which resources to create based on environment
+  patchSets:
+    - name: environment-selector
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.environment
+          policy:
+            fromFieldPath: Required

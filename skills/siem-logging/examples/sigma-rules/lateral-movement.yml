@@ -1,0 +1,28 @@
+title: RDP Connection from Non-Admin Workstation
+id: 1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b
+status: stable
+description: Detects RDP connections from workstations (not jump servers), indicating potential lateral movement
+author: Security Team
+date: 2025/12/03
+modified: 2025/12/03
+references:
+  - https://attack.mitre.org/techniques/T1021/001/
+tags:
+  - attack.lateral_movement
+  - attack.t1021.001
+logsource:
+  category: network_traffic
+  product: firewall
+detection:
+  selection:
+    destination.port: 3389
+    network.protocol: tcp
+  filter_jumpservers:
+    source.ip:
+      - '10.0.1.100'  # Jump Server 1
+      - '10.0.1.101'  # Jump Server 2
+  condition: selection and not filter_jumpservers
+falsepositives:
+  - Administrators connecting from workstations (should use jump servers)
+  - Remote support sessions (TeamViewer, LogMeIn)
+level: medium

@@ -1,0 +1,68 @@
+# Progressive Rollout Strategy with RollingSync
+# Deploys to dev first, then staging, then production clusters progressively
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: progressive-rollout
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      - cluster: dev
+        url: https://dev-cluster.example.com
+        env: development
+      - cluster: staging
+        url: https://staging-cluster.example.com
+        env: staging
+      - cluster: prod-us-east
+        url: https://prod-us-east.example.com
+        env: production
+      - cluster: prod-us-west
+        url: https://prod-us-west.example.com
+        env: production
+  strategy:
+    type: RollingSync
+    rollingSync:
+      steps:
+      # Step 1: Deploy to development immediately
+      - matchExpressions:
+        - key: envLabel
+          operator: In
+          values:
+          - development
+        # maxUpdate: 100% (default, all matching apps at once)
+      # Step 2: Deploy to staging one at a time
+      - matchExpressions:
+        - key: envLabel
+          operator: In
+          values:
+          - staging
+        maxUpdate: 1
+      # Step 3: Deploy to 50% of production clusters
+      - matchExpressions:
+        - key: envLabel
+          operator: In
+          values:
+          - production
+        maxUpdate: 50%
+  template:
+    metadata:
+      name: 'myapp-{{.cluster}}'
+      labels:
+        envLabel: '{{.env}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/myorg/myapp.git
+        targetRevision: HEAD
+        path: 'k8s/overlays/{{.cluster}}'
+      destination:
+        server: '{{.url}}'
+        namespace: myapp
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true

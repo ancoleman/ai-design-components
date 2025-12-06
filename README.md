@@ -4,20 +4,18 @@
 
 > Full-stack development skills for AI-assisted development with Claude
 
-[![Version](https://img.shields.io/badge/version-0.4.1-blue.svg)](./VERSION)
+[![Version](https://img.shields.io/badge/version-0.5.0-blue.svg)](./VERSION)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![Skills](https://img.shields.io/badge/skills-76-purple.svg)](https://ancoleman.github.io/ai-design-components/docs/skills/overview)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-orange.svg)](https://ancoleman.github.io/ai-design-components/)
 
 ## What is this?
 
-A collection of **76 Claude Skills** covering frontend, backend, DevOps, security, cloud, and AI/ML development. Skills provide Claude with domain expertise, decision frameworks, and production-ready code patterns.
-
-**29 production-ready skills** + **47 master plans** ready for implementation.
+A collection of **76 production-ready Claude Skills** covering frontend, backend, DevOps, infrastructure, security, cloud, and AI/ML development. Skills provide Claude with domain expertise, decision frameworks, and production-ready code patterns.
 
 ## Documentation
 
-**Full documentation available at: [ancoleman.github.io/ai-design-components](https://ancoleman.github.io/ai-design-components/)**
+**Full documentation: [ancoleman.github.io/ai-design-components](https://ancoleman.github.io/ai-design-components/)**
 
 | Resource | Description |
 |----------|-------------|
@@ -25,7 +23,6 @@ A collection of **76 Claude Skills** covering frontend, backend, DevOps, securit
 | [Installation](https://ancoleman.github.io/ai-design-components/docs/installation) | Setup instructions |
 | [Skills Reference](https://ancoleman.github.io/ai-design-components/docs/skills/overview) | All 76 skills documented |
 | [Skillchain Guide](https://ancoleman.github.io/ai-design-components/docs/skillchain/overview) | Guided workflow system |
-| [Master Plans](https://ancoleman.github.io/ai-design-components/docs/master-plans/overview) | 47 skill implementation plans |
 
 ## Quick Start
 
@@ -69,12 +66,13 @@ cd ai-design-components
 | **Frontend** | 15 | UI components, forms, data viz, navigation |
 | **Backend** | 14 | Databases, APIs, auth, observability |
 | **DevOps** | 6 | CI/CD, GitOps, platform engineering |
-| **Infrastructure** | 12 | IaC, Kubernetes, networking |
-| **Security** | 6 | Architecture, compliance, hardening |
+| **Infrastructure** | 12 | IaC, Kubernetes, networking, distributed systems |
+| **Security** | 7 | Architecture, compliance, TLS, hardening |
+| **Developer Productivity** | 7 | APIs, CLIs, SDKs, documentation |
+| **Data Engineering** | 6 | Architecture, streaming, SQL, secrets |
 | **AI/ML** | 4 | MLOps, RAG, prompt engineering |
 | **Cloud** | 3 | AWS, GCP, Azure patterns |
-| **Data** | 6 | Architecture, streaming, ETL |
-| **FinOps** | 3 | Cost optimization, tagging |
+| **FinOps** | 2 | Cost optimization, tagging |
 
 See [Skills Overview](https://ancoleman.github.io/ai-design-components/docs/skills/overview) for the complete list.
 

@@ -1,5 +1,28 @@
 # Text Generation Inference (TGI) - HuggingFace LLM Serving
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+  - [Docker Deployment](#docker-deployment)
+  - [Key Parameters](#key-parameters)
+- [API Usage](#api-usage)
+  - [HTTP Endpoints](#http-endpoints)
+  - [Python Client](#python-client)
+- [Quantization](#quantization)
+  - [GPTQ (4-bit)](#gptq-4-bit)
+  - [AWQ (4-bit)](#awq-4-bit)
+  - [bitsandbytes (8-bit/4-bit)](#bitsandbytes-8-bit4-bit)
+- [Multi-GPU Deployment](#multi-gpu-deployment)
+- [Kubernetes Deployment](#kubernetes-deployment)
+- [Monitoring](#monitoring)
+  - [Health Check](#health-check)
+  - [Metrics](#metrics)
+- [Comparison: TGI vs vLLM](#comparison-tgi-vs-vllm)
+- [Resources](#resources)
+
 ## Overview
 
 Text Generation Inference (TGI) is HuggingFace's production-ready LLM serving solution with continuous batching, tensor parallelism, and optimized kernels.

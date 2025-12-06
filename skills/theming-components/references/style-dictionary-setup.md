@@ -2,6 +2,29 @@
 
 **Transform W3C design tokens to multiple platform formats**
 
+
+## Table of Contents
+
+- [What is Style Dictionary?](#what-is-style-dictionary)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Building Tokens](#building-tokens)
+- [Output Examples](#output-examples)
+  - [Input (W3C JSON)](#input-w3c-json)
+  - [Output: CSS Variables](#output-css-variables)
+  - [Output: SCSS](#output-scss)
+  - [Output: JavaScript](#output-javascript)
+  - [Output: iOS Swift](#output-ios-swift)
+  - [Output: Android XML](#output-android-xml)
+- [Token References](#token-references)
+- [Multi-Theme Build](#multi-theme-build)
+- [Package.json Scripts](#packagejson-scripts)
+- [Usage in Projects](#usage-in-projects)
+  - [CSS](#css)
+  - [SCSS](#scss)
+  - [JavaScript/TypeScript](#javascripttypescript)
+- [Resources](#resources)
+
 ---
 
 ## What is Style Dictionary?

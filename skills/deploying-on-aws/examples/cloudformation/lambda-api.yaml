@@ -1,0 +1,501 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Production-ready Lambda + API Gateway + DynamoDB REST API'
+
+Parameters:
+  Stage:
+    Type: String
+    Default: prod
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+    Description: Deployment stage
+
+  DomainName:
+    Type: String
+    Default: ''
+    Description: Custom domain name for API (optional, e.g., api.example.com)
+
+  CertificateArn:
+    Type: String
+    Default: ''
+    Description: ACM certificate ARN for custom domain (required if DomainName is specified)
+
+Conditions:
+  HasCustomDomain: !Not [!Equals [!Ref DomainName, '']]
+
+Resources:
+  # DynamoDB Table
+  ItemsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-items'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: itemId
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: N
+      KeySchema:
+        - AttributeName: itemId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: UserIdIndex
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref Stage
+
+  # Lambda Execution Role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DynamoDBAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                Resource:
+                  - !GetAtt ItemsTable.Arn
+                  - !Sub '${ItemsTable.Arn}/index/*'
+
+  # Lambda Function
+  ApiFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-api'
+      Runtime: python3.12
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      MemorySize: 1024
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ItemsTable
+          STAGE: !Ref Stage
+      Code:
+        ZipFile: |
+          import json
+          import os
+          import boto3
+          import uuid
+          from datetime import datetime
+          from decimal import Decimal
+
+          dynamodb = boto3.resource('dynamodb')
+          table = dynamodb.Table(os.environ['TABLE_NAME'])
+
+          class DecimalEncoder(json.JSONEncoder):
+              def default(self, obj):
+                  if isinstance(obj, Decimal):
+                      return float(obj)
+                  return super(DecimalEncoder, self).default(obj)
+
+          def cors_headers():
+              return {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                  'Access-Control-Allow-Headers': 'Content-Type,Authorization'
+              }
+
+          def response(status_code, body):
+              return {
+                  'statusCode': status_code,
+                  'headers': cors_headers(),
+                  'body': json.dumps(body, cls=DecimalEncoder)
+              }
+
+          def lambda_handler(event, context):
+              try:
+                  http_method = event.get('requestContext', {}).get('http', {}).get('method')
+                  path = event.get('rawPath', '')
+                  path_params = event.get('pathParameters', {})
+                  query_params = event.get('queryStringParameters', {})
+
+                  # CORS preflight
+                  if http_method == 'OPTIONS':
+                      return response(200, {'message': 'OK'})
+
+                  # Parse body for POST/PUT
+                  body = {}
+                  if event.get('body'):
+                      body = json.loads(event['body'])
+
+                  # Route requests
+                  if path == '/items' and http_method == 'GET':
+                      return get_items(query_params)
+                  elif path == '/items' and http_method == 'POST':
+                      return create_item(body)
+                  elif path.startswith('/items/') and http_method == 'GET':
+                      item_id = path_params.get('id')
+                      return get_item(item_id)
+                  elif path.startswith('/items/') and http_method == 'PUT':
+                      item_id = path_params.get('id')
+                      return update_item(item_id, body)
+                  elif path.startswith('/items/') and http_method == 'DELETE':
+                      item_id = path_params.get('id')
+                      return delete_item(item_id)
+                  elif path == '/health' and http_method == 'GET':
+                      return response(200, {'status': 'healthy'})
+                  else:
+                      return response(404, {'error': 'Not found'})
+
+              except Exception as e:
+                  print(f"Error: {str(e)}")
+                  return response(500, {'error': 'Internal server error'})
+
+          def get_items(query_params):
+              """List all items, optionally filtered by userId"""
+              try:
+                  user_id = query_params.get('userId')
+
+                  if user_id:
+                      # Query by GSI
+                      result = table.query(
+                          IndexName='UserIdIndex',
+                          KeyConditionExpression='userId = :userId',
+                          ExpressionAttributeValues={':userId': user_id},
+                          ScanIndexForward=False,
+                          Limit=100
+                      )
+                  else:
+                      # Scan all items
+                      result = table.scan(Limit=100)
+
+                  return response(200, {
+                      'items': result.get('Items', []),
+                      'count': len(result.get('Items', []))
+                  })
+              except Exception as e:
+                  print(f"Error getting items: {str(e)}")
+                  return response(500, {'error': 'Failed to get items'})
+
+          def get_item(item_id):
+              """Get single item by ID"""
+              try:
+                  if not item_id:
+                      return response(400, {'error': 'Missing itemId'})
+
+                  result = table.get_item(Key={'itemId': item_id})
+
+                  if 'Item' not in result:
+                      return response(404, {'error': 'Item not found'})
+
+                  return response(200, result['Item'])
+              except Exception as e:
+                  print(f"Error getting item: {str(e)}")
+                  return response(500, {'error': 'Failed to get item'})
+
+          def create_item(body):
+              """Create new item"""
+              try:
+                  if not body.get('userId') or not body.get('name'):
+                      return response(400, {'error': 'Missing required fields: userId, name'})
+
+                  item_id = str(uuid.uuid4())
+                  timestamp = int(datetime.utcnow().timestamp())
+
+                  item = {
+                      'itemId': item_id,
+                      'userId': body['userId'],
+                      'name': body['name'],
+                      'description': body.get('description', ''),
+                      'createdAt': timestamp,
+                      'updatedAt': timestamp
+                  }
+
+                  table.put_item(Item=item)
+
+                  return response(201, item)
+              except Exception as e:
+                  print(f"Error creating item: {str(e)}")
+                  return response(500, {'error': 'Failed to create item'})
+
+          def update_item(item_id, body):
+              """Update existing item"""
+              try:
+                  if not item_id:
+                      return response(400, {'error': 'Missing itemId'})
+
+                  # Check if item exists
+                  existing = table.get_item(Key={'itemId': item_id})
+                  if 'Item' not in existing:
+                      return response(404, {'error': 'Item not found'})
+
+                  timestamp = int(datetime.utcnow().timestamp())
+
+                  # Build update expression
+                  update_expr = 'SET updatedAt = :updatedAt'
+                  expr_values = {':updatedAt': timestamp}
+
+                  if 'name' in body:
+                      update_expr += ', #name = :name'
+                      expr_values[':name'] = body['name']
+
+                  if 'description' in body:
+                      update_expr += ', description = :description'
+                      expr_values[':description'] = body['description']
+
+                  result = table.update_item(
+                      Key={'itemId': item_id},
+                      UpdateExpression=update_expr,
+                      ExpressionAttributeValues=expr_values,
+                      ExpressionAttributeNames={'#name': 'name'} if 'name' in body else None,
+                      ReturnValues='ALL_NEW'
+                  )
+
+                  return response(200, result['Attributes'])
+              except Exception as e:
+                  print(f"Error updating item: {str(e)}")
+                  return response(500, {'error': 'Failed to update item'})
+
+          def delete_item(item_id):
+              """Delete item"""
+              try:
+                  if not item_id:
+                      return response(400, {'error': 'Missing itemId'})
+
+                  # Check if item exists
+                  existing = table.get_item(Key={'itemId': item_id})
+                  if 'Item' not in existing:
+                      return response(404, {'error': 'Item not found'})
+
+                  table.delete_item(Key={'itemId': item_id})
+
+                  return response(200, {'message': 'Item deleted successfully'})
+              except Exception as e:
+                  print(f"Error deleting item: {str(e)}")
+                  return response(500, {'error': 'Failed to delete item'})
+      Tags:
+        - Key: Environment
+          Value: !Ref Stage
+
+  # Lambda Log Group
+  ApiLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ApiFunction}'
+      RetentionInDays: 7
+
+  # HTTP API Gateway
+  HttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub '${AWS::StackName}-api'
+      ProtocolType: HTTP
+      CorsConfiguration:
+        AllowOrigins:
+          - '*'
+        AllowMethods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - Authorization
+        MaxAge: 300
+
+  # API Stage
+  ApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApi
+      StageName: !Ref Stage
+      AutoDeploy: true
+      AccessLogSettings:
+        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
+        Format: '$context.requestId $context.error.message $context.error.messageString'
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 100
+        ThrottlingRateLimit: 50
+
+  # API Access Logs
+  ApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/apigateway/${AWS::StackName}'
+      RetentionInDays: 7
+
+  # Lambda Integration
+  LambdaIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt ApiFunction.Arn
+      PayloadFormatVersion: '2.0'
+
+  # API Routes
+  HealthRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'GET /health'
+      Target: !Sub 'integrations/${LambdaIntegration}'
+
+  GetItemsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'GET /items'
+      Target: !Sub 'integrations/${LambdaIntegration}'
+
+  CreateItemRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'POST /items'
+      Target: !Sub 'integrations/${LambdaIntegration}'
+
+  GetItemRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'GET /items/{id}'
+      Target: !Sub 'integrations/${LambdaIntegration}'
+
+  UpdateItemRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'PUT /items/{id}'
+      Target: !Sub 'integrations/${LambdaIntegration}'
+
+  DeleteItemRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'DELETE /items/{id}'
+      Target: !Sub 'integrations/${LambdaIntegration}'
+
+  OptionsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'OPTIONS /{proxy+}'
+      Target: !Sub 'integrations/${LambdaIntegration}'
+
+  # Lambda Permission for API Gateway
+  ApiGatewayInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ApiFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*'
+
+  # Custom Domain (Optional)
+  CustomDomain:
+    Type: AWS::ApiGatewayV2::DomainName
+    Condition: HasCustomDomain
+    Properties:
+      DomainName: !Ref DomainName
+      DomainNameConfigurations:
+        - CertificateArn: !Ref CertificateArn
+          EndpointType: REGIONAL
+
+  ApiMapping:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Condition: HasCustomDomain
+    Properties:
+      ApiId: !Ref HttpApi
+      DomainName: !Ref CustomDomain
+      Stage: !Ref ApiStage
+
+  # CloudWatch Alarm for Errors
+  ApiErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${AWS::StackName}-api-errors'
+      AlarmDescription: Alert when API error rate is high
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 10
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref ApiFunction
+
+  # CloudWatch Alarm for Throttling
+  ApiThrottleAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${AWS::StackName}-api-throttles'
+      AlarmDescription: Alert when API is being throttled
+      MetricName: Throttles
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 5
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref ApiFunction
+
+Outputs:
+  ApiEndpoint:
+    Description: HTTP API Gateway endpoint URL
+    Value: !Sub 'https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiEndpoint'
+
+  CustomDomainEndpoint:
+    Description: Custom domain endpoint (if configured)
+    Condition: HasCustomDomain
+    Value: !Sub 'https://${DomainName}'
+
+  DynamoDBTableName:
+    Description: DynamoDB table name
+    Value: !Ref ItemsTable
+    Export:
+      Name: !Sub '${AWS::StackName}-TableName'
+
+  LambdaFunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt ApiFunction.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-FunctionArn'
+
+  ApiId:
+    Description: HTTP API Gateway ID
+    Value: !Ref HttpApi
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiId'

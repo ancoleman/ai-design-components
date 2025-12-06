@@ -410,7 +410,7 @@ node scripts/analyze_media_performance.js --files images/*.jpg
 
 ## Working Examples
 
-Start with the example matching your needs:
+Start with the example matching the requirements:
 
 ```
 basic-upload.tsx              # Simple drag-drop upload
@@ -464,7 +464,7 @@ This skill works with other component skills:
 
 ## Next Steps
 
-1. Identify your media type (images, video, audio, documents)
+1. Identify the media type (images, video, audio, documents)
 2. Determine upload requirements (size, quantity, editing)
 3. Choose display pattern (gallery, carousel, player, viewer)
 4. Select library or implement custom solution

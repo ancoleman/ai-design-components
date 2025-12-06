@@ -1,5 +1,39 @@
 # Feedback Library Comparison Guide
 
+
+## Table of Contents
+
+- [Toast/Notification Libraries](#toastnotification-libraries)
+  - [Sonner (Recommended for Modern React)](#sonner-recommended-for-modern-react)
+  - [react-hot-toast (Lightweight Champion)](#react-hot-toast-lightweight-champion)
+  - [react-toastify (Feature-Rich Veteran)](#react-toastify-feature-rich-veteran)
+- [Modal/Dialog Libraries](#modaldialog-libraries)
+  - [Radix UI Dialog (Headless Powerhouse)](#radix-ui-dialog-headless-powerhouse)
+  - [Headless UI Dialog (Tailwind Official)](#headless-ui-dialog-tailwind-official)
+  - [react-modal (Classic Choice)](#react-modal-classic-choice)
+- [Comparison Matrix](#comparison-matrix)
+  - [Toast Libraries](#toast-libraries)
+  - [Modal Libraries](#modal-libraries)
+- [Decision Framework](#decision-framework)
+  - [Choose Sonner if:](#choose-sonner-if)
+  - [Choose react-hot-toast if:](#choose-react-hot-toast-if)
+  - [Choose react-toastify if:](#choose-react-toastify-if)
+  - [Choose Radix UI Dialog if:](#choose-radix-ui-dialog-if)
+  - [Choose Headless UI Dialog if:](#choose-headless-ui-dialog-if)
+- [Recommended Stacks](#recommended-stacks)
+  - [Modern Stack (Best Overall)](#modern-stack-best-overall)
+  - [Minimal Stack (Smallest Bundle)](#minimal-stack-smallest-bundle)
+  - [Feature-Rich Stack (Everything Included)](#feature-rich-stack-everything-included)
+  - [Tailwind Stack (Best DX with Tailwind)](#tailwind-stack-best-dx-with-tailwind)
+- [Migration Guides](#migration-guides)
+  - [From react-toastify to Sonner](#from-react-toastify-to-sonner)
+  - [From react-modal to Radix UI](#from-react-modal-to-radix-ui)
+- [Performance Considerations](#performance-considerations)
+  - [Bundle Size Impact](#bundle-size-impact)
+  - [Runtime Performance](#runtime-performance)
+  - [Tree-Shaking](#tree-shaking)
+- [Accessibility Scores](#accessibility-scores)
+
 ## Toast/Notification Libraries
 
 ### Sonner (Recommended for Modern React)

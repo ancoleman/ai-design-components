@@ -1,5 +1,38 @@
 # Media Library Comparison
 
+
+## Table of Contents
+
+- [Image Galleries](#image-galleries)
+  - [react-image-gallery](#react-image-gallery)
+  - [LightGallery](#lightgallery)
+  - [React Image Lightbox](#react-image-lightbox)
+- [Video Players](#video-players)
+  - [video.js](#videojs)
+  - [Plyr](#plyr)
+  - [ReactPlayer](#reactplayer)
+- [Audio Players](#audio-players)
+  - [wavesurfer.js](#wavesurferjs)
+  - [Howler.js](#howlerjs)
+  - [react-h5-audio-player](#react-h5-audio-player)
+- [PDF Viewers](#pdf-viewers)
+  - [react-pdf](#react-pdf)
+  - [PDF.js (Mozilla)](#pdfjs-mozilla)
+  - [Cloud Viewers](#cloud-viewers)
+- [File Upload](#file-upload)
+  - [react-dropzone](#react-dropzone)
+  - [Uppy](#uppy)
+  - [Filepond](#filepond)
+- [Selection Guide](#selection-guide)
+  - [Choose react-image-gallery when:](#choose-react-image-gallery-when)
+  - [Choose video.js when:](#choose-videojs-when)
+  - [Choose wavesurfer.js when:](#choose-wavesurferjs-when)
+  - [Choose react-pdf when:](#choose-react-pdf-when)
+  - [Choose react-dropzone when:](#choose-react-dropzone-when)
+- [Performance Comparison](#performance-comparison)
+- [Accessibility Comparison](#accessibility-comparison)
+- [See Also](#see-also)
+
 ## Image Galleries
 
 ### react-image-gallery

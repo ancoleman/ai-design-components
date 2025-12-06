@@ -1,0 +1,263 @@
+---
+# Privilege Escalation Detection Rule (Splunk SPL Format)
+# Platform: Splunk Enterprise Security
+# Category: Privilege Escalation
+# MITRE ATT&CK: T1548 - Abuse Elevation Control Mechanism
+
+name: Suspicious Privilege Escalation - Sudo and UAC Bypass Detection
+severity: critical
+description: |
+  Detects unauthorized privilege escalation attempts through sudo abuse, UAC bypass,
+  service account elevation, and exploitation of SUID/SGID binaries. This rule identifies
+  privilege escalation by monitoring sudo execution from non-privileged users, unusual
+  process spawning patterns, and suspicious parent-child process relationships.
+
+mitre_attack:
+  tactic: Privilege Escalation
+  technique: T1548 - Abuse Elevation Control Mechanism
+  sub_technique:
+    - T1548.003 - Sudo and Sudo Caching
+    - T1548.002 - Bypass User Account Control (Windows)
+    - T1548.001 - Setuid and Setgid
+
+splunk_search: |
+  index=linux OR index=windows sourcetype=linux_secure OR sourcetype=WinEventLog:Security
+  (process_name=sudo OR process_name=su OR EventCode=4672 OR EventCode=4673)
+  | eval suspicious_user=case(
+      user IN ("www-data", "nobody", "nginx", "apache", "postgres", "mysql", "tomcat", "jenkins"), "Service Account",
+      user IN ("guest", "anonymous"), "Low Privilege User",
+      1=1, "Standard User"
+  )
+  | where suspicious_user IN ("Service Account", "Low Privilege User")
+  | stats count as escalation_attempts
+      values(process_name) as processes
+      values(parent_process) as parent_processes
+      values(command_line) as commands
+      earliest(_time) as first_seen
+      latest(_time) as last_seen
+      by user, src_host, suspicious_user
+  | eval duration=last_seen-first_seen
+  | where escalation_attempts >= 1
+  | eval risk_score=case(
+      suspicious_user="Service Account" AND match(commands, "(?i)(bash|sh|python|perl|nc)"), 90,
+      suspicious_user="Service Account", 70,
+      suspicious_user="Low Privilege User", 60,
+      1=1, 40
+  )
+  | table _time, user, src_host, suspicious_user, escalation_attempts, processes, commands, risk_score
+  | sort -risk_score
+
+# Linux-specific SUID/SGID abuse detection
+linux_suid_search: |
+  index=linux sourcetype=linux_audit OR sourcetype=syslog
+  (syscall=execve OR type=EXECVE)
+  | rex field=exe "(?<binary_name>[^/]+)$"
+  | lookup suid_binaries.csv binary_name OUTPUT is_suid, is_legitimate
+  | where is_suid=1 AND is_legitimate=0
+  | stats count by user, binary_name, command_line, parent_process
+  | where user NOT IN ("root", "admin")
+
+# Windows UAC bypass detection
+windows_uac_search: |
+  index=windows sourcetype=WinEventLog:Security
+  (EventCode=4688 OR EventCode=4673)
+  | eval uac_bypass_indicator=case(
+      match(process_path, "(?i)(eventvwr.exe|fodhelper.exe|computerdefaults.exe)") AND
+      match(parent_process, "(?i)cmd.exe|powershell.exe"), "UAC Bypass via Trusted Binary",
+      match(command_line, "(?i)(bypassuac|uacme|eventvwr)"), "UAC Bypass Tool Detected",
+      EventCode=4673 AND privilege_list="SeDebugPrivilege", "Debug Privilege Enabled",
+      1=1, "None"
+  )
+  | where uac_bypass_indicator != "None"
+  | table _time, user, computer_name, process_name, command_line, uac_bypass_indicator
+
+# Sudo caching exploitation detection
+sudo_caching_search: |
+  index=linux sourcetype=linux_secure
+  process_name=sudo
+  | transaction user maxspan=15m
+  | where eventcount > 5
+  | stats count as rapid_sudo_uses
+      values(command) as commands
+      dc(command) as unique_commands
+      by user, src_host
+  | where rapid_sudo_uses > 5 AND unique_commands < 3
+
+detection_logic:
+  indicators:
+    - Sudo execution by service accounts (www-data, nobody, nginx, apache)
+    - Non-root users executing SUID/SGID binaries
+    - UAC bypass patterns (eventvwr.exe, fodhelper.exe abuse)
+    - Rapid sudo caching exploitation (multiple sudo calls within 15 minutes)
+    - Shell spawning from web servers or database processes
+    - Privilege token manipulation (SeDebugPrivilege, SeImpersonatePrivilege)
+
+  correlation_rules:
+    - Privilege escalation followed by lateral movement (within 30 minutes)
+    - Service account privilege escalation + outbound network connection
+    - Escalation + file access to sensitive directories (/etc/shadow, C:\Windows\System32\config)
+
+tuning_recommendations:
+  reduce_false_positives:
+    - Whitelist legitimate administrative automation (Ansible, Puppet, Chef)
+    - Exclude configuration management service accounts with documented sudo access
+    - Filter deployment scripts running during maintenance windows
+    - Create baseline of expected sudo usage per service account
+    - Whitelist containerized environments where service account elevation is normal
+
+  whitelist_example: |
+    # Exclude legitimate automation tools
+    | search NOT (user="ansible-svc" AND parent_process="ansible-playbook")
+    | search NOT (user="puppet" AND command_line="*puppet agent*")
+    | search NOT src_host IN ("jenkins-master", "gitlab-runner-*")
+
+    # Exclude scheduled maintenance windows
+    | search NOT (date_hour>=2 AND date_hour<=4 AND user="deploy-svc")
+
+  baseline_configuration: |
+    # Build 30-day baseline of normal sudo usage
+    index=linux sourcetype=linux_secure process_name=sudo
+    earliest=-30d latest=now
+    | stats count avg(count) as avg_usage stdev(count) as std_dev
+        by user, src_host
+    | eval threshold=avg_usage + (2 * std_dev)
+    | outputlookup sudo_baseline.csv
+
+  threshold_tuning:
+    strict: Any sudo by service account = alert (high volume, zero tolerance)
+    balanced: Sudo by service account with shell spawning = alert (recommended)
+    relaxed: Multiple escalations within 1 hour = alert (may miss single-event attacks)
+
+alert_configuration:
+  trigger_condition: Search returns results with risk_score >= 60
+  throttling: Suppress duplicate alerts per user/host pair for 4 hours
+  priority: critical (risk_score >= 80), high (risk_score 60-79)
+
+  notable_event_fields:
+    - user (account performing escalation)
+    - src_host (source system)
+    - suspicious_user (classification: Service Account, Low Privilege User)
+    - escalation_attempts (count)
+    - processes (sudo, su, UAC bypass tools)
+    - commands (full command line)
+    - risk_score (calculated severity 0-100)
+
+response_actions:
+  automated:
+    - Disable compromised service account (if risk_score >= 90)
+    - Kill suspicious processes (sudo shells from www-data, nobody)
+    - Isolate affected host from network (if lateral movement detected)
+    - Create forensic snapshot of affected system
+    - Trigger incident response workflow
+
+  manual_investigation:
+    - Verify if escalation resulted from legitimate change management
+    - Check user's recent activity (commands, file access, network connections)
+    - Review sudo logs for full command history
+    - Identify initial access vector (web exploit, SSH compromise, insider threat)
+    - Assess blast radius (what did escalated user access?)
+    - Check for persistence mechanisms (cron jobs, SSH keys, backdoor accounts)
+
+  forensic_queries:
+    post_escalation_activity: |
+      # What did the user do after privilege escalation?
+      index=linux sourcetype=linux_audit user="$compromised_user$"
+      earliest=$escalation_time$ latest=$escalation_time$+1h
+      | stats count by type, exe, command_line
+      | sort -count
+
+    lateral_movement_check: |
+      # Did attacker move laterally after escalation?
+      index=network OR index=linux
+      (src_ip=$affected_host_ip$ OR src_host=$affected_host$)
+      earliest=$escalation_time$ latest=$escalation_time$+4h
+      | search (dest_port=22 OR dest_port=3389 OR dest_port=5985)
+      | stats count by dest_ip, dest_port, user
+
+false_positives:
+  common_causes:
+    - Legitimate configuration management tools (Ansible, Puppet, Chef, SaltStack)
+    - Automated deployment pipelines (Jenkins, GitLab CI, GitHub Actions)
+    - Containerized applications running as service accounts with sudo access
+    - Scheduled maintenance scripts requiring elevated privileges
+    - Database backup scripts running as postgres/mysql users
+    - Web application frameworks with legitimate sudo for system tasks
+
+  mitigation:
+    - Document and whitelist approved automation service accounts
+    - Schedule expected maintenance windows and suppress alerts during those times
+    - Create separate detection rule for containerized environments
+    - Implement "expected sudo" lookup table based on 30-day baseline
+    - Require change management tickets for new sudo permissions
+
+  baseline_approach: |
+    Step 1: Run detection in "log-only" mode for 30 days
+    Step 2: Identify recurring patterns (daily at 2 AM, user "backup-svc", command "/usr/bin/mysqldump")
+    Step 3: Classify as legitimate or suspicious based on business context
+    Step 4: Build whitelist for legitimate patterns
+    Step 5: Enable alerting with whitelist applied
+
+metrics:
+  target_alert_volume: 2-8 alerts per day
+  target_true_positive_rate: 50-70% (privilege escalation is rare but critical)
+  mean_time_to_investigate: 20-30 minutes (requires context gathering)
+  mean_time_to_contain: 45 minutes (for confirmed compromise)
+  recommended_review_frequency: Weekly review of all escalation events
+
+escalation_severity_matrix:
+  critical_indicators:
+    - Service account (www-data, nobody) spawning interactive shell
+    - Sudo from guest or anonymous accounts
+    - UAC bypass tool execution detected
+    - Escalation followed by /etc/shadow or SAM database access
+    - Escalation + lateral movement within 30 minutes
+
+  high_indicators:
+    - Service account using sudo for non-standard commands
+    - Multiple sudo attempts from same user within 15 minutes (caching exploitation)
+    - Non-root user executing unknown SUID binaries
+
+  medium_indicators:
+    - Standard user using sudo (may be legitimate admin activity)
+    - Sudo during non-business hours (requires context)
+
+monitoring_recommendations:
+  create_suid_baseline: |
+    # Generate list of legitimate SUID binaries (run on hardened baseline system)
+    find / -type f \( -perm -4000 -o -perm -2000 \) -ls 2>/dev/null \
+    | awk '{print $11}' \
+    | sed 's/.*\///' \
+    | sort -u > legitimate_suid_binaries.txt
+
+    # Upload to Splunk lookup table
+    | inputlookup suid_binaries.csv
+    | append [| makeresults | eval binary_name="legitimate_binary", is_suid=1, is_legitimate=1]
+
+  integration_with_edr:
+    - Correlate with EDR process telemetry (CrowdStrike, SentinelOne, Carbon Black)
+    - Enrich with parent process chain (full process tree)
+    - Add hash-based reputation checks (VirusTotal, threat intelligence)
+
+references:
+  - https://attack.mitre.org/techniques/T1548/
+  - https://attack.mitre.org/techniques/T1548/003/ (Sudo and Sudo Caching)
+  - https://gtfobins.github.io/ (SUID binary exploitation techniques)
+  - https://book.hacktricks.xyz/linux-hardening/privilege-escalation (Linux privilege escalation)
+  - https://www.fuzzysecurity.com/tutorials/16.html (Windows privilege escalation)
+  - https://docs.splunk.com/Documentation/ES/latest/Admin/Privilegeescalation
+
+compliance_mappings:
+  pci_dss:
+    - Requirement 10.2.2 (All actions taken by root or administrative privileges)
+    - Requirement 10.2.5 (Use of identification and authentication mechanisms)
+  nist_csf:
+    - DE.AE-2 (Detected events are analyzed)
+    - DE.CM-1 (Network monitored to detect anomalous activity)
+  cis_controls:
+    - Control 4.3 (Configure privilege access management)
+    - Control 6.8 (Define and maintain role-based access control)
+
+author: Security Team
+date_created: 2025-12-05
+last_modified: 2025-12-05
+version: 1.0

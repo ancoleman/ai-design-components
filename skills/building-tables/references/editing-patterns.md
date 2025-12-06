@@ -2,6 +2,21 @@
 
 Inline editing, validation, optimistic updates, and bulk editing for data grids.
 
+
+## Table of Contents
+
+- [Inline Cell Editing](#inline-cell-editing)
+- [Select Dropdown Editor](#select-dropdown-editor)
+- [Date Picker Editor](#date-picker-editor)
+- [Optimistic Updates](#optimistic-updates)
+- [Validation](#validation)
+- [Bulk Editing](#bulk-editing)
+- [Row Reordering](#row-reordering)
+- [Copy/Paste (Excel-like)](#copypaste-excel-like)
+- [Formula Support](#formula-support)
+- [Conditional Formatting](#conditional-formatting)
+- [Resources](#resources)
+
 ## Inline Cell Editing
 
 ```tsx

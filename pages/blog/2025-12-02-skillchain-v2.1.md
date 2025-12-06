@@ -49,7 +49,7 @@ Independent skills now load concurrently using `parallel_group` fields:
 skills:
   - name: databases-postgresql
     parallel_group: data
-  - name: databases-vector
+  - name: using-vector-databases
     parallel_group: data
   # Both load simultaneously!
 ```

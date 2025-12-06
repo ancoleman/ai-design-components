@@ -1,5 +1,39 @@
 # Accessibility Patterns for Feedback Components
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [ARIA Live Regions](#aria-live-regions)
+  - [Understanding Live Regions](#understanding-live-regions)
+  - [Implementation Patterns](#implementation-patterns)
+  - [Custom Announcer Hook](#custom-announcer-hook)
+- [Focus Management](#focus-management)
+  - [Modal Focus Trap](#modal-focus-trap)
+  - [React Hook for Focus Trap](#react-hook-for-focus-trap)
+  - [Focus Restoration](#focus-restoration)
+- [Keyboard Navigation](#keyboard-navigation)
+  - [Keyboard Shortcut Handler](#keyboard-shortcut-handler)
+  - [Roving TabIndex](#roving-tabindex)
+- [Screen Reader Support](#screen-reader-support)
+  - [Visually Hidden Content](#visually-hidden-content)
+  - [Screen Reader Announcements](#screen-reader-announcements)
+  - [Descriptive Labels](#descriptive-labels)
+- [ARIA Patterns](#aria-patterns)
+  - [Alert Dialog](#alert-dialog)
+  - [Status Messages](#status-messages)
+  - [Loading States](#loading-states)
+- [Color and Contrast](#color-and-contrast)
+  - [High Contrast Support](#high-contrast-support)
+  - [Color Independence](#color-independence)
+- [Motion and Animation](#motion-and-animation)
+  - [Reduced Motion Support](#reduced-motion-support)
+  - [Reduced Motion Hook](#reduced-motion-hook)
+- [Testing Accessibility](#testing-accessibility)
+  - [Accessibility Testing Checklist](#accessibility-testing-checklist)
+  - [Automated Testing](#automated-testing)
+- [Best Practices](#best-practices)
+
 ## Overview
 
 Ensuring feedback components are accessible means they can be perceived, understood, and interacted with by all users, including those using assistive technologies.

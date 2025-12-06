@@ -1,0 +1,48 @@
+SAGA PATTERNS
+=============
+
+1. CHOREOGRAPHY (Event-Based)
+──────────────────────────────
+
+Order Service → OrderCreated event
+   ↓
+Payment Service listens → PaymentProcessed event
+   ↓
+Inventory Service listens → InventoryReserved event
+   ↓
+Shipping Service listens → OrderShipped event
+
+IF PAYMENT FAILS:
+   Payment Service → PaymentFailed event
+   Order Service listens → CancelOrder (compensating action)
+
+
+2. ORCHESTRATION (Coordinator-Based)
+─────────────────────────────────────
+
+┌─────────────────────────┐
+│  Saga Orchestrator      │
+└────────┬────────────────┘
+         │
+         ├─► 1. Order Service → Create Order
+         │
+         ├─► 2. Payment Service → Process Payment
+         │
+         ├─► 3. Inventory Service → Reserve Inventory
+         │
+         └─► 4. Shipping Service → Ship Order
+
+IF STEP 3 FAILS:
+   Compensate Step 2: Refund Payment
+   Compensate Step 1: Cancel Order
+
+
+COMPARISON
+──────────
+Choreography:
+  + Decoupled services
+  - Hard to trace flow
+
+Orchestration:
+  + Clear workflow
+  - Central coordinator dependency

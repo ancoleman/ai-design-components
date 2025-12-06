@@ -1,5 +1,32 @@
 # LangChain Orchestration for LLM Applications
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Basic RAG Pipeline](#basic-rag-pipeline)
+  - [Complete Example](#complete-example)
+- [Chain Types for RAG](#chain-types-for-rag)
+  - [1. Stuff Chain (Recommended for Most Cases)](#1-stuff-chain-recommended-for-most-cases)
+  - [2. Map-Reduce Chain](#2-map-reduce-chain)
+  - [3. Refine Chain](#3-refine-chain)
+  - [4. Map-Rerank Chain](#4-map-rerank-chain)
+- [Advanced Retrieval](#advanced-retrieval)
+  - [Hybrid Search (Keyword + Semantic)](#hybrid-search-keyword-semantic)
+  - [Re-ranking](#re-ranking)
+  - [Multi-Query Retrieval](#multi-query-retrieval)
+- [Conversational RAG](#conversational-rag)
+- [Agents](#agents)
+  - [ReAct Agent (Recommended)](#react-agent-recommended)
+  - [Structured Tool Calling](#structured-tool-calling)
+- [Streaming Responses](#streaming-responses)
+- [Custom Chains](#custom-chains)
+- [Error Handling](#error-handling)
+- [Integration with vLLM](#integration-with-vllm)
+- [Best Practices](#best-practices)
+- [Resources](#resources)
+
 ## Overview
 
 LangChain is a framework for building applications with LLMs through composable components: chains, agents, retrievers, and tools. Supports RAG (Retrieval-Augmented Generation), multi-step reasoning, and tool use.

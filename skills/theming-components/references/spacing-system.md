@@ -2,6 +2,22 @@
 
 Complete spacing token reference for the design system.
 
+
+## Table of Contents
+
+- [Base Scale](#base-scale)
+- [Semantic Spacing](#semantic-spacing)
+- [Component Spacing](#component-spacing)
+  - [Buttons](#buttons)
+  - [Form Inputs](#form-inputs)
+  - [Cards](#cards)
+  - [Layout](#layout)
+- [Logical Properties](#logical-properties)
+- [Usage Guidelines](#usage-guidelines)
+  - [Consistent Rhythm](#consistent-rhythm)
+  - [Touch Targets](#touch-targets)
+  - [Visual Hierarchy](#visual-hierarchy)
+
 ## Base Scale
 
 4px base unit with consistent multipliers:

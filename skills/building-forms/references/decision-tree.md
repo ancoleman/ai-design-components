@@ -2,6 +2,33 @@
 
 **Universal framework for selecting the appropriate form input component based on data type and requirements.**
 
+
+## Table of Contents
+
+- [The Golden Rule](#the-golden-rule)
+- [Complete Decision Tree](#complete-decision-tree)
+  - [Short Text (<100 characters)](#short-text-100-characters)
+  - [Long Text (>100 characters)](#long-text-100-characters)
+  - [Numeric Values](#numeric-values)
+  - [Date & Time](#date-time)
+  - [Boolean (Yes/No, True/False)](#boolean-yesno-truefalse)
+  - [Single Choice (Select one option)](#single-choice-select-one-option)
+  - [Multiple Choice (Select multiple options)](#multiple-choice-select-multiple-options)
+  - [File & Media](#file-media)
+  - [Color Selection](#color-selection)
+  - [Structured & Complex Data](#structured-complex-data)
+  - [Rating & Feedback](#rating-feedback)
+- [Decision Helpers](#decision-helpers)
+  - [When to use Autocomplete vs. Select Dropdown?](#when-to-use-autocomplete-vs-select-dropdown)
+  - [When to use Checkbox vs. Toggle Switch?](#when-to-use-checkbox-vs-toggle-switch)
+  - [When to use Radio Group vs. Select Dropdown?](#when-to-use-radio-group-vs-select-dropdown)
+  - [When to use Text Input vs. Autocomplete?](#when-to-use-text-input-vs-autocomplete)
+- [Mobile-Specific Considerations](#mobile-specific-considerations)
+  - [Input Type → Keyboard Type](#input-type-keyboard-type)
+- [Quick Reference Table](#quick-reference-table)
+- [Anti-Patterns (What NOT to Do)](#anti-patterns-what-not-to-do)
+- [Next Steps](#next-steps)
+
 ## The Golden Rule
 
 **Data Type → Input Component → Validation Pattern**

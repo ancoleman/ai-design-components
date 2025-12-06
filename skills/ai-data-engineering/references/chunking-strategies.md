@@ -2,6 +2,35 @@
 
 Comprehensive guide to chunking documents for optimal retrieval quality in RAG systems.
 
+
+## Table of Contents
+
+- [Why Chunking Matters](#why-chunking-matters)
+- [Default Recommendation](#default-recommendation)
+- [Chunking Methods](#chunking-methods)
+  - [1. Fixed Token-Based (Default)](#1-fixed-token-based-default)
+  - [2. Semantic Chunking](#2-semantic-chunking)
+  - [3. Code-Aware Chunking](#3-code-aware-chunking)
+  - [4. Markdown-Aware Chunking](#4-markdown-aware-chunking)
+  - [5. Sentence-Based Chunking](#5-sentence-based-chunking)
+- [Content-Type Specific Strategies](#content-type-specific-strategies)
+  - [API Documentation](#api-documentation)
+  - [Research Papers (PDF)](#research-papers-pdf)
+  - [Chat Logs / Conversations](#chat-logs-conversations)
+  - [Code Repositories](#code-repositories)
+- [Advanced Chunking Patterns](#advanced-chunking-patterns)
+  - [Sliding Window](#sliding-window)
+  - [Parent-Child Chunking](#parent-child-chunking)
+  - [Contextual Compression](#contextual-compression)
+- [Chunking Strategy Decision Tree](#chunking-strategy-decision-tree)
+- [Chunking Metadata](#chunking-metadata)
+- [Validation and Testing](#validation-and-testing)
+  - [Test Chunk Quality](#test-chunk-quality)
+  - [Evaluate Retrieval Quality](#evaluate-retrieval-quality)
+- [Common Pitfalls](#common-pitfalls)
+- [Best Practices](#best-practices)
+- [Resources](#resources)
+
 ## Why Chunking Matters
 
 Chunking is the most critical decision for RAG quality. Poor chunking causes:

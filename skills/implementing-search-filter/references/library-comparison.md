@@ -1,5 +1,41 @@
 # Search & Filter Library Comparison
 
+
+## Table of Contents
+
+- [Frontend Libraries](#frontend-libraries)
+  - [Autocomplete/Combobox Libraries](#autocompletecombobox-libraries)
+  - [Search UI Frameworks](#search-ui-frameworks)
+- [Backend Search Technologies](#backend-search-technologies)
+  - [Database Full-Text Search](#database-full-text-search)
+  - [Dedicated Search Engines](#dedicated-search-engines)
+- [Python Search Libraries](#python-search-libraries)
+  - [ORM Integration](#orm-integration)
+  - [Elasticsearch Clients](#elasticsearch-clients)
+- [Detailed Library Analysis](#detailed-library-analysis)
+  - [Downshift (Recommended for Autocomplete)](#downshift-recommended-for-autocomplete)
+  - [React Select (Alternative for Quick Implementation)](#react-select-alternative-for-quick-implementation)
+  - [Elasticsearch vs Alternatives](#elasticsearch-vs-alternatives)
+- [Decision Matrix](#decision-matrix)
+  - [Choose Downshift when:](#choose-downshift-when)
+  - [Choose React Select when:](#choose-react-select-when)
+  - [Choose PostgreSQL FTS when:](#choose-postgresql-fts-when)
+  - [Choose Elasticsearch when:](#choose-elasticsearch-when)
+  - [Choose Algolia when:](#choose-algolia-when)
+  - [Choose MeiliSearch when:](#choose-meilisearch-when)
+- [Performance Benchmarks](#performance-benchmarks)
+  - [Autocomplete Response Times](#autocomplete-response-times)
+  - [Search Engine Query Times](#search-engine-query-times)
+- [Migration Paths](#migration-paths)
+  - [From React Autosuggest to Downshift](#from-react-autosuggest-to-downshift)
+  - [From PostgreSQL to Elasticsearch](#from-postgresql-to-elasticsearch)
+- [Recommendations by Project Type](#recommendations-by-project-type)
+  - [Small E-commerce (< 10K products)](#small-e-commerce-10k-products)
+  - [Medium E-commerce (10K - 100K products)](#medium-e-commerce-10k-100k-products)
+  - [Large E-commerce (> 100K products)](#large-e-commerce-100k-products)
+  - [Internal Dashboard](#internal-dashboard)
+  - [SaaS Application](#saas-application)
+
 ## Frontend Libraries
 
 ### Autocomplete/Combobox Libraries

@@ -1,0 +1,10 @@
+{
+  "label": "Infrastructure Skills",
+  "position": 5,
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "description": "12 production-ready infrastructure skills covering Kubernetes, IaC, networking, service mesh, and distributed systems."
+  }
+}

@@ -1,0 +1,51 @@
+# ExternalDNS Helm Values
+# Install: helm install external-dns external-dns/external-dns -f helm-values.yaml
+
+provider: aws  # or: google, azure, cloudflare
+
+# Domain filters (recommended)
+domainFilters:
+  - example.com
+
+# Policy: sync (create and delete) or upsert-only (create only)
+policy: sync
+
+# TXT registry for ownership tracking
+registry: txt
+txtOwnerId: my-k8s-cluster
+
+# AWS Route53 specific
+aws:
+  region: us-east-1
+  # credentials via IRSA or secret
+
+# GCP Cloud DNS specific
+# google:
+#   project: my-gcp-project
+#   # credentials via workload identity or secret
+
+# Azure DNS specific
+# azure:
+#   resourceGroup: my-resource-group
+#   subscriptionId: my-subscription-id
+#   # credentials via managed identity or secret
+
+# Cloudflare specific
+# cloudflare:
+#   apiToken: ${CF_API_TOKEN}  # from secret
+#   proxied: false  # set to true to proxy through Cloudflare
+
+# Logging
+logLevel: info
+logFormat: text
+
+# Sync interval
+interval: 1m
+
+# Resources
+resources:
+  limits:
+    memory: 128Mi
+  requests:
+    cpu: 25m
+    memory: 64Mi

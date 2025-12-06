@@ -1,0 +1,39 @@
+# OCIRepository Source
+# Uses OCI artifact (container registry) as source
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: myapp-config
+  namespace: flux-system
+spec:
+  # Reconciliation interval
+  interval: 5m
+
+  # OCI artifact URL
+  url: oci://ghcr.io/myorg/myapp-config
+
+  # Tag or digest to track
+  ref:
+    tag: latest
+
+  # Provider type
+  provider: generic
+
+  # Authentication secret (optional)
+  # secretRef:
+  #   name: oci-credentials
+
+---
+# Kustomization using OCI source
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: myapp-from-oci
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./
+  prune: true
+  sourceRef:
+    kind: OCIRepository
+    name: myapp-config

@@ -1,0 +1,120 @@
+# Backstage Software Template Example
+# This template creates a new Node.js microservice with Express and TypeScript
+
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: nodejs-microservice
+  title: Node.js Microservice
+  description: Create a new Node.js microservice with Express, TypeScript, and observability
+  tags:
+    - recommended
+    - nodejs
+    - typescript
+    - microservice
+
+spec:
+  owner: platform-team
+  type: service
+
+  parameters:
+    - title: Service Information
+      required:
+        - name
+        - description
+        - owner
+      properties:
+        name:
+          title: Service Name
+          type: string
+          description: Unique name for this microservice (lowercase, hyphens only)
+          pattern: '^[a-z0-9-]+$'
+          ui:autofocus: true
+        description:
+          title: Description
+          type: string
+          description: Brief description of what this service does
+        owner:
+          title: Owner
+          type: string
+          description: Team or individual responsible for this service
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: [Group, User]
+
+    - title: Configuration
+      required:
+        - database
+        - environment
+      properties:
+        database:
+          title: Database
+          type: string
+          description: Database type for this service
+          enum:
+            - none
+            - postgresql
+            - mongodb
+            - redis
+          default: postgresql
+        environment:
+          title: Initial Deployment Environment
+          type: string
+          enum:
+            - development
+            - staging
+            - production
+          default: development
+
+  steps:
+    - id: fetch-base
+      name: Fetch Base Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          database: ${{ parameters.database }}
+          environment: ${{ parameters.environment }}
+
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        description: ${{ parameters.description }}
+        repoUrl: github.com?owner=my-org&repo=${{ parameters.name }}
+        defaultBranch: main
+        repoVisibility: internal
+
+    - id: register
+      name: Register Component in Catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
+    - id: create-pr-env
+      name: Create Pull Request for Development Environment
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?owner=my-org&repo=infrastructure
+        branchName: add-${{ parameters.name }}-dev-env
+        title: 'Add ${{ parameters.name }} development environment'
+        description: |
+          Automated PR to add development environment for new service ${{ parameters.name }}
+
+          Created via Platform Engineering template
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps['publish'].output.remoteUrl }}
+      - title: Open in Catalog
+        icon: catalog
+        entityRef: ${{ steps['register'].output.entityRef }}
+      - title: Infrastructure PR
+        url: ${{ steps['create-pr-env'].output.remoteUrl }}

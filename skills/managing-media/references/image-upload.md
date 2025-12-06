@@ -2,6 +2,16 @@
 
 Client-side image upload with validation, preview, and optimization.
 
+
+## Table of Contents
+
+- [Basic Upload with Preview](#basic-upload-with-preview)
+- [Drag and Drop](#drag-and-drop)
+- [Client-Side Compression](#client-side-compression)
+- [Multiple File Upload](#multiple-file-upload)
+- [Progress Indicator](#progress-indicator)
+- [Best Practices](#best-practices)
+
 ## Basic Upload with Preview
 
 ```tsx

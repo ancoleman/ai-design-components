@@ -2,6 +2,15 @@
 
 Chunked uploads, resumable uploads, and multi-file queue management for large files.
 
+
+## Table of Contents
+
+- [Chunked Upload (Large Files >100MB)](#chunked-upload-large-files-100mb)
+- [Resumable Upload](#resumable-upload)
+- [Parallel Upload Queue](#parallel-upload-queue)
+- [Best Practices](#best-practices)
+- [Resources](#resources)
+
 ## Chunked Upload (Large Files >100MB)
 
 ```tsx

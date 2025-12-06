@@ -2,6 +2,22 @@
 
 Complete typography token reference for the design system.
 
+
+## Table of Contents
+
+- [Font Families](#font-families)
+- [Type Scale](#type-scale)
+- [Font Weights](#font-weights)
+- [Line Heights](#line-heights)
+- [Letter Spacing](#letter-spacing)
+- [Semantic Typography Tokens](#semantic-typography-tokens)
+  - [Headings](#headings)
+  - [Body Text](#body-text)
+  - [UI Text](#ui-text)
+- [Accessibility Guidelines](#accessibility-guidelines)
+  - [Minimum Sizes](#minimum-sizes)
+  - [Readability](#readability)
+
 ## Font Families
 
 ```css

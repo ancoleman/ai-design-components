@@ -1,0 +1,23 @@
+# Guaranteed QoS Example
+# Requests equal limits for predictable performance
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: guaranteed-pod
+  labels:
+    qos: guaranteed
+    app: critical-service
+spec:
+  containers:
+  - name: app
+    image: nginx:1.21
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "500m"      # 0.5 CPU cores
+      limits:
+        memory: "512Mi"  # Same as request = Guaranteed QoS
+        cpu: "500m"      # Same as request = Guaranteed QoS
+    ports:
+    - containerPort: 80

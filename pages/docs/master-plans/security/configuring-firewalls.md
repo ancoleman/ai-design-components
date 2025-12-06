@@ -280,11 +280,11 @@ Compliance required (PCI-DSS, HIPAA)?
 ## Integration Points
 
 **With Other Skills:**
-- `network-architecture` - Firewall placement in network topology
-- `security-architecture` - Firewall as preventive security control
-- `kubernetes-operations` - Network policies for pod security
-- `infrastructure-as-code` - Automate firewall rules (Terraform)
-- `compliance-frameworks` - Firewall configuration for compliance
+- `architecting-networks` - Firewall placement in network topology
+- `architecting-security` - Firewall as preventive security control
+- `operating-kubernetes` - Network policies for pod security
+- `writing-infrastructure-code` - Automate firewall rules (Terraform)
+- `implementing-compliance` - Firewall configuration for compliance
 
 **Defense in Depth Example:**
 ```
@@ -298,4 +298,4 @@ Internet → WAF → Cloud FW → Security Group → Host FW → App
 ## Learn More
 
 - [Full Master Plan (init.md)](https://github.com/ancoleman/ai-design-components/blob/main/skills/configuring-firewalls/init.md)
-- Related: `network-architecture`, `security-architecture`, `kubernetes-operations`
+- Related: `architecting-networks`, `architecting-security`, `operating-kubernetes`

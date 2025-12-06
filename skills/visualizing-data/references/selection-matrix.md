@@ -2,6 +2,18 @@
 
 Complete decision trees and quick reference tables for choosing the right visualization type.
 
+
+## Table of Contents
+
+- [By Data Story (Quick Reference)](#by-data-story-quick-reference)
+- [By Data Type](#by-data-type)
+- [Decision Tree: Compare Values](#decision-tree-compare-values)
+- [Decision Tree: Show Trends](#decision-tree-show-trends)
+- [Decision Tree: Reveal Distribution](#decision-tree-reveal-distribution)
+- [By Audience Type](#by-audience-type)
+- [Performance Decision Matrix](#performance-decision-matrix)
+- [Chart Type Index (Alphabetical)](#chart-type-index-alphabetical)
+
 ## By Data Story (Quick Reference)
 
 | Data Story | Primary Choice | Alternative | When to Use Alternative |
@@ -197,8 +209,6 @@ Quick lookup for specific chart types:
 - **Treemap** - Hierarchy (nested rectangles)
 - **Violin Plot** - Distribution (full shape)
 - **Waterfall Chart** - Composition (sequential changes)
-
-**Detailed guidance for each:** See `references/chart-catalog.md`
 
 ---
 

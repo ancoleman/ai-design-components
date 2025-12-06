@@ -1,5 +1,25 @@
 # Search API Design Patterns
 
+
+## Table of Contents
+
+- [RESTful Search Endpoints](#restful-search-endpoints)
+  - [Basic Search API Design](#basic-search-api-design)
+  - [Autocomplete API](#autocomplete-api)
+- [Advanced Query Parameters](#advanced-query-parameters)
+  - [Query DSL Support](#query-dsl-support)
+  - [GraphQL Search Schema](#graphql-search-schema)
+- [Pagination Strategies](#pagination-strategies)
+  - [Offset-Based Pagination](#offset-based-pagination)
+  - [Cursor-Based Pagination](#cursor-based-pagination)
+- [Rate Limiting and Caching](#rate-limiting-and-caching)
+  - [API Rate Limiting](#api-rate-limiting)
+  - [Response Caching](#response-caching)
+- [Error Handling](#error-handling)
+  - [Comprehensive Error Responses](#comprehensive-error-responses)
+- [API Documentation](#api-documentation)
+  - [OpenAPI Specification](#openapi-specification)
+
 ## RESTful Search Endpoints
 
 ### Basic Search API Design

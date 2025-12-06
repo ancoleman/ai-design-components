@@ -1,5 +1,22 @@
 # Streaming Data Ingestion
 
+
+## Table of Contents
+
+- [Apache Kafka](#apache-kafka)
+  - [Python (confluent-kafka)](#python-confluent-kafka)
+  - [TypeScript (kafkajs)](#typescript-kafkajs)
+  - [Rust (rdkafka)](#rust-rdkafka)
+- [AWS Kinesis](#aws-kinesis)
+  - [Python (boto3)](#python-boto3)
+- [Google Pub/Sub](#google-pubsub)
+  - [Python](#python)
+- [Exactly-Once Semantics](#exactly-once-semantics)
+  - [Pattern: Idempotent Processing](#pattern-idempotent-processing)
+  - [Pattern: Outbox for Reliability](#pattern-outbox-for-reliability)
+- [Dead Letter Queues](#dead-letter-queues)
+- [Backpressure Handling](#backpressure-handling)
+
 ## Apache Kafka
 
 ### Python (confluent-kafka)

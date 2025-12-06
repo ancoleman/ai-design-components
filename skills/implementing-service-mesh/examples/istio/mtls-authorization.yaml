@@ -1,0 +1,76 @@
+# Istio mTLS and Authorization Example
+#
+# Demonstrates: Zero-trust security with strict mTLS and authorization policies
+#
+# Usage:
+#   kubectl apply -f mtls-authorization.yaml
+
+---
+# Enable strict mTLS for entire namespace
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: default-strict-mtls
+  namespace: production
+spec:
+  mtls:
+    mode: STRICT
+---
+# Default deny all traffic (zero-trust)
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-all
+  namespace: production
+spec: {}
+---
+# Allow frontend to call backend (specific methods and paths)
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: production
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/production/sa/frontend
+    to:
+    - operation:
+        methods: ["GET", "POST"]
+        paths: ["/api/*"]
+---
+# Allow gateway to call all services
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-gateway
+  namespace: production
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+---
+# Deny DELETE operations on database service
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-database-delete
+  namespace: production
+spec:
+  selector:
+    matchLabels:
+      app: database
+  action: DENY
+  rules:
+  - to:
+    - operation:
+        methods: ["DELETE"]

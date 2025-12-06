@@ -2,6 +2,22 @@
 
 Implement chat interfaces that handle text, images, audio, video, and file uploads for AI models like GPT-4 Vision, Gemini, and Claude.
 
+
+## Table of Contents
+
+- [Supported Modalities](#supported-modalities)
+- [Image Input](#image-input)
+  - [Upload + Preview](#upload-preview)
+  - [Send to API](#send-to-api)
+- [Audio Input (Voice)](#audio-input-voice)
+  - [Record Audio](#record-audio)
+- [File Upload (Documents)](#file-upload-documents)
+- [Multi-Modal Message Display](#multi-modal-message-display)
+- [Camera Capture (Mobile)](#camera-capture-mobile)
+- [Drag-and-Drop Upload](#drag-and-drop-upload)
+- [Best Practices](#best-practices)
+- [Resources](#resources)
+
 ## Supported Modalities
 
 | Modality | Use Case | Models Supporting | Max Size |

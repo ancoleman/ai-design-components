@@ -1,5 +1,39 @@
 # Modal Dialog Implementation Patterns
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Modal Types & Use Cases](#modal-types-use-cases)
+  - [Confirmation Modal](#confirmation-modal)
+  - [Form Modal](#form-modal)
+  - [Information Modal](#information-modal)
+  - [Media Modal](#media-modal)
+- [Modal Anatomy](#modal-anatomy)
+  - [Standard Structure](#standard-structure)
+  - [Modal Sizes](#modal-sizes)
+- [Focus Management](#focus-management)
+  - [Focus Trap Implementation](#focus-trap-implementation)
+  - [React Hook for Focus Management](#react-hook-for-focus-management)
+- [Animation Patterns](#animation-patterns)
+  - [Fade + Scale Entry](#fade-scale-entry)
+  - [Slide Up (Mobile)](#slide-up-mobile)
+- [Scroll Management](#scroll-management)
+  - [Body Scroll Lock](#body-scroll-lock)
+  - [Scrollable Modal Content](#scrollable-modal-content)
+- [Radix UI Implementation](#radix-ui-implementation)
+  - [Basic Modal with Radix](#basic-modal-with-radix)
+  - [Controlled Modal](#controlled-modal)
+- [Headless UI Implementation](#headless-ui-implementation)
+  - [Basic Modal with Headless UI](#basic-modal-with-headless-ui)
+- [Nested Modals](#nested-modals)
+  - [Stack Management](#stack-management)
+- [Accessibility Patterns](#accessibility-patterns)
+  - [ARIA Attributes](#aria-attributes)
+  - [Screen Reader Announcements](#screen-reader-announcements)
+  - [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Best Practices](#best-practices)
+
 ## Overview
 
 Modal dialogs are overlays that require user interaction before returning to the main application. They create a focused experience by blocking interaction with the rest of the page.

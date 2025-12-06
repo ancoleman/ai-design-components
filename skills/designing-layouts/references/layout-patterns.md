@@ -1,5 +1,21 @@
 # Layout Patterns Reference
 
+
+## Table of Contents
+
+- [Common Layout Patterns](#common-layout-patterns)
+  - [Sidebar Layout (Admin Dashboard)](#sidebar-layout-admin-dashboard)
+  - [Masonry Grid Layout](#masonry-grid-layout)
+  - [Split-Pane Layout](#split-pane-layout)
+  - [Holy Grail Layout](#holy-grail-layout)
+  - [Card Grid Layout](#card-grid-layout)
+- [Layout Composition Patterns](#layout-composition-patterns)
+  - [Nested Containers](#nested-containers)
+  - [Responsive Stack](#responsive-stack)
+- [Performance Considerations](#performance-considerations)
+  - [Avoiding Layout Thrashing](#avoiding-layout-thrashing)
+  - [CSS Containment](#css-containment)
+
 ## Common Layout Patterns
 
 ### Sidebar Layout (Admin Dashboard)

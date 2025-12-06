@@ -1,0 +1,247 @@
+---
+sidebar_position: 3
+title: Vulnerability Management
+description: Master plan for vulnerability management including scanning tools, SBOM generation, prioritization, and remediation workflows
+tags: [master-plan, security, vulnerabilities, sbom, scanning]
+---
+
+# Vulnerability Management
+
+:::info Status
+**Master Plan** - Comprehensive init.md complete, ready for SKILL.md implementation
+:::
+
+Vulnerability management is essential for identifying and remediating security weaknesses. This skill covers scanning tools (Trivy, Grype, Snyk), SBOM (Software Bill of Materials) generation, CVE prioritization, and automated remediation workflows.
+
+## Scope
+
+This skill teaches:
+
+- **Vulnerability Scanning** - Container images, dependencies, infrastructure
+- **SBOM Generation** - Software Bill of Materials for supply chain security
+- **CVE Prioritization** - CVSS scoring, exploitability assessment, EPSS
+- **Remediation Workflows** - Patch management, dependency updates, CI/CD integration
+- **Continuous Monitoring** - Automated scanning in pipelines and production
+- **Reporting** - Vulnerability dashboards, compliance reporting
+
+## Key Components
+
+### Scanning Tools
+
+**Trivy** (Aqua Security)
+- Container image scanning
+- Filesystem scanning
+- Git repository scanning
+- SBOM generation
+- Open source, fast, accurate
+
+**Grype** (Anchore)
+- Container image and filesystem scanning
+- CVE database matching
+- High performance
+- CI/CD integration
+
+**Snyk**
+- Open source dependencies
+- Container images
+- IaC security
+- Commercial with free tier
+
+**Scout** (Docker)
+- Built into Docker
+- Image scanning via Docker CLI
+- CVE database integration
+
+### SBOM (Software Bill of Materials)
+
+**Purpose:**
+- Inventory all software components
+- Track dependencies and versions
+- Supply chain security compliance
+
+**Generation Tools:**
+- Syft (Anchore) - SBOM generator
+- Trivy - Built-in SBOM support
+- CycloneDX - SBOM standard format
+
+**Example Workflow:**
+```bash
+# Generate SBOM
+syft image:tag -o cyclonedx-json > sbom.json
+
+# Scan SBOM for vulnerabilities
+grype sbom:sbom.json
+```
+
+### CVE Prioritization
+
+**CVSS Scoring:**
+- Base score (0-10): Severity rating
+- Temporal score: Exploit availability, patch status
+- Environmental score: Context-specific impact
+
+**Exploitability (EPSS):**
+- Exploit Prediction Scoring System
+- Probability of exploitation in next 30 days
+- Prioritize high EPSS scores
+
+**Decision Matrix:**
+| CVSS | EPSS | Priority |
+|------|------|----------|
+| Critical (9-10) | High (>50%) | **P0 - Immediate** |
+| High (7-8.9) | High (>50%) | **P1 - This week** |
+| Critical | Low (&lt;10%) | **P1 - This week** |
+| High | Low (&lt;10%) | **P2 - This month** |
+| Medium (4-6.9) | Any | **P3 - Next quarter** |
+
+### Remediation Workflows
+
+**Automated Patching:**
+1. CI/CD scans detect vulnerability
+2. Dependabot/Renovate creates pull request
+3. Automated tests run
+4. Auto-merge if tests pass (for low-risk updates)
+5. Deploy patched version
+
+**Manual Remediation:**
+1. Security team triages vulnerability
+2. Creates JIRA ticket with priority
+3. Engineering team patches and tests
+4. Security team verifies fix
+5. Deploy to production
+
+## Decision Framework
+
+**Which Scanning Tool?**
+
+```
+Container images?
+  YES → Trivy (comprehensive, open source)
+        OR Grype (performance-focused)
+        OR Docker Scout (Docker native)
+
+Dependencies (npm, pip, maven)?
+  YES → Snyk (best dependency coverage)
+        OR npm audit / pip-audit (native)
+
+Infrastructure as Code (Terraform)?
+  YES → Checkov (comprehensive IaC scanning)
+        OR tfsec (Terraform-specific)
+
+Comprehensive platform?
+  YES → Snyk (commercial, all-in-one)
+        OR Aqua Security (enterprise)
+```
+
+**Vulnerability Prioritization:**
+
+```
+Exploitable in production?
+  YES → **P0 - Patch within 24-48 hours**
+
+Publicly exploited (CISA KEV list)?
+  YES → **P0 - Immediate patching**
+
+Critical CVSS + high EPSS?
+  YES → **P1 - Within 7 days**
+
+Critical CVSS + low EPSS?
+  YES → **P1 - Within 30 days**
+
+High/Medium CVSS?
+  YES → **P2/P3 - Normal patch cycle**
+```
+
+## Tool Recommendations
+
+### Open Source Scanning
+
+**Trivy:**
+```bash
+# Scan image
+trivy image nginx:latest
+
+# Generate SBOM
+trivy image --format cyclonedx nginx:latest
+
+# Scan filesystem
+trivy fs /path/to/project
+```
+
+**Grype:**
+```bash
+# Scan image
+grype nginx:latest
+
+# Scan directory
+grype dir:/path/to/project
+
+# Scan SBOM
+grype sbom:./sbom.json
+```
+
+### Dependency Management
+
+**Dependabot** (GitHub)
+- Automated dependency updates
+- Security vulnerability alerts
+- Auto-merge for low-risk updates
+
+**Renovate** (Mend.io)
+- Multi-platform support (GitHub, GitLab, Bitbucket)
+- More configurable than Dependabot
+- Self-hosted option available
+
+**Snyk:**
+- Commercial platform
+- Real-time vulnerability database
+- Fix pull requests
+- Policy-based automation
+
+### CI/CD Integration
+
+**GitHub Actions:**
+```yaml
+- name: Run Trivy scanner
+  uses: aquasecurity/trivy-action@master
+  with:
+    image-ref: '${{ env.IMAGE_NAME }}'
+    severity: 'CRITICAL,HIGH'
+    exit-code: '1'  # Fail build on vulnerabilities
+```
+
+**GitLab CI:**
+```yaml
+container_scanning:
+  image: docker:stable
+  variables:
+    DOCKER_DRIVER: overlay2
+  services:
+    - docker:dind
+  script:
+    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+      aquasec/trivy image $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+```
+
+## Integration Points
+
+**With Other Skills:**
+- `building-ci-pipelines` - Scan in CI/CD pipelines
+- `operating-kubernetes` - Runtime vulnerability scanning (Falco)
+- `writing-infrastructure-code` - Scan IaC for security issues
+- `implementing-compliance` - Vulnerability management for compliance
+- `architecting-security` - Risk assessment and threat modeling
+
+**Workflow Example:**
+```
+Code Commit → Build → Scan → Prioritize → Remediate → Deploy
+     │          │       │         │          │          │
+     ▼          ▼       ▼         ▼          ▼          ▼
+  GitHub    Docker  Trivy/   CVSS +   Dependabot  Kubernetes
+  push      build   Grype    EPSS     PR          rollout
+```
+
+## Learn More
+
+- [Full Master Plan (init.md)](https://github.com/ancoleman/ai-design-components/blob/main/skills/managing-vulnerabilities/init.md)
+- Related: `architecting-security`, `building-ci-pipelines`, `implementing-compliance`

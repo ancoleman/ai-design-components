@@ -212,11 +212,11 @@ location /nginx_status {
 
 **With Other Skills:**
 - `load-balancing-patterns` - Advanced load balancing strategies
-- `infrastructure-as-code` - Automate NGINX deployment (Ansible, Terraform)
-- `kubernetes-operations` - NGINX Ingress Controller
+- `writing-infrastructure-code` - Automate NGINX deployment (Ansible, Terraform)
+- `operating-kubernetes` - NGINX Ingress Controller
 - `security-hardening` - Security headers, rate limiting, WAF integration
-- `dns-management` - DNS setup for NGINX domains
-- `observability` - NGINX metrics, access log analysis
+- `managing-dns` - DNS setup for NGINX domains
+- `implementing-observability` - NGINX metrics, access log analysis
 
 **Workflow Example:**
 ```
@@ -230,4 +230,4 @@ changes     to server  reload       metrics
 ## Learn More
 
 - [Full Master Plan (init.md)](https://github.com/ancoleman/ai-design-components/blob/main/skills/configuring-nginx/init.md)
-- Related: `load-balancing-patterns`, `infrastructure-as-code`, `security-hardening`
+- Related: `load-balancing-patterns`, `writing-infrastructure-code`, `security-hardening`

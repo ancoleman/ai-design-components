@@ -2,6 +2,29 @@
 
 **Comprehensive guide to creating accessible forms that comply with Web Content Accessibility Guidelines (WCAG) 2.1 Level AA.**
 
+
+## Table of Contents
+
+- [Why Form Accessibility Matters](#why-form-accessibility-matters)
+- [WCAG 2.1 Level AA Requirements](#wcag-21-level-aa-requirements)
+  - [Four Principles (POUR)](#four-principles-pour)
+- [Essential Accessibility Patterns](#essential-accessibility-patterns)
+  - [1. Labels and Instructions](#1-labels-and-instructions)
+  - [2. Keyboard Navigation](#2-keyboard-navigation)
+  - [3. Error Handling](#3-error-handling)
+  - [4. ARIA Attributes for Forms](#4-aria-attributes-for-forms)
+  - [5. Color and Contrast](#5-color-and-contrast)
+  - [6. Screen Reader Support](#6-screen-reader-support)
+  - [7. Timing and Limits](#7-timing-and-limits)
+- [Accessibility Testing Checklist](#accessibility-testing-checklist)
+  - [Automated Testing](#automated-testing)
+  - [Manual Testing](#manual-testing)
+- [Common Accessibility Anti-Patterns](#common-accessibility-anti-patterns)
+  - [What NOT to Do](#what-not-to-do)
+- [Accessibility Quick Reference](#accessibility-quick-reference)
+- [Resources](#resources)
+- [Next Steps](#next-steps)
+
 ## Why Form Accessibility Matters
 
 **Impact:**

@@ -1,0 +1,80 @@
+# Sync Hooks: PreSync and PostSync Jobs
+# Run database migration before sync, smoke tests after sync
+
+# PreSync: Database Migration Job
+# Runs before application sync
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migration
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      containers:
+      - name: migrate
+        image: myapp:latest
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - |
+          echo "Running database migrations..."
+          /app/migrate up
+          echo "Migrations complete!"
+      restartPolicy: Never
+  backoffLimit: 3
+
+---
+# PostSync: Smoke Test Job
+# Runs after application sync completes
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: smoke-test
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    spec:
+      containers:
+      - name: test
+        image: curlimages/curl:latest
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - |
+          echo "Running smoke tests..."
+          sleep 10  # Wait for service to be ready
+          curl -f http://myapp-service/health || exit 1
+          echo "Smoke tests passed!"
+      restartPolicy: Never
+  backoffLimit: 2
+
+---
+# SyncFail: Notification Job
+# Runs when sync fails
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sync-failure-notification
+  annotations:
+    argocd.argoproj.io/hook: SyncFail
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      containers:
+      - name: notify
+        image: curlimages/curl:latest
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - |
+          echo "Deployment failed, sending notification..."
+          # Example: Send Slack notification
+          # curl -X POST $SLACK_WEBHOOK_URL -d '{"text":"Deployment failed for myapp"}'
+          echo "Notification sent"
+      restartPolicy: Never

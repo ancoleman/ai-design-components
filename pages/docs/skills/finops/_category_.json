@@ -1,0 +1,10 @@
+{
+  "label": "FinOps Skills",
+  "position": 11,
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "description": "2 production-ready FinOps skills for cloud cost optimization and resource tagging."
+  }
+}

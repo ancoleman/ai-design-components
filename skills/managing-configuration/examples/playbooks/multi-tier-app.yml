@@ -1,0 +1,176 @@
+---
+# Multi-tier application deployment
+# Deploys: Load balancer -> Web tier -> App tier -> Database tier
+
+- name: Configure load balancers
+  hosts: loadbalancers
+  become: yes
+  vars:
+    backend_servers:
+      - web1.example.com
+      - web2.example.com
+
+  tasks:
+    - name: Install HAProxy
+      ansible.builtin.apt:
+        name: haproxy
+        state: present
+
+    - name: Configure HAProxy
+      ansible.builtin.template:
+        src: ../templates/haproxy.cfg.j2
+        dest: /etc/haproxy/haproxy.cfg
+      notify: Reload HAProxy
+
+    - name: Start HAProxy
+      ansible.builtin.service:
+        name: haproxy
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Reload HAProxy
+      ansible.builtin.service:
+        name: haproxy
+        state: reloaded
+
+- name: Configure web tier
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+
+    - name: Configure nginx as reverse proxy
+      ansible.builtin.template:
+        src: ../templates/nginx-proxy.conf.j2
+        dest: /etc/nginx/sites-available/default
+      notify: Reload nginx
+
+    - name: Start nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Reload nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+
+- name: Configure application tier
+  hosts: appservers
+  become: yes
+  vars:
+    app_version: "1.0.0"
+    app_port: 8080
+
+  tasks:
+    - name: Create application user
+      ansible.builtin.user:
+        name: appuser
+        system: yes
+        shell: /bin/false
+
+    - name: Create application directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: appuser
+        group: appuser
+        mode: '0755'
+      loop:
+        - /opt/myapp
+        - /etc/myapp
+        - /var/log/myapp
+
+    - name: Deploy application configuration
+      ansible.builtin.template:
+        src: ../templates/app.conf.j2
+        dest: /etc/myapp/app.conf
+        owner: appuser
+        group: appuser
+        mode: '0640'
+      notify: Restart application
+
+    - name: Install systemd service
+      ansible.builtin.template:
+        src: ../templates/myapp.service.j2
+        dest: /etc/systemd/system/myapp.service
+        mode: '0644'
+      notify:
+        - Reload systemd
+        - Restart application
+
+    - name: Start application
+      ansible.builtin.service:
+        name: myapp
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Restart application
+      ansible.builtin.service:
+        name: myapp
+        state: restarted
+
+- name: Configure database tier
+  hosts: databases
+  become: yes
+  vars:
+    postgres_version: "15"
+    postgres_databases:
+      - name: myapp
+        owner: appuser
+
+  tasks:
+    - name: Install PostgreSQL
+      ansible.builtin.apt:
+        name:
+          - "postgresql-{{ postgres_version }}"
+          - "postgresql-contrib-{{ postgres_version }}"
+          - python3-psycopg2
+        state: present
+
+    - name: Start PostgreSQL
+      ansible.builtin.service:
+        name: postgresql
+        state: started
+        enabled: yes
+
+    - name: Create application database
+      community.postgresql.postgresql_db:
+        name: "{{ item.name }}"
+        state: present
+      loop: "{{ postgres_databases }}"
+      become_user: postgres
+
+    - name: Create application user
+      community.postgresql.postgresql_user:
+        name: "{{ item.owner }}"
+        password: "{{ lookup('env', 'DB_PASSWORD') }}"
+        db: "{{ item.name }}"
+        priv: ALL
+        state: present
+      loop: "{{ postgres_databases }}"
+      become_user: postgres
+
+- name: Verify deployment
+  hosts: loadbalancers
+  become: yes
+
+  tasks:
+    - name: Check application responds through load balancer
+      ansible.builtin.uri:
+        url: http://localhost/health
+        status_code: 200
+      retries: 5
+      delay: 3

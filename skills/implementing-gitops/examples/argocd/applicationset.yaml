@@ -1,0 +1,56 @@
+# Multi-Environment ApplicationSet
+# Generates Applications for dev, staging, and prod environments
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: myapp-envs
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+  - list:
+      elements:
+      - env: dev
+        cluster: https://kubernetes.default.svc
+        replicas: 1
+        imageTag: latest
+        autoSync: "true"
+      - env: staging
+        cluster: https://kubernetes.default.svc
+        replicas: 2
+        imageTag: staging-v1.2.3
+        autoSync: "true"
+      - env: prod
+        cluster: https://prod-cluster.example.com
+        replicas: 5
+        imageTag: v1.2.3
+        autoSync: "false"  # Manual sync for prod
+  template:
+    metadata:
+      name: 'myapp-{{.env}}'
+      labels:
+        environment: '{{.env}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/myorg/myapp.git
+        targetRevision: HEAD
+        path: 'k8s/overlays/{{.env}}'
+        kustomize:
+          images:
+          - name: myapp
+            newTag: '{{.imageTag}}'
+          replicas:
+          - name: myapp
+            count: '{{.replicas}}'
+      destination:
+        server: '{{.cluster}}'
+        namespace: 'myapp-{{.env}}'
+      syncPolicy:
+        {{- if eq .autoSync "true"}}
+        automated:
+          prune: true
+          selfHeal: true
+        {{- end}}
+        syncOptions:
+        - CreateNamespace=true

@@ -1,5 +1,42 @@
 # Table Library Comparison Guide
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Primary Recommendations](#primary-recommendations)
+  - [1. TanStack Table (Recommended for Flexibility)](#1-tanstack-table-recommended-for-flexibility)
+  - [2. AG Grid (Recommended for Enterprise)](#2-ag-grid-recommended-for-enterprise)
+- [Secondary Options](#secondary-options)
+  - [3. Material-UI DataGrid](#3-material-ui-datagrid)
+  - [4. React Table (Legacy v7)](#4-react-table-legacy-v7)
+  - [5. React Data Grid](#5-react-data-grid)
+  - [6. Handsontable](#6-handsontable)
+- [Framework-Specific Options](#framework-specific-options)
+  - [Vue.js](#vuejs)
+  - [Angular](#angular)
+  - [Vanilla JavaScript](#vanilla-javascript)
+- [Decision Matrix](#decision-matrix)
+- [Performance Benchmarks](#performance-benchmarks)
+  - [Rendering Performance (1,000 rows)](#rendering-performance-1000-rows)
+  - [Virtual Scrolling (100,000 rows)](#virtual-scrolling-100000-rows)
+- [Migration Paths](#migration-paths)
+  - [From React Table v7 to TanStack Table v8](#from-react-table-v7-to-tanstack-table-v8)
+  - [From DataTables to Modern Solution](#from-datatables-to-modern-solution)
+- [Recommendations by Use Case](#recommendations-by-use-case)
+  - [Simple Data Display](#simple-data-display)
+  - [Business Application](#business-application)
+  - [Data Analysis Tool](#data-analysis-tool)
+  - [Custom Design System](#custom-design-system)
+  - [Excel Replacement](#excel-replacement)
+  - [Real-time Dashboard](#real-time-dashboard)
+- [Cost Analysis](#cost-analysis)
+  - [Open Source (Free)](#open-source-free)
+  - [Commercial Licenses](#commercial-licenses)
+  - [Hidden Costs](#hidden-costs)
+- [Final Recommendations](#final-recommendations)
+- [Resources](#resources)
+
 ## Overview
 
 This guide compares popular table/data grid libraries to help you select the best option for your project.

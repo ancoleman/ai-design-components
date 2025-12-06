@@ -1,0 +1,118 @@
+# HashiCorp Vault Deployment on Kubernetes
+#
+# This is a simplified Vault deployment for development/testing.
+# For production, use the official Vault Helm chart:
+# helm install vault hashicorp/vault --values values.yaml
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault
+  namespace: vault
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-config
+  namespace: vault
+data:
+  vault.hcl: |
+    storage "file" {
+      path = "/vault/data"
+    }
+
+    listener "tcp" {
+      address = "0.0.0.0:8200"
+      tls_disable = 1  # ONLY for development! Enable TLS in production
+    }
+
+    api_addr = "http://vault.vault.svc.cluster.local:8200"
+    ui = true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault
+  namespace: vault
+spec:
+  selector:
+    app: vault
+  ports:
+  - port: 8200
+    targetPort: 8200
+    name: api
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vault
+  namespace: vault
+spec:
+  serviceName: vault
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault
+  template:
+    metadata:
+      labels:
+        app: vault
+    spec:
+      serviceAccountName: vault
+      containers:
+      - name: vault
+        image: hashicorp/vault:1.15
+        args:
+        - "server"
+        - "-config=/vault/config/vault.hcl"
+        ports:
+        - containerPort: 8200
+          name: api
+        env:
+        - name: VAULT_ADDR
+          value: "http://127.0.0.1:8200"
+        - name: VAULT_API_ADDR
+          value: "http://vault.vault.svc.cluster.local:8200"
+        volumeMounts:
+        - name: config
+          mountPath: /vault/config
+        - name: data
+          mountPath: /vault/data
+      volumes:
+      - name: config
+        configMap:
+          name: vault-config
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+---
+# Post-deployment initialization script
+# Run this after Vault pod is running:
+#
+# 1. Initialize Vault
+# kubectl exec -n vault vault-0 -- vault operator init -key-shares=1 -key-threshold=1
+#
+# 2. Save root token and unseal key
+#
+# 3. Unseal Vault
+# kubectl exec -n vault vault-0 -- vault operator unseal <UNSEAL_KEY>
+#
+# 4. Enable Kubernetes auth
+# kubectl exec -n vault vault-0 -- sh -c '
+#   export VAULT_TOKEN=<ROOT_TOKEN>
+#   vault auth enable kubernetes
+#   vault write auth/kubernetes/config \
+#     kubernetes_host="https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT"
+# '
+#
+# 5. Enable KV v2 secrets engine
+# kubectl exec -n vault vault-0 -- sh -c '
+#   export VAULT_TOKEN=<ROOT_TOKEN>
+#   vault secrets enable -path=secret kv-v2
+# '

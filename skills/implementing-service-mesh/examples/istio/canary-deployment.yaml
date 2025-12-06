@@ -1,0 +1,131 @@
+# Istio Canary Deployment Example
+#
+# Demonstrates: Progressive traffic splitting from v1 to v2
+#
+# Usage:
+#   kubectl apply -f canary-deployment.yaml
+#   # Gradually update VirtualService weights: 90/10 → 75/25 → 50/50 → 100/0
+
+---
+# Backend v1 deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-v1
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: backend
+        version: v1
+    spec:
+      containers:
+      - name: backend
+        image: backend:v1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: VERSION
+          value: "v1"
+---
+# Backend v2 deployment (canary)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-v2
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: backend
+        version: v2
+    spec:
+      containers:
+      - name: backend
+        image: backend:v2
+        ports:
+        - containerPort: 8080
+        env:
+        - name: VERSION
+          value: "v2"
+---
+# Service (points to all backend pods)
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: production
+spec:
+  selector:
+    app: backend
+  ports:
+  - port: 8080
+    targetPort: 8080
+---
+# DestinationRule: Define subsets for v1 and v2
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: backend
+  namespace: production
+spec:
+  host: backend
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        http1MaxPendingRequests: 10
+    outlierDetection:
+      consecutiveErrors: 5
+      interval: 30s
+      baseEjectionTime: 30s
+---
+# VirtualService: 90% v1, 10% v2 (initial canary)
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: backend-canary
+  namespace: production
+spec:
+  hosts:
+  - backend
+  http:
+  # Internal testers always see v2
+  - match:
+    - headers:
+        x-canary-user:
+          exact: "true"
+    route:
+    - destination:
+        host: backend
+        subset: v2
+  # Production traffic: 90/10 split
+  - route:
+    - destination:
+        host: backend
+        subset: v1
+      weight: 90
+    - destination:
+        host: backend
+        subset: v2
+      weight: 10

@@ -1,0 +1,58 @@
+# OctoDNS Zone Records
+# Save as: config/example.com.yaml
+
+---
+# Root domain (@)
+'':
+  - type: A
+    ttl: 300
+    values:
+      - 192.0.2.1
+      - 192.0.2.2
+
+  - type: MX
+    ttl: 3600
+    values:
+      - exchange: mail1.example.com.
+        preference: 10
+      - exchange: mail2.example.com.
+        preference: 20
+
+  - type: TXT
+    ttl: 3600
+    values:
+      - "v=spf1 include:_spf.google.com ~all"
+
+# WWW subdomain
+www:
+  type: CNAME
+  ttl: 3600
+  value: example.com.
+
+# API subdomain
+api:
+  type: A
+  ttl: 300
+  values:
+    - 192.0.2.10
+
+# Blog subdomain
+blog:
+  type: CNAME
+  ttl: 3600
+  value: example.com.
+
+# DMARC record
+'_dmarc':
+  type: TXT
+  ttl: 3600
+  value: "v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com"
+
+# CAA record
+'@':
+  type: CAA
+  ttl: 3600
+  values:
+    - flags: 0
+      tag: issue
+      value: letsencrypt.org

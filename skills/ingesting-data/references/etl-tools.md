@@ -1,5 +1,26 @@
 # ETL Tools Reference
 
+
+## Table of Contents
+
+- [dlt (data load tool) - Recommended](#dlt-data-load-tool-recommended)
+  - [Installation](#installation)
+  - [Basic Pipeline](#basic-pipeline)
+  - [Incremental Loading](#incremental-loading)
+  - [Transformations with dbt](#transformations-with-dbt)
+- [Meltano (ELT Platform)](#meltano-elt-platform)
+  - [Installation](#installation)
+  - [Add Extractors/Loaders](#add-extractorsloaders)
+  - [Configuration](#configuration)
+  - [Run Pipeline](#run-pipeline)
+- [Dagster (Orchestration + ELT)](#dagster-orchestration-elt)
+  - [Assets-based Pipeline](#assets-based-pipeline)
+- [Airbyte (Low-Code ELT)](#airbyte-low-code-elt)
+  - [Docker Setup](#docker-setup)
+  - [API Configuration](#api-configuration)
+- [Tool Selection Guide](#tool-selection-guide)
+- [Comparison Matrix](#comparison-matrix)
+
 ## dlt (data load tool) - Recommended
 
 Modern Python-first ETL with automatic schema evolution.

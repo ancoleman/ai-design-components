@@ -361,9 +361,9 @@ self_hosted_cost = 0  # Fixed GPU cost, unlimited tokens
 
 ## Related Skills
 
-- [AI Chat](../frontend/ai-chat) - Frontend chat interface
+- [AI Chat](../frontend/building-ai-chat) - Frontend chat interface
 - [AI Data Engineering](./ai-data-engineering) - RAG pipeline orchestration
-- [Vector Databases](./databases-vector) - Retrieval for RAG
+- [Vector Databases](./using-vector-databases) - Retrieval for RAG
 - [Deploying Applications](./deploying-applications) - Deploy vLLM infrastructure
 
 ## References

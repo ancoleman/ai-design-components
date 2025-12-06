@@ -2,6 +2,25 @@
 
 > Complete scaffolding template for full-stack applications using Next.js App Router with TypeScript.
 
+
+## Table of Contents
+
+- [Project Structure](#project-structure)
+- [Core Files](#core-files)
+  - [package.json](#packagejson)
+  - [next.config.mjs](#nextconfigmjs)
+  - [tsconfig.json](#tsconfigjson)
+  - [src/app/layout.tsx](#srcapplayouttsx)
+  - [src/app/globals.css](#srcappglobalscss)
+  - [src/app/page.tsx](#srcapppagetsx)
+  - [src/context/theme-provider.tsx](#srccontexttheme-providertsx)
+  - [src/app/api/health/route.ts](#srcappapihealthroutets)
+- [Server Components vs Client Components](#server-components-vs-client-components)
+  - [When to use Server Components (default)](#when-to-use-server-components-default)
+  - [When to use Client Components](#when-to-use-client-components)
+- [Commands](#commands)
+- [Integration Checklist](#integration-checklist)
+
 ## Project Structure
 
 ```

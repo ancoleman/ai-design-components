@@ -1,0 +1,96 @@
+version: '3.8'
+
+# Wazuh Single-Node Docker Compose Deployment
+# Production-ready SIEM with manager, indexer, and dashboard
+
+services:
+  wazuh-manager:
+    image: wazuh/wazuh-manager:4.7.0
+    hostname: wazuh-manager
+    restart: always
+    ports:
+      - "1514:1514"     # Agent connection (TCP)
+      - "1515:1515"     # Agent registration
+      - "514:514/udp"   # Syslog
+      - "55000:55000"   # API
+    environment:
+      - INDEXER_URL=https://wazuh-indexer:9200
+      - INDEXER_USERNAME=admin
+      - INDEXER_PASSWORD=SecurePassword123!
+      - FILEBEAT_SSL_VERIFICATION_MODE=none
+      - API_USERNAME=wazuh-wui
+      - API_PASSWORD=SecurePassword123!
+    volumes:
+      - wazuh_api_configuration:/var/ossec/api/configuration
+      - wazuh_etc:/var/ossec/etc
+      - wazuh_logs:/var/ossec/logs
+      - wazuh_queue:/var/ossec/queue
+      - wazuh_ruleset:/var/ossec/ruleset
+      - wazuh_var_multigroups:/var/ossec/var/multigroups
+      - wazuh_integrations:/var/ossec/integrations
+      - wazuh_active_response:/var/ossec/active-response/bin
+      - wazuh_agentless:/var/ossec/agentless
+      - wazuh_wodles:/var/ossec/wodles
+      - filebeat_etc:/etc/filebeat
+      - filebeat_var:/var/lib/filebeat
+
+  wazuh-indexer:
+    image: wazuh/wazuh-indexer:4.7.0
+    hostname: wazuh-indexer
+    restart: always
+    ports:
+      - "9200:9200"
+    environment:
+      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "bootstrap.memory_lock=true"
+      - "discovery.type=single-node"
+      - "DISABLE_SECURITY_PLUGIN=false"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - wazuh-indexer-data:/var/lib/wazuh-indexer
+
+  wazuh-dashboard:
+    image: wazuh/wazuh-dashboard:4.7.0
+    hostname: wazuh-dashboard
+    restart: always
+    ports:
+      - "443:5601"
+    environment:
+      - INDEXER_USERNAME=admin
+      - INDEXER_PASSWORD=SecurePassword123!
+      - WAZUH_API_URL=https://wazuh-manager
+      - API_USERNAME=wazuh-wui
+      - API_PASSWORD=SecurePassword123!
+      - DASHBOARD_USERNAME=kibanaserver
+      - DASHBOARD_PASSWORD=SecurePassword123!
+    depends_on:
+      - wazuh-indexer
+      - wazuh-manager
+    links:
+      - wazuh-indexer:wazuh-indexer
+      - wazuh-manager:wazuh-manager
+
+volumes:
+  wazuh_api_configuration:
+  wazuh_etc:
+  wazuh_logs:
+  wazuh_queue:
+  wazuh_ruleset:
+  wazuh_var_multigroups:
+  wazuh_integrations:
+  wazuh_active_response:
+  wazuh_agentless:
+  wazuh_wodles:
+  filebeat_etc:
+  filebeat_var:
+  wazuh-indexer-data:
+
+networks:
+  default:
+    driver: bridge

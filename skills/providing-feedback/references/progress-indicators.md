@@ -1,5 +1,42 @@
 # Progress Indicator Implementation Patterns
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [When to Show Progress](#when-to-show-progress)
+  - [Timing Thresholds](#timing-thresholds)
+- [Spinner Patterns](#spinner-patterns)
+  - [Basic Spinner](#basic-spinner)
+  - [Dots Spinner](#dots-spinner)
+  - [Spinner with Message](#spinner-with-message)
+- [Progress Bar Patterns](#progress-bar-patterns)
+  - [Determinate Progress Bar](#determinate-progress-bar)
+  - [Indeterminate Progress Bar](#indeterminate-progress-bar)
+  - [Segmented Progress](#segmented-progress)
+  - [Circular Progress](#circular-progress)
+- [Linear Progress (Top Bar)](#linear-progress-top-bar)
+  - [Page Load Progress](#page-load-progress)
+  - [NProgress-style Implementation](#nprogress-style-implementation)
+- [Skeleton Screens](#skeleton-screens)
+  - [Basic Skeleton](#basic-skeleton)
+  - [Card Skeleton](#card-skeleton)
+  - [Table Skeleton](#table-skeleton)
+- [Progress with Time Estimates](#progress-with-time-estimates)
+  - [Time Calculation](#time-calculation)
+  - [Progress with Time Display](#progress-with-time-display)
+- [File Upload Progress](#file-upload-progress)
+  - [Upload with Progress](#upload-with-progress)
+  - [Multi-file Upload Queue](#multi-file-upload-queue)
+- [Loading States for Different Components](#loading-states-for-different-components)
+  - [Button Loading State](#button-loading-state)
+  - [Card Loading State](#card-loading-state)
+  - [Table Loading Overlay](#table-loading-overlay)
+- [Accessibility](#accessibility)
+  - [ARIA Attributes](#aria-attributes)
+  - [Screen Reader Support](#screen-reader-support)
+- [Best Practices](#best-practices)
+
 ## Overview
 
 Progress indicators communicate the status of operations, helping users understand system activity and manage expectations for completion times.

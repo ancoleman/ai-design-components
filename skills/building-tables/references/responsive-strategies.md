@@ -2,6 +2,18 @@
 
 Patterns for making data tables work on mobile devices.
 
+
+## Table of Contents
+
+- [Strategy 1: Horizontal Scroll](#strategy-1-horizontal-scroll)
+- [Strategy 2: Card Layout (Mobile)](#strategy-2-card-layout-mobile)
+- [Strategy 3: Priority Columns](#strategy-3-priority-columns)
+- [Strategy 4: Accordion Table](#strategy-4-accordion-table)
+- [Strategy 5: Stacked Labels](#strategy-5-stacked-labels)
+- [Comparison](#comparison)
+- [Best Practices](#best-practices)
+- [Resources](#resources)
+
 ## Strategy 1: Horizontal Scroll
 
 **Simplest - wraps table in scrollable container.**

@@ -1,5 +1,23 @@
 # File Format Handling
 
+
+## Table of Contents
+
+- [CSV Processing](#csv-processing)
+  - [Python (Polars - Recommended)](#python-polars-recommended)
+  - [TypeScript (papaparse)](#typescript-papaparse)
+- [JSON Processing](#json-processing)
+  - [JSON Lines (Recommended for streaming)](#json-lines-recommended-for-streaming)
+  - [Nested JSON](#nested-json)
+- [Parquet (Analytics Recommended)](#parquet-analytics-recommended)
+  - [Python](#python)
+  - [Rust (arrow-rs)](#rust-arrow-rs)
+- [Excel Processing](#excel-processing)
+  - [Python (openpyxl + polars)](#python-openpyxl-polars)
+- [Schema Validation](#schema-validation)
+  - [Python with Pandera](#python-with-pandera)
+- [Format Selection Guide](#format-selection-guide)
+
 ## CSV Processing
 
 ### Python (Polars - Recommended)

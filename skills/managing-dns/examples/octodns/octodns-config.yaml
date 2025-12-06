@@ -1,0 +1,48 @@
+# OctoDNS Configuration
+# Sync DNS records from YAML to multiple providers
+
+providers:
+  # YAML source (version controlled)
+  config:
+    class: octodns.provider.yaml.YamlProvider
+    directory: ./config
+    default_ttl: 3600
+    enforce_order: true
+
+  # AWS Route53
+  route53:
+    class: octodns_route53.Route53Provider
+    access_key_id: env/AWS_ACCESS_KEY_ID
+    secret_access_key: env/AWS_SECRET_ACCESS_KEY
+
+  # Google Cloud DNS
+  cloudns:
+    class: octodns_googlecloud.GoogleCloudProvider
+    project: env/GCLOUD_PROJECT
+    credentials_file: env/GOOGLE_APPLICATION_CREDENTIALS
+
+  # Cloudflare
+  cloudflare:
+    class: octodns_cloudflare.CloudflareProvider
+    token: env/CLOUDFLARE_TOKEN
+
+zones:
+  # Production zone synced to Route53 and Cloudflare
+  example.com.:
+    sources:
+      - config
+    targets:
+      - route53
+      - cloudflare
+
+  # Staging zone synced to Cloudflare only
+  staging.example.com.:
+    sources:
+      - config
+    targets:
+      - cloudflare
+
+# Usage:
+# octodns-validate --config-file=octodns-config.yaml
+# octodns-sync --config-file=octodns-config.yaml          # dry run
+# octodns-sync --config-file=octodns-config.yaml --doit   # apply changes

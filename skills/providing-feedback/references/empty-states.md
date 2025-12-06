@@ -1,5 +1,40 @@
 # Empty State Design Patterns
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Types of Empty States](#types-of-empty-states)
+  - [First Use Empty State](#first-use-empty-state)
+  - [No Results Empty State](#no-results-empty-state)
+  - [Error Empty State](#error-empty-state)
+  - [Permission Denied Empty State](#permission-denied-empty-state)
+  - [Cleared/Deleted Empty State](#cleareddeleted-empty-state)
+- [Empty State Anatomy](#empty-state-anatomy)
+  - [Standard Structure](#standard-structure)
+  - [Layout Styles](#layout-styles)
+- [Illustration Patterns](#illustration-patterns)
+  - [Simple SVG Illustrations](#simple-svg-illustrations)
+  - [Animated Illustrations](#animated-illustrations)
+  - [Icon-Based Illustrations](#icon-based-illustrations)
+- [Context-Specific Empty States](#context-specific-empty-states)
+  - [Table Empty State](#table-empty-state)
+  - [List Empty State](#list-empty-state)
+  - [Grid Empty State](#grid-empty-state)
+- [Progressive Enhancement](#progressive-enhancement)
+  - [Loading to Empty Transition](#loading-to-empty-transition)
+  - [Animated Entry](#animated-entry)
+- [Educational Empty States](#educational-empty-states)
+  - [Feature Discovery](#feature-discovery)
+  - [Onboarding Empty State](#onboarding-empty-state)
+- [Gamification Elements](#gamification-elements)
+  - [Achievement Empty State](#achievement-empty-state)
+  - [Motivational Empty State](#motivational-empty-state)
+- [Accessibility Considerations](#accessibility-considerations)
+  - [Screen Reader Support](#screen-reader-support)
+  - [Keyboard Navigation](#keyboard-navigation)
+- [Best Practices](#best-practices)
+
 ## Overview
 
 Empty states appear when there's no data to display. They're opportunities to guide users, explain features, and encourage action rather than showing blank screens.

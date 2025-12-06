@@ -1,0 +1,131 @@
+# Infracost GitHub Actions Workflow
+#
+# Estimates Terraform cost changes in pull requests
+#
+# Setup:
+#   1. Add INFRACOST_API_KEY to GitHub repository secrets
+#   2. Place this file in .github/workflows/infracost.yml
+#
+# Features:
+#   - Cost estimation on PR creation/update
+#   - PR comments with cost diff
+#   - Fail PR if cost increase > $500/month
+
+name: Terraform Cost Estimation
+
+on:
+  pull_request:
+    paths:
+      - 'terraform/**'
+      - '**.tf'
+
+permissions:
+  contents: read
+  pull-requests: write  # Required for PR comments
+
+jobs:
+  infracost:
+    runs-on: ubuntu-latest
+    name: Estimate Terraform Cost
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+
+      - name: Setup Infracost
+        uses: infracost/actions/setup@v3
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+      - name: Checkout Base Branch
+        uses: actions/checkout@v4
+        with:
+          ref: '${{ github.event.pull_request.base.ref }}'
+
+      - name: Generate Infracost Cost Estimate Baseline
+        run: |
+          cd terraform/
+          terraform init
+          terraform plan -out=tfplan.binary
+          terraform show -json tfplan.binary > plan.json
+          infracost breakdown --path=plan.json --format=json --out-file=/tmp/infracost-base.json
+
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+
+      - name: Generate Infracost Cost Estimate
+        run: |
+          cd terraform/
+          terraform init
+          terraform plan -out=tfplan.binary
+          terraform show -json tfplan.binary > plan.json
+          infracost breakdown --path=plan.json --format=json --out-file=/tmp/infracost.json
+
+      - name: Generate Infracost Diff
+        run: |
+          infracost diff \
+            --path=/tmp/infracost.json \
+            --compare-to=/tmp/infracost-base.json \
+            --format=json \
+            --out-file=/tmp/infracost-diff.json
+
+      - name: Post Infracost PR Comment
+        uses: infracost/actions/comment@v3
+        with:
+          path: /tmp/infracost-diff.json
+          behavior: update  # Update existing comment (not create new)
+
+      - name: Check Cost Increase Threshold
+        id: cost_check
+        run: |
+          MONTHLY_DIFF=$(jq '.diffTotalMonthlyCost | tonumber' /tmp/infracost-diff.json)
+          echo "Monthly cost diff: $MONTHLY_DIFF"
+
+          # Fail if cost increase > $500/month
+          if (( $(echo "$MONTHLY_DIFF > 500" | bc -l) )); then
+            echo "❌ Cost increase >$500/month requires FinOps team approval"
+            echo "cost_approved=false" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "✅ Cost increase within acceptable threshold"
+            echo "cost_approved=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Notify FinOps Team (if threshold exceeded)
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "text": "⚠️ Large cost increase detected in PR",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Cost Alert: PR requires FinOps approval*"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*PR:*\n${{ github.event.pull_request.html_url }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author:*\n${{ github.event.pull_request.user.login }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

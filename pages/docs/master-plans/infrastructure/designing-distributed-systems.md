@@ -136,9 +136,9 @@ Default? → Hash Partitioning (consistent hashing)
 
 **With Other Skills:**
 - `microservices-architecture` - Apply distributed patterns to services
-- `message-queues` - Async communication patterns
+- `using-message-queues` - Async communication patterns
 - `databases-*` - Database-specific consistency models
-- `observability` - Distributed tracing (OpenTelemetry)
+- `implementing-observability` - Distributed tracing (OpenTelemetry)
 - `testing-strategies` - Chaos engineering
 
 **Communication Patterns:**
@@ -150,4 +150,4 @@ Default? → Hash Partitioning (consistent hashing)
 ## Learn More
 
 - [Full Master Plan (init.md)](https://github.com/ancoleman/ai-design-components/blob/main/skills/designing-distributed-systems/init.md)
-- Related: `microservices-architecture`, `message-queues`, `observability`
+- Related: `microservices-architecture`, `using-message-queues`, `implementing-observability`

@@ -71,12 +71,12 @@ No enforcement (best-effort) → Experimental tags
 
 ## Integration Points
 
-- `infrastructure-as-code` - Tags applied via Terraform/Pulumi default_tags
-- `cost-optimization` - Tags enable cost allocation and budgeting
-- `compliance-frameworks` - Tags prove PCI/HIPAA/SOC2 scope
+- `writing-infrastructure-code` - Tags applied via Terraform/Pulumi default_tags
+- `optimizing-costs` - Tags enable cost allocation and budgeting
+- `implementing-compliance` - Tags prove PCI/HIPAA/SOC2 scope
 - `security-hardening` - Tags enforce security policies
-- `disaster-recovery` - Tags identify resources for backup policies
-- `kubernetes-operations` - Labels for pod scheduling and resource quotas
+- `planning-disaster-recovery` - Tags identify resources for backup policies
+- `operating-kubernetes` - Labels for pod scheduling and resource quotas
 
 ## Learn More
 

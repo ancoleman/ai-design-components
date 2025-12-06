@@ -1,0 +1,80 @@
+# Composite Action Example
+# Demonstrates: Reusable step sequence for project setup
+
+name: 'Setup Project'
+description: 'Install dependencies and setup project environment with caching'
+author: 'Your Organization'
+
+inputs:
+  node-version:
+    description: 'Node.js version to use (18, 20, 22)'
+    required: false
+    default: '20'
+  package-manager:
+    description: 'Package manager to use (npm, yarn, pnpm)'
+    required: false
+    default: 'npm'
+  working-directory:
+    description: 'Working directory for project'
+    required: false
+    default: '.'
+  install-command:
+    description: 'Custom install command (overrides package manager default)'
+    required: false
+    default: ''
+
+outputs:
+  cache-hit:
+    description: "Whether dependencies were restored from cache"
+    value: ${{ steps.cache.outputs.cache-hit }}
+  node-version:
+    description: "Node.js version that was installed"
+    value: ${{ steps.setup-node.outputs.node-version }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      id: setup-node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: ${{ inputs.package-manager }}
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.working-directory }}/node_modules
+        key: ${{ runner.os }}-${{ inputs.package-manager }}-${{ inputs.node-version }}-${{ hashFiles(format('{0}/package-lock.json', inputs.working-directory)) }}
+        restore-keys: |
+          ${{ runner.os }}-${{ inputs.package-manager }}-${{ inputs.node-version }}-
+          ${{ runner.os }}-${{ inputs.package-manager }}-
+
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [ -n "${{ inputs.install-command }}" ]; then
+          echo "Using custom install command"
+          ${{ inputs.install-command }}
+        elif [ "${{ inputs.package-manager }}" = "npm" ]; then
+          npm ci
+        elif [ "${{ inputs.package-manager }}" = "yarn" ]; then
+          yarn install --frozen-lockfile
+        elif [ "${{ inputs.package-manager }}" = "pnpm" ]; then
+          pnpm install --frozen-lockfile
+        else
+          echo "Unsupported package manager: ${{ inputs.package-manager }}"
+          exit 1
+        fi
+
+    - name: Verify installation
+      shell: bash
+      run: |
+        echo "Node.js version: $(node --version)"
+        echo "npm version: $(npm --version)"
+        echo "Package manager: ${{ inputs.package-manager }}"
+        echo "Cache hit: ${{ steps.cache.outputs.cache-hit }}"

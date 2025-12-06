@@ -2,6 +2,32 @@
 
 **Complete guide to CSS logical properties for RTL/i18n support**
 
+
+## Table of Contents
+
+- [Why Logical Properties?](#why-logical-properties)
+- [Core Concepts](#core-concepts)
+- [Complete Property Mapping](#complete-property-mapping)
+  - [Margin](#margin)
+  - [Padding](#padding)
+  - [Borders](#borders)
+  - [Positioning](#positioning)
+  - [Text Alignment](#text-alignment)
+  - [Sizing](#sizing)
+- [Token Examples](#token-examples)
+  - [✅ CORRECT - Logical Properties](#correct-logical-properties)
+  - [❌ WRONG - Physical Properties](#wrong-physical-properties)
+- [Browser Support](#browser-support)
+- [Testing RTL](#testing-rtl)
+  - [Set Document Direction](#set-document-direction)
+  - [Visual Testing Checklist](#visual-testing-checklist)
+  - [Browser DevTools](#browser-devtools)
+- [Common Patterns](#common-patterns)
+  - [Pattern 1: Card with Start Border](#pattern-1-card-with-start-border)
+  - [Pattern 2: Icon Before Text](#pattern-2-icon-before-text)
+  - [Pattern 3: Dropdown Menu](#pattern-3-dropdown-menu)
+- [Resources](#resources)
+
 ---
 
 ## Why Logical Properties?

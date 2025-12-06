@@ -1,0 +1,164 @@
+# Cilium Network Policy Example
+#
+# Demonstrates: L3/L4/L7 network policies with eBPF enforcement
+#
+# Dependencies:
+#   Cilium installed with service mesh enabled
+#
+# Usage:
+#   kubectl apply -f network-policy.yaml
+
+---
+# Frontend deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: frontend:latest
+        ports:
+        - containerPort: 3000
+---
+# Backend deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: backend:latest
+        ports:
+        - containerPort: 8080
+---
+# Backend service
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: production
+spec:
+  selector:
+    app: backend
+  ports:
+  - port: 8080
+---
+# L3/L4 Policy: Allow frontend to access backend on port 8080
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: production
+spec:
+  description: "Allow frontend pods to access backend on port 8080"
+  endpointSelector:
+    matchLabels:
+      app: backend
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app: frontend
+    toPorts:
+    - ports:
+      - port: "8080"
+        protocol: TCP
+---
+# L7 HTTP Policy: Restrict HTTP methods and paths
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: backend-http-policy
+  namespace: production
+spec:
+  endpointSelector:
+    matchLabels:
+      app: backend
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app: frontend
+    toPorts:
+    - ports:
+      - port: "8080"
+        protocol: TCP
+      rules:
+        http:
+        - method: GET
+          path: "/api/users"
+        - method: GET
+          path: "/api/users/.*"
+        - method: POST
+          path: "/api/users"
+---
+# Egress policy: Allow backend to access external API
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: backend-egress
+  namespace: production
+spec:
+  endpointSelector:
+    matchLabels:
+      app: backend
+  egress:
+  # Allow to external API
+  - toFQDNs:
+    - matchName: "api.github.com"
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+  # Allow DNS queries
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: ANY
+      rules:
+        dns:
+        - matchPattern: "*"
+---
+# Cluster-wide default deny policy
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  description: "Default deny all traffic"
+  endpointSelector: {}
+  ingress:
+  - {}
+  egress:
+  # Allow DNS for all pods
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"

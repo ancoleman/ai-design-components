@@ -1,0 +1,174 @@
+# Kubernetes Resource Quotas and Limits
+#
+# Prevent runaway resource consumption per namespace
+#
+# Apply:
+#   kubectl apply -f resource-quotas.yaml
+
+---
+# ResourceQuota: Limit total resources per namespace
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: team-backend-quota
+  namespace: team-backend
+spec:
+  hard:
+    # Compute resources
+    requests.cpu: "100"         # Max 100 CPU cores requested across all pods
+    requests.memory: 200Gi      # Max 200 GiB memory requested across all pods
+    limits.cpu: "200"           # Max 200 CPU cores limit across all pods
+    limits.memory: 400Gi        # Max 400 GiB memory limit across all pods
+
+    # Storage resources
+    requests.storage: 1Ti                # Max 1 TiB storage across all PVCs
+    persistentvolumeclaims: "10"         # Max 10 PVCs
+    requests.ephemeral-storage: 100Gi    # Max 100 GiB ephemeral storage
+
+    # Object count limits
+    pods: "50"                           # Max 50 pods
+    services: "20"                       # Max 20 services
+    services.loadbalancers: "2"          # Max 2 LoadBalancers ($$$)
+    configmaps: "50"                     # Max 50 ConfigMaps
+    secrets: "50"                        # Max 50 Secrets
+
+---
+# LimitRange: Default and max requests/limits per pod
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: default-limits
+  namespace: team-backend
+spec:
+  limits:
+  # Container limits
+  - type: Container
+    max:
+      cpu: "4"          # Max 4 CPU cores per container
+      memory: 16Gi      # Max 16 GiB memory per container
+    min:
+      cpu: 100m         # Min 100m CPU per container
+      memory: 128Mi     # Min 128 MiB memory per container
+    default:
+      cpu: 500m         # Default limit if not specified
+      memory: 1Gi
+    defaultRequest:
+      cpu: 250m         # Default request if not specified
+      memory: 512Mi
+
+  # Pod limits (sum of all containers)
+  - type: Pod
+    max:
+      cpu: "8"          # Max 8 CPU cores per pod
+      memory: 32Gi      # Max 32 GiB memory per pod
+
+  # PersistentVolumeClaim limits
+  - type: PersistentVolumeClaim
+    max:
+      storage: 500Gi    # Max 500 GiB per PVC
+    min:
+      storage: 1Gi      # Min 1 GiB per PVC
+
+---
+# PriorityClass: High priority for critical workloads
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: critical-priority
+value: 1000000                  # Higher = more important (max 1 billion)
+preemptionPolicy: PreemptLowerPriority
+globalDefault: false
+description: "Critical production workloads that must always run"
+
+---
+# PriorityClass: Medium priority for standard workloads
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: standard-priority
+value: 1000
+preemptionPolicy: PreemptLowerPriority
+globalDefault: true             # Default priority for pods without priorityClassName
+description: "Standard production workloads"
+
+---
+# PriorityClass: Low priority for batch jobs
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: low-priority
+value: 100
+preemptionPolicy: PreemptLowerPriority
+globalDefault: false
+description: "Low-priority batch jobs that can be preempted"
+
+---
+# Example Deployment with PriorityClass and Resource Requests
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-server
+  namespace: team-backend
+  labels:
+    app: api-server
+    team: backend
+    environment: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api-server
+  template:
+    metadata:
+      labels:
+        app: api-server
+        team: backend
+        environment: production
+    spec:
+      priorityClassName: critical-priority  # High priority (protected from preemption)
+
+      containers:
+      - name: api
+        image: mycompany/api-server:v1.0.0
+        ports:
+        - containerPort: 8080
+
+        # Right-sized resource requests/limits
+        resources:
+          requests:
+            cpu: 500m        # 0.5 CPU (average usage)
+            memory: 1Gi      # 1 GiB (average usage)
+          limits:
+            cpu: 1500m       # 1.5 CPU (3x requests, burst capacity)
+            memory: 3Gi      # 3 GiB (3x requests)
+
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+
+---
+# Pod Disruption Budget: Ensure availability during disruptions
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: api-server-pdb
+  namespace: team-backend
+spec:
+  minAvailable: 2               # Always keep at least 2 pods running
+  selector:
+    matchLabels:
+      app: api-server
+
+  # Or use maxUnavailable instead of minAvailable
+  # maxUnavailable: 1           # Allow max 1 pod to be unavailable

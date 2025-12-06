@@ -1,5 +1,35 @@
 # Modern CSS Techniques
 
+
+## Table of Contents
+
+- [CSS Grid](#css-grid)
+  - [Grid Fundamentals](#grid-fundamentals)
+  - [Advanced Grid Patterns](#advanced-grid-patterns)
+  - [Grid Alignment](#grid-alignment)
+- [Flexbox](#flexbox)
+  - [Flexbox Patterns](#flexbox-patterns)
+  - [Advanced Flexbox](#advanced-flexbox)
+- [Container Queries](#container-queries)
+  - [Basic Container Queries](#basic-container-queries)
+  - [Container Query Units](#container-query-units)
+  - [Nested Containers](#nested-containers)
+- [CSS Custom Properties (Variables)](#css-custom-properties-variables)
+  - [Dynamic Properties](#dynamic-properties)
+  - [Property Manipulation](#property-manipulation)
+- [Modern Layout Features](#modern-layout-features)
+  - [Aspect Ratio](#aspect-ratio)
+  - [Logical Properties](#logical-properties)
+  - [CSS Subgrid](#css-subgrid)
+  - [Scroll Snap](#scroll-snap)
+- [CSS Math Functions](#css-math-functions)
+  - [Clamp, Min, Max](#clamp-min-max)
+  - [Calc with Custom Properties](#calc-with-custom-properties)
+- [Performance Techniques](#performance-techniques)
+  - [Content Visibility](#content-visibility)
+  - [CSS Containment](#css-containment)
+  - [Will-Change](#will-change)
+
 ## CSS Grid
 
 ### Grid Fundamentals

@@ -20,16 +20,16 @@ Master plans are detailed planning documents that contain:
 
 ## Categories
 
-| Category | Skills | Focus Areas |
-|----------|--------|-------------|
-| [Infrastructure](/docs/master-plans/infrastructure) | 12 | IaC, Kubernetes, networking, distributed systems |
-| [Security](/docs/master-plans/security) | 6 | Architecture, compliance, vulnerability management |
-| [DevOps](/docs/master-plans/devops) | 6 | CI/CD, GitOps, testing, platform engineering |
-| [Developer Productivity](/docs/master-plans/developer-productivity) | 7 | APIs, CLIs, SDKs, debugging, documentation |
-| [Data](/docs/master-plans/data) | 6 | Architecture, streaming, transformation, governance |
-| [AI/ML](/docs/master-plans/ai-ml) | 4 | MLOps, prompts, evaluation, data engineering |
-| [Cloud](/docs/master-plans/cloud) | 3 | AWS, GCP, Azure patterns |
-| [FinOps](/docs/master-plans/finops) | 3 | Cost optimization, tagging, security hardening |
+| Category | Skills | Key Skills |
+|----------|--------|------------|
+| **Infrastructure** | 12 | [Kubernetes](./infrastructure/operating-kubernetes), [IaC](./infrastructure/writing-infrastructure-code), [Networks](./infrastructure/architecting-networks), [Service Mesh](./infrastructure/implementing-service-mesh) |
+| **Security** | 6 | [Architecture](./security/architecting-security), [Compliance](./security/implementing-compliance), [TLS](./security/implementing-tls), [SIEM](./security/siem-logging) |
+| **DevOps** | 6 | [CI/CD](./devops/building-ci-pipelines), [GitOps](./devops/implementing-gitops), [Testing](./devops/testing-strategies), [Platform](./devops/platform-engineering) |
+| **Developer Productivity** | 7 | [APIs](./developer-productivity/designing-apis), [CLIs](./developer-productivity/building-clis), [SDKs](./developer-productivity/designing-sdks), [Docs](./developer-productivity/generating-documentation) |
+| **Data** | 6 | [Architecture](./data/architecting-data), [Streaming](./data/streaming-data), [Transform](./data/transforming-data), [SQL](./data/optimizing-sql) |
+| **AI/ML** | 4 | [MLOps](./ai-ml/implementing-mlops), [Prompts](./ai-ml/prompt-engineering), [Eval](./ai-ml/evaluating-llms), [Embeddings](./ai-ml/embedding-optimization) |
+| **Cloud** | 3 | [AWS](./cloud/deploying-on-aws), [GCP](./cloud/deploying-on-gcp), [Azure](./cloud/deploying-on-azure) |
+| **FinOps** | 3 | [Costs](./finops/optimizing-costs), [Tags](./finops/resource-tagging), [Hardening](./finops/security-hardening) |
 
 ## Multi-Language Skills
 

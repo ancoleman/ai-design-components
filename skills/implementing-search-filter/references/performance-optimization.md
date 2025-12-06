@@ -1,5 +1,19 @@
 # Search Performance Optimization
 
+
+## Table of Contents
+
+- [Frontend Performance](#frontend-performance)
+  - [Debouncing and Throttling](#debouncing-and-throttling)
+  - [Request Cancellation](#request-cancellation)
+  - [Result Caching](#result-caching)
+- [Backend Performance](#backend-performance)
+  - [Database Index Optimization](#database-index-optimization)
+  - [Query Optimization Patterns](#query-optimization-patterns)
+  - [Elasticsearch Performance Tuning](#elasticsearch-performance-tuning)
+- [Monitoring and Metrics](#monitoring-and-metrics)
+  - [Performance Tracking](#performance-tracking)
+
 ## Frontend Performance
 
 ### Debouncing and Throttling

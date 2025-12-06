@@ -1,5 +1,26 @@
 # Elasticsearch Integration Patterns
 
+
+## Table of Contents
+
+- [Python Elasticsearch Client Setup](#python-elasticsearch-client-setup)
+  - [Basic Connection](#basic-connection)
+- [Index Design and Mappings](#index-design-and-mappings)
+  - [Product Search Index](#product-search-index)
+- [Search Query Patterns](#search-query-patterns)
+  - [Full-Text Search with Filters](#full-text-search-with-filters)
+  - [Autocomplete/Suggestions](#autocompletesuggestions)
+- [Advanced Search Features](#advanced-search-features)
+  - [Boolean Query Builder](#boolean-query-builder)
+  - [Relevance Tuning](#relevance-tuning)
+- [Performance Optimization](#performance-optimization)
+  - [Query Caching](#query-caching)
+  - [Scroll API for Large Results](#scroll-api-for-large-results)
+- [Index Management](#index-management)
+  - [Reindexing Strategy](#reindexing-strategy)
+- [Error Handling](#error-handling)
+  - [Robust Search with Retries](#robust-search-with-retries)
+
 ## Python Elasticsearch Client Setup
 
 ### Basic Connection

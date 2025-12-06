@@ -1,5 +1,22 @@
 # Query Parameter Management
 
+
+## Table of Contents
+
+- [URL State Synchronization](#url-state-synchronization)
+  - [React Router Integration](#react-router-integration)
+  - [Next.js URL Management](#nextjs-url-management)
+- [Complex Query Compression](#complex-query-compression)
+  - [Base64 Encoding for Complex Filters](#base64-encoding-for-complex-filters)
+- [Shareable Search URLs](#shareable-search-urls)
+  - [Creating Shareable Links](#creating-shareable-links)
+- [History Management](#history-management)
+  - [Search History with Local Storage](#search-history-with-local-storage)
+- [Deep Linking Support](#deep-linking-support)
+  - [Handling Deep Links](#handling-deep-links)
+- [Validation and Sanitization](#validation-and-sanitization)
+  - [URL Parameter Validation](#url-parameter-validation)
+
 ## URL State Synchronization
 
 ### React Router Integration

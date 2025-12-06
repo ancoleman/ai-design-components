@@ -1,0 +1,183 @@
+# Monorepo Workflow Example
+# Demonstrates: Selective builds based on changed paths
+
+name: Monorepo CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Detect which packages changed
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+      shared: ${{ steps.filter.outputs.shared }}
+      docs: ${{ steps.filter.outputs.docs }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v5.0.0
+
+      - name: Check changed paths
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'packages/frontend/**'
+            backend:
+              - 'packages/backend/**'
+            shared:
+              - 'packages/shared/**'
+            docs:
+              - 'docs/**'
+              - '*.md'
+
+  # Build frontend if changed
+  frontend:
+    name: Build Frontend
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true' || needs.changes.outputs.shared == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: packages/frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: packages/frontend/dist/
+
+  # Build backend if changed
+  backend:
+    name: Build Backend
+    needs: changes
+    if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.shared == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/backend
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: packages/backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run migrations
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+        run: npm run migrate
+
+      - name: Test
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  # Update documentation if changed
+  docs:
+    name: Build Documentation
+    needs: changes
+    if: needs.changes.outputs.docs == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v5.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build docs
+        run: npm run docs:build
+
+      - name: Upload docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: docs/build/
+
+  # Deploy if all checks pass (main branch only)
+  deploy:
+    name: Deploy All
+    needs: [changes, frontend, backend]
+    if: github.ref == 'refs/heads/main' && always() && !contains(needs.*.result, 'failure')
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Download frontend
+        if: needs.changes.outputs.frontend == 'true'
+        uses: actions/download-artifact@v5
+        with:
+          name: frontend-dist
+          path: frontend/
+
+      - name: Deploy frontend
+        if: needs.changes.outputs.frontend == 'true'
+        run: |
+          echo "Deploying frontend..."
+          # Deploy commands here
+
+      - name: Deploy backend
+        if: needs.changes.outputs.backend == 'true'
+        run: |
+          echo "Deploying backend..."
+          # Deploy commands here

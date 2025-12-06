@@ -1,0 +1,33 @@
+# Example Systemd Timer: Daily Backup
+#
+# Installation:
+#   sudo cp backup.timer /etc/systemd/system/
+#   sudo cp backup.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable backup.timer
+#   sudo systemctl start backup.timer
+#
+# Check timer status:
+#   systemctl list-timers backup.timer
+#   systemctl status backup.timer
+
+[Unit]
+Description=Daily Backup Timer
+Documentation=man:systemd.timer(5)
+Requires=backup.service
+
+[Timer]
+# Run daily at 2:00 AM
+OnCalendar=*-*-* 02:00:00
+
+# Run missed timers after system boot
+Persistent=true
+
+# Allow 5-minute slack window (batch with other timers)
+AccuracySec=5min
+
+# Randomize start time by up to 30 minutes (spread load)
+RandomizedDelaySec=30min
+
+[Install]
+WantedBy=timers.target

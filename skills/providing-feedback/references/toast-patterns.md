@@ -1,5 +1,41 @@
 # Toast & Snackbar Implementation Patterns
 
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Positioning Strategies](#positioning-strategies)
+  - [Bottom-Right (Recommended)](#bottom-right-recommended)
+  - [Top-Center](#top-center)
+  - [Top-Right](#top-right)
+- [Stacking Behavior](#stacking-behavior)
+  - [Queue Pattern](#queue-pattern)
+  - [Stack Pattern (Max 5)](#stack-pattern-max-5)
+  - [Replace Pattern](#replace-pattern)
+- [Animation Patterns](#animation-patterns)
+  - [Slide + Fade Enter](#slide-fade-enter)
+  - [Slide + Fade Exit](#slide-fade-exit)
+  - [Scale + Fade (Alternative)](#scale-fade-alternative)
+- [Timing Strategies](#timing-strategies)
+  - [Auto-dismiss Calculation](#auto-dismiss-calculation)
+  - [Progressive Timing](#progressive-timing)
+- [Toast Types & Styles](#toast-types-styles)
+  - [Success Toast](#success-toast)
+  - [Error Toast](#error-toast)
+  - [Toast with Action](#toast-with-action)
+- [Mobile Considerations](#mobile-considerations)
+  - [Touch-Friendly Sizing](#touch-friendly-sizing)
+  - [Swipe to Dismiss](#swipe-to-dismiss)
+  - [Safe Area Positioning (iOS)](#safe-area-positioning-ios)
+- [Implementation with Sonner](#implementation-with-sonner)
+  - [Basic Setup](#basic-setup)
+  - [Custom Toast Component](#custom-toast-component)
+  - [Promise-Based Toasts](#promise-based-toasts)
+- [Accessibility Patterns](#accessibility-patterns)
+  - [ARIA Announcements](#aria-announcements)
+  - [Keyboard Interactions](#keyboard-interactions)
+- [Best Practices](#best-practices)
+
 ## Overview
 
 Toasts (also called snackbars) are temporary notifications that appear at the edge of the screen to provide feedback without interrupting the user's workflow.

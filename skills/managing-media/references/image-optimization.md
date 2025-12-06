@@ -2,6 +2,18 @@
 
 Reduce file sizes and improve load times with responsive images, modern formats, and lazy loading.
 
+
+## Table of Contents
+
+- [Modern Image Formats](#modern-image-formats)
+- [Responsive Images](#responsive-images)
+- [Next.js Image Component](#nextjs-image-component)
+- [Lazy Loading](#lazy-loading)
+- [Client-Side Compression](#client-side-compression)
+- [CDN Integration](#cdn-integration)
+- [Best Practices](#best-practices)
+- [Tools](#tools)
+
 ## Modern Image Formats
 
 | Format | Use Case | Browser Support | Compression |

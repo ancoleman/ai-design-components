@@ -1,0 +1,93 @@
+# Matrix Build Example
+# Demonstrates: Cross-platform and multi-version testing
+
+name: Matrix Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test on ${{ matrix.os }} with Node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Don't cancel all jobs if one fails (see all results)
+      fail-fast: false
+      # Limit concurrent jobs
+      max-parallel: 6
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [18, 20, 22]
+        # Add specific configuration
+        include:
+          - os: ubuntu-latest
+            node: 20
+            experimental: true
+            coverage: true
+        # Exclude problematic combinations
+        exclude:
+          - os: windows-latest
+            node: 18
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v5.0.0
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+        continue-on-error: ${{ matrix.experimental || false }}
+
+      - name: Generate coverage
+        if: matrix.coverage
+        run: npm test -- --coverage
+
+      - name: Upload coverage
+        if: matrix.coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.os }}-node${{ matrix.node }}
+          path: coverage/
+
+  build-matrix:
+    name: Build for ${{ matrix.platform }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [linux, windows, darwin]
+        arch: [amd64, arm64]
+        exclude:
+          - platform: windows
+            arch: arm64
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v5.0.0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.platform }}
+          GOARCH: ${{ matrix.arch }}
+        run: go build -o bin/app-${{ matrix.platform }}-${{ matrix.arch }}
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-${{ matrix.platform }}-${{ matrix.arch }}
+          path: bin/app-${{ matrix.platform }}-${{ matrix.arch }}

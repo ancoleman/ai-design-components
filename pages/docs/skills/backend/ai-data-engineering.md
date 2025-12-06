@@ -338,10 +338,10 @@ python scripts/evaluate_rag.py \
 
 ## Related Skills
 
-- [Vector Databases](./databases-vector) - Store and query embeddings
+- [Vector Databases](./using-vector-databases) - Store and query embeddings
 - [Model Serving](./model-serving) - Serve LLMs for RAG generation
-- [AI Chat](../frontend/ai-chat) - Frontend chat interface
-- [Search & Filter](../frontend/search-filter) - Semantic search UI
+- [AI Chat](../frontend/building-ai-chat) - Frontend chat interface
+- [Search & Filter](../frontend/implementing-search-filter) - Semantic search UI
 
 ## References
 

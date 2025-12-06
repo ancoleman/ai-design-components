@@ -2,6 +2,22 @@
 
 Row selection, cell selection, and range selection patterns for data tables.
 
+
+## Table of Contents
+
+- [Single Row Selection](#single-row-selection)
+- [Multi-Row Selection (Checkbox)](#multi-row-selection-checkbox)
+- [Keyboard Selection](#keyboard-selection)
+- [Cell Selection (Spreadsheet-like)](#cell-selection-spreadsheet-like)
+- [Range Selection (Drag)](#range-selection-drag)
+- [Select All Variants](#select-all-variants)
+  - [Select All (Current Page)](#select-all-current-page)
+  - [Select All (All Pages)](#select-all-all-pages)
+- [Indeterminate Checkbox](#indeterminate-checkbox)
+- [Persist Selection](#persist-selection)
+- [Best Practices](#best-practices)
+- [Resources](#resources)
+
 ## Single Row Selection
 
 ```tsx
