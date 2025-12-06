@@ -41,10 +41,10 @@ function HomepageHeader() {
 
 function StatsSection() {
   const stats = [
-    { value: '76', label: 'Total Skills' },
-    { value: '29', label: 'Production Ready' },
-    { value: '47', label: 'Master Plans' },
+    { value: '76', label: 'Production Skills' },
+    { value: '18', label: 'Plugin Groups' },
     { value: '4', label: 'Languages' },
+    { value: '3', label: 'Blueprints' },
   ];
 
   return (
@@ -67,7 +67,7 @@ function QuickLinksSection() {
   const links = [
     {
       title: 'Skills Directory',
-      description: 'Explore all available skills across frontend, backend, and DevOps',
+      description: 'Explore all 76 production-ready skills across frontend, backend, DevOps, and more',
       to: '/docs/skills/overview',
     },
     {
@@ -76,9 +76,9 @@ function QuickLinksSection() {
       to: '/docs/skillchain/overview',
     },
     {
-      title: 'Master Plans',
-      description: 'View comprehensive planning documents for each skill category',
-      to: '/docs/master-plans/overview',
+      title: 'Installation',
+      description: 'Get started with AI Design Components in your projects',
+      to: '/docs/installation',
     },
   ];
 
