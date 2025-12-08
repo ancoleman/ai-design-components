@@ -219,7 +219,7 @@ jobs:
               errors=$((errors + 1))
             fi
 
-            if ! grep -q "## Skill Chain" "$bp_file"; then
+            if ! grep -q "## .*Skill Chain" "$bp_file"; then
               echo "ERROR: $bp_name missing 'Skill Chain' section"
               errors=$((errors + 1))
             fi
