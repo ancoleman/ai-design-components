@@ -1,7 +1,7 @@
 # Cloud Deployment Blueprint
 
-**Version:** 1.0.0
-**Last Updated:** 2024-12-06
+**Version:** 1.1.0
+**Last Updated:** 2025-12-08
 **Category:** Cloud Infrastructure
 
 ---
@@ -22,6 +22,11 @@ Pre-configured skill chain optimized for deploying applications to cloud platfor
 - serverless
 - lambda
 - cloud infrastructure
+- terraform
+- aws infrastructure
+- provision aws
+- provision gcp
+- provision azure
 
 **Secondary (medium confidence):**
 - cloud functions
@@ -32,9 +37,10 @@ Pre-configured skill chain optimized for deploying applications to cloud platfor
 - fargate
 - kubernetes
 - docker deploy
-- terraform
 - cloudformation
 - infrastructure as code
+- pulumi
+- cdk
 
 **Example goals that match:**
 - "deploy my app to AWS"

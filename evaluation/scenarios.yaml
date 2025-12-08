@@ -1,8 +1,8 @@
 # AI Design Components - Evaluation Scenarios
 # 12 Demo Scenarios to Validate Skillchain Effectiveness
-# Version: 1.0.0 | Last Updated: 2025-12-06
+# Version: 1.1.0 | Last Updated: 2025-12-08
 
-version: "1.0.0"
+version: "1.1.0"
 total_scenarios: 12
 
 # Evaluation Criteria (scored 1-5)
@@ -85,8 +85,8 @@ scenarios:
     goal: "Build a REST API with JWT authentication, user CRUD, and PostgreSQL"
     expected_skills:
       - designing-apis
-      - implementing-auth-security
-      - designing-databases-relational
+      - securing-authentication
+      - using-relational-databases
       - testing-strategies
       - implementing-observability
     expected_questions: 3  # With blueprint
@@ -108,7 +108,7 @@ scenarios:
     goal: "Create a FastAPI CRUD backend for a product catalog with Postgres"
     expected_skills:
       - designing-apis
-      - designing-databases-relational
+      - using-relational-databases
       - testing-strategies
     expected_questions: 3
     normal_questions: 10
@@ -131,11 +131,11 @@ scenarios:
     blueprint: k8s
     goal: "Deploy a microservices application to Kubernetes with autoscaling and monitoring"
     expected_skills:
-      - configuring-kubernetes
-      - managing-containers
+      - operating-kubernetes
+      - writing-dockerfiles
       - configuring-nginx
       - implementing-observability
-      - hardening-security
+      - security-hardening
     expected_questions: 3  # With blueprint
     normal_questions: 18   # Without blueprint
     success_criteria:
@@ -154,11 +154,11 @@ scenarios:
     blueprint: cloud
     goal: "Provision AWS infrastructure with Terraform for a web application"
     expected_skills:
-      - provisioning-terraform
-      - deploying-aws
+      - writing-infrastructure-code
+      - deploying-on-aws
       - implementing-observability
-      - hardening-security
-      - optimizing-finops
+      - security-hardening
+      - optimizing-costs
     expected_questions: 3
     normal_questions: 15
     success_criteria:
@@ -182,9 +182,9 @@ scenarios:
     expected_skills:
       - building-ci-pipelines
       - testing-strategies
-      - managing-containers
+      - writing-dockerfiles
       - implementing-gitops
-      - hardening-security
+      - security-hardening
     expected_questions: 3  # With blueprint
     normal_questions: 12   # Without blueprint
     success_criteria:
@@ -204,7 +204,7 @@ scenarios:
     expected_skills:
       - implementing-observability
       - creating-dashboards
-      - implementing-siem
+      - siem-logging
     expected_questions: 3
     normal_questions: 15
     success_criteria:
@@ -226,10 +226,10 @@ scenarios:
     blueprint: security
     goal: "Implement security hardening for SOC2 compliance with zero-trust networking"
     expected_skills:
-      - hardening-security
-      - implementing-auth-security
-      - managing-secrets
-      - implementing-siem
+      - security-hardening
+      - securing-authentication
+      - secret-management
+      - siem-logging
     expected_questions: 3  # With blueprint
     normal_questions: 20   # Without blueprint
     success_criteria:
@@ -252,9 +252,9 @@ scenarios:
     blueprint: rag-pipeline
     goal: "Build a RAG pipeline with document ingestion, embeddings, and semantic search"
     expected_skills:
-      - engineering-ai-data
+      - ai-data-engineering
       - using-vector-databases
-      - serving-models
+      - model-serving
       - implementing-observability
     expected_questions: 3
     normal_questions: 12
@@ -274,8 +274,8 @@ scenarios:
     goal: "Set up an MLOps pipeline with experiment tracking and model serving"
     expected_skills:
       - implementing-mlops
-      - engineering-ai-data
-      - serving-models
+      - ai-data-engineering
+      - model-serving
       - implementing-observability
     expected_questions: 3
     normal_questions: 20
@@ -300,7 +300,7 @@ scenarios:
     expected_skills:
       - streaming-data
       - optimizing-sql
-      - designing-databases-relational
+      - using-relational-databases
       - implementing-observability
       - testing-strategies
     expected_questions: 3

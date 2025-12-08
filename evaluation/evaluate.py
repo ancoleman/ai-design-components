@@ -214,16 +214,18 @@ class SkillDetector:
         }
 
     def detect_domain(self, goal: str) -> Tuple[str, Dict]:
-        """Detect primary domain from goal."""
+        """Detect primary domain from goal using word-boundary matching."""
         domain_keywords = {
             "frontend": ["ui", "form", "dashboard", "chart", "component", "interface",
                         "page", "design", "table", "menu", "navigation", "layout"],
             "backend": ["api", "database", "server", "auth", "queue", "cache",
                        "sql", "postgres", "mongo", "redis", "endpoint", "rest"],
             "devops": ["ci", "cd", "pipeline", "test", "docker", "gitops",
-                      "jenkins", "github actions", "gitlab"],
+                      "jenkins", "github actions", "gitlab", "prometheus", "grafana",
+                      "observability", "monitoring", "tracing"],
             "infrastructure": ["kubernetes", "k8s", "terraform", "ansible",
-                              "linux", "nginx", "network", "load balancer"],
+                              "linux", "nginx", "network", "load balancer", "aws", "gcp", "azure",
+                              "microservices", "autoscaling", "deployment", "cluster"],
             "security": ["security", "tls", "ssl", "firewall", "compliance",
                         "soc2", "vulnerability", "encryption"],
             "ai-ml": ["rag", "vector", "embeddings", "llm", "agent", "model",
@@ -236,10 +238,21 @@ class SkillDetector:
         }
 
         goal_lower = goal.lower()
+        # Extract words for word-boundary matching
+        goal_words = set(re.findall(r'\b\w+\b', goal_lower))
         domain_scores = {}
 
         for domain, keywords in domain_keywords.items():
-            score = sum(1 for kw in keywords if kw in goal_lower)
+            score = 0
+            for kw in keywords:
+                # For multi-word keywords, check substring
+                if ' ' in kw:
+                    if kw in goal_lower:
+                        score += 1
+                # For single-word keywords, check word boundary
+                else:
+                    if kw in goal_words:
+                        score += 1
             if score > 0:
                 domain_scores[domain] = score
 
@@ -264,6 +277,11 @@ class BlueprintDetector:
         """
         Detect if a blueprint matches the goal.
         Returns: (blueprint_name, confidence, details)
+
+        Matching criteria (count-based, not percentage-based):
+        - HIGH confidence: 2+ primary matches OR (1 primary + 2+ secondary)
+        - MEDIUM confidence: 1 primary match + 1 secondary
+        - LOW: 1 primary match only
         """
         goal_lower = goal.lower()
         best_match = None
@@ -281,9 +299,26 @@ class BlueprintDetector:
             # Score: primary = 10 points each, secondary = 5 points each
             score = len(primary_matches) * 10 + len(secondary_matches) * 5
 
-            # Calculate confidence (0-100%)
-            max_score = len(primary) * 10 + len(secondary) * 5
-            confidence = (score / max_score * 100) if max_score > 0 else 0
+            # Calculate confidence based on match counts (not percentage)
+            # 2+ primary = 90%, 1 primary + 2 secondary = 80%, 1 primary + 1 secondary = 70%
+            # 1 primary only = 50%, secondary only = 30%
+            p_count = len(primary_matches)
+            s_count = len(secondary_matches)
+
+            if p_count >= 2:
+                confidence = 90.0
+            elif p_count >= 1 and s_count >= 2:
+                confidence = 80.0
+            elif p_count >= 1 and s_count >= 1:
+                confidence = 70.0
+            elif p_count >= 1:
+                confidence = 50.0
+            elif s_count >= 2:
+                confidence = 40.0
+            elif s_count >= 1:
+                confidence = 20.0
+            else:
+                confidence = 0.0
 
             details[bp_name] = {
                 "primary_matches": primary_matches,
@@ -296,8 +331,8 @@ class BlueprintDetector:
                 best_score = score
                 best_match = bp_name
 
-        # Return match if confidence >= 70%
-        if best_match and details[best_match]["confidence"] >= 70:
+        # Return match if confidence >= 50% (at least 1 primary keyword match)
+        if best_match and details[best_match]["confidence"] >= 50:
             return best_match, details[best_match]["confidence"], details
 
         return None, 0, details
@@ -395,9 +430,13 @@ class ScenarioEvaluator:
             result.scores["blueprint_match"] = 5.0  # N/A = pass
 
         # 4. Calculate question reduction score
+        # If no blueprint expected, don't penalize for no question reduction
         expected_q = scenario.get("expected_questions", 0)
         normal_q = scenario.get("normal_questions", 0)
-        if normal_q > 0:
+        if expected_blueprint is None:
+            # No blueprint = no question reduction expected, give full score
+            result.scores["question_reduction"] = 5.0
+        elif normal_q > 0:
             reduction = (normal_q - expected_q) / normal_q
             result.scores["question_reduction"] = reduction * 5
         else:
