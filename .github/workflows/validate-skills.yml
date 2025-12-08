@@ -20,8 +20,8 @@ on:
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
-  validate-structure:
-    name: Validate Skill Structure
+  validate-skills:
+    name: Validate Skills (Validation Package)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,77 +34,26 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pyyaml
+          pip install pyyaml rich textual
 
-      - name: Validate skill directory structure
+      - name: Run skill validation
         run: |
-          echo "Validating skill directory structure..."
+          echo "Running skill validation package..."
+          python -m scripts.validation ci --completed --format=console
 
-          # Check that each skill has required files
-          errors=0
-
-          for skill_dir in skills/*/; do
-            skill_name=$(basename "$skill_dir")
-
-            # Skip non-skill directories
-            if [[ "$skill_name" == "node_modules" ]] || [[ "$skill_name" == "__pycache__" ]]; then
-              continue
-            fi
-
-            # Check for SKILL.md
-            if [[ ! -f "$skill_dir/SKILL.md" ]]; then
-              echo "ERROR: $skill_name is missing SKILL.md"
-              errors=$((errors + 1))
-            else
-              echo "✓ $skill_name has SKILL.md"
-
-              # Validate SKILL.md frontmatter
-              if ! head -n 1 "$skill_dir/SKILL.md" | grep -q "^---$"; then
-                echo "ERROR: $skill_name/SKILL.md missing frontmatter"
-                errors=$((errors + 1))
-              fi
-            fi
-
-            # Check for references/ directory (optional but recommended)
-            if [[ -d "$skill_dir/references" ]]; then
-              ref_count=$(find "$skill_dir/references" -name "*.md" | wc -l)
-              echo "  - $ref_count reference files"
-            fi
-
-            # Check for examples/ directory (optional)
-            if [[ -d "$skill_dir/examples" ]]; then
-              example_count=$(find "$skill_dir/examples" -type f | wc -l)
-              echo "  - $example_count example files"
-            fi
-          done
-
-          if [[ $errors -gt 0 ]]; then
-            echo ""
-            echo "Found $errors validation errors"
-            exit 1
-          fi
-
-          echo ""
-          echo "All skills validated successfully!"
-
-      - name: Count skills and resources
+      - name: Generate JUnit report
+        if: always()
         run: |
-          echo "=== Skills Summary ==="
-          skill_count=$(find skills -maxdepth 1 -type d | wc -l)
-          skill_count=$((skill_count - 1))  # Exclude skills/ itself
-          echo "Total skills: $skill_count"
+          python -m scripts.validation ci --completed --format=junit -o validation-results.xml
+        continue-on-error: true
 
-          skill_md_count=$(find skills -name "SKILL.md" | wc -l)
-          echo "Skills with SKILL.md: $skill_md_count"
-
-          ref_count=$(find skills -path "*/references/*.md" | wc -l)
-          echo "Reference documents: $ref_count"
-
-          example_count=$(find skills -path "*/examples/*" -type f ! -path "*/node_modules/*" | wc -l)
-          echo "Example files: $example_count"
-
-          script_count=$(find skills -path "*/scripts/*" -type f | wc -l)
-          echo "Script files: $script_count"
+      - name: Upload validation results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: skill-validation-results
+          path: validation-results.xml
+          if-no-files-found: ignore
 
   validate-registries:
     name: Validate Skillchain Registries
@@ -309,7 +258,7 @@ jobs:
   run-evaluation:
     name: Run Skillchain Evaluation
     runs-on: ubuntu-latest
-    needs: [validate-structure, validate-registries, validate-blueprints, validate-marketplace]
+    needs: [validate-skills, validate-registries, validate-blueprints, validate-marketplace]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -328,7 +277,6 @@ jobs:
           if [[ -f "evaluation/evaluate.py" ]]; then
             python3 evaluation/evaluate.py --report --output evaluation_results.json
 
-            # Show summary (allow failure for now - baseline)
             echo ""
             echo "Evaluation complete. See report above for details."
           else
@@ -341,13 +289,13 @@ jobs:
         if: always()
         with:
           name: evaluation-report
-          path: evaluation/evaluation_results.json
+          path: evaluation_results.json
           if-no-files-found: ignore
 
   summary:
     name: Validation Summary
     runs-on: ubuntu-latest
-    needs: [validate-structure, validate-registries, validate-blueprints, validate-marketplace, run-evaluation]
+    needs: [validate-skills, validate-registries, validate-blueprints, validate-marketplace, run-evaluation]
     if: always()
     steps:
       - name: Check results
@@ -355,10 +303,10 @@ jobs:
           echo "=== Validation Summary ==="
           echo ""
 
-          if [[ "${{ needs.validate-structure.result }}" == "success" ]]; then
-            echo "✓ Skill Structure: PASSED"
+          if [[ "${{ needs.validate-skills.result }}" == "success" ]]; then
+            echo "✓ Skills Validation: PASSED"
           else
-            echo "✗ Skill Structure: FAILED"
+            echo "✗ Skills Validation: FAILED"
           fi
 
           if [[ "${{ needs.validate-registries.result }}" == "success" ]]; then

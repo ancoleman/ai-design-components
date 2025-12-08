@@ -245,12 +245,96 @@ code {
   fill: #1e293b;
 }
 
-/* Sequence diagram improvements */
+/* ===========================================
+   Sequence Diagram Dark Mode Fixes
+   =========================================== */
+
+/* Sequence diagram actor boxes and text */
+[data-theme='dark'] .mermaid .actor,
+[data-theme='dark'] .mermaid .actor-man {
+  fill: #1e293b !important;
+  stroke: #64748b !important;
+}
+
+[data-theme='dark'] .mermaid .actor text,
+[data-theme='dark'] .mermaid text.actor {
+  fill: #e2e8f0 !important;
+}
+
+/* Sequence diagram message labels */
+[data-theme='dark'] .mermaid .messageText,
+[data-theme='dark'] .mermaid .sequenceNumber,
+[data-theme='dark'] .mermaid .labelText,
+[data-theme='dark'] .mermaid text.messageText {
+  fill: #e2e8f0 !important;
+}
+
+/* Sequence diagram loop/alt boxes */
+[data-theme='dark'] .mermaid .loopText,
+[data-theme='dark'] .mermaid .loopText tspan,
+[data-theme='dark'] .mermaid .labelBox {
+  fill: #334155 !important;
+}
+
+[data-theme='dark'] .mermaid .loopLine {
+  stroke: #64748b !important;
+}
+
+/* Sequence diagram activation bars */
+[data-theme='dark'] .mermaid .activation0,
+[data-theme='dark'] .mermaid .activation1,
+[data-theme='dark'] .mermaid .activation2 {
+  fill: #475569 !important;
+}
+
+/* Sequence diagram lines */
+[data-theme='dark'] .mermaid .messageLine0,
+[data-theme='dark'] .mermaid .messageLine1 {
+  stroke: #94a3b8 !important;
+}
+
+/* ===========================================
+   Mindmap Dark Mode Fixes
+   =========================================== */
+
+/* Mindmap node backgrounds */
+[data-theme='dark'] .mermaid .mindmap-node rect,
+[data-theme='dark'] .mermaid .mindmap-node circle,
+[data-theme='dark'] .mermaid .mindmap-node ellipse,
+[data-theme='dark'] .mermaid .section-root rect,
+[data-theme='dark'] .mermaid .section-root circle {
+  fill: #334155 !important;
+  stroke: #64748b !important;
+}
+
+/* Mindmap text - ensure visibility */
+[data-theme='dark'] .mermaid .mindmap-node text,
+[data-theme='dark'] .mermaid .mindmap-node .nodeLabel,
+[data-theme='dark'] .mermaid .mindmap-label,
+[data-theme='dark'] .mermaid g.mindmap-node text {
+  fill: #e2e8f0 !important;
+  color: #e2e8f0 !important;
+}
+
+/* Mindmap root node */
+[data-theme='dark'] .mermaid .section-root text,
+[data-theme='dark'] .mermaid .mindmap-node.section-root text {
+  fill: #f8fafc !important;
+}
+
+/* Mindmap connecting lines */
+[data-theme='dark'] .mermaid .mindmap-edge,
+[data-theme='dark'] .mermaid .edge-depth-0,
+[data-theme='dark'] .mermaid .edge-depth-1,
+[data-theme='dark'] .mermaid .edge-depth-2 {
+  stroke: #64748b !important;
+}
+
+/* Light mode sequence/mindmap defaults */
 .mermaid .actor {
   stroke-width: 2px;
 }
 
-/* Mindmap styling */
 .mermaid .mindmap-node {
   padding: 8px 16px;
 }

@@ -27,8 +27,9 @@ from datetime import datetime
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 SCENARIOS_FILE = SCRIPT_DIR / "scenarios.yaml"
-REGISTRIES_DIR = PROJECT_ROOT / "commands" / "skillchain" / "_registries"
-BLUEPRINTS_DIR = PROJECT_ROOT / "commands" / "skillchain" / "blueprints"
+# Updated for skillchain v3.0 directory structure
+REGISTRIES_DIR = PROJECT_ROOT / ".claude-commands" / "skillchain-data" / "registries"
+BLUEPRINTS_DIR = PROJECT_ROOT / ".claude-commands" / "skillchain" / "blueprints"
 
 
 # =============================================================================
