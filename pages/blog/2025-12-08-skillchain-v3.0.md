@@ -250,8 +250,8 @@ If upgrading from v2.1:
 ## Performance
 
 - **Skill loading**: ~2-3 seconds (parallel loading)
-- **Registry lookup**: <50ms (domain-specific files)
-- **Path discovery**: <50ms
+- **Registry lookup**: under 50ms (domain-specific files)
+- **Path discovery**: under 50ms
 - **Total startup**: ~3-4 seconds
 
 ## What's Next
