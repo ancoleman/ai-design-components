@@ -273,23 +273,34 @@ jobs:
           pip install pyyaml
 
       - name: Run evaluation scenarios
+        id: evaluation
         run: |
           if [[ -f "evaluation/evaluate.py" ]]; then
-            python3 evaluation/evaluate.py --report --output evaluation_results.json
+            # Run evaluation and capture exit code
+            python3 evaluation/evaluate.py --report --output evaluation/evaluation_results.json || EXIT_CODE=$?
 
             echo ""
             echo "Evaluation complete. See report above for details."
+
+            # Store pass rate for summary (0% is expected baseline)
+            if [[ -f "evaluation/evaluation_results.json" ]]; then
+              echo "evaluation_ran=true" >> $GITHUB_OUTPUT
+            fi
+
+            # Don't fail the workflow for baseline evaluation
+            # Exit 0 to allow workflow to continue
+            exit 0
           else
             echo "Evaluation script not found, skipping..."
+            echo "evaluation_ran=false" >> $GITHUB_OUTPUT
           fi
-        continue-on-error: true
 
       - name: Upload evaluation report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: evaluation-report
-          path: evaluation_results.json
+          path: evaluation/evaluation_results.json
           if-no-files-found: ignore
 
   summary:
@@ -327,10 +338,11 @@ jobs:
             echo "✗ Marketplace: FAILED"
           fi
 
+          # Evaluation is in baseline mode - scenarios show areas for improvement
           if [[ "${{ needs.run-evaluation.result }}" == "success" ]]; then
-            echo "✓ Evaluation: PASSED"
+            echo "⚠ Evaluation: BASELINE (0% pass rate expected - see artifacts)"
           else
-            echo "⚠ Evaluation: INCOMPLETE (baseline mode)"
+            echo "✗ Evaluation: FAILED"
           fi
 
           echo ""
