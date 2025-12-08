@@ -461,7 +461,7 @@ install_commands() {
     echo -e "  Data:     ${data_dir}"
     echo ""
     echo "Available commands:"
-    echo "  /skillchain:skillchain [goal]     Main guided workflow"
+    echo "  /skillchain:start [goal]          Main guided workflow"
     echo "  /skillchain:help                  Show help and skill list"
     echo "  /skillchain:blueprints:dashboard  Direct blueprint access"
     echo "  /skillchain:categories:frontend   Direct category access"
