@@ -5,20 +5,16 @@ on:
     branches: [main]
     paths:
       - 'skills/**'
-      - '.claude-commands/**'
       - '.claude-plugin/**'
       - '.github/workflows/validate-skills.yml'
-      - 'evaluation/**'
-      - 'scripts/**'
+      - 'scripts/validation/**'
   pull_request:
     branches: [main]
     paths:
       - 'skills/**'
-      - '.claude-commands/**'
       - '.claude-plugin/**'
       - '.github/workflows/validate-skills.yml'
-      - 'evaluation/**'
-      - 'scripts/**'
+      - 'scripts/validation/**'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -56,141 +52,6 @@ jobs:
           name: skill-validation-results
           path: validation-results.xml
           if-no-files-found: ignore
-
-  validate-registries:
-    name: Validate Skillchain Registries
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          pip install pyyaml
-
-      - name: Validate registry files
-        run: |
-          echo "Validating skillchain registries..."
-
-          python3 << 'EOF'
-          import yaml
-          import sys
-          from pathlib import Path
-
-          registries_dir = Path(".claude-commands/skillchain-data/registries")
-          errors = []
-
-          # Check index exists
-          index_file = registries_dir / "_index.yaml"
-          if not index_file.exists():
-              errors.append(f"Missing registry index: {index_file}")
-              print(f"ERROR: {errors[-1]}")
-              sys.exit(1)
-
-          with open(index_file) as f:
-              index = yaml.safe_load(f)
-
-          print(f"Registry version: {index.get('version', 'unknown')}")
-          print(f"Total skills declared: {index.get('total_skills', 0)}")
-
-          domains = index.get("domains", {})
-          total_skill_count = 0
-
-          for domain, info in domains.items():
-              registry_file = registries_dir / info.get("file", f"{domain}.yaml")
-
-              if not registry_file.exists():
-                  errors.append(f"Missing registry file: {registry_file}")
-                  print(f"ERROR: {errors[-1]}")
-                  continue
-
-              with open(registry_file) as f:
-                  registry = yaml.safe_load(f)
-
-              skills = registry.get("skills", {})
-              skill_count = len(skills) if isinstance(skills, dict) else 0
-              total_skill_count += skill_count
-
-              print(f"  {domain}: {skill_count} skills")
-
-              # Validate each skill has required fields
-              for skill_name, config in (skills.items() if isinstance(skills, dict) else []):
-                  if not isinstance(config, dict):
-                      continue
-
-                  if "keywords" not in config:
-                      errors.append(f"{domain}/{skill_name}: missing keywords")
-                  elif "primary" not in config.get("keywords", {}):
-                      errors.append(f"{domain}/{skill_name}: missing primary keywords")
-
-          print(f"\nTotal skills in registries: {total_skill_count}")
-
-          if errors:
-              print(f"\n{len(errors)} validation errors:")
-              for error in errors:
-                  print(f"  - {error}")
-              sys.exit(1)
-
-          print("\nAll registries validated successfully!")
-          EOF
-
-  validate-blueprints:
-    name: Validate Blueprints
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Validate blueprint files
-        run: |
-          echo "Validating skillchain blueprints..."
-
-          blueprints_dir=".claude-commands/skillchain/blueprints"
-          errors=0
-
-          for bp_file in "$blueprints_dir"/*.md; do
-            bp_name=$(basename "$bp_file" .md)
-
-            # Check file size (should be substantial)
-            line_count=$(wc -l < "$bp_file")
-            if [[ $line_count -lt 100 ]]; then
-              echo "WARNING: $bp_name has only $line_count lines (expected 100+)"
-            else
-              echo "✓ $bp_name: $line_count lines"
-            fi
-
-            # Check for required sections
-            if ! grep -q "## Trigger Keywords" "$bp_file"; then
-              echo "ERROR: $bp_name missing 'Trigger Keywords' section"
-              errors=$((errors + 1))
-            fi
-
-            if ! grep -q "## .*Skill Chain" "$bp_file"; then
-              echo "ERROR: $bp_name missing 'Skill Chain' section"
-              errors=$((errors + 1))
-            fi
-
-            if ! grep -q "## Pre-configured Defaults" "$bp_file"; then
-              echo "ERROR: $bp_name missing 'Pre-configured Defaults' section"
-              errors=$((errors + 1))
-            fi
-          done
-
-          blueprint_count=$(ls -1 "$blueprints_dir"/*.md 2>/dev/null | wc -l)
-          echo ""
-          echo "Total blueprints: $blueprint_count"
-
-          if [[ $errors -gt 0 ]]; then
-            echo "Found $errors validation errors"
-            exit 1
-          fi
-
-          echo "All blueprints validated successfully!"
 
   validate-marketplace:
     name: Validate Marketplace Config
@@ -257,97 +118,36 @@ jobs:
           print("\nMarketplace validated successfully!")
           EOF
 
-  run-evaluation:
-    name: Run Skillchain Evaluation
-    runs-on: ubuntu-latest
-    needs: [validate-skills, validate-registries, validate-blueprints, validate-marketplace]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          pip install pyyaml
-
-      - name: Run evaluation scenarios
-        id: evaluation
-        run: |
-          if [[ -f "evaluation/evaluate.py" ]]; then
-            # Run evaluation and capture exit code
-            # Note: evaluate.py saves to SCRIPT_DIR/output, so just use filename
-            python3 evaluation/evaluate.py --report --output evaluation_results.json || EXIT_CODE=$?
-
-            echo ""
-            echo "Evaluation complete. See report above for details."
-
-            # Store pass rate for summary (0% is expected baseline)
-            # File is saved in evaluation/ directory by the script
-            if [[ -f "evaluation/evaluation_results.json" ]]; then
-              echo "evaluation_ran=true" >> $GITHUB_OUTPUT
-            fi
-
-            # Don't fail the workflow for baseline evaluation
-            # Exit 0 to allow workflow to continue
-            exit 0
-          else
-            echo "Evaluation script not found, skipping..."
-            echo "evaluation_ran=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Upload evaluation report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: evaluation-report
-          path: evaluation/evaluation_results.json
-          if-no-files-found: ignore
-
   summary:
     name: Validation Summary
     runs-on: ubuntu-latest
-    needs: [validate-skills, validate-registries, validate-blueprints, validate-marketplace, run-evaluation]
+    needs: [validate-skills, validate-marketplace]
     if: always()
     steps:
       - name: Check results
         run: |
-          echo "=== Validation Summary ==="
+          echo "=== Skills Validation Summary ==="
           echo ""
+
+          FAILED=0
 
           if [[ "${{ needs.validate-skills.result }}" == "success" ]]; then
             echo "✓ Skills Validation: PASSED"
           else
             echo "✗ Skills Validation: FAILED"
-          fi
-
-          if [[ "${{ needs.validate-registries.result }}" == "success" ]]; then
-            echo "✓ Registries: PASSED"
-          else
-            echo "✗ Registries: FAILED"
-          fi
-
-          if [[ "${{ needs.validate-blueprints.result }}" == "success" ]]; then
-            echo "✓ Blueprints: PASSED"
-          else
-            echo "✗ Blueprints: FAILED"
+            FAILED=1
           fi
 
           if [[ "${{ needs.validate-marketplace.result }}" == "success" ]]; then
             echo "✓ Marketplace: PASSED"
           else
             echo "✗ Marketplace: FAILED"
-          fi
-
-          # Evaluation is in baseline mode - scenarios show areas for improvement
-          if [[ "${{ needs.run-evaluation.result }}" == "success" ]]; then
-            echo "⚠ Evaluation: BASELINE (0% pass rate expected - see artifacts)"
-          else
-            echo "✗ Evaluation: FAILED"
+            FAILED=1
           fi
 
           echo ""
           echo "=== End Summary ==="
+
+          if [[ $FAILED -eq 1 ]]; then
+            exit 1
+          fi
