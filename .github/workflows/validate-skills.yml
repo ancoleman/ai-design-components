@@ -277,12 +277,14 @@ jobs:
         run: |
           if [[ -f "evaluation/evaluate.py" ]]; then
             # Run evaluation and capture exit code
-            python3 evaluation/evaluate.py --report --output evaluation/evaluation_results.json || EXIT_CODE=$?
+            # Note: evaluate.py saves to SCRIPT_DIR/output, so just use filename
+            python3 evaluation/evaluate.py --report --output evaluation_results.json || EXIT_CODE=$?
 
             echo ""
             echo "Evaluation complete. See report above for details."
 
             # Store pass rate for summary (0% is expected baseline)
+            # File is saved in evaluation/ directory by the script
             if [[ -f "evaluation/evaluation_results.json" ]]; then
               echo "evaluation_ran=true" >> $GITHUB_OUTPUT
             fi
