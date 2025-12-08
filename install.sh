@@ -424,29 +424,30 @@ install_commands() {
     # Create commands directory
     mkdir -p "$commands_dir"
 
-    # Copy skillchain.md (the router)
-    if [[ -f "$SCRIPT_DIR/.claude-commands/skillchain.md" ]]; then
-        cp "$SCRIPT_DIR/.claude-commands/skillchain.md" "$commands_dir/skillchain.md"
-        echo -e "${GREEN}✓${NC} Installed skillchain.md"
+    # Copy entire skillchain directory (follows /dev pattern)
+    if [[ -d "$SCRIPT_DIR/.claude-commands/skillchain" ]]; then
+        rm -rf "$commands_dir/skillchain" 2>/dev/null || true
+        cp -r "$SCRIPT_DIR/.claude-commands/skillchain" "$commands_dir/skillchain"
+        echo -e "${GREEN}✓${NC} Installed skillchain directory"
+
+        # Count installed components
+        local blueprint_count=$(ls -1 "$commands_dir/skillchain/blueprints"/*.md 2>/dev/null | wc -l)
+        local category_count=$(ls -1 "$commands_dir/skillchain/categories"/*.md 2>/dev/null | wc -l)
+        echo -e "  - ${blueprint_count} blueprints"
+        echo -e "  - ${category_count} category orchestrators"
     else
-        echo -e "${RED}Error: .claude-commands/skillchain.md not found${NC}"
+        echo -e "${RED}Error: .claude-commands/skillchain directory not found${NC}"
         exit 1
     fi
 
-    # Copy skillchain resources directory (underscore prefix hides from command parsing)
-    if [[ -d "$SCRIPT_DIR/.claude-commands/_skillchain" ]]; then
-        rm -rf "$commands_dir/_skillchain" 2>/dev/null || true
-        cp -r "$SCRIPT_DIR/.claude-commands/_skillchain" "$commands_dir/_skillchain"
-        echo -e "${GREEN}✓${NC} Installed skillchain resources"
-    fi
-
     echo ""
-    echo -e "${GREEN}✓ /skillchain command installed to ${commands_dir}${NC}"
+    echo -e "${GREEN}✓ /skillchain commands installed to ${commands_dir}/skillchain${NC}"
     echo ""
-    echo "Usage:"
-    echo "  /skillchain help"
-    echo "  /skillchain dashboard with charts"
-    echo "  /skillchain kubernetes with monitoring"
+    echo "Available commands:"
+    echo "  /skillchain:skillchain [goal]     Main guided workflow"
+    echo "  /skillchain:help                  Show help and skill list"
+    echo "  /skillchain:blueprints:dashboard  Direct blueprint access"
+    echo "  /skillchain:categories:frontend   Direct category access"
 }
 
 #######################################

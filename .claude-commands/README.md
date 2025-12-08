@@ -39,7 +39,7 @@ Install once, use in all your projects:
 ./commands/install-skillchain.sh --global
 ```
 
-This installs to `~/.claude/commands/_skillchain/`, making the command available in **every project** you work on.
+This installs to `~/.claude/commands/skillchain/`, making the commands available in **every project** you work on.
 
 ### Option 2: Project-Specific Installation
 
@@ -53,7 +53,7 @@ Install for a single project (can be committed and shared with team):
 ./commands/install-skillchain.sh ~/path/to/your/project
 ```
 
-This installs to `<project>/.claude/commands/_skillchain/`, making it available only in that project.
+This installs to `<project>/.claude/commands/skillchain/`, making it available only in that project.
 
 ## Installation Locations
 
@@ -167,37 +167,56 @@ When detected, blueprints offer a faster path with fewer questions.
 
 ---
 
-## Architecture (v2.0+)
+## Architecture (v3.0+)
 
-Skillchain uses a modular architecture:
+Skillchain follows the same directory-based command pattern as `/dev`:
 
 ```
-_skillchain/                    # Underscore prefix hides from command parsing
-├── _registry.yaml              # 76 skills with keywords, dependencies, versions
-├── _help.md                    # Help content shown for /skillchain help
-├── _shared/
-│   ├── theming-rules.md        # Token-first styling requirements
-│   ├── execution-flow.md       # Workflow command handling
-│   ├── preferences.md          # User preferences schema
-│   ├── parallel-loading.md     # Dependency graphs for parallel loading
-│   ├── changelog.md            # Version history
-│   └── compatibility.md        # Version compatibility matrix
-├── _registries/                # Domain-specific registries
+~/.claude/commands/skillchain/        # Directory = namespace
+├── skillchain.md                     # /skillchain:skillchain (main entry)
+├── help.md                           # /skillchain:help
+├── _registry.yaml                    # Hidden (underscore prefix)
+├── _registries/                      # Hidden domain registries
 │   ├── frontend.yaml
 │   ├── backend.yaml
 │   ├── devops.yaml
-│   └── ...                     # 10 domain registries
-├── categories/
-│   ├── frontend.md             # Frontend orchestrator
-│   ├── backend.md              # Backend orchestrator
-│   ├── devops.md               # DevOps orchestrator
-│   └── ...                     # 12 category orchestrators
-└── blueprints/
-    ├── dashboard.md            # Pre-configured dashboard chain
-    ├── crud-api.md             # Pre-configured API chain
-    ├── rag-pipeline.md         # Pre-configured RAG chain
-    └── ...                     # 12 blueprints total
+│   └── ...                           # 10 domain registries
+├── _shared/                          # Hidden internal resources
+│   ├── theming-rules.md
+│   ├── execution-flow.md
+│   ├── preferences.md
+│   ├── parallel-loading.md
+│   ├── changelog.md
+│   └── compatibility.md
+├── blueprints/                       # Exposed as /skillchain:blueprints:*
+│   ├── dashboard.md                  # /skillchain:blueprints:dashboard
+│   ├── crud-api.md                   # /skillchain:blueprints:crud-api
+│   ├── rag-pipeline.md               # /skillchain:blueprints:rag-pipeline
+│   └── ...                           # 12 blueprints total
+└── categories/                       # Exposed as /skillchain:categories:*
+    ├── frontend.md                   # /skillchain:categories:frontend
+    ├── backend.md                    # /skillchain:categories:backend
+    ├── devops.md                     # /skillchain:categories:devops
+    └── ...                           # 12 category orchestrators
 ```
+
+### Command Pattern
+
+Like `/dev:*` commands, skillchain exposes a hierarchical command structure:
+
+| Command | Description |
+|---------|-------------|
+| `/skillchain:skillchain [goal]` | Main guided workflow |
+| `/skillchain:help` | Show help and 76 skills |
+| `/skillchain:blueprints:dashboard` | Direct dashboard blueprint |
+| `/skillchain:blueprints:rag-pipeline` | Direct RAG pipeline blueprint |
+| `/skillchain:categories:frontend` | Frontend orchestrator |
+| `/skillchain:categories:backend` | Backend orchestrator |
+
+**Hidden files** (underscore prefix) remain internal:
+- `_registry.yaml` - Not exposed as command
+- `_registries/` - Not exposed as commands
+- `_shared/` - Not exposed as commands
 
 ### Dynamic Path Discovery
 
@@ -205,10 +224,10 @@ Skillchain works from any project by dynamically finding its installation locati
 
 ```bash
 # Step 0 in skillchain.md discovers the path:
-if [ -d ".claude/commands/_skillchain" ]; then
-  SKILLCHAIN_DIR="$(pwd)/.claude/commands/_skillchain"
-elif [ -d "$HOME/.claude/commands/_skillchain" ]; then
-  SKILLCHAIN_DIR="$HOME/.claude/commands/_skillchain"
+if [ -d ".claude/commands/skillchain" ]; then
+  SKILLCHAIN_DIR="$(pwd)/.claude/commands/skillchain"
+elif [ -d "$HOME/.claude/commands/skillchain" ]; then
+  SKILLCHAIN_DIR="$HOME/.claude/commands/skillchain"
 fi
 ```
 
