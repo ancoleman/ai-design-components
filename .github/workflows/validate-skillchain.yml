@@ -181,13 +181,19 @@ jobs:
 
             # Check if evaluation report was created
             if [[ -f "evaluation/evaluation_results.json" ]]; then
-              # Extract pass rate and check threshold
-              PASS_RATE=$(python3 -c "import json; data=json.load(open('evaluation/evaluation_results.json')); print(data.get('pass_rate', 0))")
+              # Extract pass rate from passed/total_scenarios
+              PASS_RATE=$(python3 -c "
+import json
+data = json.load(open('evaluation/evaluation_results.json'))
+passed = data.get('passed', 0)
+total = data.get('total_scenarios', 1)
+print(int(passed / total * 100))
+")
               echo "Pass rate: ${PASS_RATE}%"
               echo "pass_rate=$PASS_RATE" >> $GITHUB_OUTPUT
 
               # Fail if pass rate is 0% (no scenarios passing)
-              if [[ "$PASS_RATE" == "0" || "$PASS_RATE" == "0.0" ]]; then
+              if [[ "$PASS_RATE" == "0" ]]; then
                 echo ""
                 echo "ERROR: Evaluation pass rate is 0% - all scenarios failed"
                 echo "See evaluation report artifact for details"
