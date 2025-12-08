@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - 'skills/**'
-      - 'commands/**'
+      - '.claude-commands/**'
       - '.claude-plugin/**'
       - 'evaluation/**'
       - 'scripts/**'
@@ -13,7 +13,7 @@ on:
     branches: [main]
     paths:
       - 'skills/**'
-      - 'commands/**'
+      - '.claude-commands/**'
       - '.claude-plugin/**'
       - 'evaluation/**'
       - 'scripts/**'
@@ -131,7 +131,7 @@ jobs:
           import sys
           from pathlib import Path
 
-          registries_dir = Path("commands/skillchain/_registries")
+          registries_dir = Path(".claude-commands/_skillchain/_registries")
           errors = []
 
           # Check index exists
@@ -199,7 +199,7 @@ jobs:
         run: |
           echo "Validating skillchain blueprints..."
 
-          blueprints_dir="commands/skillchain/blueprints"
+          blueprints_dir=".claude-commands/_skillchain/blueprints"
           errors=0
 
           for bp_file in "$blueprints_dir"/*.md; do

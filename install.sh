@@ -433,10 +433,10 @@ install_commands() {
         exit 1
     fi
 
-    # Copy skillchain resources directory
-    if [[ -d "$SCRIPT_DIR/.claude-commands/skillchain" ]]; then
-        rm -rf "$commands_dir/skillchain" 2>/dev/null || true
-        cp -r "$SCRIPT_DIR/.claude-commands/skillchain" "$commands_dir/skillchain"
+    # Copy skillchain resources directory (underscore prefix hides from command parsing)
+    if [[ -d "$SCRIPT_DIR/.claude-commands/_skillchain" ]]; then
+        rm -rf "$commands_dir/_skillchain" 2>/dev/null || true
+        cp -r "$SCRIPT_DIR/.claude-commands/_skillchain" "$commands_dir/_skillchain"
         echo -e "${GREEN}✓${NC} Installed skillchain resources"
     fi
 

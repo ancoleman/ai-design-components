@@ -15,10 +15,10 @@ argument-hint: "[goal] e.g., 'dashboard with charts', 'kubernetes with monitorin
 The skillchain command has multiple files. Find them by running this Bash command:
 
 ```bash
-if [ -d ".claude/commands/skillchain" ]; then
-  echo "$(pwd)/.claude/commands/skillchain"
-elif [ -d "$HOME/.claude/commands/skillchain" ]; then
-  echo "$HOME/.claude/commands/skillchain"
+if [ -d ".claude/commands/_skillchain" ]; then
+  echo "$(pwd)/.claude/commands/_skillchain"
+elif [ -d "$HOME/.claude/commands/_skillchain" ]; then
+  echo "$HOME/.claude/commands/_skillchain"
 else
   echo "ERROR: skillchain directory not found"
 fi
@@ -26,10 +26,10 @@ fi
 
 **Store the output path as SKILLCHAIN_DIR** - use it for ALL subsequent file reads in this workflow.
 
-Example: If output is `/Users/john/.claude/commands/skillchain`, then:
-- Help file: `/Users/john/.claude/commands/skillchain/_help.md`
-- Registry: `/Users/john/.claude/commands/skillchain/_registry.yaml`
-- Categories: `/Users/john/.claude/commands/skillchain/categories/frontend.md`
+Example: If output is `/Users/john/.claude/commands/_skillchain`, then:
+- Help file: `/Users/john/.claude/commands/_skillchain/_help.md`
+- Registry: `/Users/john/.claude/commands/_skillchain/_registry.yaml`
+- Categories: `/Users/john/.claude/commands/_skillchain/categories/frontend.md`
 
 ---
 
