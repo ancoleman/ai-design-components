@@ -10,26 +10,44 @@ argument-hint: "[goal] e.g., 'dashboard with charts', 'kubernetes with monitorin
 
 ---
 
-## Step 0: Locate Skillchain Directory (CRITICAL - DO THIS FIRST)
+## Step 0: Locate Skillchain Directories (CRITICAL - DO THIS FIRST)
 
-The skillchain command has multiple files. Find them by running this Bash command:
+The skillchain has two directories: commands and data. Find them by running:
 
 ```bash
+# Find commands directory
 if [ -d ".claude/commands/skillchain" ]; then
-  echo "$(pwd)/.claude/commands/skillchain"
+  SKILLCHAIN_CMD="$(pwd)/.claude/commands/skillchain"
 elif [ -d "$HOME/.claude/commands/skillchain" ]; then
-  echo "$HOME/.claude/commands/skillchain"
+  SKILLCHAIN_CMD="$HOME/.claude/commands/skillchain"
 else
-  echo "ERROR: skillchain directory not found"
+  echo "ERROR: skillchain commands not found"
 fi
+
+# Find data directory (registries, shared resources)
+if [ -d ".claude/skillchain-data" ]; then
+  SKILLCHAIN_DATA="$(pwd)/.claude/skillchain-data"
+elif [ -d "$HOME/.claude/skillchain-data" ]; then
+  SKILLCHAIN_DATA="$HOME/.claude/skillchain-data"
+else
+  echo "ERROR: skillchain data not found"
+fi
+
+echo "Commands: $SKILLCHAIN_CMD"
+echo "Data: $SKILLCHAIN_DATA"
 ```
 
-**Store the output path as SKILLCHAIN_DIR** - use it for ALL subsequent file reads in this workflow.
+**Store both paths:**
+- **SKILLCHAIN_CMD** - Commands directory (blueprints, categories, help)
+- **SKILLCHAIN_DATA** - Data directory (registry, shared resources)
 
-Example: If output is `/Users/john/.claude/commands/skillchain`, then:
-- Help file: `/Users/john/.claude/commands/skillchain/help.md`
-- Registry: `/Users/john/.claude/commands/skillchain/_registry.yaml`
-- Categories: `/Users/john/.claude/commands/skillchain/categories/frontend.md`
+Example paths:
+- Help file: `{SKILLCHAIN_CMD}/help.md`
+- Categories: `{SKILLCHAIN_CMD}/categories/frontend.md`
+- Blueprints: `{SKILLCHAIN_CMD}/blueprints/dashboard.md`
+- Registry: `{SKILLCHAIN_DATA}/registry.yaml`
+- Registries: `{SKILLCHAIN_DATA}/registries/frontend.yaml`
+- Shared: `{SKILLCHAIN_DATA}/shared/preferences.md`
 
 ---
 
@@ -50,7 +68,7 @@ fi
 If PREFS_FILE exists:
 - Read `{PREFS_FILE}` and store as USER_PREFS
 - USER_PREFS will be passed to orchestrators for smart defaults
-- See `{SKILLCHAIN_DIR}/_shared/preferences.md` for full schema
+- See `{SKILLCHAIN_DATA}/shared/preferences.md` for full schema
 
 **Preference Priority:**
 1. User's explicit choice (current workflow) - Highest
@@ -62,7 +80,7 @@ If PREFS_FILE exists:
 ## Step 1: Parse Command
 
 If "$ARGUMENTS" is empty or "help":
-  - Read and display `{SKILLCHAIN_DIR}/help.md`
+  - Read and display `{SKILLCHAIN_CMD}/help.md`
   - STOP and wait for user to provide goal
   - Example: `/skillchain dashboard with charts`
 
@@ -70,7 +88,7 @@ If "$ARGUMENTS" is empty or "help":
 
 ## Step 2: Load Registry Index
 
-Read `{SKILLCHAIN_DIR}/_registries/_index.yaml` and parse:
+Read `{SKILLCHAIN_DATA}/registries/_index.yaml` and parse:
 - domains: 10 domain registries (frontend, backend, devops, infrastructure, security, developer, data, ai-ml, cloud, finops)
 - total_skills: 76
 - cross-domain mappings: fullstack, multi-domain
@@ -145,7 +163,7 @@ Check if the user's goal matches a pre-configured blueprint for faster workflow.
 
 **Detection Algorithm:**
 ```
-for each blueprint in {SKILLCHAIN_DIR}/blueprints/:
+for each blueprint in {SKILLCHAIN_CMD}/blueprints/:
   score = 0
   for keyword in blueprint.trigger_keywords:
     if keyword in goal (case-insensitive):
@@ -170,7 +188,7 @@ Would you like to use the {blueprint} blueprint? (yes/no/customize)"
 ```
 
 **User Response:**
-- "yes" → Read `{SKILLCHAIN_DIR}/blueprints/{blueprint}.md` and use its configuration
+- "yes" → Read `{SKILLCHAIN_CMD}/blueprints/{blueprint}.md` and use its configuration
 - "no" → Continue to Step 4 (normal skill matching)
 - "customize" → Load blueprint but allow modifications
 
@@ -247,20 +265,20 @@ Based on detected domain(s), load the appropriate orchestrator:
 
 ```bash
 # Single domain routing
-frontend        → Read {SKILLCHAIN_DIR}/categories/frontend.md
-backend         → Read {SKILLCHAIN_DIR}/categories/backend.md
-devops          → Read {SKILLCHAIN_DIR}/categories/devops.md
-infrastructure  → Read {SKILLCHAIN_DIR}/categories/infrastructure.md
-security        → Read {SKILLCHAIN_DIR}/categories/security.md
-developer       → Read {SKILLCHAIN_DIR}/categories/developer.md
-data            → Read {SKILLCHAIN_DIR}/categories/data.md
-ai-ml           → Read {SKILLCHAIN_DIR}/categories/ai-ml.md
-cloud           → Read {SKILLCHAIN_DIR}/categories/cloud.md
-finops          → Read {SKILLCHAIN_DIR}/categories/finops.md
+frontend        → Read {SKILLCHAIN_CMD}/categories/frontend.md
+backend         → Read {SKILLCHAIN_CMD}/categories/backend.md
+devops          → Read {SKILLCHAIN_CMD}/categories/devops.md
+infrastructure  → Read {SKILLCHAIN_CMD}/categories/infrastructure.md
+security        → Read {SKILLCHAIN_CMD}/categories/security.md
+developer       → Read {SKILLCHAIN_CMD}/categories/developer.md
+data            → Read {SKILLCHAIN_CMD}/categories/data.md
+ai-ml           → Read {SKILLCHAIN_CMD}/categories/ai-ml.md
+cloud           → Read {SKILLCHAIN_CMD}/categories/cloud.md
+finops          → Read {SKILLCHAIN_CMD}/categories/finops.md
 
 # Multi-domain routing
-fullstack       → Read {SKILLCHAIN_DIR}/categories/fullstack.md      # frontend + backend
-multi-domain    → Read {SKILLCHAIN_DIR}/categories/multi-domain.md   # 3+ domains
+fullstack       → Read {SKILLCHAIN_CMD}/categories/fullstack.md      # frontend + backend
+multi-domain    → Read {SKILLCHAIN_CMD}/categories/multi-domain.md   # 3+ domains
 ```
 
 **Pass Context to Orchestrator:**
@@ -271,7 +289,7 @@ multi-domain    → Read {SKILLCHAIN_DIR}/categories/multi-domain.md   # 3+ doma
 - estimated_questions: sum of skill question counts
 - estimated_time: calculate based on skill count (3-5 min per skill)
 - user_prefs: USER_PREFS (if PREFS_FILE exists, otherwise null)
-- registry_path: "{SKILLCHAIN_DIR}/_registries/{domain}.yaml"
+- registry_path: "{SKILLCHAIN_DATA}/registries/{domain}.yaml"
 
 ---
 
@@ -315,7 +333,7 @@ Would you like to save these preferences for next time?
 - Blueprint configuration (if blueprint was used)
 - Skill-specific choices (for each skill that was used)
 
-See `{SKILLCHAIN_DIR}/_shared/preferences.md` for complete saving logic.
+See `{SKILLCHAIN_DATA}/shared/preferences.md` for complete saving logic.
 
 ---
 

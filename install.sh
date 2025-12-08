@@ -417,18 +417,20 @@ do_validate() {
 install_commands() {
     local claude_dir="$HOME/.claude"
     local commands_dir="$claude_dir/commands"
+    local data_dir="$claude_dir/skillchain-data"
 
-    echo -e "${CYAN}Installing /skillchain command globally...${NC}"
+    echo -e "${CYAN}Installing /skillchain commands globally...${NC}"
     echo ""
 
-    # Create commands directory
+    # Create directories
     mkdir -p "$commands_dir"
+    mkdir -p "$data_dir"
 
-    # Copy entire skillchain directory (follows /dev pattern)
+    # Copy skillchain commands (only actual slash commands)
     if [[ -d "$SCRIPT_DIR/.claude-commands/skillchain" ]]; then
         rm -rf "$commands_dir/skillchain" 2>/dev/null || true
         cp -r "$SCRIPT_DIR/.claude-commands/skillchain" "$commands_dir/skillchain"
-        echo -e "${GREEN}✓${NC} Installed skillchain directory"
+        echo -e "${GREEN}✓${NC} Installed skillchain commands"
 
         # Count installed components
         local blueprint_count=$(ls -1 "$commands_dir/skillchain/blueprints"/*.md 2>/dev/null | wc -l)
@@ -440,8 +442,23 @@ install_commands() {
         exit 1
     fi
 
+    # Copy skillchain data (registries, shared - NOT exposed as commands)
+    if [[ -d "$SCRIPT_DIR/.claude-commands/skillchain-data" ]]; then
+        rm -rf "$data_dir" 2>/dev/null || true
+        cp -r "$SCRIPT_DIR/.claude-commands/skillchain-data" "$data_dir"
+        echo -e "${GREEN}✓${NC} Installed skillchain data"
+
+        # Count registries
+        local registry_count=$(ls -1 "$data_dir/registries"/*.yaml 2>/dev/null | wc -l)
+        echo -e "  - ${registry_count} domain registries"
+    else
+        echo -e "${YELLOW}Warning: skillchain-data directory not found${NC}"
+    fi
+
     echo ""
-    echo -e "${GREEN}✓ /skillchain commands installed to ${commands_dir}/skillchain${NC}"
+    echo -e "${GREEN}✓ Skillchain installed to:${NC}"
+    echo -e "  Commands: ${commands_dir}/skillchain"
+    echo -e "  Data:     ${data_dir}"
     echo ""
     echo "Available commands:"
     echo "  /skillchain:skillchain [goal]     Main guided workflow"
