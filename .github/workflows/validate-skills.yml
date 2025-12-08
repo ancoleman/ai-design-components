@@ -131,7 +131,7 @@ jobs:
           import sys
           from pathlib import Path
 
-          registries_dir = Path(".claude-commands/_skillchain/_registries")
+          registries_dir = Path(".claude-commands/skillchain-data/registries")
           errors = []
 
           # Check index exists
@@ -199,7 +199,7 @@ jobs:
         run: |
           echo "Validating skillchain blueprints..."
 
-          blueprints_dir=".claude-commands/_skillchain/blueprints"
+          blueprints_dir=".claude-commands/skillchain/blueprints"
           errors=0
 
           for bp_file in "$blueprints_dir"/*.md; do
