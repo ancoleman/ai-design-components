@@ -190,3 +190,72 @@ code {
 .bg-intelligence-green { background-color: var(--color-intelligence-green); }
 .bg-security-yellow { background-color: var(--color-security-yellow); }
 .bg-fire-red { background-color: var(--color-fire-red); }
+
+/* ===========================================
+   Mermaid Diagram Styling
+   =========================================== */
+
+/* Subgraph container spacing */
+.mermaid .cluster rect {
+  rx: 8px;
+  ry: 8px;
+}
+
+/* Subgraph title positioning and spacing */
+.mermaid .cluster-label {
+  font-weight: 600;
+}
+
+/* Add padding inside subgraphs via transform */
+.mermaid .cluster-label .nodeLabel {
+  padding: 8px 12px;
+}
+
+/* Dark mode: Force dark text on light subgraph backgrounds */
+[data-theme='dark'] .mermaid .cluster-label text,
+[data-theme='dark'] .mermaid .cluster-label .nodeLabel,
+[data-theme='dark'] .mermaid g.cluster text.nodeLabel {
+  fill: #1a1a2e !important;
+  color: #1a1a2e !important;
+}
+
+/* Ensure subgraph title text is readable in both modes */
+.mermaid .cluster text {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Dark mode specific: cluster/subgraph label text should be dark */
+[data-theme='dark'] .mermaid .cluster text {
+  fill: #1e293b !important;
+}
+
+/* Light mode: ensure good contrast */
+:root .mermaid .cluster text {
+  fill: #1e293b;
+}
+
+/* Better node spacing within subgraphs */
+.mermaid .node {
+  margin: 8px;
+}
+
+/* Improve overall diagram readability */
+.mermaid {
+  margin: 1.5rem 0;
+}
+
+/* Flowchart node text visibility in dark mode */
+[data-theme='dark'] .mermaid .node .label {
+  color: inherit;
+}
+
+/* Sequence diagram improvements */
+.mermaid .actor {
+  stroke-width: 2px;
+}
+
+/* Mindmap node spacing */
+.mermaid .mindmap-node {
+  padding: 8px 16px;
+}

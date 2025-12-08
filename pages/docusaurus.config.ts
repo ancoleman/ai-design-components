@@ -85,6 +85,19 @@ const config: Config = {
       defaultMode: 'dark',
       respectPrefersColorScheme: false,
     },
+    mermaid: {
+      theme: {
+        light: 'neutral',
+        dark: 'dark',
+      },
+      options: {
+        flowchart: {
+          padding: 20,
+          nodeSpacing: 50,
+          rankSpacing: 50,
+        },
+      },
+    },
     navbar: {
       title: '',
       logo: {
