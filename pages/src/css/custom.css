@@ -201,53 +201,48 @@ code {
   ry: 8px;
 }
 
-/* Subgraph title positioning and spacing */
-.mermaid .cluster-label {
-  font-weight: 600;
-}
-
-/* Add padding inside subgraphs via transform */
-.mermaid .cluster-label .nodeLabel {
-  padding: 8px 12px;
-}
-
-/* Dark mode: Force dark text on light subgraph backgrounds */
-[data-theme='dark'] .mermaid .cluster-label text,
-[data-theme='dark'] .mermaid .cluster-label .nodeLabel,
-[data-theme='dark'] .mermaid g.cluster text.nodeLabel {
-  fill: #1a1a2e !important;
-  color: #1a1a2e !important;
-}
-
-/* Ensure subgraph title text is readable in both modes */
-.mermaid .cluster text {
-  font-weight: 600;
-  font-size: 14px;
-}
-
-/* Dark mode specific: cluster/subgraph label text should be dark */
-[data-theme='dark'] .mermaid .cluster text {
-  fill: #1e293b !important;
-}
-
-/* Light mode: ensure good contrast */
-:root .mermaid .cluster text {
-  fill: #1e293b;
-}
-
-/* Better node spacing within subgraphs */
-.mermaid .node {
-  margin: 8px;
-}
-
 /* Improve overall diagram readability */
 .mermaid {
   margin: 1.5rem 0;
 }
 
-/* Flowchart node text visibility in dark mode */
-[data-theme='dark'] .mermaid .node .label {
-  color: inherit;
+/*
+ * Dark mode: Force dark text on ALL subgraph/cluster labels
+ * These are the container headings like "User", "Entry Point", etc.
+ * Using multiple selectors to ensure we catch all Mermaid versions
+ */
+[data-theme='dark'] .mermaid .cluster text,
+[data-theme='dark'] .mermaid .cluster-label text,
+[data-theme='dark'] .mermaid .cluster-label span,
+[data-theme='dark'] .mermaid .cluster-label foreignObject span,
+[data-theme='dark'] .mermaid .cluster-label foreignObject div,
+[data-theme='dark'] .mermaid .cluster-label .nodeLabel,
+[data-theme='dark'] .mermaid g.cluster > text,
+[data-theme='dark'] .mermaid g[class*="cluster"] text,
+[data-theme='dark'] .mermaid [class*="cluster"] text,
+[data-theme='dark'] .mermaid .flowchart-label text,
+[data-theme='dark'] .mermaid svg g.cluster text {
+  fill: #1a1a2e !important;
+  color: #1a1a2e !important;
+}
+
+/* Target foreignObject content which Mermaid uses for complex labels */
+[data-theme='dark'] .mermaid .cluster foreignObject div,
+[data-theme='dark'] .mermaid .cluster foreignObject span,
+[data-theme='dark'] .mermaid .cluster-label foreignObject * {
+  color: #1a1a2e !important;
+}
+
+/* Ensure subgraph title text styling */
+.mermaid .cluster text,
+.mermaid .cluster-label text {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Light mode: ensure good contrast */
+.mermaid .cluster text {
+  fill: #1e293b;
 }
 
 /* Sequence diagram improvements */
@@ -255,7 +250,7 @@ code {
   stroke-width: 2px;
 }
 
-/* Mindmap node spacing */
+/* Mindmap styling */
 .mermaid .mindmap-node {
   padding: 8px 16px;
 }

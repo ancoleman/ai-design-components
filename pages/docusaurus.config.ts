@@ -88,7 +88,7 @@ const config: Config = {
     mermaid: {
       theme: {
         light: 'neutral',
-        dark: 'dark',
+        dark: 'neutral',  // Use neutral for both - dark theme has white text which conflicts with light subgraph backgrounds
       },
       options: {
         flowchart: {
