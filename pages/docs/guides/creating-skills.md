@@ -28,7 +28,7 @@ This guide covers the complete process of creating Claude Skills from initial co
    ```
 4. **Install the skillchain** to test your changes:
    ```bash
-   ./commands/install-skillchain.sh
+   ./install.sh
    ```
 
 ## Key Principles
@@ -155,12 +155,12 @@ Use descriptive branch names:
 
 6. **Test your changes**:
    ```bash
-   # Install locally and test
-   ./commands/install-skillchain.sh
+   # Install skillchain locally and test
+   ./install.sh commands
 
    # Test the skill with Claude Code
    claude
-   /skillchain [test your skill]
+   /skillchain:start [test your skill]
    ```
 
 7. **Commit with descriptive messages**:

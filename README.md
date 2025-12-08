@@ -26,10 +26,36 @@ A collection of **76 production-ready Claude Skills** covering frontend, backend
 
 ## Quick Start
 
-### Option 1: Quick Install (Recommended)
+### Option 1: Installer Script (Recommended)
+
+The interactive installer handles everything - skills, skillchain, and plugins:
 
 ```bash
-# Add marketplace (Claude handles the rest - no cloning needed)
+git clone https://github.com/ancoleman/ai-design-components.git
+cd ai-design-components
+./install.sh
+```
+
+The installer provides:
+- **Interactive menu** for choosing what to install
+- **Skillchain v3.0** with 76 skills across 10 domains
+- **Plugin installation** for all 19 plugin groups
+- **Automatic setup** of commands and data directories
+
+```bash
+# Installer commands
+./install.sh                    # Interactive mode
+./install.sh plugins list       # See all available plugins
+./install.sh plugins install    # Install all plugins
+./install.sh skillchain         # Install skillchain only
+```
+
+### Option 2: Manual Plugin Installation
+
+If you prefer using Claude's plugin commands directly:
+
+```bash
+# Add marketplace
 claude plugin marketplace add ancoleman/ai-design-components
 
 # Install all 19 plugins (76 skills)
@@ -54,27 +80,18 @@ claude plugin install cloud-provider-skills@ai-design-components
 claude plugin install finops-skills@ai-design-components
 ```
 
-### Option 2: Selective Installation
+### Option 3: Selective Installation
+
+Install only what you need:
 
 ```bash
 # Add marketplace first
 claude plugin marketplace add ancoleman/ai-design-components
 
-# Install only what you need
+# Install specific plugin groups
 claude plugin install infrastructure-skills@ai-design-components
 claude plugin install devops-skills@ai-design-components
 claude plugin install security-skills@ai-design-components
-```
-
-### Option 3: Using the Installer Script
-
-If you've cloned the repo for development:
-
-```bash
-git clone https://github.com/ancoleman/ai-design-components.git
-cd ai-design-components
-./install.sh              # Interactive mode
-./install.sh plugins list # See all available plugins
 ```
 
 ## Plugin Commands Reference
@@ -96,13 +113,13 @@ claude plugin validate .claude-plugin/marketplace.json          # Validate
 
 ## Using Skillchain
 
-Once installed, use the `/skillchain` command for guided workflows:
+Once installed, use the `/skillchain:start` command for guided workflows:
 
 ```bash
-/skillchain dashboard with charts and filters
-/skillchain REST API with postgres
-/skillchain kubernetes with monitoring
-/skillchain RAG pipeline with embeddings
+/skillchain:start dashboard with charts and filters
+/skillchain:start REST API with postgres
+/skillchain:start kubernetes with monitoring
+/skillchain:start RAG pipeline with embeddings
 ```
 
 ## Skill Categories

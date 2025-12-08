@@ -1,201 +1,197 @@
 ---
 sidebar_position: 5
 title: Architecture
-description: How skillchain works internally
+description: How skillchain v3.0 works internally
 ---
 
 # Skillchain Architecture
 
-Skillchain v2.1 uses a modular architecture that separates concerns and enables dynamic path discovery, parallel loading, and user preferences.
+Skillchain v3.0 uses a **separated architecture** that keeps command files (exposed as slash commands) separate from data files (registries, shared resources). This prevents internal files from appearing as unwanted commands.
 
 ## Core Concepts
 
-### 1. Modular Design
+### 1. Separated Directory Structure
 
-Skillchain is built from 19 separate files instead of a monolithic script:
+The key innovation in v3.0 is separating commands from data:
 
 ```
-skillchain/
-├── skillchain.md           # Router (entry point)
-├── _registry.yaml          # Skill definitions
-├── _help.md                # Help content
-├── _shared/                # Shared resources (6 files)
-│   ├── theming-rules.md
-│   ├── execution-flow.md
-│   ├── preferences.md
-│   ├── parallel-loading.md
-│   ├── changelog.md
-│   └── compatibility.md
-├── categories/             # Orchestrators (4 files)
-│   ├── frontend.md
-│   ├── backend.md
-│   ├── fullstack.md
-│   └── ai-ml.md
-└── blueprints/             # Pre-configured templates (3 files)
-    ├── dashboard.md
-    ├── crud-api.md
-    └── rag-pipeline.md
+~/.claude/
+├── commands/
+│   └── skillchain/                    # Commands (exposed as /skillchain:*)
+│       ├── start.md                   # /skillchain:start (main entry)
+│       ├── help.md                    # /skillchain:help
+│       ├── blueprints/                # /skillchain:blueprints:*
+│       │   ├── dashboard.md
+│       │   ├── crud-api.md
+│       │   └── ... (12 total)
+│       └── categories/                # /skillchain:categories:*
+│           ├── frontend.md
+│           ├── backend.md
+│           ├── devops.md
+│           ├── infrastructure.md
+│           ├── security.md
+│           ├── developer.md
+│           ├── data.md
+│           ├── ai-ml.md
+│           ├── cloud.md
+│           ├── finops.md
+│           ├── fullstack.md
+│           └── multi-domain.md
+│
+└── skillchain-data/                   # Data (NOT exposed as commands)
+    ├── registries/
+    │   ├── _index.yaml
+    │   ├── frontend.yaml
+    │   ├── backend.yaml
+    │   └── ... (10 domain registries)
+    └── shared/
+        ├── preferences.md
+        ├── theming-rules.md
+        └── execution-flow.md
 ```
 
-**Benefits:**
-- **Maintainability** - Each file has single responsibility
-- **Extensibility** - Add new blueprints/orchestrators easily
-- **Testability** - Test individual components
-- **Debuggability** - Easier to trace issues
+**Why this matters:**
+- Every `.md` file in `commands/` becomes a slash command
+- There's **no mechanism** to hide files with underscore prefix
+- Solution: Keep data files outside `commands/` directory entirely
 
-### 2. Registry System
+### 2. Domain Registry System
 
-The `_registry.yaml` file serves as the central configuration:
+Instead of a single `_registry.yaml`, v3.0 uses domain-specific registries:
 
 ```yaml
-registry_version: "2.1.0"
-last_updated: "2025-12-02"
+# registries/_index.yaml
+version: "3.0.0"
+total_skills: 76
 
-categories:
-  frontend: { description, default_tools }
-  backend: { description, default_tools }
-  fullstack: { description, default_tools }
-  ai-ml: { description, default_tools }
+domains:
+  frontend:
+    file: "frontend.yaml"
+    skill_count: 15
+    orchestrator: "categories/frontend.md"
 
-blueprints:
-  dashboard: { triggers, skill_chain, questions }
-  crud-api: { triggers, skill_chain, questions }
-  rag-pipeline: { triggers, skill_chain, questions }
+  backend:
+    file: "backend.yaml"
+    skill_count: 14
+    orchestrator: "categories/backend.md"
 
-skills:
-  theming-components:
-    category: frontend
-    priority: 1
-    keywords: { primary, secondary, exclusions }
-    dependencies: []
-    version: "1.0.0"
-  # ... 28 more skills
+  devops:
+    file: "devops.yaml"
+    skill_count: 6
+    orchestrator: "categories/devops.md"
+
+  # ... 7 more domains
 ```
 
-**Registry provides:**
-- Skill metadata (name, category, priority)
-- Keyword matching rules
-- Dependency relationships
-- Version tracking
-- Blueprint definitions
+Each domain registry contains skill definitions:
+
+```yaml
+# registries/devops.yaml
+domain: devops
+version: "1.0.0"
+plugin_group: devops-skills
+
+skills:
+  writing-dockerfiles:
+    priority: 3
+    keywords:
+      primary: [docker, dockerfile, container, image]
+      secondary: [multi-stage, buildkit, layer]
+    invocation: "devops-skills:writing-dockerfiles"
+    dependencies: []
+    version: "1.0.0"
+```
 
 ### 3. Dynamic Path Discovery
 
-Skillchain works from any installation location (global or project):
+Skillchain works from any installation location:
 
 ```bash
-# Step 0 in skillchain.md (executed first, every time)
+# Step 0 in start.md (executed first, every time)
+
+# Find commands directory
 if [ -d ".claude/commands/skillchain" ]; then
-  SKILLCHAIN_DIR="$(pwd)/.claude/commands/skillchain"
+  SKILLCHAIN_CMD="$(pwd)/.claude/commands/skillchain"
 elif [ -d "$HOME/.claude/commands/skillchain" ]; then
-  SKILLCHAIN_DIR="$HOME/.claude/commands/skillchain"
+  SKILLCHAIN_CMD="$HOME/.claude/commands/skillchain"
+fi
+
+# Find data directory (separate from commands)
+if [ -d ".claude/skillchain-data" ]; then
+  SKILLCHAIN_DATA="$(pwd)/.claude/skillchain-data"
+elif [ -d "$HOME/.claude/skillchain-data" ]; then
+  SKILLCHAIN_DATA="$HOME/.claude/skillchain-data"
 fi
 ```
 
-All file references use `{SKILLCHAIN_DIR}/...` for portability.
-
-This enables:
-- Global installation (`~/.claude/commands/skillchain/`)
-- Project installation (`.claude/commands/skillchain/`)
-- No hardcoded paths
-- Works from any working directory
+All file references use:
+- `{SKILLCHAIN_CMD}/...` for commands (blueprints, categories, help)
+- `{SKILLCHAIN_DATA}/...` for data (registries, shared)
 
 ## System Flow
 
-The complete workflow from user input to generated code follows these steps:
+The complete workflow from user input to generated code:
 
-1. **Step 0:** Locate Skillchain Directory - Find installation location
+1. **Step 0:** Locate Directories - Find `skillchain/` and `skillchain-data/`
 2. **Step 0.5:** Load User Preferences - Load saved choices as defaults
 3. **Step 1:** Parse Command - Handle "help" or continue with goal
-4. **Step 2:** Load Registry - Parse _registry.yaml for skills
-5. **Step 3:** Analyze Goal & Detect Category - Extract keywords, determine frontend/backend/fullstack/ai-ml
+4. **Step 2:** Load Registry Index - Parse `registries/_index.yaml`
+5. **Step 3:** Analyze Goal & Detect Domain(s) - Extract keywords, determine domain(s)
 6. **Step 3.5:** Detect Blueprint Match - Check if goal matches a blueprint pattern
-7. **Step 4:** Match Skills - Find relevant skills based on keywords
+7. **Step 4:** Match Skills - Load domain registry, find relevant skills
 8. **Step 5:** Route to Orchestrator - Load appropriate category orchestrator
 9. **Step 6:** Orchestrator Execution - Invoke skills, ask questions, generate code
 10. **Step 7:** Save Preferences - Offer to save choices for next time
 
-## Category Routing
+## Domain Routing
 
-### Frontend Orchestrator
+### 10 Single-Domain Orchestrators
 
-**Responsibilities:**
-- Handle UI-focused workflows
-- Ensure theming is always first
-- Group skills by phase (foundation → structure → content → interaction)
-- Apply token-first styling rules
-- Invoke assembling-components last
+| Domain | Skills | Focus |
+|--------|--------|-------|
+| frontend | 15 | UI components, forms, charts |
+| backend | 14 | APIs, databases, messaging |
+| devops | 6 | CI/CD, Docker, GitOps |
+| infrastructure | 12 | Kubernetes, Terraform, networking |
+| security | 7 | Compliance, TLS, firewalls |
+| developer | 7 | APIs, CLIs, SDKs |
+| data | 6 | ETL, streaming, SQL |
+| ai-ml | 4 | MLOps, prompts, evaluation |
+| cloud | 3 | AWS, GCP, Azure |
+| finops | 2 | Cost optimization |
 
-**Skill Groups:**
-1. Foundation (priority 1): theming-components
-2. Structure (priority 2-4): layouts, navigation, timelines
-3. Data Display (priority 5): dashboards, charts, tables
-4. User Input (priority 6): forms, search-filter
-5. Interaction (priority 7-8): ai-chat, drag-drop, feedback
-6. Content (priority 7): media, guiding-users
-7. Assembly (priority 99): assembling-components
+### Multi-Domain Orchestrators
 
-### Backend Orchestrator
+| Orchestrator | When Used |
+|--------------|-----------|
+| fullstack | frontend + backend detected |
+| multi-domain | 3+ domains detected |
 
-**Responsibilities:**
-- Handle API/database/deployment workflows
-- Support multi-language patterns (Python/TypeScript/Rust/Go)
-- Group skills by layer (data → APIs → platform)
-- Apply observability by default
+### Domain Detection Logic
 
-**Skill Groups:**
-1. Data Ingestion (priority 5): ingesting-data
-2. Databases (priority 10): relational, vector, timeseries, document, graph
-3. APIs (priority 5): api-patterns
-4. Messaging (priority 15): message-queues, realtime-sync
-5. Platform (priority 8-25): auth-security, observability, deploying-applications
-6. AI/ML (priority 15-20): ai-data-engineering, model-serving
+```python
+detected_domains = []
 
-### Fullstack Orchestrator
+for domain in [frontend, backend, devops, infrastructure, ...]:
+  score = count(domain_keywords in goal)
+  if score > 0:
+    detected_domains.append({domain, score})
 
-**Responsibilities:**
-- Combine frontend + backend workflows
-- Ensure API contracts align (frontend expects what backend provides)
-- Apply consistent theming across full stack
-- Handle data flow (backend → frontend)
+sort detected_domains by score descending
 
-**Execution:**
-1. Run frontend orchestrator
-2. Run backend orchestrator
-3. Verify API contracts
-4. Generate integration code
-
-### AI-ML Orchestrator
-
-**Responsibilities:**
-- Handle RAG pipelines, model serving, AI data engineering
-- Optimize for AI-specific patterns
-- Support vector databases and embeddings
-- Integrate with LLM providers
-
-**Skill Groups:**
-1. Data Ingestion: ingesting-data (documents, PDFs)
-2. Vector Storage: databases-vector
-3. AI Engineering: ai-data-engineering (chunking, embeddings)
-4. API Layer: api-patterns (query endpoints)
-5. Model Serving: model-serving (vLLM, Ollama)
-6. Optional UI: building-ai-chat
+if len(detected_domains) == 0:
+  ask_user("Which domain?")
+elif len(detected_domains) == 1:
+  route_to_single_domain()
+elif detected_domains == [frontend, backend]:
+  route_to_fullstack()
+elif len(detected_domains) <= 3:
+  route_to_multi_domain()
+else:
+  ask_user("Too broad, please narrow scope")
+```
 
 ## Parallel Loading
-
-### Concept
-
-Independent skills are loaded concurrently to reduce workflow time:
-
-```
-Sequential (old):          Parallel (v2.1):
-Step 1: skill-a (10s)      Step 1: skill-a (10s)
-Step 2: skill-b (8s)       Step 2: skill-b + skill-c (8s)
-Step 3: skill-c (6s)       Step 3: skill-d (5s)
-Total: 24s                 Total: 23s (10-30% faster)
-```
-
-### Parallel Groups
 
 Skills are assigned to `parallel_group` in registry:
 
@@ -208,11 +204,11 @@ skills:
     parallel_group: 2  # After theming
 
   visualizing-data:
-    parallel_group: 3  # After layouts
+    parallel_group: 3  # Can run with building-tables
     dependencies: ["theming-components"]
 
   building-tables:
-    parallel_group: 3  # Same as viz (parallel!)
+    parallel_group: 3  # Same group = parallel!
     dependencies: ["theming-components"]
 
   assembling-components:
@@ -247,199 +243,203 @@ global:
     vector_db: qdrant | pgvector | pinecone
 
 last_updated: timestamp
-version: "2.1.0"
+version: "3.0.0"
 ```
 
 ### Preference Priority
 
-When resolving configuration values:
-
-1. **User's explicit choice** (current workflow) - Highest priority
+1. **User's explicit choice** (current workflow) - Highest
 2. **Saved preferences** (from `~/.claude/skillchain-prefs.yaml`)
 3. **Blueprint defaults** (if blueprint is active)
-4. **Skill defaults** (from `_registry.yaml`)
+4. **Skill defaults** (from registry)
 
-## Versioning
+## Blueprint System
 
-### Skill Versions
+### 12 Available Blueprints
 
-Each skill has semantic version:
+| Blueprint | Domain | Skills Included |
+|-----------|--------|-----------------|
+| dashboard | Frontend | theming, layouts, dashboards, viz, feedback |
+| crud-api | Backend | api-patterns, relational-db, auth |
+| api-first | Developer | designing-apis, documentation |
+| rag-pipeline | AI/ML | ingesting-data, vector-db, ai-engineering |
+| ml-pipeline | AI/ML | mlops, model-serving |
+| ci-cd | DevOps | testing, ci-pipelines, gitops |
+| k8s | Infrastructure | kubernetes, infrastructure-code |
+| cloud | Cloud | aws/gcp/azure deployment |
+| observability | DevOps | observability, logging |
+| security | Security | architecture, compliance, hardening |
+| cost | FinOps | cost optimization, tagging |
+| data-pipeline | Data | architecting-data, transforming-data |
 
-```yaml
-skills:
-  theming-components:
-    version: "1.0.0"
-  visualizing-data:
-    version: "1.0.0"
+### Blueprint Detection
+
+```python
+for blueprint in blueprints:
+  score = 0
+  for keyword in blueprint.trigger_keywords:
+    if keyword in goal:
+      score += weight(keyword)
+
+  if score >= confidence_threshold:
+    offer_blueprint(blueprint)
+    break
 ```
 
-### Registry Version
+## Command Pattern
 
-```yaml
-registry_version: "2.1.0"  # Skillchain version
-version: "2.0.0"            # Backwards compat
-```
+### Exposed Commands
+
+| Command | Description |
+|---------|-------------|
+| `/skillchain:start [goal]` | Main guided workflow |
+| `/skillchain:help` | Show help and 76 skills |
+| `/skillchain:blueprints:dashboard` | Direct dashboard blueprint |
+| `/skillchain:blueprints:k8s` | Direct Kubernetes blueprint |
+| `/skillchain:categories:frontend` | Direct frontend orchestrator |
+| `/skillchain:categories:devops` | Direct DevOps orchestrator |
+
+### Data Files (NOT exposed)
+
+- `skillchain-data/registries/*.yaml` - Skill definitions
+- `skillchain-data/shared/*.md` - Internal resources
 
 ## File Structure
 
 ### Complete Directory Tree
 
 ```
-.claude/commands/skillchain/
-├── skillchain.md              # Router (200 lines)
-├── _registry.yaml             # Skill definitions (759 lines)
-├── _help.md                   # Help content (156 lines)
+~/.claude/
+├── commands/skillchain/           # Commands (26 files)
+│   ├── start.md                   # Router (entry point)
+│   ├── help.md                    # Help content
+│   │
+│   ├── blueprints/                # 12 blueprints
+│   │   ├── dashboard.md
+│   │   ├── crud-api.md
+│   │   ├── api-first.md
+│   │   ├── rag-pipeline.md
+│   │   ├── ml-pipeline.md
+│   │   ├── ci-cd.md
+│   │   ├── k8s.md
+│   │   ├── cloud.md
+│   │   ├── observability.md
+│   │   ├── security.md
+│   │   ├── cost.md
+│   │   └── data-pipeline.md
+│   │
+│   └── categories/                # 12 orchestrators
+│       ├── frontend.md
+│       ├── backend.md
+│       ├── devops.md
+│       ├── infrastructure.md
+│       ├── security.md
+│       ├── developer.md
+│       ├── data.md
+│       ├── ai-ml.md
+│       ├── cloud.md
+│       ├── finops.md
+│       ├── fullstack.md
+│       └── multi-domain.md
 │
-├── _shared/                   # Shared resources
-│   ├── theming-rules.md       # Token-first styling requirements
-│   ├── execution-flow.md      # Workflow command handling
-│   ├── preferences.md         # User preferences schema
-│   ├── parallel-loading.md    # Dependency graphs
-│   ├── changelog.md           # Version history
-│   └── compatibility.md       # Version compatibility matrix
-│
-├── categories/                # Orchestrators
-│   ├── frontend.md            # Frontend orchestrator (~300 lines)
-│   ├── backend.md             # Backend orchestrator (~350 lines)
-│   ├── fullstack.md           # Fullstack orchestrator (~250 lines)
-│   └── ai-ml.md               # AI/ML orchestrator (~300 lines)
-│
-└── blueprints/                # Pre-configured templates
-    ├── dashboard.md           # Dashboard blueprint (~150 lines)
-    ├── crud-api.md            # CRUD API blueprint (~200 lines)
-    └── rag-pipeline.md        # RAG pipeline blueprint (~250 lines)
+└── skillchain-data/               # Data (NOT commands)
+    ├── registries/                # 11 registry files
+    │   ├── _index.yaml
+    │   ├── frontend.yaml
+    │   ├── backend.yaml
+    │   ├── devops.yaml
+    │   ├── infrastructure.yaml
+    │   ├── security.yaml
+    │   ├── developer.yaml
+    │   ├── data.yaml
+    │   ├── ai-ml.yaml
+    │   ├── cloud.yaml
+    │   └── finops.yaml
+    │
+    └── shared/                    # Shared resources
+        ├── preferences.md
+        ├── theming-rules.md
+        └── execution-flow.md
 
-Total: 19 files, ~3,000 lines
+Total: ~40 files
 ```
 
 ## Design Decisions
 
-### Why Modular Architecture?
+### Why Separated Directories?
 
-**Problem:** v1.0 was a single 1,000+ line file that was hard to maintain.
+**Problem:** Every `.md` file in `commands/` becomes a slash command. Internal files (`_registry.yaml`, `_shared/*.md`) were appearing as unwanted commands.
 
-**Solution:** Break into 19 specialized files.
-
-**Benefits:**
-- Each file has single responsibility
-- Easier to test individual components
-- Simpler to add new blueprints
-- Better git diffs (changes isolated)
-
-### Why Dynamic Path Discovery?
-
-**Problem:** Hardcoded paths don't work for both global and project installations.
-
-**Solution:** Detect installation location at runtime.
+**Solution:** Move data files outside `commands/` to `skillchain-data/`.
 
 **Benefits:**
-- Works from any directory
-- Supports global installation (`~/.claude/`)
-- Supports project installation (`.claude/`)
-- No configuration needed
+- Clean command structure
+- No unwanted `/skillchain:_shared:*` commands
+- Clear separation of concerns
+- Easier maintenance
 
-### Why Registry-Based?
+### Why Domain Registries?
 
-**Problem:** Skill metadata scattered across multiple files.
+**Problem:** Single registry file became too large (700+ lines).
 
-**Solution:** Centralize in `_registry.yaml`.
-
-**Benefits:**
-- Single source of truth
-- Easy to update skill definitions
-- Supports tooling (validation, linting)
-- Clear skill relationships
-
-### Why Parallel Loading?
-
-**Problem:** Sequential skill loading is slow.
-
-**Solution:** Load independent skills concurrently.
+**Solution:** Split into 10 domain-specific registries.
 
 **Benefits:**
-- 10-30% faster workflows
-- Better user experience
-- Scales with more skills
-- Automatically resolves dependencies
+- Smaller, focused files
+- Domain teams can own their registry
+- Faster loading (only load relevant domains)
+- Better organization
 
-### Why User Preferences?
+### Why 10 Domains?
 
-**Problem:** Repeating same choices every workflow.
+**Problem:** 2 categories (frontend/backend) didn't cover DevOps, infrastructure, security, etc.
 
-**Solution:** Save preferences between sessions.
+**Solution:** Expand to 10 comprehensive domains.
 
 **Benefits:**
-- Faster subsequent workflows
-- Consistent configurations
-- Easy to override
-- Shareable (commit to repo)
+- Full-stack coverage
+- Specialized orchestrators
+- Better keyword matching
+- More accurate routing
 
 ## Extension Points
 
 ### Adding a New Blueprint
 
-1. Create blueprint file: `blueprints/my-blueprint.md`
-2. Add to `_registry.yaml`:
-   ```yaml
-   blueprints:
-     my-blueprint:
-       triggers: { primary, secondary }
-       skill_chain: [...]
-       file: "{SKILLCHAIN_DIR}/blueprints/my-blueprint.md"
-   ```
-3. Test keyword detection
-4. Document in this guide
+1. Create `blueprints/my-blueprint.md`
+2. Blueprint auto-detected (no registry update needed)
+3. Add trigger keywords in blueprint file
+4. Test with `/skillchain:start [keywords]`
 
-### Adding a New Orchestrator
+### Adding a New Domain
 
-1. Create orchestrator file: `categories/my-category.md`
-2. Add to `_registry.yaml`:
-   ```yaml
-   categories:
-     my-category:
-       description: "..."
-       default_tools: [...]
-   ```
-3. Implement skill routing logic
-4. Test with various goals
+1. Create `skillchain-data/registries/my-domain.yaml`
+2. Update `skillchain-data/registries/_index.yaml`
+3. Create `categories/my-domain.md` orchestrator
+4. Add domain keywords to `start.md`
 
 ### Adding a New Skill
 
-1. Create skill package (see [Skills documentation](../skills/overview.md))
-2. Add to `_registry.yaml`:
-   ```yaml
-   skills:
-     my-skill:
-       category: frontend
-       priority: 7
-       keywords: { primary, secondary }
-       dependencies: [...]
-       version: "1.0.0"
-   ```
+1. Create skill package (SKILL.md, references/, etc.)
+2. Add to appropriate domain registry
 3. Test keyword matching
-4. Update compatibility matrix
+4. Update help.md if needed
 
-## Performance Characteristics
+## Performance
 
 ### Time Complexity
 
-- **Category detection:** O(k) where k = keyword count
-- **Skill matching:** O(n) where n = skill count
-- **Dependency resolution:** O(n²) worst case, O(n) typical
-- **Blueprint detection:** O(b × k) where b = blueprint count
-
-### Space Complexity
-
-- **Registry:** ~50KB YAML
-- **Preferences:** ~5KB YAML
-- **Total files:** ~100KB
+- **Domain detection:** O(k × d) where k = keywords, d = domains
+- **Skill matching:** O(n) where n = skills in domain
+- **Blueprint detection:** O(b × k) where b = blueprints
 
 ### Execution Time
 
-- **Router:** under 1 second
-- **Orchestrator load:** under 1 second
+- **Router:** < 1 second
+- **Registry load:** < 1 second
+- **Orchestrator load:** < 1 second
 - **Skill invocation:** 2-5 seconds per skill
-- **Total workflow:** 5-12 minutes (depends on questions)
+- **Total workflow:** 5-15 minutes (depends on questions)
 
 ## Next Steps
 

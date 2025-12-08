@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.2] - 2025-12-08
+
+### Added
+
+**Enhanced Interactive Installer:**
+- Reorganized menu with 12 options grouped by action type (Install, Update, Uninstall, Info)
+- Option 1: Full Install - Marketplace + all plugins + /skillchain command
+- Option 2: Install Skillchain only
+- Option 6: Update Skillchain - Refresh to latest version
+- Option 7: Update Marketplace - Refresh marketplace plugins
+- Option 8: Uninstall Skillchain - Remove commands and data
+- Option 10: Uninstall Everything - Complete removal
+
+**Skillchain Management Commands:**
+- `./install.sh commands` - Install skillchain globally
+- `./install.sh commands update` - Update skillchain to latest version
+- `./install.sh commands uninstall` - Remove skillchain commands and data
+- `./install.sh uninstall-all` - Remove everything (skillchain + plugins + marketplace)
+- Smart install/update detection with appropriate messaging
+
+**New Blog Post:**
+- `pages/blog/2025-12-08-skillchain-v3.0.md` - Comprehensive v3.0 announcement covering 76 skills, 10 domains, 12 blueprints
+
+### Changed
+
+**Documentation Updates:**
+- Completely rewrote `pages/docs/installation.md` for v3.0 with full installer documentation
+- Updated `pages/docs/skillchain/` docs to reflect v3.0 architecture
+- Updated all references from `install-skillchain.sh` to `./install.sh`
+- Updated all references from `/skillchain` to `/skillchain:start`
+- Fixed GitHub issue templates with current installation commands
+
+### Removed
+
+- `.claude-commands/install-skillchain.sh` - Replaced by `./install.sh commands`
+
 ## [0.5.1] - 2025-12-08
 
 ### Fixed

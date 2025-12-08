@@ -1,7 +1,7 @@
 ---
 sidebar_position: 4
 title: Blueprints
-description: Pre-configured skill chains for common patterns
+description: 12 pre-configured skill chains for common patterns
 ---
 
 # Blueprints
@@ -27,7 +27,26 @@ A blueprint is a pre-configured skill chain that:
 | Risk of incompatible choices | Tested combinations only |
 | 8-12 minute setup | 5-7 minute setup |
 
-## Available Blueprints
+## Available Blueprints (12)
+
+### Quick Reference
+
+| Blueprint | Domain | Description |
+|-----------|--------|-------------|
+| dashboard | Frontend | Analytics dashboard with charts & KPIs |
+| crud-api | Backend | REST API with database & auth |
+| api-first | Developer | API-first design with OpenAPI |
+| rag-pipeline | AI/ML | RAG with vector search & embeddings |
+| ml-pipeline | AI/ML | MLOps pipeline with training & serving |
+| ci-cd | DevOps | CI/CD with testing & deployment |
+| k8s | Infrastructure | Kubernetes deployment with Helm |
+| cloud | Cloud | Multi-cloud deployment patterns |
+| observability | DevOps | Monitoring, logging, tracing stack |
+| security | Security | Security architecture & compliance |
+| cost | FinOps | Cost optimization strategy |
+| data-pipeline | Data | ETL/ELT data processing pipeline |
+
+---
 
 ### Dashboard Blueprint
 
@@ -59,7 +78,7 @@ A blueprint is a pre-configured skill chain that:
 
 **Example Usage:**
 ```bash
-/skillchain analytics dashboard with revenue charts
+/skillchain:start analytics dashboard with revenue charts
 
 # Skillchain detects "dashboard" and "analytics"
 # Offers dashboard blueprint
@@ -106,7 +125,7 @@ A blueprint is a pre-configured skill chain that:
 
 **Example Usage:**
 ```bash
-/skillchain REST API with PostgreSQL database
+/skillchain:start REST API with PostgreSQL database
 
 # Skillchain detects "REST API" and "PostgreSQL"
 # Offers crud-api blueprint
@@ -164,7 +183,7 @@ A blueprint is a pre-configured skill chain that:
 
 **Example Usage:**
 ```bash
-/skillchain RAG pipeline with semantic search
+/skillchain:start RAG pipeline with semantic search
 
 # Skillchain detects "RAG" and "semantic search"
 # Offers rag-pipeline blueprint
@@ -201,19 +220,19 @@ Blueprints are automatically detected based on keywords in your goal:
 
 ```bash
 # Dashboard blueprint detected
-/skillchain analytics dashboard
-/skillchain admin panel with metrics
-/skillchain KPI overview
+/skillchain:start analytics dashboard
+/skillchain:start admin panel with metrics
+/skillchain:start KPI overview
 
 # CRUD API blueprint detected
-/skillchain REST API with postgres
-/skillchain FastAPI CRUD endpoints
-/skillchain backend API server
+/skillchain:start REST API with postgres
+/skillchain:start FastAPI CRUD endpoints
+/skillchain:start backend API server
 
 # RAG pipeline blueprint detected
-/skillchain RAG system
-/skillchain semantic search with embeddings
-/skillchain document Q&A knowledge base
+/skillchain:start RAG system
+/skillchain:start semantic search with embeddings
+/skillchain:start document Q&A knowledge base
 ```
 
 ### Detection Confidence
@@ -227,7 +246,7 @@ Confidence calculation:
 - Threshold: 7 points (70%)
 
 Example:
-"/skillchain analytics dashboard with KPI cards"
+"/skillchain:start analytics dashboard with KPI cards"
 - "analytics" (secondary): +5
 - "dashboard" (primary): +10
 - "KPI" (secondary): +5
@@ -289,7 +308,7 @@ You can extend skillchain with your own blueprints.
 ### Blueprint Structure
 
 ```yaml
-# .claude/commands/skillchain/blueprints/my-blueprint.md
+# .claude/commands/skillchain:start/blueprints/my-blueprint.md
 ---
 description: "Brief description"
 allowed-tools: ["Skill", "Read", "Write"]
@@ -456,10 +475,10 @@ Users should know what they'll get:
 **Solution:** Use more specific blueprint keywords
 ```bash
 # Instead of:
-/skillchain data display page
+/skillchain:start data display page
 
 # Use:
-/skillchain analytics dashboard
+/skillchain:start analytics dashboard
 ```
 
 ### Wrong Blueprint Detected
@@ -469,7 +488,7 @@ Users should know what they'll get:
 **Solution:** Add exclusion keywords or be more specific
 ```bash
 # If RAG blueprint triggers for general "search":
-/skillchain product search filter  # "filter" + "product" = frontend
+/skillchain:start product search filter  # "filter" + "product" = frontend
 ```
 
 ### Want Blueprint But Need Customization

@@ -281,14 +281,14 @@ skills/[skill-name]/
 ### Option 1: Use Skillchain (Recommended)
 
 ```bash
-# Install skillchain
-./commands/install-skillchain.sh --global
+# Use the interactive installer
+./install.sh
 
 # Start Claude Code
 claude
 
 # Use skillchain
-/skillchain dashboard with charts
+/skillchain:start dashboard with charts
 ```
 
 See [Skillchain documentation](../skillchain/overview.md).

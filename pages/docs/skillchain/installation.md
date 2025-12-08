@@ -1,12 +1,12 @@
 ---
 sidebar_position: 2
 title: Installation
-description: How to install skillchain globally or per-project
+description: How to install skillchain v3.0 globally or per-project
 ---
 
 # Installing Skillchain
 
-Skillchain can be installed globally (for all projects) or per-project (for team sharing). Both installation methods use the provided installation script.
+Skillchain v3.0 can be installed globally (for all projects) or per-project (for team sharing). Both installation methods use the provided installation script.
 
 ## Prerequisites
 
@@ -20,14 +20,16 @@ Install once, use in all your projects:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ai-design-components.git
+git clone https://github.com/ancoleman/ai-design-components.git
 cd ai-design-components
 
 # Install globally
-./commands/install-skillchain.sh --global
+./install.sh
 ```
 
-This installs to `~/.claude/commands/skillchain/`, making the command available in **every project** you work on.
+This installs to:
+- `~/.claude/commands/skillchain/` - Commands (exposed as `/skillchain:*`)
+- `~/.claude/skillchain-data/` - Data (registries, shared resources)
 
 ### Benefits of Global Installation
 
@@ -48,10 +50,10 @@ cd ~/my-project
 claude
 
 # Test skillchain
-/skillchain help
+/skillchain:start help
 ```
 
-You should see the skillchain help guide with all 29 available skills.
+You should see the skillchain help guide with all 76 available skills across 10 domains.
 
 ## Option 2: Project-Specific Installation
 
@@ -62,10 +64,10 @@ Install for a single project (can be committed and shared with team):
 cd ~/my-project
 
 # Clone or copy the ai-design-components repo
-git clone https://github.com/yourusername/ai-design-components.git
+git clone https://github.com/ancoleman/ai-design-components.git
 
 # Install to current project
-./ai-design-components/commands/install-skillchain.sh
+./ai-design-components/install.sh --project
 ```
 
 Or specify a target project:
@@ -73,10 +75,12 @@ Or specify a target project:
 ```bash
 # Install to a specific project
 cd ai-design-components
-./commands/install-skillchain.sh ~/path/to/your/project
+./install.sh --project ~/path/to/your/project
 ```
 
-This installs to `&lt;project>/.claude/commands/skillchain/`, making it available only in that project.
+This installs to:
+- `<project>/.claude/commands/skillchain/` - Commands
+- `<project>/.claude/skillchain-data/` - Data
 
 ### Benefits of Project Installation
 
@@ -92,9 +96,10 @@ If you want to commit skillchain to your project repository:
 ```bash
 # Ensure .claude directory is tracked
 git add .claude/commands/skillchain/
+git add .claude/skillchain-data/
 
 # Commit
-git commit -m "Add skillchain v2.1 for team collaboration"
+git commit -m "Add skillchain v3.0 for team collaboration"
 ```
 
 ## Installation Locations
@@ -110,32 +115,68 @@ Claude Code looks for commands in two locations:
 
 ## What Gets Installed
 
-The installation script copies the complete skillchain structure:
+The installation script installs the skillchain in a **separated structure**:
+
+### Commands Directory (exposed as slash commands)
 
 ```
-.claude/commands/skillchain/
-├── skillchain.md           # Router (main entry point)
-├── _registry.yaml          # 29 skill definitions
-├── _help.md                # Help content
-├── _shared/                # Shared resources (9 files)
-│   ├── theming-rules.md
-│   ├── execution-flow.md
-│   ├── preferences.md
-│   ├── parallel-loading.md
-│   ├── changelog.md
-│   └── compatibility.md
-├── categories/             # Orchestrators (4 files)
-│   ├── frontend.md
-│   ├── backend.md
-│   ├── fullstack.md
-│   └── ai-ml.md
-└── blueprints/             # Pre-configured templates (3 files)
-    ├── dashboard.md
-    ├── crud-api.md
-    └── rag-pipeline.md
+~/.claude/commands/skillchain/
+├── start.md                    # /skillchain:start (main entry)
+├── help.md                     # /skillchain:help
+│
+├── blueprints/                 # 12 blueprints
+│   ├── dashboard.md
+│   ├── crud-api.md
+│   ├── api-first.md
+│   ├── rag-pipeline.md
+│   ├── ml-pipeline.md
+│   ├── ci-cd.md
+│   ├── k8s.md
+│   ├── cloud.md
+│   ├── observability.md
+│   ├── security.md
+│   ├── cost.md
+│   └── data-pipeline.md
+│
+└── categories/                 # 12 orchestrators
+    ├── frontend.md
+    ├── backend.md
+    ├── devops.md
+    ├── infrastructure.md
+    ├── security.md
+    ├── developer.md
+    ├── data.md
+    ├── ai-ml.md
+    ├── cloud.md
+    ├── finops.md
+    ├── fullstack.md
+    └── multi-domain.md
 ```
 
-Total: 19 files, approximately 3,000 lines of optimized guidance.
+### Data Directory (NOT exposed as commands)
+
+```
+~/.claude/skillchain-data/
+├── registries/                 # 11 registry files
+│   ├── _index.yaml             # Registry index (76 skills)
+│   ├── frontend.yaml           # 15 skills
+│   ├── backend.yaml            # 14 skills
+│   ├── devops.yaml             # 6 skills
+│   ├── infrastructure.yaml     # 12 skills
+│   ├── security.yaml           # 7 skills
+│   ├── developer.yaml          # 7 skills
+│   ├── data.yaml               # 6 skills
+│   ├── ai-ml.yaml              # 4 skills
+│   ├── cloud.yaml              # 3 skills
+│   └── finops.yaml             # 2 skills
+│
+└── shared/                     # Shared resources
+    ├── preferences.md
+    ├── theming-rules.md
+    └── execution-flow.md
+```
+
+**Why two directories?** Every `.md` file in `commands/` becomes a slash command. The separated structure prevents internal files from appearing as unwanted commands like `/skillchain:_registry`.
 
 ## Updating
 
@@ -145,10 +186,10 @@ To update an existing installation, simply run the installer again:
 # Update global installation
 cd ai-design-components
 git pull  # Get latest changes
-./commands/install-skillchain.sh --global
+./install.sh
 
 # Update project installation
-./commands/install-skillchain.sh ~/your-project
+./install.sh --project ~/your-project
 ```
 
 The installer will:
@@ -164,9 +205,11 @@ To remove skillchain:
 ```bash
 # Remove global installation
 rm -rf ~/.claude/commands/skillchain
+rm -rf ~/.claude/skillchain-data
 
 # Remove project installation
 rm -rf .claude/commands/skillchain
+rm -rf .claude/skillchain-data
 
 # Optional: Remove saved preferences
 rm ~/.claude/skillchain-prefs.yaml
@@ -176,20 +219,26 @@ rm ~/.claude/skillchain-prefs.yaml
 
 ### Command Not Found
 
-If `/skillchain` doesn't work:
+If `/skillchain:start` doesn't work:
 
 1. **Check installation location:**
    ```bash
-   ls ~/.claude/commands/skillchain/skillchain.md  # Global
-   ls .claude/commands/skillchain/skillchain.md    # Project
+   ls ~/.claude/commands/skillchain/start.md     # Global
+   ls .claude/commands/skillchain/start.md       # Project
    ```
 
-2. **Verify Claude Code is running:**
+2. **Verify data directory exists:**
+   ```bash
+   ls ~/.claude/skillchain-data/registries/      # Global
+   ls .claude/skillchain-data/registries/        # Project
+   ```
+
+3. **Verify Claude Code is running:**
    ```bash
    claude --version
    ```
 
-3. **Restart Claude Code:**
+4. **Restart Claude Code:**
    Exit and restart the Claude Code CLI.
 
 ### Permission Denied
@@ -198,10 +247,10 @@ If you get permission errors:
 
 ```bash
 # Make installer executable
-chmod +x commands/install-skillchain.sh
+chmod +x install.sh
 
 # Run with proper permissions
-./commands/install-skillchain.sh --global
+./install.sh
 ```
 
 ### Wrong Version Installed
@@ -210,12 +259,11 @@ Check which version is active:
 
 ```bash
 # View registry version
-cat ~/.claude/commands/skillchain/_registry.yaml | head -5
+cat ~/.claude/skillchain-data/registries/_index.yaml | head -5
 
 # Should show:
-# registry_version: "2.1.0"
-# version: "2.0.0"
-# last_updated: "2025-12-02"
+# version: "3.0.0"
+# total_skills: 76
 ```
 
 ### Skills Not Loading
@@ -226,7 +274,7 @@ If skills aren't triggering:
    The skills themselves must be installed separately from skillchain. See [Skills Installation](../skills/overview.md).
 
 2. **Verify skill invocation paths:**
-   Skills are referenced by their full invocation name (e.g., `ui-foundation-skills:theming-components`).
+   Skills are referenced by their full invocation name (e.g., `frontend-skills:theming-components`).
 
 ## Configuration
 
@@ -268,5 +316,5 @@ These override global preferences when working in that project.
 ## Next Steps
 
 - [Learn usage patterns](./usage.md) with examples
-- [Explore blueprints](./blueprints.md) for fast-track presets
+- [Explore blueprints](./blueprints.md) for fast-track presets (12 available)
 - [Understand architecture](./architecture.md) and how it works internally

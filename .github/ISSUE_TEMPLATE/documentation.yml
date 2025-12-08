@@ -84,14 +84,14 @@ body:
       description: How would you improve this documentation?
       placeholder: |
         Suggested text:
-        "Install the skillchain globally using the provided script:
-        ./commands/install-skillchain.sh --global
+        "Install the skillchain globally using the installer:
+        ./install.sh commands
 
-        This makes the /skillchain command available in all your projects."
+        This makes the /skillchain:start command available in all your projects."
 
         Also add:
         - Explanation of global vs project-specific installation
-        - Link to commands/README.md for full documentation
+        - Link to pages/docs/skillchain/ for full documentation
 
   - type: textarea
     id: examples

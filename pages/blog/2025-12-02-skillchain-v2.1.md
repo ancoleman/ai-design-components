@@ -209,11 +209,11 @@ cd ~/my-project
 ## Installation
 
 ```bash
-# From repository root
-/install-skillchain
+# From repository root - interactive installer
+./install.sh
 
-# With global access (optional)
-/install-skillchain --global
+# Install skillchain commands only
+./install.sh commands
 ```
 
 ## Upgrade Notes

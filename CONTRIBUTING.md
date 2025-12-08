@@ -30,7 +30,7 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
    ```
 4. **Install the skillchain** to test your changes:
    ```bash
-   ./commands/install-skillchain.sh
+   ./install.sh
    ```
 
 ## Ways to Contribute
@@ -223,11 +223,11 @@ If your skill should be accessible via `/skillchain`:
 4. **Test your changes**:
    ```bash
    # Install locally and test
-   ./commands/install-skillchain.sh
+   ./install.sh
 
    # Test the skill with Claude Code
    claude
-   /skillchain [test your skill]
+   /skillchain:start [test your skill]
    ```
 
 5. **Commit with descriptive messages**:

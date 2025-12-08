@@ -2,7 +2,7 @@
 #
 # AI Design Components - Installer v3.0
 #
-# Comprehensive installer for managing marketplace and plugins.
+# Comprehensive installer for managing marketplace, plugins, and skillchain.
 #
 # Usage:
 #   ./install.sh                        # Interactive mode
@@ -13,8 +13,11 @@
 #   ./install.sh plugins install NAME   # Install single plugin
 #   ./install.sh plugins uninstall NAME # Uninstall single plugin
 #   ./install.sh plugins uninstall-all  # Uninstall all plugins
-#   ./install.sh validate               # Validate marketplace
 #   ./install.sh commands               # Install /skillchain globally
+#   ./install.sh commands update        # Update /skillchain to latest
+#   ./install.sh commands uninstall     # Remove /skillchain and data
+#   ./install.sh uninstall-all          # Remove everything
+#   ./install.sh validate               # Validate marketplace
 #   ./install.sh --help                 # Show help
 #
 
@@ -98,9 +101,14 @@ print_usage() {
     echo "    plugins uninstall-all   Uninstall all plugins"
     echo "    plugins list            List available plugins"
     echo ""
+    echo -e "  ${BOLD}Skillchain Commands:${NC}"
+    echo "    commands                Install /skillchain command globally"
+    echo "    commands update         Update /skillchain to latest version"
+    echo "    commands uninstall      Remove /skillchain commands and data"
+    echo ""
     echo -e "  ${BOLD}Other:${NC}"
     echo "    validate                Validate marketplace manifest"
-    echo "    commands                Install /skillchain command globally"
+    echo "    uninstall-all           Remove everything (skillchain + plugins + marketplace)"
     echo "    help                    Show this help message"
     echo ""
     echo "Interactive mode (no arguments) provides guided setup."
@@ -413,13 +421,25 @@ do_validate() {
 
 #######################################
 # Install /skillchain command globally
+# Pass "update" as first arg for update messaging
 #######################################
 install_commands() {
+    local mode="${1:-install}"
     local claude_dir="$HOME/.claude"
     local commands_dir="$claude_dir/commands"
     local data_dir="$claude_dir/skillchain-data"
 
-    echo -e "${CYAN}Installing /skillchain commands globally...${NC}"
+    # Check if already installed (for messaging)
+    local is_update=false
+    if [[ -d "$commands_dir/skillchain" ]] || [[ -d "$data_dir" ]]; then
+        is_update=true
+    fi
+
+    if [[ "$mode" == "update" ]] || [[ "$is_update" == true ]]; then
+        echo -e "${CYAN}Updating /skillchain commands...${NC}"
+    else
+        echo -e "${CYAN}Installing /skillchain commands globally...${NC}"
+    fi
     echo ""
 
     # Create directories
@@ -456,7 +476,11 @@ install_commands() {
     fi
 
     echo ""
-    echo -e "${GREEN}✓ Skillchain installed to:${NC}"
+    if [[ "$is_update" == true ]]; then
+        echo -e "${GREEN}✓ Skillchain updated successfully${NC}"
+    else
+        echo -e "${GREEN}✓ Skillchain installed successfully${NC}"
+    fi
     echo -e "  Commands: ${commands_dir}/skillchain"
     echo -e "  Data:     ${data_dir}"
     echo ""
@@ -468,40 +492,136 @@ install_commands() {
 }
 
 #######################################
+# Uninstall /skillchain commands
+#######################################
+uninstall_commands() {
+    local claude_dir="$HOME/.claude"
+    local commands_dir="$claude_dir/commands/skillchain"
+    local data_dir="$claude_dir/skillchain-data"
+
+    echo -e "${CYAN}Removing /skillchain commands...${NC}"
+    echo ""
+
+    local removed=0
+
+    # Remove skillchain commands
+    if [[ -d "$commands_dir" ]]; then
+        rm -rf "$commands_dir"
+        echo -e "${GREEN}✓${NC} Removed skillchain commands from $commands_dir"
+        ((removed++))
+    else
+        echo -e "${YELLOW}○${NC} Skillchain commands not found at $commands_dir"
+    fi
+
+    # Remove skillchain data
+    if [[ -d "$data_dir" ]]; then
+        rm -rf "$data_dir"
+        echo -e "${GREEN}✓${NC} Removed skillchain data from $data_dir"
+        ((removed++))
+    else
+        echo -e "${YELLOW}○${NC} Skillchain data not found at $data_dir"
+    fi
+
+    echo ""
+    if [[ $removed -gt 0 ]]; then
+        echo -e "${GREEN}✓ Skillchain uninstalled successfully${NC}"
+        echo ""
+        echo "The /skillchain:start command is no longer available."
+        echo "To reinstall: ./install.sh commands"
+    else
+        echo -e "${YELLOW}Nothing to remove - skillchain was not installed${NC}"
+    fi
+}
+
+#######################################
 # Interactive mode
 #######################################
 interactive_mode() {
     echo -e "${CYAN}What would you like to do?${NC}"
     echo ""
-    echo -e "  ${BOLD}1)${NC} ${GREEN}Quick Install${NC} - Add marketplace + install all plugins"
-    echo -e "  ${BOLD}2)${NC} ${YELLOW}Marketplace Only${NC} - Just add the marketplace"
-    echo -e "  ${BOLD}3)${NC} ${MAGENTA}Select Plugins${NC} - Choose which plugins to install"
-    echo -e "  ${BOLD}4)${NC} ${CYAN}Uninstall${NC} - Remove marketplace and plugins"
-    echo -e "  ${BOLD}5)${NC} ${BLUE}List Plugins${NC} - Show available plugins"
-    echo -e "  ${BOLD}6)${NC} Help - Show all commands"
+    echo -e "  ${BOLD}Install:${NC}"
+    echo -e "    ${BOLD}1)${NC} ${GREEN}Full Install${NC} - Marketplace + all plugins + /skillchain command"
+    echo -e "    ${BOLD}2)${NC} ${MAGENTA}Install Skillchain${NC} - Install /skillchain:start command globally"
+    echo -e "    ${BOLD}3)${NC} ${YELLOW}Marketplace + Plugins${NC} - Add marketplace + install all plugins"
+    echo -e "    ${BOLD}4)${NC} ${CYAN}Marketplace Only${NC} - Just add the marketplace"
+    echo -e "    ${BOLD}5)${NC} ${BLUE}Select Plugins${NC} - Choose which plugins to install"
     echo ""
-    read -p "Enter choice [1-6]: " choice
+    echo -e "  ${BOLD}Update:${NC}"
+    echo -e "    ${BOLD}6)${NC} Update Skillchain - Refresh /skillchain to latest version"
+    echo -e "    ${BOLD}7)${NC} Update Marketplace - Refresh marketplace plugins"
+    echo ""
+    echo -e "  ${BOLD}Uninstall:${NC}"
+    echo -e "    ${BOLD}8)${NC} ${RED}Uninstall Skillchain${NC} - Remove /skillchain commands and data"
+    echo -e "    ${BOLD}9)${NC} Uninstall Plugins - Remove marketplace and all plugins"
+    echo -e "    ${BOLD}10)${NC} ${RED}Uninstall Everything${NC} - Remove all (skillchain + plugins + marketplace)"
+    echo ""
+    echo -e "  ${BOLD}Info:${NC}"
+    echo -e "    ${BOLD}11)${NC} List Plugins - Show available plugins"
+    echo -e "    ${BOLD}0)${NC} Help - Show all commands"
+    echo ""
+    read -p "Enter choice [0-11]: " choice
 
     case $choice in
         1)
+            # Full install: marketplace + plugins + skillchain
+            marketplace_add
+            echo ""
+            plugins_install_all
+            echo ""
+            install_commands
+            echo ""
+            echo -e "${GREEN}═══════════════════════════════════════════════════════════════════${NC}"
+            echo -e "${GREEN}  Full Installation Complete!${NC}"
+            echo -e "${GREEN}═══════════════════════════════════════════════════════════════════${NC}"
+            echo ""
+            echo -e "  ${YELLOW}Restart Claude Code, then try:${NC}"
+            echo "    /skillchain:start dashboard with charts"
+            echo "    /skillchain:help"
+            ;;
+        2)
+            # Install skillchain commands only
+            install_commands
+            ;;
+        3)
+            # Marketplace + plugins (no skillchain)
             marketplace_add
             echo ""
             plugins_install_all
             ;;
-        2)
+        4)
+            # Marketplace only
             marketplace_add
             echo ""
             echo -e "${CYAN}Next steps:${NC}"
             echo "  ./install.sh plugins install-all    # Install all plugins"
             echo "  ./install.sh plugins install NAME   # Install specific plugin"
+            echo "  ./install.sh commands               # Install /skillchain command"
             ;;
-        3)
+        5)
+            # Select plugins
             plugins_list
             echo ""
             echo -e "${CYAN}To install specific plugins:${NC}"
             echo "  ./install.sh plugins install PLUGIN_NAME"
             ;;
-        4)
+        6)
+            # Update skillchain
+            install_commands "update"
+            ;;
+        7)
+            # Update marketplace
+            marketplace_update
+            ;;
+        8)
+            # Uninstall skillchain only
+            echo -e "${YELLOW}This will remove the /skillchain commands and data.${NC}"
+            read -p "Continue? [y/N]: " confirm
+            if [[ "$confirm" =~ ^[Yy]$ ]]; then
+                uninstall_commands
+            fi
+            ;;
+        9)
+            # Uninstall plugins and marketplace
             echo -e "${YELLOW}This will remove all plugins and the marketplace.${NC}"
             read -p "Continue? [y/N]: " confirm
             if [[ "$confirm" =~ ^[Yy]$ ]]; then
@@ -510,10 +630,26 @@ interactive_mode() {
                 marketplace_remove
             fi
             ;;
-        5)
+        10)
+            # Uninstall everything
+            echo -e "${RED}This will remove EVERYTHING: skillchain, all plugins, and the marketplace.${NC}"
+            read -p "Are you sure? [y/N]: " confirm
+            if [[ "$confirm" =~ ^[Yy]$ ]]; then
+                uninstall_commands
+                echo ""
+                plugins_uninstall_all
+                echo ""
+                marketplace_remove
+                echo ""
+                echo -e "${GREEN}✓ All AI Design Components have been removed${NC}"
+            fi
+            ;;
+        11)
+            # List plugins
             plugins_list
             ;;
-        6)
+        0)
+            # Help
             print_usage
             ;;
         *)
@@ -596,7 +732,37 @@ main() {
             do_validate
             ;;
         commands)
-            install_commands
+            local subcommand="${1:-install}"
+            shift || true
+            case "$subcommand" in
+                install|"")
+                    install_commands
+                    ;;
+                update|refresh)
+                    install_commands "update"
+                    ;;
+                uninstall|remove)
+                    uninstall_commands
+                    ;;
+                *)
+                    echo -e "${RED}Unknown commands subcommand: ${subcommand}${NC}"
+                    echo "Available: install (default), update, uninstall"
+                    exit 1
+                    ;;
+            esac
+            ;;
+        uninstall-all)
+            echo -e "${RED}This will remove EVERYTHING: skillchain, all plugins, and the marketplace.${NC}"
+            read -p "Are you sure? [y/N]: " confirm
+            if [[ "$confirm" =~ ^[Yy]$ ]]; then
+                uninstall_commands
+                echo ""
+                plugins_uninstall_all
+                echo ""
+                marketplace_remove
+                echo ""
+                echo -e "${GREEN}✓ All AI Design Components have been removed${NC}"
+            fi
             ;;
         help|--help|-h)
             print_usage

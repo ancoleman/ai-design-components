@@ -45,8 +45,8 @@ body:
       label: Steps to Reproduce
       description: Steps to reproduce the behavior
       placeholder: |
-        1. Install skillchain globally with './install-skillchain.sh --global'
-        2. Run '/skillchain dashboard with charts'
+        1. Install skillchain globally with './install.sh commands'
+        2. Run '/skillchain:start dashboard with charts'
         3. Answer questions...
         4. See error...
     validations:

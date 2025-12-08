@@ -71,22 +71,22 @@ The **ai-design-components** marketplace contains **29 skills** across frontend 
 
 ## Quick Start: The Skillchain Command
 
-The **recommended way** to use AI Design Components is through the `/skillchain` command:
+The **recommended way** to use AI Design Components is through the `/skillchain:start` command:
 
 ```bash
-# Install skillchain globally (available in all projects)
-./commands/install-skillchain.sh --global
+# Use the interactive installer (recommended)
+./install.sh
 
-# Or install to a specific project
-./commands/install-skillchain.sh ~/your-project
+# Or install skillchain only
+./install.sh skillchain
 
 # Then use it in Claude Code
-/skillchain dashboard with charts and postgres backend
-/skillchain login form with OAuth authentication
-/skillchain RAG pipeline with vector search
+/skillchain:start dashboard with charts and postgres backend
+/skillchain:start login form with OAuth authentication
+/skillchain:start RAG pipeline with vector search
 ```
 
-See [commands/README.md](./commands/README.md) for complete skillchain documentation.
+See [.claude-commands/README.md](./.claude-commands/README.md) for complete skillchain documentation.
 
 ---
 
@@ -285,9 +285,9 @@ ai-design-components/
 │   ├── using-relational-databases/
 │   │   └── SKILL.md
 │   └── ...                       # 26 more skills
-├── commands/
-│   ├── skillchain.md             # The /skillchain command
-│   └── install-skillchain.sh     # Installation script
+├── .claude-commands/
+│   └── skillchain/               # The /skillchain:start command
+├── install.sh                    # Installation script
 └── docs/
     └── architecture/             # Architecture documentation
 ```
@@ -355,8 +355,8 @@ ai-design-components/
 ### Issue: Skillchain Command Not Found
 
 **Solutions:**
-1. Ensure skillchain is installed: Check `~/.claude/commands/skillchain.md` or `.claude/commands/skillchain.md`
-2. Re-run installation: `./commands/install-skillchain.sh --global`
+1. Ensure skillchain is installed: Check `~/.claude/commands/skillchain/start.md` or `.claude/commands/skillchain/start.md`
+2. Re-run installation: `./install.sh`
 3. Restart Claude Code
 
 ---

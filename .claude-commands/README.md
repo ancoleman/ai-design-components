@@ -2,9 +2,9 @@
 
 This directory contains slash commands for Claude Code that provide guided workflows for AI Design Components.
 
-## The Skillchain Command (v2.1)
+## The Skillchain Command (v3.0)
 
-The `/skillchain` command is the **recommended entry point** for using AI Design Components. Instead of relying on prompt formulation to trigger individual skills, skillchain provides a guided, step-by-step workflow.
+The `/skillchain:start` command is the **recommended entry point** for using AI Design Components. Instead of relying on prompt formulation to trigger individual skills, skillchain provides a guided, step-by-step workflow.
 
 ### Why Use Skillchain?
 
@@ -26,7 +26,7 @@ then creating-dashboards, then visualizing-data..."
 
 Skillchain (just describe your goal):
 ```
-/skillchain sales dashboard with revenue charts
+/skillchain:start sales dashboard with revenue charts
 ```
 
 ## Installation
@@ -36,10 +36,10 @@ Skillchain (just describe your goal):
 Install once, use in all your projects:
 
 ```bash
-./commands/install-skillchain.sh --global
+./install.sh
 ```
 
-This installs to `~/.claude/commands/skillchain/`, making the commands available in **every project** you work on.
+This installs to `~/.claude/commands/skillchain/` and `~/.claude/skillchain-data/`, making the commands available in **every project** you work on.
 
 ### Option 2: Project-Specific Installation
 
@@ -47,10 +47,10 @@ Install for a single project (can be committed and shared with team):
 
 ```bash
 # Install to current directory
-./commands/install-skillchain.sh
+./install.sh --project
 
 # Or install to a specific project
-./commands/install-skillchain.sh ~/path/to/your/project
+./install.sh --project ~/path/to/your/project
 ```
 
 This installs to `<project>/.claude/commands/skillchain/`, making it available only in that project.
@@ -77,19 +77,20 @@ claude
 Then use the skillchain command:
 
 ```
-/skillchain help                         # Show all 29 available skills
-/skillchain dashboard with charts        # Build a dashboard
-/skillchain login form with validation   # Build a login form
-/skillchain AI chat interface            # Build a chat UI
-/skillchain import CSV data to postgres  # Build ETL pipeline
-/skillchain RAG pipeline with embeddings # Build AI data pipeline
+/skillchain:start help                           # Show all 76 available skills
+/skillchain:start dashboard with charts          # Build a dashboard
+/skillchain:start CI/CD pipeline                 # Build CI/CD workflow
+/skillchain:start Kubernetes deployment          # Build K8s infrastructure
+/skillchain:start SOC2 compliance                # Implement security compliance
+/skillchain:start RAG pipeline with embeddings   # Build AI data pipeline
+/skillchain:start deploy to AWS                  # Cloud deployment
 ```
 
 ### How It Works
 
 1. **Parse Goal** - Skillchain analyzes keywords in your description
-2. **Detect Category** - Routes to frontend, backend, fullstack, or ai-ml orchestrator
-3. **Match Blueprint** - Checks for pre-configured patterns (dashboard, crud-api, rag-pipeline)
+2. **Detect Domain(s)** - Routes to one of 10 domain orchestrators (or fullstack/multi-domain)
+3. **Match Blueprint** - Checks for pre-configured patterns (12 available)
 4. **Order Skills** - Ensures correct execution order with dependency resolution
 5. **Load Preferences** - Applies saved preferences from previous sessions
 6. **Guide Configuration** - Asks questions for each skill (or uses defaults)
@@ -99,7 +100,43 @@ Then use the skillchain command:
 
 ---
 
-## v2.1 Features
+## v3.0 Features
+
+### 10 Domains, 76 Skills
+
+v3.0 expands from 2 domains (frontend/backend) to **10 comprehensive domains**:
+
+| Domain | Skills | Focus |
+|--------|--------|-------|
+| Frontend | 15 | UI components, forms, charts, dashboards |
+| Backend | 14 | APIs, databases, messaging, deployment |
+| DevOps | 6 | CI/CD, Docker, GitOps, incidents |
+| Infrastructure | 12 | Kubernetes, Terraform, networking |
+| Security | 7 | Compliance, TLS, firewalls, SIEM |
+| Developer | 7 | APIs, CLIs, SDKs, documentation |
+| Data | 6 | ETL, streaming, SQL optimization |
+| AI/ML | 4 | MLOps, prompts, LLM evaluation |
+| Cloud | 3 | AWS, GCP, Azure deployments |
+| FinOps | 2 | Cost optimization, tagging |
+
+### 12 Blueprints
+
+Pre-configured skill chains for common patterns:
+
+| Blueprint | Category | Description |
+|-----------|----------|-------------|
+| dashboard | Frontend | Analytics dashboard with charts & KPIs |
+| crud-api | Backend | REST API with database & auth |
+| api-first | Developer | API-first design with OpenAPI |
+| rag-pipeline | AI/ML | RAG with vector search & embeddings |
+| ml-pipeline | AI/ML | MLOps pipeline with training & serving |
+| ci-cd | DevOps | CI/CD with testing & deployment |
+| k8s | Infrastructure | Kubernetes deployment with Helm |
+| cloud | Cloud | Multi-cloud deployment patterns |
+| observability | DevOps | Monitoring, logging, tracing stack |
+| security | Security | Security architecture & compliance |
+| cost | FinOps | Cost optimization strategy |
+| data-pipeline | Data | ETL/ELT data processing pipeline |
 
 ### User Preferences System
 
@@ -123,16 +160,14 @@ global:
 
 ### Skill Versioning
 
-All 29 skills are versioned for compatibility tracking:
+All 76 skills are versioned for compatibility tracking:
 
 ```yaml
-# In _registry.yaml
+# In registries/*.yaml
 visualizing-data:
   version: "1.0.0"
   # ...
 ```
-
-See `_shared/changelog.md` for version history and `_shared/compatibility.md` for the compatibility matrix.
 
 ### Parallel Skill Loading
 
@@ -151,87 +186,83 @@ Step 2: designing-layouts
 Step 3 (PARALLEL): visualizing-data + building-tables
 ```
 
-Skills are grouped by `parallel_group` in the registry. See `_shared/parallel-loading.md` for dependency graphs.
-
-### Blueprints
-
-Pre-configured skill chains for common patterns:
-
-| Blueprint | Trigger Keywords | Skills |
-|-----------|-----------------|--------|
-| `dashboard` | dashboard, analytics, admin panel | theming → layouts → dashboards → data-viz → feedback → assembly |
-| `crud-api` | REST API, CRUD, FastAPI | api-patterns → databases-relational → auth-security |
-| `rag-pipeline` | RAG, semantic search, embeddings | ingesting-data → databases-vector → ai-data-engineering |
-
-When detected, blueprints offer a faster path with fewer questions.
-
 ---
 
-## Architecture (v3.0+)
+## Architecture (v3.0)
 
-Skillchain follows the same directory-based command pattern as `/dev`:
+Skillchain uses a **separated structure** to prevent internal files from appearing as commands:
 
 ```
-~/.claude/commands/skillchain/        # Directory = namespace
-├── skillchain.md                     # /skillchain:skillchain (main entry)
-├── help.md                           # /skillchain:help
-├── _registry.yaml                    # Hidden (underscore prefix)
-├── _registries/                      # Hidden domain registries
-│   ├── frontend.yaml
-│   ├── backend.yaml
-│   ├── devops.yaml
-│   └── ...                           # 10 domain registries
-├── _shared/                          # Hidden internal resources
-│   ├── theming-rules.md
-│   ├── execution-flow.md
-│   ├── preferences.md
-│   ├── parallel-loading.md
-│   ├── changelog.md
-│   └── compatibility.md
-├── blueprints/                       # Exposed as /skillchain:blueprints:*
-│   ├── dashboard.md                  # /skillchain:blueprints:dashboard
-│   ├── crud-api.md                   # /skillchain:blueprints:crud-api
-│   ├── rag-pipeline.md               # /skillchain:blueprints:rag-pipeline
-│   └── ...                           # 12 blueprints total
-└── categories/                       # Exposed as /skillchain:categories:*
-    ├── frontend.md                   # /skillchain:categories:frontend
-    ├── backend.md                    # /skillchain:categories:backend
-    ├── devops.md                     # /skillchain:categories:devops
-    └── ...                           # 12 category orchestrators
+~/.claude/
+├── commands/
+│   └── skillchain/                    # Commands (exposed as /skillchain:*)
+│       ├── start.md                   # /skillchain:start (main entry)
+│       ├── help.md                    # /skillchain:help
+│       ├── blueprints/                # /skillchain:blueprints:*
+│       │   ├── dashboard.md
+│       │   ├── crud-api.md
+│       │   ├── rag-pipeline.md
+│       │   └── ... (12 total)
+│       └── categories/                # /skillchain:categories:*
+│           ├── frontend.md
+│           ├── backend.md
+│           ├── devops.md
+│           ├── infrastructure.md
+│           ├── security.md
+│           ├── developer.md
+│           ├── data.md
+│           ├── ai-ml.md
+│           ├── cloud.md
+│           ├── finops.md
+│           ├── fullstack.md
+│           └── multi-domain.md
+│
+└── skillchain-data/                   # Data (NOT exposed as commands)
+    ├── registries/
+    │   ├── _index.yaml
+    │   ├── frontend.yaml
+    │   ├── backend.yaml
+    │   └── ... (10 domain registries)
+    └── shared/
+        ├── preferences.md
+        ├── theming-rules.md
+        └── execution-flow.md
 ```
 
 ### Command Pattern
 
-Like `/dev:*` commands, skillchain exposes a hierarchical command structure:
+Skillchain exposes a hierarchical command structure:
 
 | Command | Description |
 |---------|-------------|
-| `/skillchain:skillchain [goal]` | Main guided workflow |
+| `/skillchain:start [goal]` | Main guided workflow |
 | `/skillchain:help` | Show help and 76 skills |
 | `/skillchain:blueprints:dashboard` | Direct dashboard blueprint |
 | `/skillchain:blueprints:rag-pipeline` | Direct RAG pipeline blueprint |
 | `/skillchain:categories:frontend` | Frontend orchestrator |
-| `/skillchain:categories:backend` | Backend orchestrator |
-
-**Hidden files** (underscore prefix) remain internal:
-- `_registry.yaml` - Not exposed as command
-- `_registries/` - Not exposed as commands
-- `_shared/` - Not exposed as commands
+| `/skillchain:categories:devops` | DevOps orchestrator |
 
 ### Dynamic Path Discovery
 
 Skillchain works from any project by dynamically finding its installation location:
 
 ```bash
-# Step 0 in skillchain.md discovers the path:
+# Commands directory
 if [ -d ".claude/commands/skillchain" ]; then
-  SKILLCHAIN_DIR="$(pwd)/.claude/commands/skillchain"
+  SKILLCHAIN_CMD="$(pwd)/.claude/commands/skillchain"
 elif [ -d "$HOME/.claude/commands/skillchain" ]; then
-  SKILLCHAIN_DIR="$HOME/.claude/commands/skillchain"
+  SKILLCHAIN_CMD="$HOME/.claude/commands/skillchain"
+fi
+
+# Data directory (separate from commands)
+if [ -d ".claude/skillchain-data" ]; then
+  SKILLCHAIN_DATA="$(pwd)/.claude/skillchain-data"
+elif [ -d "$HOME/.claude/skillchain-data" ]; then
+  SKILLCHAIN_DATA="$HOME/.claude/skillchain-data"
 fi
 ```
 
-All file references use `{SKILLCHAIN_DIR}/...` pattern for portability.
+All file references use `{SKILLCHAIN_CMD}/...` and `{SKILLCHAIN_DATA}/...` patterns for portability.
 
 ---
 
@@ -262,19 +293,106 @@ All file references use `{SKILLCHAIN_DIR}/...` pattern for portability.
 | Skill | Group | Description |
 |-------|-------|-------------|
 | ingesting-data | data-ingestion | ETL, CSV, S3 imports |
-| databases-relational | databases | Postgres, MySQL, SQLite |
-| databases-vector | databases | Qdrant, pgvector, Pinecone |
-| databases-timeseries | databases | ClickHouse, InfluxDB |
-| databases-document | databases | MongoDB, DynamoDB |
-| databases-graph | databases | Neo4j, knowledge graphs |
-| api-patterns | apis | REST, GraphQL, gRPC |
-| message-queues | messaging | Kafka, RabbitMQ, Celery |
-| realtime-sync | messaging | WebSocket, SSE, CRDTs |
-| auth-security | platform | JWT, OAuth, RBAC |
-| observability | platform | OpenTelemetry, logging |
+| using-relational-databases | databases | Postgres, MySQL, SQLite |
+| using-vector-databases | databases | Qdrant, pgvector, Pinecone |
+| using-timeseries-databases | databases | ClickHouse, InfluxDB |
+| using-document-databases | databases | MongoDB, DynamoDB |
+| using-graph-databases | databases | Neo4j, knowledge graphs |
+| implementing-api-patterns | apis | REST, GraphQL, gRPC |
+| using-message-queues | messaging | Kafka, RabbitMQ, Celery |
+| implementing-realtime-sync | messaging | WebSocket, SSE, CRDTs |
+| securing-authentication | platform | JWT, OAuth, RBAC |
+| implementing-observability | platform | OpenTelemetry, logging |
 | deploying-applications | platform | Kubernetes, serverless |
 | ai-data-engineering | ai-ml | RAG pipelines, chunking |
 | model-serving | ai-ml | vLLM, Ollama, inference |
+
+### DevOps Skills (6)
+
+| Skill | Group | Description |
+|-------|-------|-------------|
+| writing-dockerfiles | containers | Multi-stage builds, optimization |
+| testing-strategies | quality | Unit, integration, e2e tests |
+| building-ci-pipelines | automation | GitHub Actions, Jenkins |
+| implementing-gitops | deployment | ArgoCD, Flux workflows |
+| managing-incidents | reliability | On-call, postmortems, runbooks |
+| platform-engineering | platform | IDP, Backstage, developer portals |
+
+### Infrastructure Skills (12)
+
+| Skill | Group | Description |
+|-------|-------|-------------|
+| operating-kubernetes | orchestration | kubectl, Helm, deployments |
+| writing-infrastructure-code | iac | Terraform, Pulumi, Ansible |
+| managing-configuration | config | Ansible, Chef, Puppet |
+| architecting-networks | networking | VPC, subnets, routing |
+| load-balancing-patterns | networking | ALB, NLB, HAProxy |
+| managing-dns | networking | Route53, BIND, DNS records |
+| implementing-service-mesh | networking | Istio, Linkerd, Consul |
+| administering-linux | systems | Ubuntu, RHEL, systemd |
+| configuring-nginx | systems | Reverse proxy, SSL |
+| shell-scripting | systems | Bash, automation |
+| planning-disaster-recovery | reliability | DR, backup, failover |
+| designing-distributed-systems | reliability | Microservices, consensus |
+
+### Security Skills (7)
+
+| Skill | Group | Description |
+|-------|-------|-------------|
+| architecting-security | architecture | Zero trust, threat modeling |
+| implementing-compliance | compliance | SOC2, HIPAA, GDPR, PCI |
+| managing-vulnerabilities | operations | CVE scanning, patching |
+| implementing-tls | encryption | Certificates, mTLS |
+| configuring-firewalls | network | iptables, security groups |
+| siem-logging | monitoring | Security logging, Splunk |
+| security-hardening | hardening | CIS benchmarks, least privilege |
+
+### Developer Productivity Skills (7)
+
+| Skill | Group | Description |
+|-------|-------|-------------|
+| designing-apis | api | REST, GraphQL, OpenAPI |
+| building-clis | tools | Click, Typer, Cobra |
+| designing-sdks | tools | Client libraries, wrappers |
+| generating-documentation | docs | Sphinx, MkDocs, JSDoc |
+| debugging-techniques | debugging | pdb, gdb, DevTools |
+| managing-git-workflows | vcs | Branching, rebasing, PRs |
+| writing-github-actions | automation | Workflows, actions |
+
+### Data Engineering Skills (6)
+
+| Skill | Group | Description |
+|-------|-------|-------------|
+| architecting-data | architecture | Data warehouse, lake, schema |
+| streaming-data | streaming | Kafka, Kinesis, real-time |
+| transforming-data | etl | dbt, Airflow, pipelines |
+| optimizing-sql | performance | Query optimization, indexes |
+| secret-management | security | Vault, AWS Secrets Manager |
+| performance-engineering | optimization | Profiling, benchmarking |
+
+### AI/ML Skills (4)
+
+| Skill | Group | Description |
+|-------|-------|-------------|
+| implementing-mlops | mlops | MLflow, Kubeflow, monitoring |
+| prompt-engineering | prompts | Few-shot, chain of thought |
+| evaluating-llms | evaluation | Benchmarks, evals |
+| embedding-optimization | vectors | Vector search, similarity |
+
+### Cloud Provider Skills (3)
+
+| Skill | Group | Description |
+|-------|-------|-------------|
+| deploying-on-aws | aws | Lambda, S3, EC2, ECS |
+| deploying-on-gcp | gcp | Cloud Run, Cloud Functions |
+| deploying-on-azure | azure | Azure Functions, AKS |
+
+### FinOps Skills (2)
+
+| Skill | Group | Description |
+|-------|-------|-------------|
+| optimizing-costs | cost | Right-sizing, reserved instances |
+| resource-tagging | governance | Tag strategy, cost allocation |
 
 ---
 
@@ -296,16 +414,16 @@ During a skillchain session, you can use:
 ## Files
 
 ```
-commands/
-├── skillchain/              # Modular command structure (19 files)
-│   ├── skillchain.md        # Router
-│   ├── _registry.yaml       # Skill definitions
-│   ├── _help.md             # Help content
-│   ├── _shared/             # Shared resources (9 files)
-│   ├── categories/          # Orchestrators (4 files)
-│   └── blueprints/          # Templates (3 files)
-├── install-skillchain.sh    # Installation script
-└── README.md                # This documentation
+.claude-commands/
+├── skillchain/                  # Commands (26 files)
+│   ├── start.md                 # Main router
+│   ├── help.md                  # Help content
+│   ├── blueprints/              # 12 blueprint templates
+│   └── categories/              # 12 category orchestrators
+├── skillchain-data/             # Data (not exposed as commands)
+│   ├── registries/              # 11 registry files
+│   └── shared/                  # Shared resources
+└── README.md                    # This documentation
 ```
 
 ## Updating
@@ -314,10 +432,10 @@ To update an existing installation, run the installer again:
 
 ```bash
 # Update global installation
-./commands/install-skillchain.sh --global
+./install.sh
 
 # Update project installation
-./commands/install-skillchain.sh ~/your-project
+./install.sh --project ~/your-project
 ```
 
 The installer will detect and update existing installations.
@@ -328,8 +446,9 @@ The installer will detect and update existing installations.
 
 | Version | Date | Changes |
 |---------|------|---------|
+| v3.0.0 | 2025-12-08 | 10 domains, 76 skills, 12 blueprints, separated data directory |
 | v2.1.0 | 2025-12-02 | User preferences, skill versioning, parallel loading |
 | v2.0.0 | 2025-12-02 | Modular architecture, blueprints, dynamic paths |
 | v1.0.0 | 2025-12-01 | Initial monolithic release |
 
-See `_skillchain/_shared/changelog.md` for detailed version history.
+See `skillchain-data/shared/changelog.md` for detailed version history.

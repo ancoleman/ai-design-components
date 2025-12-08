@@ -17,22 +17,22 @@ After [installing skillchain](./installation.md), start Claude Code in any proje
 claude
 
 # Use skillchain with natural language
-/skillchain [describe what you want to build]
+/skillchain:start [describe what you want to build]
 ```
 
 ### Command Syntax
 
 ```bash
-/skillchain help                         # Show help guide
-/skillchain [goal]                       # Start workflow with goal
+/skillchain:start help                         # Show help guide
+/skillchain:start [goal]                       # Start workflow with goal
 ```
 
 Examples:
 ```bash
-/skillchain dashboard with charts        # Frontend: dashboard + visualizations
-/skillchain login form with validation   # Frontend: form system
-/skillchain REST API with postgres       # Backend: API + database
-/skillchain RAG pipeline                 # Backend: AI/ML workflow
+/skillchain:start dashboard with charts        # Frontend: dashboard + visualizations
+/skillchain:start login form with validation   # Frontend: form system
+/skillchain:start REST API with postgres       # Backend: API + database
+/skillchain:start RAG pipeline                 # Backend: AI/ML workflow
 ```
 
 ## How Skillchain Interprets Your Goal
@@ -83,7 +83,7 @@ Trigger AI/ML orchestrator when detected:
 If **both frontend AND backend keywords** are present, skillchain routes to the fullstack orchestrator:
 
 ```bash
-/skillchain dashboard with postgres backend
+/skillchain:start dashboard with postgres backend
 # Detects: "dashboard" (frontend) + "postgres" (backend)
 # Routes to: fullstack orchestrator
 ```
@@ -93,7 +93,7 @@ If **both frontend AND backend keywords** are present, skillchain routes to the 
 ### Example 1: Analytics Dashboard
 
 ```bash
-/skillchain analytics dashboard with revenue charts
+/skillchain:start analytics dashboard with revenue charts
 ```
 
 **What happens:**
@@ -114,7 +114,7 @@ If **both frontend AND backend keywords** are present, skillchain routes to the 
 ### Example 2: Login Form
 
 ```bash
-/skillchain login form with email and password validation
+/skillchain:start login form with email and password validation
 ```
 
 **What happens:**
@@ -131,7 +131,7 @@ If **both frontend AND backend keywords** are present, skillchain routes to the 
 ### Example 3: AI Chat Interface
 
 ```bash
-/skillchain AI chat interface with streaming responses
+/skillchain:start AI chat interface with streaming responses
 ```
 
 **What happens:**
@@ -152,7 +152,7 @@ If **both frontend AND backend keywords** are present, skillchain routes to the 
 ### Example 4: REST API with PostgreSQL
 
 ```bash
-/skillchain REST API with PostgreSQL database
+/skillchain:start REST API with PostgreSQL database
 ```
 
 **What happens:**
@@ -170,7 +170,7 @@ If **both frontend AND backend keywords** are present, skillchain routes to the 
 ### Example 5: Data Ingestion Pipeline
 
 ```bash
-/skillchain import CSV data from S3 to PostgreSQL
+/skillchain:start import CSV data from S3 to PostgreSQL
 ```
 
 **What happens:**
@@ -186,7 +186,7 @@ If **both frontend AND backend keywords** are present, skillchain routes to the 
 ### Example 6: RAG Pipeline
 
 ```bash
-/skillchain RAG pipeline with vector search and embeddings
+/skillchain:start RAG pipeline with vector search and embeddings
 ```
 
 **What happens:**
@@ -207,7 +207,7 @@ If **both frontend AND backend keywords** are present, skillchain routes to the 
 ### Example 7: Dashboard with Backend
 
 ```bash
-/skillchain sales dashboard with revenue charts and postgres backend
+/skillchain:start sales dashboard with revenue charts and postgres backend
 ```
 
 **What happens:**
@@ -222,7 +222,7 @@ If **both frontend AND backend keywords** are present, skillchain routes to the 
 ### Example 8: Login with OAuth
 
 ```bash
-/skillchain login form with OAuth 2.0 authentication
+/skillchain:start login form with OAuth 2.0 authentication
 ```
 
 **What happens:**
@@ -250,7 +250,7 @@ During a skillchain session, you can control the flow:
 ### Example Session with Commands
 
 ```
-You: /skillchain dashboard with charts
+You: /skillchain:start dashboard with charts
 
 Claude: I detected this matches our 'dashboard' blueprint!
 Would you like to use the dashboard blueprint? (yes/no/customize)
@@ -289,7 +289,7 @@ Claude: Generating dashboard... [complete output]
 After your first workflow, skillchain offers to save preferences:
 
 ```yaml
-# ~/.claude/skillchain-prefs.yaml
+# ~/.claude/skillchain:start-prefs.yaml
 global:
   theme:
     color_scheme: "blue-gray"
@@ -325,7 +325,7 @@ This gives you blueprint benefits (skill selection, ordering) while allowing ful
 All backend skills support multiple languages:
 
 ```bash
-/skillchain REST API with PostgreSQL
+/skillchain:start REST API with PostgreSQL
 ```
 
 You'll be asked:
@@ -345,33 +345,33 @@ All patterns work across languages with idiomatic implementations.
 
 ```bash
 # Vague
-/skillchain dashboard
+/skillchain:start dashboard
 
 # Better
-/skillchain sales dashboard with bar charts and KPI cards
+/skillchain:start sales dashboard with bar charts and KPI cards
 
 # Best
-/skillchain sales dashboard with monthly revenue bar chart, year-over-year comparison, and 4 KPI cards for revenue, profit, orders, and customers
+/skillchain:start sales dashboard with monthly revenue bar chart, year-over-year comparison, and 4 KPI cards for revenue, profit, orders, and customers
 ```
 
 ### 2. Mention Key Technologies
 
 ```bash
 # Generic
-/skillchain API with database
+/skillchain:start API with database
 
 # Specific
-/skillchain REST API with PostgreSQL and JWT authentication
+/skillchain:start REST API with PostgreSQL and JWT authentication
 ```
 
 ### 3. Include User Experience Details
 
 ```bash
 # Basic
-/skillchain form
+/skillchain:start form
 
 # Enhanced
-/skillchain login form with email validation, password strength meter, and social login
+/skillchain:start login form with email validation, password strength meter, and social login
 ```
 
 ### 4. Leverage Blueprints
@@ -380,9 +380,9 @@ When your goal matches a blueprint pattern, let skillchain detect it:
 
 ```bash
 # Blueprint-friendly patterns
-/skillchain analytics dashboard       # → dashboard blueprint
-/skillchain CRUD API                  # → crud-api blueprint
-/skillchain RAG system                # → rag-pipeline blueprint
+/skillchain:start analytics dashboard       # → dashboard blueprint
+/skillchain:start CRUD API                  # → crud-api blueprint
+/skillchain:start RAG system                # → rag-pipeline blueprint
 ```
 
 ### 5. Use Workflow Commands
@@ -408,10 +408,10 @@ If skillchain routes to the wrong category:
 
 ```bash
 # Be more explicit
-/skillchain backend API with postgres  # Forces backend
+/skillchain:start backend API with postgres  # Forces backend
 
 # Or use both frontend and backend keywords for fullstack
-/skillchain dashboard UI with postgres backend
+/skillchain:start dashboard UI with postgres backend
 ```
 
 ### Blueprint Not Detected
@@ -420,11 +420,11 @@ If you want a blueprint but it's not triggered:
 
 ```bash
 # Use exact blueprint keywords
-/skillchain analytics dashboard     # ✓ Triggers dashboard blueprint
-/skillchain data overview page      # ✗ May not trigger blueprint
+/skillchain:start analytics dashboard     # ✓ Triggers dashboard blueprint
+/skillchain:start data overview page      # ✗ May not trigger blueprint
 
 # Explicitly mention the pattern
-/skillchain REST API CRUD operations  # ✓ Triggers crud-api blueprint
+/skillchain:start REST API CRUD operations  # ✓ Triggers crud-api blueprint
 ```
 
 ### Too Many Questions
@@ -433,10 +433,10 @@ Use blueprints to reduce questions:
 
 ```bash
 # Standard: 12+ questions
-/skillchain I want to build a dashboard with charts
+/skillchain:start I want to build a dashboard with charts
 
 # Blueprint: 3 questions
-/skillchain analytics dashboard
+/skillchain:start analytics dashboard
 ```
 
 Or use `skip` command during workflow to accept defaults.

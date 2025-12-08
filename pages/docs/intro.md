@@ -22,15 +22,15 @@ Built following [Anthropic's official Skills best practices](https://platform.cl
 
 ## Quick Start with Skillchain (v2.1)
 
-The **recommended way** to use AI Design Components is through the `/skillchain` command. Instead of manually triggering individual skills, skillchain provides a guided workflow with intelligent defaults.
+The **recommended way** to use AI Design Components is through the `/skillchain:start` command. Instead of manually triggering individual skills, skillchain provides a guided workflow with intelligent defaults.
 
 ```bash
-# Install globally (available in ALL your projects)
-./commands/install-skillchain.sh --global
+# Use the interactive installer
+./install.sh
 
 # Then start Claude Code and use skillchain
 claude
-/skillchain dashboard with charts and filters
+/skillchain:start dashboard with charts and filters
 ```
 
 ### Why Skillchain?
