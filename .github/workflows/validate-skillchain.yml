@@ -182,13 +182,7 @@ jobs:
             # Check if evaluation report was created
             if [[ -f "evaluation/evaluation_results.json" ]]; then
               # Extract pass rate from passed/total_scenarios
-              PASS_RATE=$(python3 -c "
-import json
-data = json.load(open('evaluation/evaluation_results.json'))
-passed = data.get('passed', 0)
-total = data.get('total_scenarios', 1)
-print(int(passed / total * 100))
-")
+              PASS_RATE=$(python3 -c "import json; d=json.load(open('evaluation/evaluation_results.json')); print(int(d.get('passed',0)/max(d.get('total_scenarios',1),1)*100))")
               echo "Pass rate: ${PASS_RATE}%"
               echo "pass_rate=$PASS_RATE" >> $GITHUB_OUTPUT
 
