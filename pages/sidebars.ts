@@ -206,6 +206,7 @@ const sidebars: SidebarsConfig = {
     'skillchain/usage',
     'skillchain/blueprints',
     'skillchain/architecture',
+    'skillchain/architecture-diagram',
   ],
 
   // Master plans sidebar
