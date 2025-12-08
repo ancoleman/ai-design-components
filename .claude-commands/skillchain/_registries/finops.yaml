@@ -1,0 +1,57 @@
+# finops.yaml - FinOps Skills Registry
+domain: finops
+version: "1.0.0"
+plugin_group: finops-skills
+last_updated: "2025-12-06"
+
+description: "Cloud cost optimization and financial operations"
+
+keywords:
+  domain_triggers:
+    primary: [cost, budget, finops, optimization, spend, pricing, billing]
+    secondary: [cost management, cost reduction, resource optimization, tagging]
+
+skills:
+  optimizing-costs:
+    category: finops
+    group: cost-management
+    priority: 5
+    parallel_group: 1
+    required: false
+
+    keywords:
+      primary: [cost optimization, reduce costs, cost reduction, budget, cost savings]
+      secondary: [right sizing, reserved instances, spot instances, cost analysis, waste]
+      exclusions: []
+
+    invocation: "finops-skills:optimizing-costs"
+    dependencies: []
+
+    questions:
+      source: "skill"
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  resource-tagging:
+    category: finops
+    group: cost-management
+    priority: 8
+    parallel_group: 1
+    required: false
+
+    keywords:
+      primary: [tagging, tags, resource tags, cost allocation, tag strategy]
+      secondary: [labeling, metadata, cost tracking, chargeback, showback]
+      exclusions: []
+
+    invocation: "finops-skills:resource-tagging"
+    dependencies: []
+
+    questions:
+      source: "skill"
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 350
+    version: "1.0.0"

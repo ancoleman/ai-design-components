@@ -1,10 +1,10 @@
 ---
-description: "Start a guided skill chaining workflow to build full-stack applications. 29 skills covering frontend, backend, databases, and AI. Usage: /skillchain [goal]"
+description: "Start a guided skill chaining workflow to build full-stack applications. 76 skills across 10 domains: frontend, backend, devops, infrastructure, security, developer, data, ai-ml, cloud, finops. Usage: /skillchain [goal]"
 allowed-tools: Skill, Read, Write, Bash
-argument-hint: "[goal] e.g., 'dashboard with charts', 'API with postgres', 'RAG pipeline'"
+argument-hint: "[goal] e.g., 'dashboard with charts', 'kubernetes with monitoring', 'RAG pipeline', 'CI/CD pipeline'"
 ---
 
-# Skill Chain Router v2.0
+# Skill Chain Router v3.0
 
 **Input:** $ARGUMENTS
 
@@ -68,49 +68,65 @@ If "$ARGUMENTS" is empty or "help":
 
 ---
 
-## Step 2: Load Registry
+## Step 2: Load Registry Index
 
-Read `{SKILLCHAIN_DIR}/_registry.yaml` and parse:
-- categories: frontend, backend, fullstack, ai-ml
-- skills: all 29 skill definitions
-- metadata: keywords, dependencies, questions
+Read `{SKILLCHAIN_DIR}/_registries/_index.yaml` and parse:
+- domains: 10 domain registries (frontend, backend, devops, infrastructure, security, developer, data, ai-ml, cloud, finops)
+- total_skills: 76
+- cross-domain mappings: fullstack, multi-domain
 
 ---
 
-## Step 3: Analyze Goal & Detect Category
+## Step 3: Analyze Goal & Detect Domain(s)
 
 ### Extract Keywords from Goal
 Parse "$ARGUMENTS" to extract:
-- Nouns: dashboard, chart, api, database, form, etc.
-- Verbs: deploy, upload, search, etc.
-- Tech terms: postgres, react, kafka, qdrant, etc.
+- Nouns: dashboard, chart, api, database, kubernetes, terraform, etc.
+- Verbs: deploy, upload, search, secure, monitor, etc.
+- Tech terms: postgres, react, kafka, qdrant, aws, etc.
 
-### Detect Primary Category
+### Domain Detection Keywords
 
-**Frontend indicators:**
-[ui, form, dashboard, chart, component, interface, page, design, table, menu, navigation, layout, timeline, media, upload, drag, drop, toast, notification, loading]
+**Frontend:** [ui, form, dashboard, chart, component, interface, page, design, table, menu, navigation, layout, timeline, media, upload, drag, drop, toast, notification]
 
-**Backend indicators:**
-[api, database, server, deploy, auth, queue, cache, sql, postgres, mongo, redis, kafka, webhook, endpoint, rest, graphql]
+**Backend:** [api, database, server, auth, queue, cache, sql, postgres, mongo, redis, kafka, webhook, endpoint, rest, graphql, realtime]
 
-**AI/ML indicators:**
-[rag, vector, embeddings, llm, agent, model, ai, chat, assistant, semantic, similarity]
+**DevOps:** [ci, cd, pipeline, test, docker, dockerfile, gitops, argocd, incident, platform, jenkins, github actions]
 
-**Fullstack indicators:**
-Both frontend AND backend keywords present
+**Infrastructure:** [kubernetes, k8s, terraform, ansible, linux, nginx, network, load balancer, dns, service mesh, istio, distributed]
 
-**Category Detection Logic:**
+**Security:** [security, tls, ssl, firewall, compliance, soc2, vulnerability, siem, hardening, encryption, zero trust]
+
+**Developer:** [cli, sdk, api design, documentation, debug, git, workflow, github actions]
+
+**Data:** [etl, pipeline, streaming, kafka, sql optimization, data architecture, secret, vault, performance]
+
+**AI/ML:** [rag, vector, embeddings, llm, agent, model, ai, chat, mlops, prompt, evaluation]
+
+**Cloud:** [aws, gcp, azure, lambda, s3, ec2, cloud functions, cloud run]
+
+**FinOps:** [cost, budget, tagging, finops, optimization, spend]
+
+### Domain Detection Logic
 ```
-IF (frontend keywords > 0 AND backend keywords > 0):
+detected_domains = []
+for each domain in [frontend, backend, devops, infrastructure, security, developer, data, ai-ml, cloud, finops]:
+  score = count(domain_keywords in goal)
+  if score > 0:
+    detected_domains.append({domain, score})
+
+sort detected_domains by score descending
+
+IF len(detected_domains) == 0:
+  Ask user: "Which domain is this for? (frontend/backend/devops/infrastructure/security/...)"
+ELSE IF len(detected_domains) == 1:
+  category = detected_domains[0]
+ELSE IF detected_domains contains ONLY [frontend, backend]:
   category = fullstack
-ELSE IF (ai/ml keywords > 0):
-  category = ai-ml (might also trigger backend)
-ELSE IF (frontend keywords > backend keywords):
-  category = frontend
-ELSE IF (backend keywords > 0):
-  category = backend
+ELSE IF len(detected_domains) <= 3:
+  category = multi-domain
 ELSE:
-  Ask user: "Is this frontend (UI), backend (API/DB), or fullstack?"
+  Ask user to narrow scope
 ```
 
 ---
@@ -225,24 +241,37 @@ Re-sort by priority after adding dependencies
 
 ---
 
-## Step 5: Route to Category Orchestrator
+## Step 5: Route to Domain Orchestrator
 
-Based on detected category, load orchestrator:
+Based on detected domain(s), load the appropriate orchestrator:
 
 ```bash
-frontend  → Read {SKILLCHAIN_DIR}/categories/frontend.md
-backend   → Read {SKILLCHAIN_DIR}/categories/backend.md
-fullstack → Read {SKILLCHAIN_DIR}/categories/fullstack.md
-ai-ml     → Read {SKILLCHAIN_DIR}/categories/ai-ml.md
+# Single domain routing
+frontend        → Read {SKILLCHAIN_DIR}/categories/frontend.md
+backend         → Read {SKILLCHAIN_DIR}/categories/backend.md
+devops          → Read {SKILLCHAIN_DIR}/categories/devops.md
+infrastructure  → Read {SKILLCHAIN_DIR}/categories/infrastructure.md
+security        → Read {SKILLCHAIN_DIR}/categories/security.md
+developer       → Read {SKILLCHAIN_DIR}/categories/developer.md
+data            → Read {SKILLCHAIN_DIR}/categories/data.md
+ai-ml           → Read {SKILLCHAIN_DIR}/categories/ai-ml.md
+cloud           → Read {SKILLCHAIN_DIR}/categories/cloud.md
+finops          → Read {SKILLCHAIN_DIR}/categories/finops.md
+
+# Multi-domain routing
+fullstack       → Read {SKILLCHAIN_DIR}/categories/fullstack.md      # frontend + backend
+multi-domain    → Read {SKILLCHAIN_DIR}/categories/multi-domain.md   # 3+ domains
 ```
 
 **Pass Context to Orchestrator:**
 - original_goal: "$ARGUMENTS"
-- matched_skills: [list of skill objects with scores]
-- category: detected category
+- detected_domains: [list of detected domains with scores]
+- matched_skills: [list of skill objects from domain registry]
+- primary_domain: highest-scoring domain
 - estimated_questions: sum of skill question counts
-- estimated_time: "8-12 minutes" (calculate based on skill count)
+- estimated_time: calculate based on skill count (3-5 min per skill)
 - user_prefs: USER_PREFS (if PREFS_FILE exists, otherwise null)
+- registry_path: "{SKILLCHAIN_DIR}/_registries/{domain}.yaml"
 
 ---
 

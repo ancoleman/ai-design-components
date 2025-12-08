@@ -1,0 +1,58 @@
+# ai-ml.yaml
+domain: ai-ml
+version: "1.0.0"
+plugin_group: ai-ml-skills
+
+keywords:
+  domain_triggers:
+    primary: [ai, ml, llm, model, embedding, rag, prompt, mlops, evaluation, machine learning]
+    secondary: [openai, anthropic, huggingface, langchain, vector, semantic search, fine-tuning]
+
+skills:
+  implementing-mlops:
+    priority: 15
+    keywords:
+      primary: [mlops, model deployment, model training, ml pipeline, model monitoring]
+      secondary: [wandb, mlflow, kubeflow, model registry, experiment tracking]
+    invocation: "ai-ml-skills:implementing-mlops"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 500
+    version: "1.0.0"
+
+  prompt-engineering:
+    priority: 5
+    keywords:
+      primary: [prompt, prompt engineering, prompt optimization, few-shot, zero-shot]
+      secondary: [system prompt, user prompt, prompt template, chain of thought]
+    invocation: "ai-ml-skills:prompt-engineering"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  evaluating-llms:
+    priority: 10
+    keywords:
+      primary: [llm evaluation, model evaluation, benchmark, accuracy, performance testing]
+      secondary: [eval, test suite, quality metrics, human feedback, ground truth]
+    invocation: "ai-ml-skills:evaluating-llms"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  embedding-optimization:
+    priority: 12
+    keywords:
+      primary: [embedding, vector, semantic search, similarity, vector database]
+      secondary: [openai embeddings, sentence transformers, cosine similarity, chunking]
+    invocation: "ai-ml-skills:embedding-optimization"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 450
+    version: "1.0.0"

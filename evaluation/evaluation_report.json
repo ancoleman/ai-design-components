@@ -1,0 +1,2419 @@
+{
+  "timestamp": "2025-12-06T15:14:01.579159",
+  "total_scenarios": 12,
+  "passed": 0,
+  "failed": 12,
+  "overall_score": 2.396660052910053,
+  "results": [
+    {
+      "scenario_id": "S01",
+      "scenario_name": "Sales Analytics Dashboard",
+      "domain": "frontend",
+      "passed": false,
+      "scores": {
+        "skill_detection": 2.142857142857143,
+        "domain_detection": 5.0,
+        "blueprint_match": 0.0,
+        "question_reduction": 3.75
+      },
+      "skill_detection": {
+        "expected": [
+          "designing-layouts",
+          "visualizing-data",
+          "building-tables",
+          "assembling-components",
+          "theming-components",
+          "creating-dashboards",
+          "providing-feedback"
+        ],
+        "detected": [
+          "creating-dashboards",
+          "visualizing-data",
+          "building-tables",
+          "using-timeseries-databases",
+          "shell-scripting",
+          "implementing-observability",
+          "building-ci-pipelines"
+        ],
+        "precision": 0.42857142857142855,
+        "recall": 0.42857142857142855,
+        "f1": 0.42857142857142855,
+        "details": {
+          "scores": {
+            "visualizing-data": 20,
+            "creating-dashboards": 30,
+            "building-tables": 10,
+            "using-timeseries-databases": 10,
+            "implementing-observability": 5,
+            "building-ci-pipelines": 5,
+            "shell-scripting": 10
+          },
+          "matched_keywords": {
+            "visualizing-data": [
+              {
+                "keyword": "chart",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "analytics",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "creating-dashboards": [
+              {
+                "keyword": "analytics",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "dashboard",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "metrics",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "building-tables": [
+              {
+                "keyword": "table",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "using-timeseries-databases": [
+              {
+                "keyword": "metrics",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "implementing-observability": [
+              {
+                "keyword": "metrics",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "building-ci-pipelines": [
+              {
+                "keyword": "build",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "shell-scripting": [
+              {
+                "keyword": "sh",
+                "type": "primary",
+                "score": 10
+              }
+            ]
+          },
+          "goal_words": [
+            "and",
+            "metrics",
+            "sales",
+            "data",
+            "charts",
+            "dashboard",
+            "revenue",
+            "table",
+            "build",
+            "user",
+            "a",
+            "with",
+            "analytics"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": "dashboard",
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "dashboard": {
+            "primary_matches": [
+              "dashboard",
+              "analytics",
+              "metrics"
+            ],
+            "secondary_matches": [],
+            "score": 30,
+            "confidence": 33.33333333333333
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "k8s": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "observability": {
+            "primary_matches": [
+              "metrics"
+            ],
+            "secondary_matches": [],
+            "score": 10,
+            "confidence": 9.090909090909092
+          },
+          "api-first": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ci-cd": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "security": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (43%): Missing {'assembling-components', 'theming-components', 'providing-feedback', 'designing-layouts'}",
+        "Blueprint not detected: expected dashboard"
+      ],
+      "suggestions": [
+        "Add keywords from goal to dashboard.md"
+      ]
+    },
+    {
+      "scenario_id": "S02",
+      "scenario_name": "Multi-step Registration Form",
+      "domain": "frontend",
+      "passed": false,
+      "scores": {
+        "skill_detection": 2.8571428571428577,
+        "domain_detection": 5.0,
+        "blueprint_match": 5.0,
+        "question_reduction": 0.0
+      },
+      "skill_detection": {
+        "expected": [
+          "assembling-components",
+          "theming-components",
+          "building-forms",
+          "providing-feedback"
+        ],
+        "detected": [
+          "building-forms",
+          "providing-feedback",
+          "using-relational-databases"
+        ],
+        "precision": 0.6666666666666666,
+        "recall": 0.5,
+        "f1": 0.5714285714285715,
+        "details": {
+          "scores": {
+            "building-forms": 20,
+            "providing-feedback": 5,
+            "using-relational-databases": 5
+          },
+          "matched_keywords": {
+            "building-forms": [
+              {
+                "keyword": "form",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "validation",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "providing-feedback": [
+              {
+                "keyword": "progress",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "using-relational-databases": [
+              {
+                "keyword": "orm",
+                "type": "secondary",
+                "score": 5
+              }
+            ]
+          },
+          "goal_words": [
+            "and",
+            "create",
+            "indicator",
+            "a",
+            "registration",
+            "validation",
+            "form",
+            "progress",
+            "step",
+            "multi",
+            "user",
+            "with"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": null,
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "dashboard": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "k8s": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "observability": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "api-first": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ci-cd": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "security": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (50%): Missing {'assembling-components', 'theming-components'}"
+      ],
+      "suggestions": []
+    },
+    {
+      "scenario_id": "S03",
+      "scenario_name": "REST API with Authentication",
+      "domain": "backend",
+      "passed": false,
+      "scores": {
+        "skill_detection": 1.0000000000000002,
+        "domain_detection": 5.0,
+        "blueprint_match": 0.0,
+        "question_reduction": 4.0
+      },
+      "skill_detection": {
+        "expected": [
+          "designing-databases-relational",
+          "implementing-observability",
+          "implementing-auth-security",
+          "designing-apis",
+          "testing-strategies"
+        ],
+        "detected": [
+          "securing-authentication",
+          "using-relational-databases",
+          "implementing-api-patterns",
+          "designing-apis",
+          "building-ci-pipelines"
+        ],
+        "precision": 0.2,
+        "recall": 0.2,
+        "f1": 0.20000000000000004,
+        "details": {
+          "scores": {
+            "using-relational-databases": 20,
+            "implementing-api-patterns": 20,
+            "designing-apis": 15,
+            "securing-authentication": 30,
+            "building-ci-pipelines": 5
+          },
+          "matched_keywords": {
+            "using-relational-databases": [
+              {
+                "keyword": "sql",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "postgres",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "implementing-api-patterns": [
+              {
+                "keyword": "api",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "rest",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "designing-apis": [
+              {
+                "keyword": "rest",
+                "type": "secondary",
+                "score": 5
+              },
+              {
+                "keyword": "rest api",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "securing-authentication": [
+              {
+                "keyword": "auth",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "jwt",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "authentication",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "building-ci-pipelines": [
+              {
+                "keyword": "build",
+                "type": "secondary",
+                "score": 5
+              }
+            ]
+          },
+          "goal_words": [
+            "and",
+            "postgresql",
+            "crud",
+            "authentication",
+            "build",
+            "user",
+            "a",
+            "jwt",
+            "api",
+            "with",
+            "rest"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": "api-first",
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [
+              "crud",
+              "rest api"
+            ],
+            "secondary_matches": [],
+            "score": 20,
+            "confidence": 25.0
+          },
+          "dashboard": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "k8s": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "observability": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "api-first": {
+            "primary_matches": [
+              "api",
+              "rest api"
+            ],
+            "secondary_matches": [
+              "crud"
+            ],
+            "score": 25,
+            "confidence": 25.0
+          },
+          "ci-cd": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "security": {
+            "primary_matches": [],
+            "secondary_matches": [
+              "authentication"
+            ],
+            "score": 5,
+            "confidence": 4.545454545454546
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (20%): Missing {'designing-databases-relational', 'implementing-auth-security', 'implementing-observability', 'testing-strategies'}",
+        "Blueprint not detected: expected api-first"
+      ],
+      "suggestions": [
+        "Add keywords from goal to api-first.md"
+      ]
+    },
+    {
+      "scenario_id": "S04",
+      "scenario_name": "CRUD API with Database",
+      "domain": "backend",
+      "passed": false,
+      "scores": {
+        "skill_detection": 0,
+        "domain_detection": 5.0,
+        "blueprint_match": 0.0,
+        "question_reduction": 3.5
+      },
+      "skill_detection": {
+        "expected": [
+          "designing-apis",
+          "designing-databases-relational",
+          "testing-strategies"
+        ],
+        "detected": [
+          "implementing-api-patterns",
+          "displaying-timelines",
+          "using-relational-databases"
+        ],
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0,
+        "details": {
+          "scores": {
+            "displaying-timelines": 10,
+            "using-relational-databases": 10,
+            "implementing-api-patterns": 15
+          },
+          "matched_keywords": {
+            "displaying-timelines": [
+              {
+                "keyword": "log",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "using-relational-databases": [
+              {
+                "keyword": "postgres",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "implementing-api-patterns": [
+              {
+                "keyword": "api",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "fastapi",
+                "type": "secondary",
+                "score": 5
+              }
+            ]
+          },
+          "goal_words": [
+            "create",
+            "fastapi",
+            "postgres",
+            "backend",
+            "catalog",
+            "crud",
+            "for",
+            "a",
+            "with",
+            "product"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": "crud-api",
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [
+              "crud",
+              "crud backend"
+            ],
+            "secondary_matches": [
+              "fastapi"
+            ],
+            "score": 25,
+            "confidence": 31.25
+          },
+          "dashboard": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "k8s": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "observability": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "api-first": {
+            "primary_matches": [
+              "api"
+            ],
+            "secondary_matches": [
+              "crud"
+            ],
+            "score": 15,
+            "confidence": 15.0
+          },
+          "ci-cd": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "security": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (0%): Missing {'designing-apis', 'designing-databases-relational', 'testing-strategies'}",
+        "Blueprint not detected: expected crud-api"
+      ],
+      "suggestions": [
+        "Add keywords from goal to crud-api.md"
+      ]
+    },
+    {
+      "scenario_id": "S05",
+      "scenario_name": "Kubernetes Microservices Deployment",
+      "domain": "infrastructure",
+      "passed": false,
+      "scores": {
+        "skill_detection": 1.1111111111111112,
+        "domain_detection": 5.0,
+        "blueprint_match": 0.0,
+        "question_reduction": 4.166666666666667
+      },
+      "skill_detection": {
+        "expected": [
+          "implementing-observability",
+          "managing-containers",
+          "hardening-security",
+          "configuring-kubernetes",
+          "configuring-nginx"
+        ],
+        "detected": [
+          "deploying-applications",
+          "operating-kubernetes",
+          "implementing-observability",
+          "designing-distributed-systems"
+        ],
+        "precision": 0.25,
+        "recall": 0.2,
+        "f1": 0.22222222222222224,
+        "details": {
+          "scores": {
+            "implementing-observability": 10,
+            "deploying-applications": 20,
+            "operating-kubernetes": 20,
+            "designing-distributed-systems": 10
+          },
+          "matched_keywords": {
+            "implementing-observability": [
+              {
+                "keyword": "monitoring",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "deploying-applications": [
+              {
+                "keyword": "deploy",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "kubernetes",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "operating-kubernetes": [
+              {
+                "keyword": "kubernetes",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "services",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "designing-distributed-systems": [
+              {
+                "keyword": "microservices",
+                "type": "primary",
+                "score": 10
+              }
+            ]
+          },
+          "goal_words": [
+            "and",
+            "microservices",
+            "autoscaling",
+            "to",
+            "application",
+            "a",
+            "kubernetes",
+            "monitoring",
+            "with",
+            "deploy"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": "k8s",
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "dashboard": {
+            "primary_matches": [],
+            "secondary_matches": [
+              "monitoring"
+            ],
+            "score": 5,
+            "confidence": 5.555555555555555
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "k8s": {
+            "primary_matches": [
+              "kubernetes"
+            ],
+            "secondary_matches": [
+              "services"
+            ],
+            "score": 15,
+            "confidence": 15.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [
+              "kubernetes"
+            ],
+            "score": 5,
+            "confidence": 4.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "observability": {
+            "primary_matches": [
+              "monitoring"
+            ],
+            "secondary_matches": [],
+            "score": 10,
+            "confidence": 9.090909090909092
+          },
+          "api-first": {
+            "primary_matches": [],
+            "secondary_matches": [
+              "microservices"
+            ],
+            "score": 5,
+            "confidence": 5.0
+          },
+          "ci-cd": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "security": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (20%): Missing {'hardening-security', 'managing-containers', 'configuring-kubernetes', 'configuring-nginx'}",
+        "Blueprint not detected: expected k8s"
+      ],
+      "suggestions": [
+        "Add keywords from goal to k8s.md"
+      ]
+    },
+    {
+      "scenario_id": "S06",
+      "scenario_name": "Terraform AWS Infrastructure",
+      "domain": "infrastructure",
+      "passed": false,
+      "scores": {
+        "skill_detection": 0,
+        "domain_detection": 0.0,
+        "blueprint_match": 0.0,
+        "question_reduction": 4.0
+      },
+      "skill_detection": {
+        "expected": [
+          "deploying-aws",
+          "implementing-observability",
+          "hardening-security",
+          "optimizing-finops",
+          "provisioning-terraform"
+        ],
+        "detected": [
+          "designing-layouts",
+          "building-forms",
+          "writing-infrastructure-code",
+          "deploying-on-aws",
+          "using-relational-databases"
+        ],
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0,
+        "details": {
+          "scores": {
+            "designing-layouts": 10,
+            "building-forms": 10,
+            "using-relational-databases": 5,
+            "writing-infrastructure-code": 10,
+            "deploying-on-aws": 10
+          },
+          "matched_keywords": {
+            "designing-layouts": [
+              {
+                "keyword": "structure",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "building-forms": [
+              {
+                "keyword": "form",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "using-relational-databases": [
+              {
+                "keyword": "orm",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "writing-infrastructure-code": [
+              {
+                "keyword": "terraform",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "deploying-on-aws": [
+              {
+                "keyword": "aws",
+                "type": "primary",
+                "score": 10
+              }
+            ]
+          },
+          "goal_words": [
+            "provision",
+            "aws",
+            "for",
+            "terraform",
+            "infrastructure",
+            "application",
+            "a",
+            "web",
+            "with"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": "cloud",
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "dashboard": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "k8s": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [
+              "terraform"
+            ],
+            "score": 5,
+            "confidence": 4.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "observability": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "api-first": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ci-cd": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "security": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (0%): Missing {'deploying-aws', 'implementing-observability', 'hardening-security', 'optimizing-finops', 'provisioning-terraform'}",
+        "Domain mismatch: expected infrastructure, got frontend",
+        "Blueprint not detected: expected cloud"
+      ],
+      "suggestions": [
+        "Add keywords from goal to cloud.md"
+      ]
+    },
+    {
+      "scenario_id": "S07",
+      "scenario_name": "CI/CD Pipeline with Testing",
+      "domain": "devops",
+      "passed": false,
+      "scores": {
+        "skill_detection": 1.4285714285714284,
+        "domain_detection": 5.0,
+        "blueprint_match": 0.0,
+        "question_reduction": 3.75
+      },
+      "skill_detection": {
+        "expected": [
+          "building-ci-pipelines",
+          "managing-containers",
+          "hardening-security",
+          "testing-strategies",
+          "implementing-gitops"
+        ],
+        "detected": [
+          "building-ci-pipelines",
+          "writing-github-actions",
+          "deploying-applications",
+          "testing-strategies",
+          "operating-kubernetes",
+          "ai-data-engineering",
+          "managing-git-workflows",
+          "visualizing-data",
+          "ingesting-data"
+        ],
+        "precision": 0.2222222222222222,
+        "recall": 0.4,
+        "f1": 0.2857142857142857,
+        "details": {
+          "scores": {
+            "visualizing-data": 5,
+            "deploying-applications": 20,
+            "operating-kubernetes": 10,
+            "ingesting-data": 5,
+            "ai-data-engineering": 10,
+            "building-ci-pipelines": 30,
+            "testing-strategies": 20,
+            "writing-github-actions": 25,
+            "managing-git-workflows": 10
+          },
+          "matched_keywords": {
+            "visualizing-data": [
+              {
+                "keyword": "line",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "deploying-applications": [
+              {
+                "keyword": "deploy",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "kubernetes",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "operating-kubernetes": [
+              {
+                "keyword": "kubernetes",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "ingesting-data": [
+              {
+                "keyword": "pipeline",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "ai-data-engineering": [
+              {
+                "keyword": "pipeline",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "building-ci-pipelines": [
+              {
+                "keyword": "pipeline",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "ci",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "github actions",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "testing-strategies": [
+              {
+                "keyword": "test",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "testing",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "writing-github-actions": [
+              {
+                "keyword": "ci",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "github actions",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "action",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "managing-git-workflows": [
+              {
+                "keyword": "git",
+                "type": "primary",
+                "score": 10
+              }
+            ]
+          },
+          "goal_words": [
+            "and",
+            "deployment",
+            "github",
+            "set",
+            "actions",
+            "up",
+            "cd",
+            "pipeline",
+            "a",
+            "ci",
+            "kubernetes",
+            "with",
+            "testing"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": "ci-cd",
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "dashboard": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "k8s": {
+            "primary_matches": [
+              "kubernetes"
+            ],
+            "secondary_matches": [],
+            "score": 10,
+            "confidence": 10.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [
+              "kubernetes"
+            ],
+            "score": 5,
+            "confidence": 4.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "observability": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "api-first": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ci-cd": {
+            "primary_matches": [
+              "ci/cd",
+              "pipeline",
+              "github actions"
+            ],
+            "secondary_matches": [],
+            "score": 30,
+            "confidence": 27.27272727272727
+          },
+          "security": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (40%): Missing {'hardening-security', 'managing-containers', 'implementing-gitops'}",
+        "Blueprint not detected: expected ci-cd"
+      ],
+      "suggestions": [
+        "Add keywords from goal to ci-cd.md"
+      ]
+    },
+    {
+      "scenario_id": "S08",
+      "scenario_name": "Observability Stack Setup",
+      "domain": "devops",
+      "passed": false,
+      "scores": {
+        "skill_detection": 1.25,
+        "domain_detection": 5.0,
+        "blueprint_match": 0.0,
+        "question_reduction": 4.0
+      },
+      "skill_detection": {
+        "expected": [
+          "implementing-observability",
+          "creating-dashboards",
+          "implementing-siem"
+        ],
+        "detected": [
+          "implementing-observability",
+          "using-timeseries-databases",
+          "building-ci-pipelines",
+          "writing-github-actions",
+          "implementing-service-mesh"
+        ],
+        "precision": 0.2,
+        "recall": 0.3333333333333333,
+        "f1": 0.25,
+        "details": {
+          "scores": {
+            "using-timeseries-databases": 10,
+            "implementing-observability": 15,
+            "implementing-service-mesh": 5,
+            "building-ci-pipelines": 10,
+            "writing-github-actions": 10
+          },
+          "matched_keywords": {
+            "using-timeseries-databases": [
+              {
+                "keyword": "prometheus",
+                "type": "secondary",
+                "score": 5
+              },
+              {
+                "keyword": "grafana",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "implementing-observability": [
+              {
+                "keyword": "prometheus",
+                "type": "secondary",
+                "score": 5
+              },
+              {
+                "keyword": "observability",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "implementing-service-mesh": [
+              {
+                "keyword": "observability",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "building-ci-pipelines": [
+              {
+                "keyword": "ci",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "writing-github-actions": [
+              {
+                "keyword": "ci",
+                "type": "primary",
+                "score": 10
+              }
+            ]
+          },
+          "goal_words": [
+            "and",
+            "tracing",
+            "distributed",
+            "grafana",
+            "implement",
+            "prometheus",
+            "observability",
+            "full",
+            "with"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": "observability",
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "dashboard": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "k8s": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "observability": {
+            "primary_matches": [
+              "observability",
+              "tracing"
+            ],
+            "secondary_matches": [
+              "prometheus",
+              "grafana",
+              "distributed tracing"
+            ],
+            "score": 35,
+            "confidence": 31.818181818181817
+          },
+          "api-first": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ci-cd": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "security": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (33%): Missing {'creating-dashboards', 'implementing-siem'}",
+        "Blueprint not detected: expected observability"
+      ],
+      "suggestions": [
+        "Add keywords from goal to observability.md"
+      ]
+    },
+    {
+      "scenario_id": "S09",
+      "scenario_name": "Security Hardening Implementation",
+      "domain": "security",
+      "passed": false,
+      "scores": {
+        "skill_detection": 0,
+        "domain_detection": 5.0,
+        "blueprint_match": 0.0,
+        "question_reduction": 4.25
+      },
+      "skill_detection": {
+        "expected": [
+          "managing-secrets",
+          "hardening-security",
+          "implementing-auth-security",
+          "implementing-siem"
+        ],
+        "detected": [
+          "implementing-compliance",
+          "securing-authentication",
+          "architecting-networks",
+          "security-hardening"
+        ],
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0,
+        "details": {
+          "scores": {
+            "securing-authentication": 10,
+            "architecting-networks": 10,
+            "implementing-compliance": 20,
+            "security-hardening": 10
+          },
+          "matched_keywords": {
+            "securing-authentication": [
+              {
+                "keyword": "security",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "architecting-networks": [
+              {
+                "keyword": "network",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "implementing-compliance": [
+              {
+                "keyword": "compliance",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "soc2",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "security-hardening": [
+              {
+                "keyword": "hardening",
+                "type": "primary",
+                "score": 10
+              }
+            ]
+          },
+          "goal_words": [
+            "with",
+            "hardening",
+            "networking",
+            "zero",
+            "trust",
+            "soc2",
+            "for",
+            "implement",
+            "security",
+            "compliance"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": "security",
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "dashboard": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "k8s": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "observability": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "api-first": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ci-cd": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "security": {
+            "primary_matches": [
+              "security",
+              "hardening",
+              "compliance",
+              "soc2"
+            ],
+            "secondary_matches": [],
+            "score": 40,
+            "confidence": 36.36363636363637
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (0%): Missing {'managing-secrets', 'hardening-security', 'implementing-auth-security', 'implementing-siem'}",
+        "Blueprint not detected: expected security"
+      ],
+      "suggestions": [
+        "Add keywords from goal to security.md"
+      ]
+    },
+    {
+      "scenario_id": "S10",
+      "scenario_name": "RAG Pipeline with Vector Search",
+      "domain": "ai-ml",
+      "passed": false,
+      "scores": {
+        "skill_detection": 0.8333333333333333,
+        "domain_detection": 5.0,
+        "blueprint_match": 0.0,
+        "question_reduction": 3.75
+      },
+      "skill_detection": {
+        "expected": [
+          "using-vector-databases",
+          "implementing-observability",
+          "engineering-ai-data",
+          "serving-models"
+        ],
+        "detected": [
+          "ai-data-engineering",
+          "using-vector-databases",
+          "embedding-optimization",
+          "ingesting-data",
+          "building-ci-pipelines",
+          "implementing-search-filter",
+          "using-document-databases",
+          "visualizing-data"
+        ],
+        "precision": 0.125,
+        "recall": 0.25,
+        "f1": 0.16666666666666666,
+        "details": {
+          "scores": {
+            "visualizing-data": 5,
+            "implementing-search-filter": 10,
+            "using-vector-databases": 20,
+            "embedding-optimization": 20,
+            "ai-data-engineering": 35,
+            "using-document-databases": 10,
+            "ingesting-data": 15,
+            "building-ci-pipelines": 15
+          },
+          "matched_keywords": {
+            "visualizing-data": [
+              {
+                "keyword": "line",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "implementing-search-filter": [
+              {
+                "keyword": "search",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "using-vector-databases": [
+              {
+                "keyword": "embedding",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "rag",
+                "type": "secondary",
+                "score": 5
+              },
+              {
+                "keyword": "semantic search",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "embedding-optimization": [
+              {
+                "keyword": "embedding",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "semantic search",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "ai-data-engineering": [
+              {
+                "keyword": "rag",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "pipeline",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "embeddings",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "semantic",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "using-document-databases": [
+              {
+                "keyword": "document",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "ingesting-data": [
+              {
+                "keyword": "ingest",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "pipeline",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "building-ci-pipelines": [
+              {
+                "keyword": "pipeline",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "build",
+                "type": "secondary",
+                "score": 5
+              }
+            ]
+          },
+          "goal_words": [
+            "and",
+            "search",
+            "document",
+            "embeddings",
+            "rag",
+            "semantic",
+            "build",
+            "pipeline",
+            "a",
+            "ingestion",
+            "with"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": "rag-pipeline",
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "dashboard": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "k8s": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [
+              "semantic search",
+              "embeddings"
+            ],
+            "secondary_matches": [],
+            "score": 20,
+            "confidence": 21.052631578947366
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "observability": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "api-first": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ci-cd": {
+            "primary_matches": [
+              "pipeline"
+            ],
+            "secondary_matches": [],
+            "score": 10,
+            "confidence": 9.090909090909092
+          },
+          "security": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (25%): Missing {'implementing-observability', 'engineering-ai-data', 'serving-models'}",
+        "Blueprint not detected: expected rag-pipeline"
+      ],
+      "suggestions": [
+        "Add keywords from goal to rag-pipeline.md"
+      ]
+    },
+    {
+      "scenario_id": "S11",
+      "scenario_name": "ML Training Pipeline",
+      "domain": "ai-ml",
+      "passed": false,
+      "scores": {
+        "skill_detection": 1.0,
+        "domain_detection": 5.0,
+        "blueprint_match": 0.0,
+        "question_reduction": 4.25
+      },
+      "skill_detection": {
+        "expected": [
+          "implementing-observability",
+          "implementing-mlops",
+          "engineering-ai-data",
+          "serving-models"
+        ],
+        "detected": [
+          "model-serving",
+          "implementing-mlops",
+          "ai-data-engineering",
+          "building-ci-pipelines",
+          "visualizing-data",
+          "ingesting-data"
+        ],
+        "precision": 0.16666666666666666,
+        "recall": 0.25,
+        "f1": 0.2,
+        "details": {
+          "scores": {
+            "visualizing-data": 5,
+            "ingesting-data": 5,
+            "ai-data-engineering": 10,
+            "building-ci-pipelines": 10,
+            "model-serving": 25,
+            "implementing-mlops": 15
+          },
+          "matched_keywords": {
+            "visualizing-data": [
+              {
+                "keyword": "line",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "ingesting-data": [
+              {
+                "keyword": "pipeline",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "ai-data-engineering": [
+              {
+                "keyword": "pipeline",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "building-ci-pipelines": [
+              {
+                "keyword": "pipeline",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "model-serving": [
+              {
+                "keyword": "model",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "serving",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "mlops",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "implementing-mlops": [
+              {
+                "keyword": "mlops",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "experiment tracking",
+                "type": "secondary",
+                "score": 5
+              }
+            ]
+          },
+          "goal_words": [
+            "an",
+            "experiment",
+            "and",
+            "set",
+            "up",
+            "serving",
+            "mlops",
+            "pipeline",
+            "tracking",
+            "model",
+            "with"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": "ml-pipeline",
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "dashboard": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "k8s": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [
+              "mlops"
+            ],
+            "secondary_matches": [
+              "experiment tracking",
+              "model serving"
+            ],
+            "score": 20,
+            "confidence": 17.391304347826086
+          },
+          "observability": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "api-first": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ci-cd": {
+            "primary_matches": [
+              "pipeline"
+            ],
+            "secondary_matches": [],
+            "score": 10,
+            "confidence": 9.090909090909092
+          },
+          "security": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (25%): Missing {'implementing-observability', 'engineering-ai-data', 'serving-models'}",
+        "Blueprint not detected: expected ml-pipeline"
+      ],
+      "suggestions": [
+        "Add keywords from goal to ml-pipeline.md"
+      ]
+    },
+    {
+      "scenario_id": "S12",
+      "scenario_name": "ETL Data Pipeline",
+      "domain": "data",
+      "passed": false,
+      "scores": {
+        "skill_detection": 0,
+        "domain_detection": 5.0,
+        "blueprint_match": 0.0,
+        "question_reduction": 4.0
+      },
+      "skill_detection": {
+        "expected": [
+          "designing-databases-relational",
+          "implementing-observability",
+          "streaming-data",
+          "testing-strategies",
+          "optimizing-sql"
+        ],
+        "detected": [
+          "ingesting-data",
+          "building-forms",
+          "transforming-data",
+          "ai-data-engineering",
+          "building-ci-pipelines",
+          "architecting-data",
+          "visualizing-data"
+        ],
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0,
+        "details": {
+          "scores": {
+            "visualizing-data": 5,
+            "building-forms": 10,
+            "ingesting-data": 35,
+            "transforming-data": 10,
+            "ai-data-engineering": 10,
+            "building-ci-pipelines": 10,
+            "architecting-data": 10
+          },
+          "matched_keywords": {
+            "visualizing-data": [
+              {
+                "keyword": "line",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "building-forms": [
+              {
+                "keyword": "validation",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "ingesting-data": [
+              {
+                "keyword": "ingest",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "etl",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "csv",
+                "type": "primary",
+                "score": 10
+              },
+              {
+                "keyword": "pipeline",
+                "type": "secondary",
+                "score": 5
+              }
+            ],
+            "transforming-data": [
+              {
+                "keyword": "etl",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "ai-data-engineering": [
+              {
+                "keyword": "pipeline",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "building-ci-pipelines": [
+              {
+                "keyword": "pipeline",
+                "type": "primary",
+                "score": 10
+              }
+            ],
+            "architecting-data": [
+              {
+                "keyword": "data warehouse",
+                "type": "primary",
+                "score": 10
+              }
+            ]
+          },
+          "goal_words": [
+            "an",
+            "create",
+            "ingest",
+            "csv",
+            "into",
+            "etl",
+            "warehouse",
+            "validation",
+            "to",
+            "data",
+            "pipeline",
+            "a",
+            "with"
+          ]
+        }
+      },
+      "blueprint_detection": {
+        "expected": "data-pipeline",
+        "detected": null,
+        "confidence": 0,
+        "details": {
+          "crud-api": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "dashboard": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cost": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "data-pipeline": {
+            "primary_matches": [
+              "etl"
+            ],
+            "secondary_matches": [
+              "data warehouse"
+            ],
+            "score": 15,
+            "confidence": 15.0
+          },
+          "k8s": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "rag-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "cloud": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ml-pipeline": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "observability": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "api-first": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          },
+          "ci-cd": {
+            "primary_matches": [
+              "pipeline"
+            ],
+            "secondary_matches": [],
+            "score": 10,
+            "confidence": 9.090909090909092
+          },
+          "security": {
+            "primary_matches": [],
+            "secondary_matches": [],
+            "score": 0,
+            "confidence": 0.0
+          }
+        }
+      },
+      "issues": [
+        "Low skill recall (0%): Missing {'designing-databases-relational', 'implementing-observability', 'streaming-data', 'testing-strategies', 'optimizing-sql'}",
+        "Blueprint not detected: expected data-pipeline"
+      ],
+      "suggestions": [
+        "Add keywords from goal to data-pipeline.md"
+      ]
+    }
+  ]
+}

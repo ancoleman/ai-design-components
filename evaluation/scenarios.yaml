@@ -1,0 +1,352 @@
+# AI Design Components - Evaluation Scenarios
+# 12 Demo Scenarios to Validate Skillchain Effectiveness
+# Version: 1.0.0 | Last Updated: 2025-12-06
+
+version: "1.0.0"
+total_scenarios: 12
+
+# Evaluation Criteria (scored 1-5)
+criteria:
+  - name: skill_detection
+    description: "Correct skills identified from user goal"
+    weight: 0.25
+  - name: blueprint_match
+    description: "Correct blueprint triggered (if applicable)"
+    weight: 0.20
+  - name: question_reduction
+    description: "Questions reduced from normal flow"
+    weight: 0.15
+  - name: output_quality
+    description: "Generated code/config quality"
+    weight: 0.25
+  - name: completion_time
+    description: "Time to complete workflow"
+    weight: 0.15
+
+scenarios:
+  # =============================================================================
+  # FRONTEND DOMAIN (2 scenarios)
+  # =============================================================================
+
+  - id: "S01"
+    name: "Sales Analytics Dashboard"
+    domain: frontend
+    blueprint: dashboard
+    goal: "Build a sales analytics dashboard with revenue charts, user metrics, and a data table"
+    expected_skills:
+      - theming-components
+      - designing-layouts
+      - creating-dashboards
+      - visualizing-data
+      - building-tables
+      - providing-feedback
+      - assembling-components
+    expected_questions: 3  # With blueprint
+    normal_questions: 12   # Without blueprint
+    success_criteria:
+      - "Dashboard layout with sidebar and main content"
+      - "4 KPI cards (revenue, users, conversion, growth)"
+      - "Line chart for trends, bar chart for comparisons"
+      - "Data table with sorting and pagination"
+      - "Light/dark theme toggle"
+      - "Design tokens in tokens.css"
+    complexity: medium
+    estimated_time_minutes: 15
+
+  - id: "S02"
+    name: "Multi-step Registration Form"
+    domain: frontend
+    blueprint: null  # No specific blueprint, tests skill chaining
+    goal: "Create a multi-step user registration form with validation and progress indicator"
+    expected_skills:
+      - theming-components
+      - building-forms
+      - providing-feedback
+      - assembling-components
+    expected_questions: 8
+    normal_questions: 8
+    success_criteria:
+      - "Multi-step wizard with progress bar"
+      - "Form validation (client and server-side)"
+      - "Accessible form controls with ARIA"
+      - "Error messages and success feedback"
+      - "Responsive mobile layout"
+    complexity: medium
+    estimated_time_minutes: 20
+
+  # =============================================================================
+  # BACKEND DOMAIN (2 scenarios)
+  # =============================================================================
+
+  - id: "S03"
+    name: "REST API with Authentication"
+    domain: backend
+    blueprint: api-first
+    goal: "Build a REST API with JWT authentication, user CRUD, and PostgreSQL"
+    expected_skills:
+      - designing-apis
+      - implementing-auth-security
+      - designing-databases-relational
+      - testing-strategies
+      - implementing-observability
+    expected_questions: 3  # With blueprint
+    normal_questions: 15   # Without blueprint
+    success_criteria:
+      - "OpenAPI 3.0 specification"
+      - "JWT authentication with refresh tokens"
+      - "RBAC authorization"
+      - "PostgreSQL schema with migrations"
+      - "API tests (unit + integration)"
+      - "Prometheus metrics endpoint"
+    complexity: high
+    estimated_time_minutes: 25
+
+  - id: "S04"
+    name: "CRUD API with Database"
+    domain: backend
+    blueprint: crud-api
+    goal: "Create a FastAPI CRUD backend for a product catalog with Postgres"
+    expected_skills:
+      - designing-apis
+      - designing-databases-relational
+      - testing-strategies
+    expected_questions: 3
+    normal_questions: 10
+    success_criteria:
+      - "FastAPI endpoints for CRUD operations"
+      - "SQLAlchemy models with relationships"
+      - "Alembic migrations"
+      - "Pydantic validation schemas"
+      - "Pytest test suite"
+    complexity: medium
+    estimated_time_minutes: 15
+
+  # =============================================================================
+  # INFRASTRUCTURE DOMAIN (2 scenarios)
+  # =============================================================================
+
+  - id: "S05"
+    name: "Kubernetes Microservices Deployment"
+    domain: infrastructure
+    blueprint: k8s
+    goal: "Deploy a microservices application to Kubernetes with autoscaling and monitoring"
+    expected_skills:
+      - configuring-kubernetes
+      - managing-containers
+      - configuring-nginx
+      - implementing-observability
+      - hardening-security
+    expected_questions: 3  # With blueprint
+    normal_questions: 18   # Without blueprint
+    success_criteria:
+      - "Deployment manifests with resource limits"
+      - "HorizontalPodAutoscaler configuration"
+      - "Ingress with TLS termination"
+      - "ServiceMonitor for Prometheus"
+      - "Network policies for security"
+      - "Kustomize overlays for environments"
+    complexity: high
+    estimated_time_minutes: 20
+
+  - id: "S06"
+    name: "Terraform AWS Infrastructure"
+    domain: infrastructure
+    blueprint: cloud
+    goal: "Provision AWS infrastructure with Terraform for a web application"
+    expected_skills:
+      - provisioning-terraform
+      - deploying-aws
+      - implementing-observability
+      - hardening-security
+      - optimizing-finops
+    expected_questions: 3
+    normal_questions: 15
+    success_criteria:
+      - "Terraform modules for VPC, ECS, RDS"
+      - "Remote state in S3 with DynamoDB lock"
+      - "IAM roles with least privilege"
+      - "CloudWatch alarms and dashboards"
+      - "Cost allocation tags"
+    complexity: high
+    estimated_time_minutes: 25
+
+  # =============================================================================
+  # DEVOPS DOMAIN (2 scenarios)
+  # =============================================================================
+
+  - id: "S07"
+    name: "CI/CD Pipeline with Testing"
+    domain: devops
+    blueprint: ci-cd
+    goal: "Set up a GitHub Actions CI/CD pipeline with testing and Kubernetes deployment"
+    expected_skills:
+      - building-ci-pipelines
+      - testing-strategies
+      - managing-containers
+      - implementing-gitops
+      - hardening-security
+    expected_questions: 3  # With blueprint
+    normal_questions: 12   # Without blueprint
+    success_criteria:
+      - "GitHub Actions workflow with matrix testing"
+      - "Docker build with caching"
+      - "Security scanning (Trivy, CodeQL)"
+      - "ArgoCD deployment manifests"
+      - "Environment-specific configurations"
+    complexity: high
+    estimated_time_minutes: 20
+
+  - id: "S08"
+    name: "Observability Stack Setup"
+    domain: devops
+    blueprint: observability
+    goal: "Implement full observability with Prometheus, Grafana, and distributed tracing"
+    expected_skills:
+      - implementing-observability
+      - creating-dashboards
+      - implementing-siem
+    expected_questions: 3
+    normal_questions: 15
+    success_criteria:
+      - "Prometheus configuration with service discovery"
+      - "Grafana dashboards (Golden Signals, RED)"
+      - "OpenTelemetry instrumentation"
+      - "Alert rules with thresholds"
+      - "Loki log aggregation"
+    complexity: high
+    estimated_time_minutes: 20
+
+  # =============================================================================
+  # SECURITY DOMAIN (1 scenario)
+  # =============================================================================
+
+  - id: "S09"
+    name: "Security Hardening Implementation"
+    domain: security
+    blueprint: security
+    goal: "Implement security hardening for SOC2 compliance with zero-trust networking"
+    expected_skills:
+      - hardening-security
+      - implementing-auth-security
+      - managing-secrets
+      - implementing-siem
+    expected_questions: 3  # With blueprint
+    normal_questions: 20   # Without blueprint
+    success_criteria:
+      - "TLS 1.3 configuration"
+      - "OAuth2/OIDC implementation"
+      - "HashiCorp Vault integration"
+      - "SIEM logging setup"
+      - "Network policies (zero-trust)"
+      - "SOC2 compliance documentation"
+    complexity: high
+    estimated_time_minutes: 30
+
+  # =============================================================================
+  # AI-ML DOMAIN (2 scenarios)
+  # =============================================================================
+
+  - id: "S10"
+    name: "RAG Pipeline with Vector Search"
+    domain: ai-ml
+    blueprint: rag-pipeline
+    goal: "Build a RAG pipeline with document ingestion, embeddings, and semantic search"
+    expected_skills:
+      - engineering-ai-data
+      - using-vector-databases
+      - serving-models
+      - implementing-observability
+    expected_questions: 3
+    normal_questions: 12
+    success_criteria:
+      - "Document chunking strategy"
+      - "Embedding generation pipeline"
+      - "Vector database setup (Qdrant/Pinecone)"
+      - "Retrieval with reranking"
+      - "FastAPI serving endpoint"
+    complexity: high
+    estimated_time_minutes: 25
+
+  - id: "S11"
+    name: "ML Training Pipeline"
+    domain: ai-ml
+    blueprint: ml-pipeline
+    goal: "Set up an MLOps pipeline with experiment tracking and model serving"
+    expected_skills:
+      - implementing-mlops
+      - engineering-ai-data
+      - serving-models
+      - implementing-observability
+    expected_questions: 3
+    normal_questions: 20
+    success_criteria:
+      - "MLflow experiment tracking"
+      - "Feast feature store integration"
+      - "Kubeflow/Prefect pipeline"
+      - "Model registry and versioning"
+      - "A/B testing infrastructure"
+    complexity: high
+    estimated_time_minutes: 30
+
+  # =============================================================================
+  # DATA DOMAIN (1 scenario)
+  # =============================================================================
+
+  - id: "S12"
+    name: "ETL Data Pipeline"
+    domain: data
+    blueprint: data-pipeline
+    goal: "Create an ETL pipeline to ingest CSV data into a data warehouse with validation"
+    expected_skills:
+      - streaming-data
+      - optimizing-sql
+      - designing-databases-relational
+      - implementing-observability
+      - testing-strategies
+    expected_questions: 3
+    normal_questions: 15
+    success_criteria:
+      - "Airflow DAG for orchestration"
+      - "Data quality checks (Great Expectations)"
+      - "Incremental loading strategy"
+      - "Schema evolution handling"
+      - "Pipeline monitoring and alerting"
+    complexity: medium
+    estimated_time_minutes: 20
+
+# =============================================================================
+# EVALUATION SUMMARY
+# =============================================================================
+
+summary:
+  total_scenarios: 12
+  by_domain:
+    frontend: 2
+    backend: 2
+    infrastructure: 2
+    devops: 2
+    security: 1
+    ai-ml: 2
+    data: 1
+
+  blueprints_covered:
+    - dashboard
+    - api-first
+    - crud-api
+    - k8s
+    - cloud
+    - ci-cd
+    - observability
+    - security
+    - rag-pipeline
+    - ml-pipeline
+    - data-pipeline
+
+  question_reduction:
+    with_blueprints: 36  # Total expected questions with blueprints
+    without_blueprints: 162  # Total normal questions
+    reduction_percentage: 78%  # (162-36)/162 = 78% fewer questions
+
+  estimated_total_time:
+    with_blueprints: "4-5 hours"
+    without_blueprints: "10-12 hours"

@@ -26,37 +26,83 @@ A collection of **76 production-ready Claude Skills** covering frontend, backend
 
 ## Quick Start
 
-### Option 1: Skillchain (Recommended)
-
-The guided workflow that chains skills automatically:
+### Option 1: Quick Install (Recommended)
 
 ```bash
-# Install globally
-./commands/install-skillchain.sh --global
+# Add marketplace (Claude handles the rest - no cloning needed)
+claude plugin marketplace add ancoleman/ai-design-components
 
-# Use in Claude Code
-/skillchain dashboard with charts and filters
-/skillchain REST API with postgres
-/skillchain RAG pipeline with embeddings
+# Install all 19 plugins (76 skills)
+claude plugin install ui-foundation-skills@ai-design-components
+claude plugin install ui-data-skills@ai-design-components
+claude plugin install ui-input-skills@ai-design-components
+claude plugin install ui-interaction-skills@ai-design-components
+claude plugin install ui-structure-skills@ai-design-components
+claude plugin install ui-content-skills@ai-design-components
+claude plugin install ui-assembly-skills@ai-design-components
+claude plugin install backend-data-skills@ai-design-components
+claude plugin install backend-api-skills@ai-design-components
+claude plugin install backend-platform-skills@ai-design-components
+claude plugin install backend-ai-skills@ai-design-components
+claude plugin install devops-skills@ai-design-components
+claude plugin install infrastructure-skills@ai-design-components
+claude plugin install security-skills@ai-design-components
+claude plugin install developer-productivity-skills@ai-design-components
+claude plugin install data-engineering-skills@ai-design-components
+claude plugin install ai-ml-skills@ai-design-components
+claude plugin install cloud-provider-skills@ai-design-components
+claude plugin install finops-skills@ai-design-components
 ```
 
-### Option 2: Plugin Marketplace
+### Option 2: Selective Installation
 
 ```bash
-# Add marketplace
-/plugin marketplace add ancoleman/ai-design-components
+# Add marketplace first
+claude plugin marketplace add ancoleman/ai-design-components
 
-# Install skill groups
-/plugin install ui-data-skills@ai-design-components
-/plugin install backend-api-skills@ai-design-components
+# Install only what you need
+claude plugin install infrastructure-skills@ai-design-components
+claude plugin install devops-skills@ai-design-components
+claude plugin install security-skills@ai-design-components
 ```
 
-### Option 3: Clone Repository
+### Option 3: Using the Installer Script
+
+If you've cloned the repo for development:
 
 ```bash
 git clone https://github.com/ancoleman/ai-design-components.git
 cd ai-design-components
-# Skills available when working in this directory
+./install.sh              # Interactive mode
+./install.sh plugins list # See all available plugins
+```
+
+## Plugin Commands Reference
+
+```bash
+# Marketplace
+claude plugin marketplace add ancoleman/ai-design-components    # Add
+claude plugin marketplace rm ai-design-components               # Remove
+claude plugin marketplace list                                  # List all
+claude plugin marketplace update ai-design-components           # Update
+
+# Plugins
+claude plugin install <plugin>@ai-design-components             # Install
+claude plugin uninstall <plugin>                                # Uninstall
+
+# Validation
+claude plugin validate .claude-plugin/marketplace.json          # Validate
+```
+
+## Using Skillchain
+
+Once installed, use the `/skillchain` command for guided workflows:
+
+```bash
+/skillchain dashboard with charts and filters
+/skillchain REST API with postgres
+/skillchain kubernetes with monitoring
+/skillchain RAG pipeline with embeddings
 ```
 
 ## Skill Categories
@@ -83,6 +129,7 @@ See [Skills Overview](https://ancoleman.github.io/ai-design-components/docs/skil
 
 ## Resources
 
+- [Plugin Commands Reference](https://ancoleman.github.io/ai-design-components/docs/guides/plugin-commands) - Complete CLI reference for marketplace/plugin management
 - [Anthropic Skills Documentation](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
 - [Skills Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
 - [LLM Ecosystem Guide](https://ancoleman.github.io/ai-design-components/llm-ecosystem)

@@ -1,0 +1,145 @@
+# developer.yaml
+# Developer Productivity domain registry for skillchain
+domain: developer-productivity
+version: "1.0.0"
+last_updated: "2025-12-06"
+plugin_group: developer-productivity-skills
+
+keywords:
+  domain_triggers:
+    primary: [api, sdk, cli, documentation, debug, git, github]
+    secondary: [rest, graphql, openapi, docs, workflow, actions, cicd]
+
+skills:
+  designing-apis:
+    priority: 10
+    group: developer-tools
+    required: false
+
+    keywords:
+      primary: [api design, rest api, graphql, openapi, api specification]
+      secondary: [endpoint, swagger, api doc, rest, graphql schema]
+      exclusions: []
+
+    invocation: "developer-productivity-skills:designing-apis"
+    dependencies: []
+
+    questions:
+      source: "skill"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  building-clis:
+    priority: 8
+    group: developer-tools
+    required: false
+
+    keywords:
+      primary: [cli, command line, terminal tool, command line interface]
+      secondary: [click, typer, cobra, argparse, terminal app]
+      exclusions: []
+
+    invocation: "developer-productivity-skills:building-clis"
+    dependencies: []
+
+    questions:
+      source: "skill"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  designing-sdks:
+    priority: 12
+    group: developer-tools
+    required: false
+
+    keywords:
+      primary: [sdk, library, client library, api client, sdk design]
+      secondary: [wrapper, api wrapper, sdk development, library design]
+      exclusions: []
+
+    invocation: "developer-productivity-skills:designing-sdks"
+    dependencies: ["designing-apis"]
+
+    questions:
+      source: "skill"
+
+    estimate_tokens: 500
+    version: "1.0.0"
+
+  generating-documentation:
+    priority: 5
+    group: documentation
+    required: false
+
+    keywords:
+      primary: [documentation, docs, api docs, readme, docstring]
+      secondary: [sphinx, mkdocs, jsdoc, typedoc, javadoc, godoc]
+      exclusions: []
+
+    invocation: "developer-productivity-skills:generating-documentation"
+    dependencies: []
+
+    questions:
+      source: "skill"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  debugging-techniques:
+    priority: 7
+    group: debugging
+    required: false
+
+    keywords:
+      primary: [debug, debugging, troubleshoot, debugger, breakpoint]
+      secondary: [pdb, gdb, lldb, chrome devtools, vscode debug]
+      exclusions: []
+
+    invocation: "developer-productivity-skills:debugging-techniques"
+    dependencies: []
+
+    questions:
+      source: "skill"
+
+    estimate_tokens: 350
+    version: "1.0.0"
+
+  managing-git-workflows:
+    priority: 6
+    group: version-control
+    required: false
+
+    keywords:
+      primary: [git, git workflow, branching, merge, rebase, git flow]
+      secondary: [trunk based, feature branch, pull request, code review]
+      exclusions: []
+
+    invocation: "developer-productivity-skills:managing-git-workflows"
+    dependencies: []
+
+    questions:
+      source: "skill"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  writing-github-actions:
+    priority: 9
+    group: automation
+    required: false
+
+    keywords:
+      primary: [github actions, workflow, ci, automation, yaml workflow]
+      secondary: [action, gh actions, github ci, workflow yaml]
+      exclusions: []
+
+    invocation: "developer-productivity-skills:writing-github-actions"
+    dependencies: []
+
+    questions:
+      source: "skill"
+
+    estimate_tokens: 450
+    version: "1.0.0"

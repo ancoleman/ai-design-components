@@ -1,0 +1,79 @@
+# cloud.yaml - Cloud Provider Skills Registry
+domain: cloud
+version: "1.0.0"
+plugin_group: cloud-skills
+last_updated: "2025-12-06"
+
+description: "Cloud provider deployment and platform-specific services"
+
+keywords:
+  domain_triggers:
+    primary: [aws, gcp, azure, cloud, lambda, s3, ec2, cloud function, blob storage]
+    secondary: [cloud provider, cloud deployment, cloud platform, serverless]
+
+skills:
+  deploying-on-aws:
+    category: cloud
+    group: cloud-providers
+    priority: 10
+    parallel_group: 1
+    required: false
+
+    keywords:
+      primary: [aws, amazon, lambda, s3, ec2, cloudformation, dynamodb, rds]
+      secondary: [elastic beanstalk, ecs, eks, fargate, route53, cloudfront]
+      exclusions: [gcp, azure, google cloud, microsoft azure]
+
+    invocation: "cloud-skills:deploying-on-aws"
+    dependencies: []
+
+    questions:
+      source: "skill"
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  deploying-on-gcp:
+    category: cloud
+    group: cloud-providers
+    priority: 10
+    parallel_group: 1
+    required: false
+
+    keywords:
+      primary: [gcp, google cloud, cloud functions, cloud run, gcs, bigquery]
+      secondary: [gke, app engine, cloud storage, firebase, cloud sql]
+      exclusions: [aws, azure, amazon, microsoft azure]
+
+    invocation: "cloud-skills:deploying-on-gcp"
+    dependencies: []
+
+    questions:
+      source: "skill"
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  deploying-on-azure:
+    category: cloud
+    group: cloud-providers
+    priority: 10
+    parallel_group: 1
+    required: false
+
+    keywords:
+      primary: [azure, microsoft azure, azure functions, blob storage, cosmos db]
+      secondary: [aks, app service, azure devops, active directory, key vault]
+      exclusions: [aws, gcp, amazon, google cloud]
+
+    invocation: "cloud-skills:deploying-on-azure"
+    dependencies: []
+
+    questions:
+      source: "skill"
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"

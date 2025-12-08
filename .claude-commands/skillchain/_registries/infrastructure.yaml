@@ -1,0 +1,158 @@
+# Infrastructure Domain Registry
+domain: infrastructure
+version: "1.0.0"
+last_updated: "2025-12-06"
+plugin_group: infrastructure-skills
+
+description: "Infrastructure management, orchestration, networking, and distributed systems"
+
+keywords:
+  domain_triggers:
+    primary: [kubernetes, k8s, terraform, ansible, linux, nginx, network, load balancer, dns, service mesh, istio, infrastructure]
+    secondary: [helm, kustomize, consul, envoy, systemd, sysadmin, iptables, haproxy, distributed]
+
+# Skills in this domain (12 total)
+skills:
+  operating-kubernetes:
+    priority: 20
+    keywords:
+      primary: [kubernetes, k8s, kubectl, pods, deployments, services]
+      secondary: [helm, kustomize, namespaces, ingress, cronjob]
+    invocation: "infrastructure-skills:operating-kubernetes"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  writing-infrastructure-code:
+    priority: 15
+    keywords:
+      primary: [terraform, infrastructure as code, iac, ansible, pulumi]
+      secondary: [provisioning, declarative, modules, state]
+    invocation: "infrastructure-skills:writing-infrastructure-code"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  administering-linux:
+    priority: 10
+    keywords:
+      primary: [linux, ubuntu, debian, rhel, centos, systemd]
+      secondary: [bash, shell, sysadmin, unix, server]
+    invocation: "infrastructure-skills:administering-linux"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  architecting-networks:
+    priority: 12
+    keywords:
+      primary: [network, vpc, subnet, routing, nat, vpn]
+      secondary: [cidr, gateway, peering, vlan, firewall rules]
+    invocation: "infrastructure-skills:architecting-networks"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  load-balancing-patterns:
+    priority: 10
+    keywords:
+      primary: [load balancer, lb, alb, nlb, haproxy, nginx lb]
+      secondary: [round robin, sticky sessions, health checks, backend pool]
+    invocation: "infrastructure-skills:load-balancing-patterns"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  planning-disaster-recovery:
+    priority: 8
+    keywords:
+      primary: [disaster recovery, dr, backup, failover, rpo, rto]
+      secondary: [high availability, business continuity, replication]
+    invocation: "infrastructure-skills:planning-disaster-recovery"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  configuring-nginx:
+    priority: 5
+    keywords:
+      primary: [nginx, reverse proxy, web server, nginx conf]
+      secondary: [upstream, location, proxy_pass, ssl termination]
+    invocation: "infrastructure-skills:configuring-nginx"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 350
+    version: "1.0.0"
+
+  shell-scripting:
+    priority: 5
+    keywords:
+      primary: [bash script, shell script, automation, sh]
+      secondary: [shellcheck, zsh, script, automate tasks]
+    invocation: "infrastructure-skills:shell-scripting"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 350
+    version: "1.0.0"
+
+  managing-dns:
+    priority: 8
+    keywords:
+      primary: [dns, domain, nameserver, route53, bind]
+      secondary: [a record, cname, mx, txt, zone file]
+    invocation: "infrastructure-skills:managing-dns"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 350
+    version: "1.0.0"
+
+  implementing-service-mesh:
+    priority: 15
+    keywords:
+      primary: [service mesh, istio, linkerd, consul connect, envoy]
+      secondary: [sidecar, traffic management, mtls, observability]
+    invocation: "infrastructure-skills:implementing-service-mesh"
+    dependencies: ["operating-kubernetes"]
+    questions:
+      source: "skill"
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  managing-configuration:
+    priority: 10
+    keywords:
+      primary: [configuration management, ansible, chef, puppet, salt]
+      secondary: [config, playbook, idempotent, inventory]
+    invocation: "infrastructure-skills:managing-configuration"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  designing-distributed-systems:
+    priority: 25
+    keywords:
+      primary: [distributed systems, microservices, consensus, raft, paxos]
+      secondary: [cap theorem, eventual consistency, partitioning, sharding]
+    invocation: "infrastructure-skills:designing-distributed-systems"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 500
+    version: "1.0.0"

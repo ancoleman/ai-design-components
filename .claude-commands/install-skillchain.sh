@@ -27,7 +27,8 @@ NC='\033[0m' # No Color
 
 # Source directory (where this script lives)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SKILLCHAIN_SOURCE="$SCRIPT_DIR/skillchain"
+SKILLCHAIN_ROUTER="$SCRIPT_DIR/skillchain.md"
+SKILLCHAIN_RESOURCES="$SCRIPT_DIR/skillchain"
 
 # Parse arguments
 GLOBAL_INSTALL=false
@@ -78,22 +79,28 @@ else
 fi
 
 echo -e "${BLUE}╔══════════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║   AI Design Components - Skillchain Command Installer v2.1   ║${NC}"
+echo -e "${BLUE}║   AI Design Components - Skillchain Command Installer v3.0   ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-# Check if source directory exists
-if [ ! -d "$SKILLCHAIN_SOURCE" ]; then
-    echo -e "${RED}Error: skillchain directory not found at $SKILLCHAIN_SOURCE${NC}"
+# Check if source files exist
+if [ ! -f "$SKILLCHAIN_ROUTER" ]; then
+    echo -e "${RED}Error: skillchain.md not found at $SKILLCHAIN_ROUTER${NC}"
+    echo "Make sure you're running this script from the ai-design-components repository."
+    exit 1
+fi
+
+if [ ! -d "$SKILLCHAIN_RESOURCES" ]; then
+    echo -e "${RED}Error: skillchain resources not found at $SKILLCHAIN_RESOURCES${NC}"
     echo "Make sure you're running this script from the ai-design-components repository."
     exit 1
 fi
 
 # Verify critical files exist
 REQUIRED_FILES=(
-    "$SKILLCHAIN_SOURCE/skillchain.md"
-    "$SKILLCHAIN_SOURCE/_registry.yaml"
-    "$SKILLCHAIN_SOURCE/_help.md"
+    "$SKILLCHAIN_ROUTER"
+    "$SKILLCHAIN_RESOURCES/_registry.yaml"
+    "$SKILLCHAIN_RESOURCES/_help.md"
 )
 
 for file in "${REQUIRED_FILES[@]}"; do
@@ -117,22 +124,27 @@ if [ ! -d "$CLAUDE_COMMANDS_DIR" ]; then
 fi
 
 # Check if skillchain already exists
-if [ -d "$CLAUDE_COMMANDS_DIR/skillchain" ]; then
-    echo -e "${YELLOW}Existing skillchain directory found. Updating...${NC}"
+if [ -f "$CLAUDE_COMMANDS_DIR/skillchain.md" ] || [ -d "$CLAUDE_COMMANDS_DIR/skillchain" ]; then
+    echo -e "${YELLOW}Existing skillchain installation found. Updating...${NC}"
+    rm -f "$CLAUDE_COMMANDS_DIR/skillchain.md"
     rm -rf "$CLAUDE_COMMANDS_DIR/skillchain"
 fi
 
-# Copy entire skillchain directory
-echo -e "${YELLOW}Installing skillchain v2.1 command structure...${NC}"
-cp -r "$SKILLCHAIN_SOURCE" "$CLAUDE_COMMANDS_DIR/"
+# Install router (creates /skillchain command)
+echo -e "${YELLOW}Installing skillchain v3.0 command...${NC}"
+cp "$SKILLCHAIN_ROUTER" "$CLAUDE_COMMANDS_DIR/skillchain.md"
+
+# Install resources
+echo -e "${YELLOW}Installing skillchain resources...${NC}"
+cp -r "$SKILLCHAIN_RESOURCES" "$CLAUDE_COMMANDS_DIR/"
 
 # Count installed files
 FILE_COUNT=$(find "$CLAUDE_COMMANDS_DIR/skillchain" -type f | wc -l | tr -d ' ')
 
 # Verify installation
-if [ -f "$CLAUDE_COMMANDS_DIR/skillchain/skillchain.md" ]; then
+if [ -f "$CLAUDE_COMMANDS_DIR/skillchain.md" ] && [ -d "$CLAUDE_COMMANDS_DIR/skillchain" ]; then
     echo ""
-    echo -e "${GREEN}✅ Skillchain v2.1 command installed successfully!${NC}"
+    echo -e "${GREEN}✅ Skillchain v3.0 command installed successfully!${NC}"
     echo ""
     echo -e "Location: ${BLUE}$CLAUDE_COMMANDS_DIR/skillchain/${NC}"
     echo -e "Files installed: ${CYAN}$FILE_COUNT${NC}"
@@ -140,13 +152,13 @@ if [ -f "$CLAUDE_COMMANDS_DIR/skillchain/skillchain.md" ]; then
 
     # Show structure
     echo -e "${CYAN}Installed structure:${NC}"
+    echo "  skillchain.md              (Router - creates /skillchain command)"
     echo "  skillchain/"
-    echo "  ├── skillchain.md         (Router)"
     echo "  ├── _registry.yaml        (Skill registry)"
-    echo "  ├── _help.md             (Help content)"
-    echo "  ├── _shared/             (Shared rules)"
-    echo "  ├── categories/          (Category skills)"
-    echo "  └── blueprints/          (Project templates)"
+    echo "  ├── _help.md              (Help content)"
+    echo "  ├── _shared/              (Shared rules)"
+    echo "  ├── categories/           (Category orchestrators)"
+    echo "  └── blueprints/           (Project templates)"
     echo ""
 
     if [ "$GLOBAL_INSTALL" = true ]; then
@@ -174,11 +186,12 @@ if [ -f "$CLAUDE_COMMANDS_DIR/skillchain/skillchain.md" ]; then
     echo "  3. Ask configuration questions for each component"
     echo "  4. Generate themed, accessible code"
     echo ""
-    echo -e "${CYAN}v2.1 Features:${NC}"
+    echo -e "${CYAN}v3.0 Features:${NC}"
+    echo "  • Fixed command: /skillchain (was /skillchain:skillchain)"
     echo "  • User preferences saved to ~/.claude/skillchain-prefs.yaml"
     echo "  • Parallel skill loading for faster workflows"
     echo "  • Skill versioning with compatibility tracking"
-    echo "  • 29 skills: 15 frontend + 14 backend"
+    echo "  • 29 skills: 15 frontend + 14 backend (expanding to 76)"
     echo ""
     echo -e "${GREEN}Start Claude Code and try: /skillchain help${NC}"
 else

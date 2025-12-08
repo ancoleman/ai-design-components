@@ -1,0 +1,317 @@
+# backend.yaml
+# Backend Domain Registry - Database, API, Platform, and AI/ML Skills
+# Part of Phase 3: Domain-Specific Registries
+
+registry_version: "2.1.0"
+domain: backend
+description: "APIs, databases, messaging, deployment, and AI/ML infrastructure"
+last_updated: "2025-12-06"
+
+# Default tools for backend skills
+default_tools: ["Read", "Write", "Bash", "Skill"]
+
+# Backend skills (14 total)
+skills:
+  # DATABASE SKILLS (5)
+
+  using-relational-databases:
+    group: databases
+    priority: 10
+    parallel_group: 1
+    required: false
+
+    keywords:
+      primary: [database, sql, postgres, mysql, sqlite]
+      secondary: [orm, prisma, drizzle, sqlalchemy, rds]
+      exclusions: []
+
+    invocation: "backend-skills:using-relational-databases"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  using-vector-databases:
+    group: databases
+    priority: 10
+    parallel_group: 2
+    required: false
+
+    keywords:
+      primary: [vector, embedding, qdrant, pgvector, similarity]
+      secondary: [rag, semantic search, pinecone]
+      requires_any: [database, search, ai, rag]
+
+    invocation: "backend-skills:using-vector-databases"
+    dependencies: ["ingesting-data"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  using-document-databases:
+    group: databases
+    priority: 10
+    parallel_group: 1
+    required: false
+
+    keywords:
+      primary: [nosql, mongo, document, firestore, dynamodb]
+      secondary: [collection, json, bson]
+      exclusions: []
+
+    invocation: "backend-skills:using-document-databases"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  using-graph-databases:
+    group: databases
+    priority: 10
+    parallel_group: 1
+    required: false
+
+    keywords:
+      primary: [graph, neo4j, cypher, relationships, nodes, edges]
+      secondary: [memgraph, knowledge graph]
+      exclusions: []
+
+    invocation: "backend-skills:using-graph-databases"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  using-timeseries-databases:
+    group: databases
+    priority: 10
+    parallel_group: 1
+    required: false
+
+    keywords:
+      primary: [timeseries, metrics, clickhouse, influxdb, timescale]
+      secondary: [prometheus, grafana, tsdb]
+      exclusions: []
+
+    invocation: "backend-skills:using-timeseries-databases"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  # API & MESSAGING SKILLS (3)
+
+  implementing-api-patterns:
+    group: apis
+    priority: 5
+    parallel_group: 2
+    required: false
+
+    keywords:
+      primary: [api, rest, graphql, grpc, trpc]
+      secondary: [fastapi, hono, axum, endpoints]
+      exclusions: []
+
+    invocation: "backend-skills:implementing-api-patterns"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  using-message-queues:
+    group: messaging
+    priority: 15
+    parallel_group: 3
+    required: false
+
+    keywords:
+      primary: [kafka, queue, message, event, rabbitmq, nats]
+      secondary: [temporal, celery, pub-sub]
+      exclusions: []
+
+    invocation: "backend-skills:using-message-queues"
+    dependencies: ["implementing-api-patterns"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  implementing-realtime-sync:
+    group: messaging
+    priority: 15
+    parallel_group: 3
+    required: false
+
+    keywords:
+      primary: [websocket, realtime, streaming, sse, collaborative]
+      secondary: [yjs, presence, live]
+      exclusions: []
+
+    invocation: "backend-skills:implementing-realtime-sync"
+    dependencies: ["implementing-api-patterns"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  # PLATFORM SKILLS (3)
+
+  securing-authentication:
+    group: platform
+    priority: 8
+    parallel_group: 3
+    required: false
+
+    keywords:
+      primary: [auth, login, security, jwt, oauth, authentication]
+      secondary: [passkeys, webauthn, rbac, permissions]
+      exclusions: []
+
+    invocation: "backend-skills:securing-authentication"
+    dependencies: ["implementing-api-patterns"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  implementing-observability:
+    group: platform
+    priority: 20
+    parallel_group: 5
+    required: false
+
+    keywords:
+      primary: [monitoring, observability, logs, traces, opentelemetry]
+      secondary: [otel, lgtm, metrics, prometheus]
+      exclusions: []
+
+    invocation: "backend-skills:implementing-observability"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  deploying-applications:
+    group: platform
+    priority: 25
+    parallel_group: 5
+    required: false
+
+    keywords:
+      primary: [deploy, kubernetes, k8s, serverless, helm]
+      secondary: [lambda, vercel, cloudflare, docker]
+      exclusions: []
+
+    invocation: "backend-skills:deploying-applications"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  # DATA INGESTION (1)
+
+  ingesting-data:
+    group: data-ingestion
+    priority: 5
+    parallel_group: 1
+    required: false
+
+    keywords:
+      primary: [ingest, import, etl, csv, extract, load, migration]
+      secondary: [s3, bucket, cdc, dlt, pipeline]
+      exclusions: []
+
+    invocation: "backend-skills:ingesting-data"
+    dependencies: []
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  # AI/ML SKILLS (2)
+
+  ai-data-engineering:
+    group: ai-ml
+    priority: 15
+    parallel_group: 4
+    required: false
+
+    keywords:
+      primary: [rag, embeddings, chunking, pipeline]
+      secondary: [vector, indexing, semantic]
+      requires_any: [ai, rag, llm, search]
+
+    invocation: "backend-skills:ai-data-engineering"
+    dependencies: ["using-vector-databases"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  model-serving:
+    group: ai-ml
+    priority: 20
+    parallel_group: 4
+    required: false
+
+    keywords:
+      primary: [llm, model, serving, vllm, inference]
+      secondary: [bentoml, ollama, mlops]
+      requires_any: [ai, llm, model]
+
+    invocation: "backend-skills:model-serving"
+    dependencies: ["ai-data-engineering"]
+
+    questions:
+      source: "skill"  # 5+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"

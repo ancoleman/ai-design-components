@@ -1,0 +1,536 @@
+# Multi-Domain Workflow Orchestrator
+
+Handles cross-domain goals that span multiple categories (infrastructure + security + devops, frontend + backend + cloud, etc.)
+
+---
+
+## Step 1: Load Shared Resources
+
+Read execution-flow.md for general workflow guidance:
+
+```
+Read {SKILLCHAIN_DIR}/_shared/execution-flow.md
+```
+
+If any frontend/UI skills are detected in the chain, also load theming rules:
+
+```
+Read {SKILLCHAIN_DIR}/_shared/theming-rules.md
+```
+
+---
+
+## Step 2: Detect Involved Domains
+
+Analyze the user goal to identify which domains are involved:
+
+### Domain Detection Rules
+
+Parse the goal for keywords matching these domains:
+
+**Infrastructure:**
+- Keywords: kubernetes, k8s, terraform, cluster, container orchestration, helm
+- Registry: infrastructure.yaml
+
+**Security:**
+- Keywords: security, secrets, vault, encryption, compliance, audit, RBAC, IAM
+- Registry: security.yaml
+
+**DevOps:**
+- Keywords: CI/CD, pipeline, deployment, automation, jenkins, github actions, gitops
+- Registry: devops.yaml
+
+**Cloud:**
+- Keywords: aws, azure, gcp, cloud, s3, lambda, serverless, cloud functions
+- Registry: cloud.yaml
+
+**Data:**
+- Keywords: data pipeline, ETL, streaming, kafka, airflow, data processing
+- Registry: data.yaml
+
+**Developer:**
+- Keywords: IDE, debugging, testing, code review, git workflow
+- Registry: developer.yaml
+
+**FinOps:**
+- Keywords: cost, budget, tagging, cost optimization
+- Registry: finops.yaml
+
+**AI/ML:**
+- Keywords: RAG, embeddings, vector, LLM, model serving
+- Registry: ai-ml.yaml
+
+**Frontend:**
+- Keywords: UI, dashboard, react, component, chart, form
+- Registry: frontend.yaml
+
+**Backend:**
+- Keywords: API, database, postgres, authentication, REST
+- Registry: backend.yaml
+
+### Load Relevant Registries
+
+```python
+detected_domains = []
+for domain in all_domains:
+  if goal_contains_keywords(user_goal, domain.keywords):
+    detected_domains.append(domain)
+    load_registry(f"{SKILLCHAIN_DIR}/_registries/{domain.name}.yaml")
+```
+
+---
+
+## Step 3: Determine Domain Execution Order
+
+Organize detected domains into execution phases:
+
+### Phase 1: Infrastructure Foundation (if present)
+Execute these domains FIRST as they provide the foundation:
+- infrastructure (k8s cluster setup)
+- cloud (cloud resource provisioning)
+
+### Phase 2: Platform Services (if present)
+Execute after infrastructure is ready:
+- security (secrets management, RBAC)
+- data (data pipelines, databases)
+- backend (APIs, services)
+
+### Phase 3: Application Layer (if present)
+Execute after platform is ready:
+- frontend (UI components)
+- ai-ml (RAG pipelines, model serving)
+
+### Phase 4: Operations (if present)
+Execute LAST to set up operational concerns:
+- devops (CI/CD, deployment automation)
+- finops (cost optimization, tagging)
+- developer (tooling, workflows)
+
+### Execution Order Example
+
+**Goal: "Deploy secure kubernetes cluster with monitoring and cost tracking"**
+
+Detected domains: infrastructure, security, devops, finops
+
+Execution order:
+```
+Phase 1: infrastructure (kubernetes cluster)
+Phase 2: security (RBAC, secrets, network policies)
+Phase 4: devops (CI/CD, deployment), finops (cost optimization, tagging)
+```
+
+---
+
+## Step 4: Confirm Multi-Domain Chain
+
+Present the detected domains and execution order to the user:
+
+```
+>═══════════════════════════════════════════════════════════
+  MULTI-DOMAIN SKILL CHAIN DETECTED
+═══════════════════════════════════════════════════════════
+
+Goal: "{original_goal}"
+
+Detected Domains: [{domain1}, {domain2}, {domain3}, ...]
+
+Execution Plan:
+───────────────────────────────────────────────────────────
+
+PHASE 1: Infrastructure Foundation
+  □ infrastructure → {matched skills}
+  □ cloud → {matched skills}
+
+PHASE 2: Platform Services
+  □ security → {matched skills}
+  □ backend → {matched skills}
+
+PHASE 3: Application Layer
+  □ frontend → {matched skills}
+  □ ai-ml → {matched skills}
+
+PHASE 4: Operations
+  □ devops → {matched skills}
+  □ finops → {matched skills}
+
+───────────────────────────────────────────────────────────
+Total Skills: {N}
+Estimated Questions: {X}
+Estimated Time: {Y} minutes
+───────────────────────────────────────────────────────────
+
+Options:
+  • Type "confirm" to proceed
+  • Type "skip" to use all defaults (faster)
+  • Type "customize" to add/remove skills
+  • Type "help" to see workflow commands
+
+Your choice:
+```
+
+Wait for user response:
+- "confirm" → Proceed to Step 5
+- "skip" → Set skip_all_questions = true, proceed to Step 5
+- "customize" → Allow skill additions/removals, then proceed
+- "help" → Show workflow commands from execution-flow.md
+
+---
+
+## Step 5: Execute Multi-Domain Workflow
+
+Initialize:
+```
+domain_configs = {}  # Track configs by domain
+skill_configs = {}   # Track configs by skill
+current_phase = 1
+max_phase = 4
+skip_all_questions = false
+```
+
+For each phase (1 through 4):
+
+### 5.1 Announce Phase
+
+```
+═══════════════════════════════════════════════════════════
+ PHASE {current_phase}/{max_phase}: {PHASE_NAME}
+═══════════════════════════════════════════════════════════
+```
+
+### 5.2 Execute Domains in Phase
+
+For each domain in current phase:
+
+#### 5.2.1 Announce Domain
+
+```
+─────────────────────────────────────────────────────────
+▸ DOMAIN: {domain.name}
+  Skills: [{skill1}, {skill2}, ...]
+─────────────────────────────────────────────────────────
+```
+
+#### 5.2.2 Invoke Each Skill in Domain
+
+For each skill in domain:
+
+```
+Skill({ skill: "{skill.invocation}" })
+```
+
+**Example invocations across domains:**
+- Infrastructure: `infrastructure-skills:kubernetes-orchestration`
+- Security: `security-skills:managing-secrets`
+- DevOps: `devops-skills:ci-cd-pipelines`
+- Cloud: `cloud-skills:aws-services`, `cloud-skills:azure-services`
+- Backend: `backend-api-skills:api-patterns`
+- Frontend: `ui-foundation-skills:theming-components`
+- FinOps: `finops-skills:optimizing-costs`
+- AI/ML: `backend-ai-skills:ai-data-engineering`
+
+#### 5.2.3 Load Questions
+
+All skills use `questions.source: "skill"` format.
+
+Extract questions from SKILL.md `## Skillchain Configuration` section.
+
+#### 5.2.4 Ask User (unless skip_all_questions)
+
+Present questions with:
+- Context from previous domains/phases
+- Cross-domain awareness (e.g., "You're deploying to Kubernetes, so...")
+- Smart defaults based on earlier choices
+- Dependencies on skills from earlier phases
+
+Handle workflow commands:
+- "skip" → Use default for this question
+- "back" → Return to previous skill (may cross domain boundaries)
+- "status" → Show progress across all phases
+- "done" → Skip remaining phases, proceed to generation
+- "restart" → Go back to Step 4
+
+#### 5.2.5 Store Configuration
+
+```
+skill_configs[skill.name] = {
+  answers: user_answers,
+  invocation: skill.invocation,
+  domain: domain.name,
+  phase: current_phase
+}
+
+domain_configs[domain.name][skill.name] = skill_configs[skill.name]
+```
+
+### 5.3 Phase Completion
+
+After all domains in phase complete:
+
+```
+═══════════════════════════════════════════════════════════
+✓ PHASE {current_phase} COMPLETE
+  Configured: {list of domains}
+═══════════════════════════════════════════════════════════
+```
+
+Increment current_phase and continue to next phase.
+
+---
+
+## Step 6: Generate Multi-Domain Output
+
+After all phases complete, generate integrated deliverables:
+
+### 6.1 Analyze Cross-Domain Integration Points
+
+Identify where domains need to interact:
+
+**Infrastructure → Security:**
+- Kubernetes RBAC policies
+- Network policies
+- Pod security standards
+
+**Infrastructure → DevOps:**
+- Kubernetes deployment manifests
+- CI/CD pipeline configs for k8s
+- Helm charts
+
+**Backend → Security:**
+- API authentication middleware
+- Secrets injection into services
+- Database encryption
+
+**Cloud → FinOps:**
+- Resource tagging policies
+- Cost allocation by cloud service
+- Budget alerts
+
+**Frontend → Backend:**
+- API client generation
+- Authentication token handling
+- Type-safe API contracts
+
+**AI/ML → Backend:**
+- Vector database integration
+- LLM inference API endpoints
+- Streaming response handling
+
+### 6.2 Generate Integrated Output
+
+Create complete multi-domain implementation:
+
+```
+═══════════════════════════════════════════════════════════
+  MULTI-DOMAIN IMPLEMENTATION COMPLETE
+═══════════════════════════════════════════════════════════
+
+Configured Domains: [{domain1}, {domain2}, ...]
+Total Skills: {N}
+
+Generated Structure:
+═► multi-domain-project/
+     infrastructure/
+        kubernetes/
+           cluster-config.yaml       # K8s cluster setup
+           namespaces.yaml           # Namespace definitions
+        terraform/
+           main.tf                   # Infrastructure as code
+           variables.tf
+     security/
+        rbac/
+           roles.yaml                # Kubernetes RBAC
+           bindings.yaml
+        secrets/
+           vault-config.hcl          # HashiCorp Vault
+           secret-injection.yaml     # K8s secrets
+        network/
+           network-policies.yaml     # K8s network policies
+     backend/
+        src/
+           api/                      # API services
+           db/                       # Database models
+        k8s/
+           deployments.yaml          # K8s deployments
+           services.yaml             # K8s services
+     frontend/
+        src/
+           tokens.css                # Design tokens
+           components/               # UI components
+        k8s/
+           deployment.yaml           # Frontend deployment
+     devops/
+        ci-cd/
+           .github/workflows/        # GitHub Actions
+           jenkins/                  # Jenkins pipelines
+        deployment/
+           deploy.sh                 # Deployment automation
+           rollback.sh
+     finops/
+        cost-optimization/
+           recommendations.csv       # Cost savings
+        tagging/
+           tag-policies/             # Cloud tag enforcement
+     monitoring/
+        prometheus/
+           config.yaml               # Metrics collection
+        grafana/
+           dashboards/               # Observability dashboards
+
+Integration Points:
+═► Infrastructure + Security
+   • Kubernetes RBAC configured
+   • Network policies enforced
+   • Pod security standards: {level}
+
+═► Backend + Security
+   • API authentication: {method}
+   • Secrets managed by: {vault/k8s-secrets}
+   • Database encryption: enabled
+
+═► DevOps + Infrastructure
+   • CI/CD deploys to: {k8s-cluster}
+   • Deployment strategy: {rolling/blue-green/canary}
+   • GitOps enabled: {yes/no}
+
+═► FinOps + Cloud
+   • Tagging enforced at: {deployment/account}
+   • Cost allocation by: {namespace/service/team}
+   • Budget alerts configured
+
+[If frontend included:]
+═► Frontend + Backend
+   • API client: type-safe, generated
+   • Authentication: JWT tokens
+   • Theming: tokens.css (light/dark)
+
+Deployment Order:
+1. Provision infrastructure (Terraform/K8s cluster)
+2. Configure security (RBAC, secrets, network policies)
+3. Deploy backend services (K8s deployments)
+4. [If frontend:] Deploy frontend (K8s/static hosting)
+5. Configure CI/CD pipelines
+6. Apply FinOps policies and monitoring
+
+Next Steps:
+1. Review generated configurations
+2. Update environment variables and secrets
+3. Run infrastructure provisioning: {command}
+4. Deploy security policies: {command}
+5. Deploy applications: {command}
+6. Verify deployment: {command}
+
+Would you like me to:
+A) Generate the full implementation code
+B) Explain any integration point in detail
+C) Modify configurations for a specific domain
+D) Add additional domains (data/ai-ml/developer)
+```
+
+---
+
+## Error Handling
+
+### No Common Domains
+
+If goal is too vague to detect any domains:
+
+```
+⚠ Unable to Detect Domains
+
+Your goal: "{user_goal}"
+
+This seems like a multi-domain request, but I couldn't identify specific domains.
+
+Could you clarify which areas you need?
+□ Infrastructure (Kubernetes, Terraform)
+□ Security (Secrets, RBAC, compliance)
+□ DevOps (CI/CD, deployment automation)
+□ Cloud (AWS, Azure, GCP)
+□ Backend (APIs, databases)
+□ Frontend (UI components)
+□ FinOps (Cost optimization, tagging)
+□ AI/ML (RAG, embeddings, model serving)
+
+Select all that apply (comma-separated):
+```
+
+### Domain Conflicts
+
+If domains have conflicting requirements:
+
+```
+⚠ DOMAIN CONFLICT DETECTED
+
+security: Requires private network (no internet access)
+devops: Requires GitHub Actions (public internet)
+
+Recommendation:
+- Use self-hosted GitHub Actions runners in private network
+- OR use private GitLab CI/CD
+
+Which approach?
+A) Self-hosted runners (more secure, more complex)
+B) Public CI/CD with network exceptions
+C) Explain trade-offs in detail
+```
+
+### Skill Load Failures Across Domains
+
+If skill from one domain fails:
+
+```
+⚠ ERROR: Skill '{skill.name}' from domain '{domain}' failed
+
+Reason: {error_message}
+
+This skill is in Phase {phase}. Other domains depend on it:
+- {dependent_domain1}
+- {dependent_domain2}
+
+Options:
+1. Retry this skill
+2. Continue without (may affect dependent domains)
+3. Stop and investigate
+
+Your choice (1/2/3):
+```
+
+---
+
+## Multi-Domain Guidelines
+
+### 1. Respect Phase Dependencies
+Never execute a skill from Phase 3 before Phase 1 completes.
+
+### 2. Cross-Domain Context Sharing
+Skills in later phases can reference configurations from earlier phases.
+
+### 3. Integration Validation
+After all phases, validate integration points between domains.
+
+### 4. Avoid Redundancy
+If multiple domains configure the same resource (e.g., Kubernetes), consolidate.
+
+### 5. Domain Boundaries
+Keep domain-specific code separate; use well-defined interfaces for integration.
+
+---
+
+## Summary
+
+**Multi-domain orchestrator responsibilities:**
+1. Detect all involved domains from user goal
+2. Load appropriate registries for each domain
+3. Organize domains into 4 execution phases
+4. Execute skills in dependency order across phases
+5. Track configurations per domain and per skill
+6. Generate integrated multi-domain deliverables
+7. Validate cross-domain integration points
+8. Provide deployment guidance across all domains
+
+**Key differences from single-domain orchestrators:**
+- Manages MULTIPLE domains instead of one category
+- Phases ensure proper dependency ordering
+- Cross-domain context sharing for smart defaults
+- Integration point validation is critical
+- Generates unified project structure spanning all domains

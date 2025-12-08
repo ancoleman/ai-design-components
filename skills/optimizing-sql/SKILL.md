@@ -42,7 +42,7 @@ Use SQL Server Management Studio: Display Estimated Execution Plan (Ctrl+L)
 - **Scan Type**: Sequential scan vs index scan
 - **Execution Time**: Actual time spent on operation
 
-For detailed execution plan interpretation, see `reference/explain-guide.md`.
+For detailed execution plan interpretation, see `references/explain-guide.md`.
 
 ### Step 2: Identify Optimization Opportunities
 
@@ -56,7 +56,7 @@ For detailed execution plan interpretation, see `reference/explain-guide.md`.
 | Correlated subquery | Subquery executes per row | Rewrite as JOIN or EXISTS |
 | Sort operation on large result set | Expensive sorting | Add index matching ORDER BY |
 
-For scan type interpretation, see `reference/scan-types.md`.
+For scan type interpretation, see `references/scan-types.md`.
 
 ### Step 3: Apply Indexing Strategies
 
@@ -90,7 +90,7 @@ Is column used in WHERE, JOIN, ORDER BY, or GROUP BY?
 - **Clustered**: Table data sorted by index (one per table)
 - **Non-clustered**: Separate index structure (multiple allowed)
 
-For comprehensive indexing guidance, see `reference/indexing-decisions.md` and `reference/index-types.md`.
+For comprehensive indexing guidance, see `references/indexing-decisions.md` and `references/index-types.md`.
 
 ### Step 4: Design Composite Indexes
 
@@ -114,7 +114,7 @@ CREATE INDEX idx_orders_customer_status_created
 ON orders (customer_id, status, created_at DESC);
 ```
 
-For composite index design patterns, see `reference/composite-indexes.md`.
+For composite index design patterns, see `references/composite-indexes.md`.
 
 ### Step 5: Rewrite Inefficient Queries
 
@@ -165,8 +165,8 @@ LEFT JOIN orders ON users.id = orders.user_id
 GROUP BY users.id, users.name;
 ```
 
-For complete anti-pattern reference, see `reference/anti-patterns.md`.
-For efficient query patterns, see `reference/efficient-patterns.md`.
+For complete anti-pattern reference, see `references/anti-patterns.md`.
+For efficient query patterns, see `references/efficient-patterns.md`.
 
 ## Quick Reference Tables
 
@@ -221,7 +221,7 @@ CREATE INDEX idx_users_email_covering
 ON users (email) INCLUDE (id, name);
 ```
 
-For comprehensive PostgreSQL optimization, see `reference/postgresql.md`.
+For comprehensive PostgreSQL optimization, see `references/postgresql.md`.
 
 ### MySQL-Specific Features
 
@@ -235,7 +235,7 @@ WHERE customer_id = 123;
 - **InnoDB** (default): Transactional, row-level locks, clustered primary key
 - **MyISAM**: Faster reads, no transactions, table-level locks
 
-For comprehensive MySQL optimization, see `reference/mysql.md`.
+For comprehensive MySQL optimization, see `references/mysql.md`.
 
 ### SQL Server-Specific Features
 
@@ -248,7 +248,7 @@ ALTER DATABASE YourDatabase SET QUERY_STORE = ON;
 - Look for yellow exclamation marks in graphical execution plans
 - Thick arrows indicate high row counts
 
-For comprehensive SQL Server optimization, see `reference/sqlserver.md`.
+For comprehensive SQL Server optimization, see `references/sqlserver.md`.
 
 ## Advanced Optimization Techniques
 
@@ -378,15 +378,15 @@ UPDATE STATISTICS table_name;
 
 For comprehensive documentation, reference these files:
 
-- `reference/explain-guide.md` - Detailed EXPLAIN plan interpretation
-- `reference/scan-types.md` - Scan type meanings and performance implications
-- `reference/indexing-decisions.md` - When and how to add indexes
-- `reference/index-types.md` - Database-specific index types
-- `reference/composite-indexes.md` - Multi-column index design
-- `reference/anti-patterns.md` - Common anti-patterns with solutions
-- `reference/efficient-patterns.md` - Efficient query patterns
-- `reference/postgresql.md` - PostgreSQL-specific optimizations
-- `reference/mysql.md` - MySQL-specific optimizations
-- `reference/sqlserver.md` - SQL Server-specific optimizations
+- `references/explain-guide.md` - Detailed EXPLAIN plan interpretation
+- `references/scan-types.md` - Scan type meanings and performance implications
+- `references/indexing-decisions.md` - When and how to add indexes
+- `references/index-types.md` - Database-specific index types
+- `references/composite-indexes.md` - Multi-column index design
+- `references/anti-patterns.md` - Common anti-patterns with solutions
+- `references/efficient-patterns.md` - Efficient query patterns
+- `references/postgresql.md` - PostgreSQL-specific optimizations
+- `references/mysql.md` - MySQL-specific optimizations
+- `references/sqlserver.md` - SQL Server-specific optimizations
 
 For working SQL examples, see `examples/` directory.

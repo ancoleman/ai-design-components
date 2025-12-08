@@ -1,0 +1,104 @@
+# Security Domain Registry
+# Security skills for architecting secure systems, implementing compliance,
+# and hardening infrastructure against threats.
+
+domain: security
+version: "1.0.0"
+plugin_group: security-skills
+
+keywords:
+  domain_triggers:
+    primary: [security, tls, ssl, firewall, compliance, soc2, vulnerability, siem, hardening, encryption]
+    secondary: [https, certificate, cve, audit, pen test, penetration, waf, ids, ips]
+
+skills:
+  architecting-security:
+    priority: 20
+    keywords:
+      primary: [security architecture, zero trust, defense in depth, threat model, security design]
+      secondary: [security framework, attack surface, security principles, perimeter security]
+    invocation: "security-skills:architecting-security"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 500
+    version: "1.0.0"
+    description: "Design secure system architectures using defense-in-depth, zero trust, and threat modeling"
+
+  implementing-compliance:
+    priority: 18
+    keywords:
+      primary: [compliance, soc2, hipaa, gdpr, pci, iso27001, audit]
+      secondary: [regulatory, certification, controls, attestation, framework]
+    invocation: "security-skills:implementing-compliance"
+    dependencies: ["architecting-security"]
+    questions:
+      source: "skill"
+    estimate_tokens: 450
+    version: "1.0.0"
+    description: "Implement compliance frameworks (SOC 2, HIPAA, GDPR, PCI-DSS) with audit controls"
+
+  managing-vulnerabilities:
+    priority: 12
+    keywords:
+      primary: [vulnerability, cve, scanning, patching, security scan, pen test]
+      secondary: [exploit, remediation, trivy, snyk, dependabot, disclosure]
+    invocation: "security-skills:managing-vulnerabilities"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+    description: "Manage vulnerabilities with scanning, assessment, patching, and disclosure processes"
+
+  implementing-tls:
+    priority: 10
+    keywords:
+      primary: [tls, ssl, https, certificate, cert-manager, letsencrypt]
+      secondary: [encryption in transit, x509, mtls, mutual tls, certificate rotation]
+    invocation: "security-skills:implementing-tls"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+    description: "Implement TLS/SSL with certificate management, rotation, and mutual TLS (mTLS)"
+
+  configuring-firewalls:
+    priority: 8
+    keywords:
+      primary: [firewall, iptables, security group, network policy, waf]
+      secondary: [egress, ingress, acl, network security, packet filter]
+    invocation: "security-skills:configuring-firewalls"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 350
+    version: "1.0.0"
+    description: "Configure firewalls, security groups, network policies, and web application firewalls"
+
+  siem-logging:
+    priority: 15
+    keywords:
+      primary: [siem, security logging, audit log, splunk, elk, security monitoring]
+      secondary: [log aggregation, security events, correlation, alerting, forensics]
+    invocation: "security-skills:siem-logging"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 450
+    version: "1.0.0"
+    description: "Implement SIEM (Security Information and Event Management) with logging and monitoring"
+
+  security-hardening:
+    priority: 10
+    keywords:
+      primary: [hardening, security baseline, cis benchmark, secure configuration, least privilege]
+      secondary: [minimize attack surface, security posture, configuration management, security controls]
+    invocation: "security-skills:security-hardening"
+    dependencies: ["architecting-security"]
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+    description: "Harden systems using CIS benchmarks, least privilege, and secure configurations"

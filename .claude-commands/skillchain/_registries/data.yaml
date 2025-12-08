@@ -1,0 +1,90 @@
+# data.yaml
+# Data Engineering domain registry for skillchain v3.0
+domain: data-engineering
+version: "1.0.0"
+plugin_group: data-engineering-skills
+last_updated: "2025-12-06"
+
+keywords:
+  domain_triggers:
+    primary: [etl, pipeline, streaming, kafka, sql, optimization, data architecture, secret, vault, performance]
+    secondary: [data warehouse, data lake, airflow, dbt, spark, redshift, snowflake, bigquery]
+
+skills:
+  architecting-data:
+    priority: 15
+    keywords:
+      primary: [data architecture, data warehouse, data lake, schema design, data modeling]
+      secondary: [star schema, snowflake schema, dimensional modeling, normalization]
+      exclusions: []
+    invocation: "data-engineering-skills:architecting-data"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  streaming-data:
+    priority: 12
+    keywords:
+      primary: [streaming, kafka, kinesis, real-time data, event streaming]
+      secondary: [stream processing, pubsub, event-driven, flink, spark streaming]
+      exclusions: []
+    invocation: "data-engineering-skills:streaming-data"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  transforming-data:
+    priority: 10
+    keywords:
+      primary: [etl, data transformation, dbt, airflow, data pipeline]
+      secondary: [data cleaning, data quality, orchestration, prefect, dagster]
+      exclusions: []
+    invocation: "data-engineering-skills:transforming-data"
+    dependencies: ["architecting-data"]
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  optimizing-sql:
+    priority: 8
+    keywords:
+      primary: [sql optimization, query performance, database tuning, indexes]
+      secondary: [explain plan, query plan, slow queries, performance tuning]
+      exclusions: []
+    invocation: "data-engineering-skills:optimizing-sql"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 350
+    version: "1.0.0"
+
+  secret-management:
+    priority: 6
+    keywords:
+      primary: [secrets, vault, credentials, api keys, environment variables]
+      secondary: [hashicorp vault, aws secrets manager, encryption, key management]
+      exclusions: []
+    invocation: "data-engineering-skills:secret-management"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 350
+    version: "1.0.0"
+
+  performance-engineering:
+    priority: 20
+    keywords:
+      primary: [performance, optimization, scalability, throughput, latency]
+      secondary: [profiling, benchmarking, bottleneck, load testing, capacity planning]
+      exclusions: []
+    invocation: "data-engineering-skills:performance-engineering"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 500
+    version: "1.0.0"

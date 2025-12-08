@@ -1,0 +1,367 @@
+# Frontend Domain Registry
+# Component-based UI development skills for building modern web interfaces
+
+domain: frontend
+description: "UI components and interactions"
+version: "1.0.0"
+last_updated: "2025-12-06"
+
+# Default tools available to all frontend skills
+default_tools: ["Read", "Write", "Skill"]
+
+# Frontend Skills (15 total)
+# Execution order: theming → structure → data → input → interaction → content → assembly
+
+skills:
+  # 1. FOUNDATION (Priority 1 - Always First)
+
+  theming-components:
+    group: foundation
+    priority: 1
+    parallel_group: 1
+    required: true  # Always included for frontend
+
+    keywords:
+      primary: [theme, colors, brand, styling, tokens, dark mode]
+      secondary: [palette, design system, css variables]
+      exclusions: [api, database, backend]
+
+    invocation: "frontend-skills:theming-components"
+    dependencies: []
+
+    questions:
+      source: "inline"  # < 5 questions
+      defaults:
+        color_scheme: "blue-gray"
+        theme_modes: ["light", "dark"]
+        spacing_base: "8px"
+
+    estimate_tokens: 200
+    version: "1.0.0"
+
+  # 2-4. STRUCTURE (Priority 3-4)
+
+  designing-layouts:
+    group: structure
+    priority: 3
+    parallel_group: 2
+    required: false
+
+    keywords:
+      primary: [layout, grid, columns, structure, responsive]
+      secondary: [flexbox, css grid, container]
+      exclusions: []
+
+    invocation: "frontend-skills:designing-layouts"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 3 questions
+      defaults:
+        system: "css-grid"
+        responsive: true
+        breakpoints: ["sm", "md", "lg", "xl"]
+
+    estimate_tokens: 250
+    version: "1.0.0"
+
+  implementing-navigation:
+    group: structure
+    priority: 4
+    parallel_group: 2
+    required: false
+
+    keywords:
+      primary: [navigation, menu, nav, tabs, routing]
+      secondary: [sidebar, breadcrumb, links]
+      exclusions: []
+
+    invocation: "frontend-skills:implementing-navigation"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        type: "sidebar"
+        collapsible: true
+
+    estimate_tokens: 250
+    version: "1.0.0"
+
+  displaying-timelines:
+    group: structure
+    priority: 6
+    parallel_group: 6
+    required: false
+
+    keywords:
+      primary: [timeline, activity, history, feed, events, log]
+      secondary: [chronological, audit]
+      exclusions: []
+
+    invocation: "frontend-skills:displaying-timelines"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        orientation: "vertical"
+        timestamps: true
+
+    estimate_tokens: 200
+    version: "1.0.0"
+
+  # 5-7. DATA DISPLAY (Priority 5)
+
+  visualizing-data:
+    group: data-display
+    priority: 5
+    parallel_group: 3
+    required: false
+
+    keywords:
+      primary: [chart, graph, visualize, plot, analytics]
+      secondary: [bar, line, pie, donut, scatter, area, heatmap]
+      exclusions: []
+
+    invocation: "frontend-skills:visualizing-data"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "skill"  # 10+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 350
+    version: "1.0.0"
+
+  building-tables:
+    group: data-display
+    priority: 5
+    parallel_group: 3
+    required: false
+
+    keywords:
+      primary: [table, grid, records, rows, columns]
+      secondary: [data grid, list, pagination, sorting, filtering]
+      exclusions: []
+
+    invocation: "frontend-skills:building-tables"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "skill"  # 8+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 300
+    version: "1.0.0"
+
+  creating-dashboards:
+    group: data-display
+    priority: 5
+    parallel_group: 3
+    required: false
+
+    keywords:
+      primary: [dashboard, admin, metrics, overview, analytics]
+      secondary: [kpi, cards, widgets]
+      exclusions: []
+
+    invocation: "frontend-skills:creating-dashboards"
+    dependencies: ["theming-components", "designing-layouts"]
+
+    questions:
+      source: "inline"  # 3 questions
+      defaults:
+        layout: "sidebar-grid"
+        kpi_cards: 4
+        responsive: true
+
+    estimate_tokens: 250
+    version: "1.0.0"
+
+  # 8-9. USER INPUT (Priority 6)
+
+  building-forms:
+    group: user-input
+    priority: 6
+    parallel_group: 4
+    required: false
+
+    keywords:
+      primary: [form, input, validation, login, signup, register]
+      secondary: [fields, submit, textarea, select, checkbox]
+      exclusions: []
+
+    invocation: "frontend-skills:building-forms"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "skill"  # 12+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  implementing-search-filter:
+    group: user-input
+    priority: 6
+    parallel_group: 4
+    required: false
+
+    keywords:
+      primary: [search, filter, find, query]
+      secondary: [faceted, autocomplete, typeahead]
+      exclusions: []
+
+    invocation: "frontend-skills:implementing-search-filter"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 3 questions
+      defaults:
+        realtime: true
+        position: "top-right"
+        scope: "all"
+
+    estimate_tokens: 250
+    version: "1.0.0"
+
+  # 10-12. INTERACTION (Priority 7-8)
+
+  building-ai-chat:
+    group: interaction
+    priority: 7
+    parallel_group: 5
+    required: false
+
+    keywords:
+      primary: [chat, ai, assistant, chatbot, conversation]
+      secondary: [streaming, messages, llm]
+      exclusions: []
+
+    invocation: "frontend-skills:building-ai-chat"
+    dependencies: ["theming-components", "building-forms"]
+
+    questions:
+      source: "skill"  # 8+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  implementing-drag-drop:
+    group: interaction
+    priority: 7
+    parallel_group: 5
+    required: false
+
+    keywords:
+      primary: [drag, drop, sortable, reorder, move]
+      secondary: [kanban, dnd, draggable]
+      exclusions: []
+
+    invocation: "frontend-skills:implementing-drag-drop"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        library: "dnd-kit"
+        touch_support: true
+
+    estimate_tokens: 250
+    version: "1.0.0"
+
+  providing-feedback:
+    group: interaction
+    priority: 8
+    parallel_group: 5
+    required: false
+
+    keywords:
+      primary: [notification, toast, alert, loading, spinner]
+      secondary: [feedback, skeleton, progress]
+      exclusions: []
+
+    invocation: "frontend-skills:providing-feedback"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        toast_position: "top-right"
+        loading_type: "skeleton"
+
+    estimate_tokens: 200
+    version: "1.0.0"
+
+  # 13-14. CONTENT (Priority 7-8)
+
+  managing-media:
+    group: content
+    priority: 7
+    parallel_group: 6
+    required: false
+
+    keywords:
+      primary: [upload, file, image, gallery, media, video, audio]
+      secondary: [attachment, dropzone]
+      exclusions: []
+
+    invocation: "frontend-skills:managing-media"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "skill"  # 7+ questions
+      section: "## Skillchain Configuration"
+
+    estimate_tokens: 350
+    version: "1.0.0"
+
+  guiding-users:
+    group: content
+    priority: 8
+    parallel_group: 6
+    required: false
+
+    keywords:
+      primary: [onboarding, tutorial, guide, tour, tooltip, help, wizard]
+      secondary: [walkthrough, hints]
+      exclusions: []
+
+    invocation: "frontend-skills:guiding-users"
+    dependencies: ["theming-components"]
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        type: "tooltips"
+        dismissible: true
+
+    estimate_tokens: 200
+    version: "1.0.0"
+
+  # 15. ASSEMBLY (Priority 99 - Always Last)
+
+  assembling-components:
+    group: assembly
+    priority: 99  # Always last
+    parallel_group: 99  # Assembly - must be last
+    required: true
+
+    keywords:
+      primary: [assemble, wire, integrate, scaffold, production]
+      secondary: [validate, combine]
+      exclusions: []
+
+    invocation: "frontend-skills:assembling-components"
+    dependencies: ["*"]  # Depends on all previous skills
+
+    questions:
+      source: "inline"  # 2 questions
+      defaults:
+        validate_tokens: true
+        production_ready: true
+
+    estimate_tokens: 300
+    version: "1.0.0"

@@ -1,0 +1,82 @@
+# devops.yaml
+domain: devops
+version: "1.0.0"
+plugin_group: devops-skills
+
+keywords:
+  domain_triggers:
+    primary: [ci, cd, pipeline, test, docker, gitops, incident, platform, sre]
+    secondary: [jenkins, github actions, argocd, flux, reliability, deployment automation]
+
+skills:
+  testing-strategies:
+    priority: 5
+    keywords:
+      primary: [test, testing, unit test, integration test, e2e, coverage, tdd]
+      secondary: [jest, pytest, vitest, playwright, cypress, mocha]
+    invocation: "devops-skills:testing-strategies"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  building-ci-pipelines:
+    priority: 10
+    keywords:
+      primary: [ci, pipeline, github actions, jenkins, circleci, continuous integration]
+      secondary: [workflow, automation, build, gitlab ci, travis]
+    invocation: "devops-skills:building-ci-pipelines"
+    dependencies: ["testing-strategies"]
+    questions:
+      source: "skill"
+    estimate_tokens: 450
+    version: "1.0.0"
+
+  implementing-gitops:
+    priority: 15
+    keywords:
+      primary: [gitops, argocd, flux, reconciliation, continuous deployment]
+      secondary: [kustomize, helm, declarative deployment]
+    invocation: "devops-skills:implementing-gitops"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 400
+    version: "1.0.0"
+
+  platform-engineering:
+    priority: 20
+    keywords:
+      primary: [platform, idp, developer portal, backstage, internal platform]
+      secondary: [golden path, self-service, developer experience]
+    invocation: "devops-skills:platform-engineering"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 500
+    version: "1.0.0"
+
+  managing-incidents:
+    priority: 8
+    keywords:
+      primary: [incident, outage, postmortem, on-call, pagerduty, incident response]
+      secondary: [sre, reliability, runbook, alerting, oncall]
+    invocation: "devops-skills:managing-incidents"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 350
+    version: "1.0.0"
+
+  writing-dockerfiles:
+    priority: 3
+    keywords:
+      primary: [docker, dockerfile, container, image, containerize]
+      secondary: [multi-stage, buildkit, layer, docker build]
+    invocation: "devops-skills:writing-dockerfiles"
+    dependencies: []
+    questions:
+      source: "skill"
+    estimate_tokens: 350
+    version: "1.0.0"

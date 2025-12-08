@@ -5,6 +5,71 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2025-12-08
+
+### Fixed
+
+**Skillchain Command Duplication:**
+- Moved `commands/` to `.claude-commands/` to prevent skillchain from appearing under every plugin
+- Previously, all 19 plugins had `"source": "./"` which caused each plugin to expose its own `/plugin:skillchain:skillchain` command
+- Skillchain now only appears as a user-level command when installed via `./install.sh commands`
+
+### Added
+
+**Skillchain Enhancements (9 New Blueprints):**
+- `api-first` - API-first development with OpenAPI-driven workflows
+- `ci-cd` - Complete CI/CD pipeline setup with testing and deployment
+- `cloud` - Multi-cloud deployment patterns for AWS/GCP/Azure
+- `cost` - FinOps-focused cost optimization workflows
+- `data-pipeline` - End-to-end data pipeline construction
+- `k8s` - Kubernetes deployment with Helm and operators
+- `ml-pipeline` - Machine learning pipeline with MLOps practices
+- `observability` - Full-stack observability with metrics, logs, traces
+- `security` - Security-hardened deployment patterns
+
+**Skillchain Categories (8 New Domain Categories):**
+- `cloud` - AWS, GCP, Azure provider skills
+- `data` - Data engineering and architecture skills
+- `developer` - Developer productivity skills
+- `devops` - CI/CD, GitOps, platform engineering
+- `finops` - Cost optimization and tagging
+- `infrastructure` - IaC, Kubernetes, networking
+- `multi-domain` - Cross-cutting composite workflows
+- `security` - Security architecture and compliance
+
+**Skillchain Registries (10 Domain Registries):**
+- Organized skill references by domain for faster loading
+- Registries: ai-ml, backend, cloud, data, developer, devops, finops, frontend, infrastructure, security
+
+**Evaluation Framework:**
+- `evaluation/evaluate.py` - Python script for skill evaluation
+- `evaluation/scenarios.yaml` - Test scenarios for skill validation
+- `evaluation/evaluation_report.json` - Generated evaluation reports
+
+**GitHub Actions:**
+- `.github/workflows/validate-skills.yml` - CI workflow for skill validation
+
+**MLOps Examples:**
+- `skills/implementing-mlops/examples/` - 5 production examples:
+  - BentoML model serving
+  - Feast feature store
+  - Kubeflow pipelines
+  - MLflow experiment tracking
+  - Model monitoring
+
+**Documentation:**
+- `pages/docs/guides/plugin-commands.md` - Complete CLI reference for marketplace and plugin management
+
+### Changed
+
+**Installer Updates (v3.0):**
+- Updated `install.sh` to reference new `.claude-commands/` path
+- Proper handling of Claude Code plugin CLI commands
+- Better error messages for marketplace operations
+
+**SQL Optimization Skill:**
+- Renamed `reference/` to `references/` for consistency with other skills
+
 ## [0.5.0] - 2025-12-05
 
 ### 🎉 MAJOR MILESTONE: All 76 Skills Production-Ready

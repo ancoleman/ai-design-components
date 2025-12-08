@@ -1,0 +1,364 @@
+# Infrastructure Workflow Orchestrator
+
+**Context Received:**
+- Goal: {original_goal}
+- Skills: {matched_skills}
+- Category: infrastructure
+- Estimated: {estimated_time}, {estimated_questions} questions
+
+---
+
+## Step 1: Load Shared Resources
+
+Read `{SKILLCHAIN_DIR}/_shared/execution-flow.md`
+
+Store in context for all skills.
+
+**Note:** Infrastructure workflows do not require theming-rules.md (frontend-only).
+
+---
+
+## Step 2: Confirm Skill Chain with User
+
+Present detected chain:
+
+```
+TPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPW
+Q  SKILL CHAIN DETECTED FOR: "{original_goal}"             Q
+`PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPc
+Q  MATCHED INFRASTRUCTURE SKILLS:                          Q
+{for each matched skill with score > 0:}
+Q    {n}. � {skill.name} (matched: "{keyword}")            Q
+Q          Priority: {skill.priority}                      Q
+`PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPc
+Q  Estimated time: {estimated_time}                        Q
+Q  Estimated questions: {estimated_questions}              Q
+`PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPc
+Q  OPTIONS:                                                Q
+Q    " Type "confirm" to proceed                           Q
+Q    " Type "skip" to use all defaults (faster)            Q
+Q    " Type "customize" to add/remove skills               Q
+Q    " Type "help" to see workflow commands                Q
+ZPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP]
+```
+
+Wait for user response:
+- "confirm" � Proceed to Step 3
+- "skip" � Set skip_all_questions = true, proceed to Step 3
+- "customize" � Allow skill additions/removals, then proceed
+- "help" � Show workflow commands from execution-flow.md
+
+---
+
+## Step 3: Skill Invocation Loop
+
+Initialize:
+```
+skill_configs = {}
+current_skill_index = 1
+total_skills = len(confirmed_skills)
+```
+
+For each skill in confirmed_skills:
+
+### 3.1 Announce Skill
+
+```
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+ STEP {current_skill_index}/{total_skills}: {SKILL.NAME}
+ Namespace: infrastructure-skills:{skill.name}
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+```
+
+### 3.2 Invoke Skill
+
+```
+Skill({ skill: "{skill.invocation}" })
+```
+
+**Infrastructure skill invocation format:**
+- `infrastructure-skills:operating-kubernetes`
+- `infrastructure-skills:writing-infrastructure-code`
+- `infrastructure-skills:administering-linux`
+- `infrastructure-skills:architecting-networks`
+- `infrastructure-skills:load-balancing-patterns`
+- `infrastructure-skills:planning-disaster-recovery`
+- `infrastructure-skills:configuring-nginx`
+- `infrastructure-skills:shell-scripting`
+- `infrastructure-skills:managing-dns`
+- `infrastructure-skills:implementing-service-mesh`
+- `infrastructure-skills:managing-configuration`
+- `infrastructure-skills:designing-distributed-systems`
+
+### 3.3 Load Questions
+
+All infrastructure skills use `questions.source: "skill"` format.
+
+```python
+# Read from SKILL.md in the plugin
+skill_md_path = f"/mnt/skills/public/infrastructure-skills/{skill.name}/SKILL.md"
+skill_md = Read(skill_md_path)
+
+# Extract "## Skillchain Configuration" section
+section_content = extract_section(skill_md, "## Skillchain Configuration")
+
+# Parse questions from markdown
+questions = parse_questions(section_content)
+```
+
+### 3.4 Ask User (unless skip_all_questions)
+
+If skip_all_questions:
+  Use defaults for all questions
+Else:
+  For each question in questions:
+    Present question with:
+      - Context from previous skills
+      - Smart defaults based on goal keywords
+      - Current answer if revisiting (for "back" command)
+      - Dependency information if applicable
+
+    Wait for answer or workflow command:
+      - Answer � Store and continue
+      - "skip" � Use default for this question
+      - "back" � Return to previous skill
+      - "status" � Show progress, re-ask question
+      - "done" � Break loop, proceed to assembly
+      - "restart" � Go back to Step 2
+
+### 3.5 Store Configuration
+
+```
+skill_configs[skill.name] = {
+  answers: user_answers,
+  invocation: skill.invocation,
+  priority: skill.priority,
+  dependencies: skill.dependencies
+}
+
+current_skill_index += 1
+```
+
+---
+
+## Step 4: Generate Infrastructure Output
+
+**IMPORTANT:** Infrastructure workflows generate declarative configuration files and automation scripts.
+
+### 4.1 Analyze Collected Configurations
+
+Review all `skill_configs` to identify:
+- Infrastructure provisioning tools (Terraform, Ansible, Pulumi)
+- Kubernetes manifests and Helm charts
+- Network architecture and segmentation
+- Load balancing and traffic management
+- DNS and service discovery configuration
+- Disaster recovery and backup strategies
+- Linux system configuration and services
+- Shell automation scripts
+- Service mesh configuration (if applicable)
+
+### 4.2 Identify Integration Points
+
+Detect where infrastructure components interact:
+- Kubernetes clusters and networking (VPC, subnets)
+- Load balancers and ingress controllers
+- DNS records and service endpoints
+- Service mesh and Kubernetes services
+- IaC modules and network resources
+- Configuration management and Linux hosts
+- Disaster recovery and backup automation
+
+### 4.3 Generate Production-Ready Infrastructure
+
+Create complete infrastructure configuration:
+
+```
+TPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPW
+Q  GENERATING INFRASTRUCTURE FOR: "{original_goal}"        Q
+`PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPc
+Q  Based on configurations:                                Q
+{for each skill in skill_configs:}
+Q     {skill.name}: {summary of choices}                  Q
+ZPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP]
+
+Generating:
+  1. Infrastructure as Code (Terraform/Ansible)
+  2. Kubernetes manifests and Helm charts
+  3. Network configuration and security groups
+  4. Load balancer and ingress configuration
+  5. DNS records and zone files
+  6. Shell automation scripts
+  7. Service mesh configuration (if applicable)
+  8. Disaster recovery runbooks
+```
+
+### 4.4 Output Organization
+
+Organize infrastructure code by component type:
+
+**For Kubernetes-focused infrastructure:**
+```
+infrastructure/
+   terraform/         # Cloud resource provisioning
+      main.tf
+      network.tf
+      kubernetes.tf
+      variables.tf
+   k8s/               # Kubernetes manifests
+      base/
+      overlays/
+      helm/
+   scripts/           # Automation scripts
+      setup.sh
+      backup.sh
+      deploy.sh
+   docs/
+      architecture.md
+      runbooks/
+```
+
+**For Multi-tier infrastructure:**
+```
+infrastructure/
+   terraform/         # IaC modules
+      network/
+      compute/
+      storage/
+   ansible/           # Configuration management
+      playbooks/
+      roles/
+      inventory/
+   nginx/             # Web server configs
+      conf.d/
+      ssl/
+   dns/               # DNS zone files
+   scripts/           # Shell automation
+   disaster-recovery/ # DR plans and scripts
+```
+
+### 4.5 Validation Checklist
+
+Verify generated infrastructure includes:
+- [ ] All resources properly namespaced/tagged
+- [ ] Network segmentation and security groups
+- [ ] High availability and redundancy where needed
+- [ ] Monitoring and health checks configured
+- [ ] Secrets management (not hardcoded)
+- [ ] Disaster recovery procedures documented
+- [ ] Automation scripts are idempotent
+- [ ] Documentation for runbooks and operations
+- [ ] Cost optimization considerations noted
+- [ ] Compliance and security best practices
+
+### 4.6 Present Output
+
+Display generated files with explanations:
+
+```
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+  INFRASTRUCTURE CONFIGURATION COMPLETE
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+
+Generated {file_count} files across {skill_count} infrastructure skills:
+
+KEY FILES:
+  =� {terraform_main}            - Core infrastructure resources
+  =� {k8s_manifests}             - Kubernetes deployment specs
+  =� {network_config}            - Network architecture
+  =� {lb_config}                 - Load balancer configuration
+  =� {automation_scripts}        - Setup and deployment scripts
+
+NEXT STEPS:
+  1. Review generated configurations
+  2. Update variables.tf with your values
+  3. Initialize: {init_command}
+  4. Plan: {plan_command}
+  5. Apply: {apply_command}
+
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+```
+
+---
+
+## Error Handling
+
+### Skill Invocation Failure
+
+If skill invocation fails:
+
+```
+�  ERROR: Skill '{skill.name}' failed to load
+
+Invocation: {skill.invocation}
+Reason: {error_message}
+
+Options:
+1. Continue with remaining skills (skip this one)
+2. Retry this skill
+3. Stop workflow and show partial progress
+
+Your choice (1/2/3):
+```
+
+Handle user choice:
+- 1 � Mark skill as skipped, continue to next skill
+- 2 � Re-invoke skill, reset current_skill_index
+- 3 � Stop loop, proceed to Step 4 with partial configs
+
+### Dependency Failures
+
+When a dependent skill was skipped/failed:
+
+```
+�  WARNING: '{skill.name}' depends on '{dependency}' which was skipped.
+
+Example: implementing-service-mesh requires operating-kubernetes
+
+We'll note this dependency in the generated configuration.
+Continue? (yes/no)
+```
+
+If "no" � Allow user to go back and configure dependency
+
+### Configuration Conflicts
+
+Detect incompatible infrastructure choices:
+
+```
+�  CONFIGURATION CONFLICT DETECTED
+
+writing-infrastructure-code specified: Terraform
+managing-configuration specified: Ansible
+
+For consistency, consider:
+1. Use Terraform for all provisioning (recommended for cloud)
+2. Use Ansible for all configuration (recommended for on-prem)
+3. Use both (Terraform for infra, Ansible for config)
+
+Your choice (1/2/3):
+```
+
+### Missing Critical Configuration
+
+If essential infrastructure components are missing:
+
+```
+�  WARNING: Kubernetes manifests without network configuration
+
+architecting-networks was not selected. This may cause issues with:
+- Pod networking and CNI plugins
+- Service discovery and DNS
+- Ingress and load balancer connectivity
+
+Options:
+1. Add architecting-networks skill (recommended)
+2. Continue (assume default network configuration)
+3. Go back and review skill selection
+
+Your choice (1/2/3):
+```
+
+---
+
+**Orchestrator Complete - Lines: ~195**

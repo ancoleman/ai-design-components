@@ -1,0 +1,66 @@
+# Skillchain Registry Index
+# Version 3.0.0 - 76 Skills across 10 domains
+
+version: "3.0.0"
+last_updated: "2025-12-06"
+
+domains:
+  frontend:
+    file: "frontend.yaml"
+    skill_count: 15
+    orchestrator: "categories/frontend.md"
+
+  backend:
+    file: "backend.yaml"
+    skill_count: 14
+    orchestrator: "categories/backend.md"
+
+  devops:
+    file: "devops.yaml"
+    skill_count: 6
+    orchestrator: "categories/devops.md"
+
+  infrastructure:
+    file: "infrastructure.yaml"
+    skill_count: 12
+    orchestrator: "categories/infrastructure.md"
+
+  security:
+    file: "security.yaml"
+    skill_count: 7
+    orchestrator: "categories/security.md"
+
+  developer:
+    file: "developer.yaml"
+    skill_count: 7
+    orchestrator: "categories/developer.md"
+
+  data:
+    file: "data.yaml"
+    skill_count: 6
+    orchestrator: "categories/data.md"
+
+  ai-ml:
+    file: "ai-ml.yaml"
+    skill_count: 4
+    orchestrator: "categories/ai-ml.md"
+
+  cloud:
+    file: "cloud.yaml"
+    skill_count: 3
+    orchestrator: "categories/cloud.md"
+
+  finops:
+    file: "finops.yaml"
+    skill_count: 2
+    orchestrator: "categories/finops.md"
+
+total_skills: 76
+
+# Cross-domain mappings
+fullstack:
+  combines: [frontend, backend]
+  orchestrator: "categories/fullstack.md"
+
+multi_domain:
+  orchestrator: "categories/multi-domain.md"
