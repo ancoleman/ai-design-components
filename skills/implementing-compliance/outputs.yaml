@@ -1,0 +1,795 @@
+skill: "implementing-compliance"
+version: "1.0"
+domain: "security"
+
+base_outputs:
+  - path: "compliance/README.md"
+    must_contain: ["Compliance Framework", "SOC 2", "controls", "evidence"]
+  - path: "compliance/controls/control-mapping.yaml"
+    must_contain: ["control_id", "frameworks", "implementation"]
+  - path: "policies/encryption-policy.md"
+    must_contain: ["AES-256", "TLS 1.3"]
+  - path: "policies/access-control-policy.md"
+    must_contain: ["MFA", "RBAC", "least privilege"]
+  - path: "audit/audit-logging-config.yaml"
+    must_contain: ["retention", "7 years", "immutable"]
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "compliance/frameworks/soc2-checklist.md"
+        must_contain: ["Trust Services Criteria", "CC6.1", "controls"]
+      - path: "terraform/encryption/s3-encryption.tf"
+        must_contain: ["aws_kms_key", "enable_key_rotation", "aws_s3_bucket_server_side_encryption"]
+      - path: "terraform/encryption/rds-encryption.tf"
+        must_contain: ["storage_encrypted", "kms_key_id"]
+      - path: "policies/mfa/iam-mfa-policy.tf"
+        must_contain: ["aws:MultiFactorAuthPresent", "Deny"]
+      - path: "audit/cloudwatch-logs.tf"
+        must_contain: ["retention_in_days = 2555", "kms_key_id"]
+      - path: "docs/incident-response-plan.md"
+        must_contain: ["detection", "escalation", "notification timeline"]
+
+    intermediate:
+      - path: "compliance/opa-policies/encryption.rego"
+        must_contain: ["package compliance", "deny", "aws_s3_bucket", "encrypted"]
+      - path: "compliance/opa-policies/access-control.rego"
+        must_contain: ["package compliance", "deny", "mfa", "rbac"]
+      - path: ".github/workflows/compliance-check.yml"
+        must_contain: ["checkov", "opa eval", "terraform plan"]
+      - path: "terraform/audit/s3-object-lock.tf"
+        must_contain: ["aws_s3_bucket_object_lock_configuration", "COMPLIANCE", "years = 7"]
+      - path: "terraform/network/security-groups.tf"
+        must_contain: ["ingress", "egress", "deny-by-default"]
+      - path: "compliance/evidence/evidence-collector.py"
+        must_contain: ["control_id", "frameworks", "collect_evidence"]
+      - path: "k8s/rbac/developer-role.yaml"
+        must_contain: ["Role", "rules", "resources", "verbs"]
+      - path: "compliance/vendor-management/security-questionnaire.md"
+        must_contain: ["SOC 2 report", "encryption", "audit logs"]
+
+    advanced:
+      - path: "compliance/evidence/evidence_collector.py"
+        must_contain: ["EvidenceCollector", "control_id", "frameworks", "timestamp"]
+      - path: "compliance/evidence/report_generator.py"
+        must_contain: ["AuditReportGenerator", "generate_soc2_report", "compliance_score"]
+      - path: "compliance/opa-policies/network-security.rego"
+        must_contain: ["package compliance", "security_group", "ingress"]
+      - path: "compliance/opa-policies/data-protection.rego"
+        must_contain: ["package compliance", "encryption", "retention"]
+      - path: "compliance/testing/test_compliance.py"
+        must_contain: ["test_s3_encrypted", "test_opa_policies", "assert"]
+      - path: "terraform/monitoring/config-rules.tf"
+        must_contain: ["aws_config_config_rule", "encrypted-volumes", "rds-encryption-enabled"]
+      - path: "terraform/monitoring/eventbridge-compliance.tf"
+        must_contain: ["aws_cloudwatch_event_rule", "aws_lambda_permission"]
+      - path: "compliance/frameworks/control-mapping-matrix.yaml"
+        must_contain: ["SOC2", "HIPAA", "PCI-DSS", "GDPR", "ISO27001"]
+      - path: "compliance/frameworks/hipaa-baa-template.md"
+        must_contain: ["Business Associate Agreement", "PHI", "safeguards"]
+      - path: "compliance/frameworks/gdpr-dpa-template.md"
+        must_contain: ["Data Processing Agreement", "personal data", "controller"]
+      - path: "scripts/compliance-report.sh"
+        must_contain: ["checkov", "opa", "evidence", "report"]
+      - path: "monitoring/compliance-alerts.yaml"
+        must_contain: ["encryption_disabled", "mfa_not_enabled", "alert"]
+
+  cloud_provider:
+    aws:
+      - path: "terraform/aws/kms-keys.tf"
+        must_contain: ["aws_kms_key", "enable_key_rotation = true", "deletion_window_in_days"]
+      - path: "terraform/aws/cloudtrail.tf"
+        must_contain: ["aws_cloudtrail", "enable_logging", "s3_bucket_name", "kms_key_id"]
+      - path: "terraform/aws/config.tf"
+        must_contain: ["aws_config_configuration_recorder", "aws_config_delivery_channel"]
+      - path: "terraform/aws/guardduty.tf"
+        must_contain: ["aws_guardduty_detector", "enable = true"]
+      - path: "terraform/aws/security-hub.tf"
+        must_contain: ["aws_securityhub_account", "enable_default_standards"]
+      - path: "terraform/aws/iam-password-policy.tf"
+        must_contain: ["aws_iam_account_password_policy", "minimum_password_length = 12", "require_uppercase_characters"]
+
+    gcp:
+      - path: "terraform/gcp/kms-keys.tf"
+        must_contain: ["google_kms_key_ring", "google_kms_crypto_key", "rotation_period"]
+      - path: "terraform/gcp/logging.tf"
+        must_contain: ["google_logging_project_sink", "destination", "filter"]
+      - path: "terraform/gcp/security-command-center.tf"
+        must_contain: ["google_scc_source", "google_scc_notification_config"]
+      - path: "terraform/gcp/cloud-armor.tf"
+        must_contain: ["google_compute_security_policy", "rule", "action"]
+
+    azure:
+      - path: "terraform/azure/key-vault.tf"
+        must_contain: ["azurerm_key_vault", "soft_delete_retention_days", "purge_protection_enabled = true"]
+      - path: "terraform/azure/storage-encryption.tf"
+        must_contain: ["azurerm_storage_account", "enable_https_traffic_only = true", "min_tls_version = \"TLS1_2\""]
+      - path: "terraform/azure/security-center.tf"
+        must_contain: ["azurerm_security_center_subscription_pricing", "resource_type", "tier = \"Standard\""]
+      - path: "terraform/azure/monitor-diagnostic.tf"
+        must_contain: ["azurerm_monitor_diagnostic_setting", "log_analytics_workspace_id"]
+
+    multi-cloud:
+      - path: "compliance/opa-policies/multi-cloud-encryption.rego"
+        must_contain: ["package compliance", "aws_s3_bucket", "google_storage_bucket", "azurerm_storage_account"]
+      - path: "compliance/opa-policies/multi-cloud-network.rego"
+        must_contain: ["package compliance", "security_group", "firewall", "network_security_group"]
+      - path: "terraform/multi-cloud/central-logging.tf"
+        must_contain: ["aws_cloudtrail", "google_logging", "azurerm_monitor"]
+
+  infrastructure:
+    kubernetes:
+      - path: "k8s/rbac/admin-clusterrole.yaml"
+        must_contain: ["ClusterRole", "rules", "apiGroups", "resources", "verbs"]
+      - path: "k8s/rbac/developer-role.yaml"
+        must_contain: ["Role", "namespace", "resources", "verbs"]
+      - path: "k8s/rbac/rolebinding.yaml"
+        must_contain: ["RoleBinding", "subjects", "roleRef"]
+      - path: "k8s/network-policies/deny-all.yaml"
+        must_contain: ["NetworkPolicy", "podSelector", "policyTypes"]
+      - path: "k8s/network-policies/allow-specific.yaml"
+        must_contain: ["NetworkPolicy", "ingress", "from"]
+      - path: "k8s/pod-security/pod-security-standards.yaml"
+        must_contain: ["pod-security.kubernetes.io", "enforce", "restricted"]
+      - path: "k8s/audit/audit-policy.yaml"
+        must_contain: ["apiVersion: audit.k8s.io", "rules", "level"]
+
+    docker:
+      - path: "docker/security-scanning.yml"
+        must_contain: ["trivy", "scan", "vulnerability"]
+      - path: "Dockerfile"
+        must_contain: ["USER", "non-root", "HEALTHCHECK"]
+      - path: ".dockerignore"
+        must_contain: [".env", "secrets", ".git"]
+
+    serverless:
+      - path: "serverless/iam-least-privilege.yml"
+        must_contain: ["iamRoleStatements", "Effect: Allow", "Resource"]
+      - path: "serverless/encryption-at-rest.yml"
+        must_contain: ["environment", "KMS_KEY_ID", "encrypted: true"]
+      - path: "serverless/vpc-config.yml"
+        must_contain: ["vpc", "securityGroupIds", "subnetIds"]
+
+scaffolding:
+  - path: "compliance/"
+    type: "directory"
+    description: "Root directory for compliance frameworks and controls"
+
+  - path: "compliance/frameworks/"
+    type: "directory"
+    description: "Framework-specific documentation (SOC 2, HIPAA, PCI-DSS, GDPR)"
+
+  - path: "compliance/controls/"
+    type: "directory"
+    description: "Control implementations and mappings"
+
+  - path: "compliance/opa-policies/"
+    type: "directory"
+    description: "Open Policy Agent policies for policy-as-code enforcement"
+
+  - path: "compliance/evidence/"
+    type: "directory"
+    description: "Automated evidence collection scripts"
+
+  - path: "compliance/testing/"
+    type: "directory"
+    description: "Compliance test suites"
+
+  - path: "compliance/vendor-management/"
+    type: "directory"
+    description: "Vendor assessment templates and BAA/DPA agreements"
+
+  - path: "policies/"
+    type: "directory"
+    description: "Security and compliance policies"
+
+  - path: "audit/"
+    type: "directory"
+    description: "Audit logging configurations"
+
+  - path: "terraform/encryption/"
+    type: "directory"
+    description: "Infrastructure-as-code for encryption controls"
+
+  - path: "terraform/monitoring/"
+    type: "directory"
+    description: "Compliance monitoring and alerting"
+
+  - path: "k8s/rbac/"
+    type: "directory"
+    description: "Kubernetes RBAC configurations"
+
+  - path: "k8s/network-policies/"
+    type: "directory"
+    description: "Kubernetes network policies for segmentation"
+
+  - path: "compliance/README.md"
+    type: "file"
+    template: |
+      # Compliance Framework Implementation
+
+      This project implements compliance controls for SOC 2 Type II, HIPAA, PCI-DSS 4.0, and GDPR.
+
+      ## Quick Start
+
+      ### Prerequisites
+
+      - Terraform >= 1.5
+      - Open Policy Agent (OPA)
+      - Checkov for IaC scanning
+      - AWS/GCP/Azure CLI (depending on cloud provider)
+
+      ### Initial Setup
+
+      1. Review applicable frameworks:
+         ```bash
+         # Identify required frameworks
+         cat compliance/frameworks/framework-selection.md
+         ```
+
+      2. Implement unified controls:
+         ```bash
+         # Deploy encryption controls
+         cd terraform/encryption
+         terraform init
+         terraform plan
+         terraform apply
+         ```
+
+      3. Configure audit logging:
+         ```bash
+         cd terraform/audit
+         terraform apply
+         ```
+
+      4. Set up policy enforcement:
+         ```bash
+         # Test OPA policies
+         opa test compliance/opa-policies/
+         ```
+
+      ## Compliance Frameworks
+
+      ### SOC 2 Type II
+      - **Timeline:** 6-12 month observation period
+      - **Controls:** Trust Services Criteria (CC)
+      - **Key Requirements:** Encryption, MFA, audit logging, monitoring, incident response
+      - **Checklist:** See `compliance/frameworks/soc2-checklist.md`
+
+      ### HIPAA
+      - **Audience:** Healthcare data (PHI)
+      - **Controls:** Administrative, Physical, Technical safeguards
+      - **Key Requirements:** Encryption, access controls, audit logs, BAAs
+      - **Documentation:** See `compliance/frameworks/hipaa-safeguards.md`
+
+      ### PCI-DSS 4.0
+      - **Audience:** Payment card data
+      - **Effective:** April 1, 2025 (mandatory)
+      - **Key Changes:** Client-side security, 12-char passwords, enhanced MFA
+      - **Requirements:** See `compliance/frameworks/pci-dss-requirements.md`
+
+      ### GDPR
+      - **Audience:** EU residents' personal data
+      - **Key Requirements:** 48-hour breach notification, data minimization, right to erasure
+      - **Documentation:** See `compliance/frameworks/gdpr-articles.md`
+
+      ## Universal Control Implementation
+
+      ### Priority 1: Encryption
+      - **ENC-001:** Encryption at rest (AES-256, managed KMS)
+      - **ENC-002:** Encryption in transit (TLS 1.3 minimum)
+      - **Implementation:** `terraform/encryption/`
+
+      ### Priority 2: Access Control
+      - **MFA-001:** Multi-factor authentication for privileged access
+      - **RBAC-001:** Role-based access control with least privilege
+      - **Implementation:** `policies/mfa/`, `k8s/rbac/`
+
+      ### Priority 3: Audit Logging
+      - **LOG-001:** Centralized audit logging, 7-year retention, immutable storage
+      - **Implementation:** `audit/`, `terraform/audit/`
+
+      ### Priority 4: Monitoring
+      - **MON-001:** SIEM, intrusion detection, real-time alerting
+      - **Implementation:** `terraform/monitoring/`
+
+      ### Priority 5: Incident Response
+      - **IR-001:** Detection, escalation, breach notification procedures
+      - **Implementation:** `docs/incident-response-plan.md`
+
+      ## Policy as Code
+
+      ### OPA Enforcement
+
+      All infrastructure changes are validated against compliance policies before deployment:
+
+      ```bash
+      # Generate Terraform plan
+      terraform plan -out=tfplan.binary
+      terraform show -json tfplan.binary > tfplan.json
+
+      # Evaluate against OPA policies
+      opa eval --data compliance/opa-policies/ \
+        --input tfplan.json \
+        'data.compliance.main.deny'
+      ```
+
+      ### CI/CD Integration
+
+      Compliance checks run automatically in CI/CD:
+
+      ```yaml
+      # .github/workflows/compliance-check.yml
+      - name: Checkov IaC Scan
+        run: checkov -d terraform/ --check SOC2 --check HIPAA --check PCI --check GDPR
+
+      - name: OPA Policy Evaluation
+        run: opa eval --data compliance/opa-policies/ --input tfplan.json
+      ```
+
+      ### Static Analysis
+
+      ```bash
+      # Scan with Checkov
+      checkov -d ./terraform \
+        --check SOC2 --check HIPAA --check PCI --check GDPR \
+        --output cli --output json
+
+      # Scan with tfsec
+      tfsec terraform/ --format json
+
+      # Scan with Trivy
+      trivy config terraform/
+      ```
+
+      ## Evidence Collection
+
+      ### Automated Evidence Gathering
+
+      ```bash
+      # Collect control evidence
+      python compliance/evidence/evidence_collector.py
+
+      # Generate audit report
+      python compliance/evidence/report_generator.py --framework soc2 \
+        --start-date 2024-01-01 --end-date 2024-12-31
+      ```
+
+      ### Control Mapping Matrix
+
+      See `compliance/frameworks/control-mapping-matrix.yaml` for unified control mappings across all frameworks.
+
+      ## Breach Notification
+
+      **Timeline Requirements:**
+      - **HIPAA:** 60 days to HHS and affected individuals
+      - **GDPR:** 48 hours to supervisory authority
+      - **SOC 2:** 72 hours to affected customers
+      - **PCI-DSS:** Immediate notification to payment brands
+
+      **Procedure:** See `docs/incident-response-plan.md`
+
+      ## Vendor Management
+
+      ### Business Associate Agreements (HIPAA)
+      - Template: `compliance/vendor-management/hipaa-baa-template.md`
+      - Required for all vendors handling PHI
+      - Annual review and renewal
+
+      ### Data Processing Agreements (GDPR)
+      - Template: `compliance/vendor-management/gdpr-dpa-template.md`
+      - Required for all vendors processing personal data
+      - Sub-processor approval required
+
+      ### Security Questionnaire
+      - Template: `compliance/vendor-management/security-questionnaire.md`
+      - Collect SOC 2 reports (≤90 days old)
+      - Annual re-assessment
+
+      ## Testing
+
+      ### Compliance Test Suite
+
+      ```bash
+      # Run compliance tests
+      pytest compliance/testing/
+
+      # Test specific control
+      pytest compliance/testing/test_compliance.py::test_s3_encrypted
+      ```
+
+      ### Manual Validation
+
+      ```bash
+      # Verify encryption at rest
+      aws s3api get-bucket-encryption --bucket my-bucket
+
+      # Verify MFA enforcement
+      aws iam get-account-password-policy
+
+      # Verify audit logging
+      aws cloudtrail describe-trails
+      ```
+
+      ## Quarterly Reviews
+
+      - [ ] Access reviews (all user permissions)
+      - [ ] Vendor assessments (SOC 2 reports, security questionnaires)
+      - [ ] Control testing (sample evidence collection)
+      - [ ] Policy updates (review and update as needed)
+
+      ## Annual Activities
+
+      - [ ] Risk assessment
+      - [ ] Disaster recovery testing
+      - [ ] Penetration testing
+      - [ ] Compliance audit preparation
+
+      ## Common Mistakes
+
+      - Treating compliance as one-time project vs continuous process
+      - Implementing per-framework vs unified controls
+      - Manual evidence collection vs automation
+      - Insufficient log retention (<7 years)
+      - Missing MFA enforcement
+      - Not encrypting backups/logs
+      - Inadequate vendor due diligence
+
+      ## Resources
+
+      **Framework Documentation:**
+      - `compliance/frameworks/soc2-controls.md`
+      - `compliance/frameworks/hipaa-safeguards.md`
+      - `compliance/frameworks/pci-dss-requirements.md`
+      - `compliance/frameworks/gdpr-articles.md`
+
+      **Implementation Guides:**
+      - `docs/encryption-implementations.md`
+      - `docs/access-control-patterns.md`
+      - `docs/audit-logging-patterns.md`
+      - `docs/incident-response-templates.md`
+
+      **Automation:**
+      - `compliance/opa-policies/` - Policy as code
+      - `compliance/evidence/` - Evidence collection scripts
+      - `.github/workflows/compliance-check.yml` - CI/CD integration
+
+      ---
+
+      **Important:** Consult qualified legal counsel and auditors for legal interpretation and audit preparation.
+
+  - path: "compliance/controls/control-mapping.yaml"
+    type: "file"
+    template: |
+      # Unified Control Mapping
+      # Map controls once, satisfy multiple frameworks (60-80% effort reduction)
+
+      controls:
+        - id: "ENC-001"
+          name: "Encryption at Rest"
+          description: "AES-256 encryption for all data at rest using managed KMS with automatic key rotation"
+          frameworks:
+            - framework: "SOC2"
+              control: "CC6.1"
+            - framework: "HIPAA"
+              control: "164.312(a)(2)(iv)"
+            - framework: "PCI-DSS"
+              control: "Req 3.4"
+            - framework: "GDPR"
+              control: "Art 32"
+            - framework: "ISO27001"
+              control: "A.10.1.1"
+          implementation:
+            - "AWS KMS with automatic key rotation"
+            - "S3 bucket encryption (SSE-KMS)"
+            - "RDS encryption at rest"
+            - "EBS volume encryption"
+          evidence:
+            - "AWS Config rule: encrypted-volumes"
+            - "Terraform state showing encryption enabled"
+            - "KMS key rotation logs"
+          status: "IMPLEMENTED"
+
+        - id: "ENC-002"
+          name: "Encryption in Transit"
+          description: "TLS 1.3 (TLS 1.2 minimum) for all data in transit with strong cipher suites"
+          frameworks:
+            - framework: "SOC2"
+              control: "CC6.1"
+            - framework: "HIPAA"
+              control: "164.312(e)(1)"
+            - framework: "PCI-DSS"
+              control: "Req 4.1"
+            - framework: "GDPR"
+              control: "Art 32"
+            - framework: "ISO27001"
+              control: "A.13.1.1"
+          implementation:
+            - "ALB with TLS 1.3 policy"
+            - "API Gateway with TLS 1.2 minimum"
+            - "RDS force SSL connection"
+          evidence:
+            - "Load balancer SSL policy configuration"
+            - "SSL Labs test results"
+            - "Certificate expiration monitoring"
+          status: "IMPLEMENTED"
+
+        - id: "MFA-001"
+          name: "Multi-Factor Authentication"
+          description: "MFA required for all privileged access (TOTP, hardware tokens, biometric)"
+          frameworks:
+            - framework: "SOC2"
+              control: "CC6.1"
+            - framework: "HIPAA"
+              control: "164.312(d)"
+            - framework: "PCI-DSS"
+              control: "Req 8.3"
+            - framework: "GDPR"
+              control: "Art 32"
+            - framework: "ISO27001"
+              control: "A.9.4.2"
+          implementation:
+            - "AWS IAM MFA enforcement policy"
+            - "Console access requires MFA"
+            - "API calls blocked without MFA"
+          evidence:
+            - "IAM credential report (MFA enabled)"
+            - "CloudTrail logs (MFA present)"
+            - "User training completion records"
+          status: "IMPLEMENTED"
+
+        - id: "RBAC-001"
+          name: "Role-Based Access Control"
+          description: "Least privilege access with job function-based roles and quarterly reviews"
+          frameworks:
+            - framework: "SOC2"
+              control: "CC6.1, CC6.2"
+            - framework: "HIPAA"
+              control: "164.308(a)(3), 164.308(a)(4)"
+            - framework: "PCI-DSS"
+              control: "Req 7.1, Req 8.2"
+            - framework: "GDPR"
+              control: "Art 32"
+            - framework: "ISO27001"
+              control: "A.9.2.1, A.9.2.5"
+          implementation:
+            - "AWS IAM roles with least privilege"
+            - "Kubernetes RBAC policies"
+            - "Quarterly access reviews"
+          evidence:
+            - "Access review reports (quarterly)"
+            - "IAM policy documents"
+            - "Access provisioning/deprovisioning logs"
+          status: "IMPLEMENTED"
+
+        - id: "LOG-001"
+          name: "Audit Logging"
+          description: "Centralized audit logging with 7-year retention in immutable storage"
+          frameworks:
+            - framework: "SOC2"
+              control: "CC7.2"
+            - framework: "HIPAA"
+              control: "164.312(b)"
+            - framework: "PCI-DSS"
+              control: "Req 10.2, Req 10.3"
+            - framework: "GDPR"
+              control: "Art 30"
+            - framework: "ISO27001"
+              control: "A.12.4.1"
+          implementation:
+            - "CloudWatch Logs (7-year retention)"
+            - "S3 Object Lock (COMPLIANCE mode)"
+            - "Application audit logging"
+          evidence:
+            - "Log retention configuration"
+            - "Sample audit logs"
+            - "Log immutability verification"
+          status: "IMPLEMENTED"
+
+        - id: "MON-001"
+          name: "Security Monitoring"
+          description: "SIEM, intrusion detection, real-time alerting for security events"
+          frameworks:
+            - framework: "SOC2"
+              control: "CC7.2, CC7.3"
+            - framework: "HIPAA"
+              control: "164.312(b)"
+            - framework: "PCI-DSS"
+              control: "Req 10.6, Req 11.4"
+            - framework: "GDPR"
+              control: "Art 32"
+            - framework: "ISO27001"
+              control: "A.12.4.1, A.16.1.2"
+          implementation:
+            - "AWS GuardDuty for threat detection"
+            - "CloudWatch alarms for anomalies"
+            - "SIEM integration (Splunk/ELK)"
+          evidence:
+            - "Security alert logs"
+            - "Incident detection metrics"
+            - "Mean time to detect (MTTD)"
+          status: "IMPLEMENTED"
+
+        - id: "IR-001"
+          name: "Incident Response"
+          description: "Documented incident response plan with automated detection and breach notification"
+          frameworks:
+            - framework: "SOC2"
+              control: "CC7.3, CC7.4"
+            - framework: "HIPAA"
+              control: "164.308(a)(6)"
+            - framework: "PCI-DSS"
+              control: "Req 12.10"
+            - framework: "GDPR"
+              control: "Art 33, Art 34"
+            - framework: "ISO27001"
+              control: "A.16.1.1, A.16.1.4"
+          implementation:
+            - "Incident response plan document"
+            - "Automated alerting and escalation"
+            - "Breach notification procedures"
+          evidence:
+            - "Incident response plan (approved)"
+            - "Incident response test results"
+            - "Breach notification templates"
+          status: "IMPLEMENTED"
+
+        - id: "BC-001"
+          name: "Business Continuity"
+          description: "Automated backups, multi-region DR, defined RPO/RTO with regular testing"
+          frameworks:
+            - framework: "SOC2"
+              control: "A1.2, A1.3"
+            - framework: "HIPAA"
+              control: "164.308(a)(7)"
+            - framework: "PCI-DSS"
+              control: "Req 12.10"
+            - framework: "GDPR"
+              control: "Art 32"
+            - framework: "ISO27001"
+              control: "A.17.1.1, A.17.1.2"
+          implementation:
+            - "Automated daily backups"
+            - "Multi-region replication"
+            - "Quarterly failover testing"
+          evidence:
+            - "Backup configuration"
+            - "DR test results (quarterly)"
+            - "RPO/RTO metrics"
+          status: "IMPLEMENTED"
+
+        - id: "VULN-001"
+          name: "Vulnerability Management"
+          description: "Regular vulnerability scanning, patch management, penetration testing"
+          frameworks:
+            - framework: "SOC2"
+              control: "CC7.1"
+            - framework: "HIPAA"
+              control: "164.308(a)(8)"
+            - framework: "PCI-DSS"
+              control: "Req 11.2, Req 11.3"
+            - framework: "GDPR"
+              control: "Art 32"
+            - framework: "ISO27001"
+              control: "A.12.6.1, A.18.2.3"
+          implementation:
+            - "Weekly vulnerability scans"
+            - "Automated patch management"
+            - "Annual penetration testing"
+          evidence:
+            - "Vulnerability scan reports"
+            - "Patch management logs"
+            - "Penetration test reports"
+          status: "IMPLEMENTED"
+
+metadata:
+  primary_blueprints: ["security"]
+  contributes_to:
+    - "SOC 2 Type II compliance"
+    - "HIPAA compliance"
+    - "PCI-DSS 4.0 compliance"
+    - "GDPR compliance"
+    - "ISO 27001 certification"
+    - "Enterprise security posture"
+    - "Audit readiness"
+
+  integrates_with:
+    - "security-hardening"     # Technical security control implementation
+    - "secret-management"      # HIPAA/PCI-DSS secrets handling
+    - "infrastructure-as-code" # IaC for compliance controls
+    - "kubernetes-operations"  # K8s RBAC and network policies
+    - "building-ci-pipelines"  # Policy-as-code enforcement
+    - "siem-logging"           # Audit logging and monitoring
+    - "incident-management"    # Incident response procedures
+    - "auth-security"          # MFA and authentication controls
+
+  common_patterns:
+    - name: "Unified Control Implementation"
+      description: "Implement controls once, map to multiple frameworks (60-80% effort reduction)"
+      files: ["compliance/controls/control-mapping.yaml"]
+
+    - name: "Policy as Code with OPA"
+      description: "Enforce compliance policies in CI/CD before infrastructure deployment"
+      files: ["compliance/opa-policies/", ".github/workflows/compliance-check.yml"]
+
+    - name: "Automated Evidence Collection"
+      description: "Continuous evidence gathering for audit preparation"
+      files: ["compliance/evidence/", "terraform/monitoring/"]
+
+    - name: "Encryption Everywhere"
+      description: "AES-256 at rest, TLS 1.3 in transit with managed KMS"
+      files: ["terraform/encryption/", "policies/encryption-policy.md"]
+
+  anti_patterns:
+    - name: "Per-framework implementation"
+      avoid: "Implementing separate controls for each framework"
+      use: "Unified controls mapped to multiple frameworks"
+
+    - name: "Manual evidence collection"
+      avoid: "Collecting evidence manually before audits"
+      use: "Automated evidence collection with continuous monitoring"
+
+    - name: "Compliance as one-time project"
+      avoid: "Treating compliance as point-in-time certification"
+      use: "Continuous compliance with ongoing monitoring and testing"
+
+    - name: "Insufficient log retention"
+      avoid: "90-day or 1-year log retention"
+      use: "7-year retention to satisfy all frameworks"
+
+    - name: "Missing MFA enforcement"
+      avoid: "MFA optional or only for admin accounts"
+      use: "MFA required for all privileged access with IAM enforcement"
+
+    - name: "Unencrypted backups and logs"
+      avoid: "Encrypting production data but not backups/logs"
+      use: "Encryption for all data including backups and audit logs"
+
+  tools:
+    policy_as_code:
+      - name: "Open Policy Agent (OPA)"
+        use_when: "General-purpose policy engine, multi-cloud, custom policies"
+      - name: "Checkov"
+        use_when: "IaC scanning with built-in compliance frameworks (SOC2, HIPAA, PCI, GDPR)"
+      - name: "tfsec"
+        use_when: "Terraform-specific security scanning"
+      - name: "Trivy"
+        use_when: "Container and IaC scanning with compliance checks"
+
+    compliance_automation:
+      - name: "AWS Config"
+        use_when: "AWS resource compliance monitoring and remediation"
+      - name: "Cloud Custodian"
+        use_when: "Multi-cloud compliance automation and policy enforcement"
+      - name: "Drata/Vanta/Secureframe"
+        use_when: "Continuous compliance platforms with SOC 2 automation"
+
+    cloud_security:
+      - name: "AWS Security Hub"
+        use_when: "Centralized AWS security findings and compliance checks"
+      - name: "AWS GuardDuty"
+        use_when: "Threat detection and intrusion prevention"
+      - name: "GCP Security Command Center"
+        use_when: "GCP security and compliance monitoring"
+      - name: "Azure Security Center"
+        use_when: "Azure security posture management"
+
+    secret_scanning:
+      - name: "Gitleaks"
+        use_when: "Pre-commit hooks and CI/CD secret scanning"
+      - name: "TruffleHog"
+        use_when: "Git history scanning for leaked secrets"
+
+  validation_checks:
+    - "All S3 buckets encrypted with KMS (run Checkov)"
+    - "All RDS instances encrypted at rest (run AWS Config rule)"
+    - "MFA enforced for IAM users (check credential report)"
+    - "Audit logging enabled with 7-year retention (check CloudWatch/S3)"
+    - "OPA policies pass on Terraform plan (run opa eval)"
+    - "Network security groups deny-by-default (run tfsec)"
+    - "Kubernetes RBAC follows least privilege (review roles)"
+    - "Incident response plan documented and tested"
+    - "Vendor BAAs/DPAs signed and current"
+    - "Quarterly access reviews completed"
+    - "Annual risk assessment conducted"
+    - "Penetration testing performed annually"

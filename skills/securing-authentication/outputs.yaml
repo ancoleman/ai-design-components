@@ -1,0 +1,399 @@
+skill: "securing-authentication"
+version: "1.0"
+domain: "backend"
+
+base_outputs:
+  - path: "src/auth/config.{ts,py,rs,go}"
+    must_contain:
+      - "OAuth 2.1"
+      - "PKCE"
+      - "token lifetime"
+      - "refresh token rotation"
+    description: "Core authentication configuration with OAuth 2.1 compliance, PKCE enabled, token lifetimes (5-15min access, 1-7day refresh), and refresh token rotation"
+
+  - path: "src/middleware/auth.{ts,py,rs,go}"
+    must_contain:
+      - "JWT validation"
+      - "Bearer token"
+      - "Authorization header"
+    description: "Authentication middleware for JWT validation and bearer token extraction from Authorization headers"
+
+  - path: "src/middleware/security-headers.{ts,py,rs,go}"
+    must_contain:
+      - "Strict-Transport-Security"
+      - "X-Frame-Options"
+      - "X-Content-Type-Options"
+      - "Content-Security-Policy"
+    description: "Security headers middleware with HSTS, frame options, content type options, and CSP"
+
+  - path: "src/utils/jwt.{ts,py,rs,go}"
+    must_contain:
+      - "EdDSA"
+      - "ES256"
+      - "token generation"
+      - "token validation"
+      - "claims validation"
+    description: "JWT utilities for token generation/validation using EdDSA (preferred) or ES256, with required claims (iss, sub, aud, exp, iat, jti)"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "src/auth/handlers/login.{ts,py,rs,go}"
+        must_contain:
+          - "password verification"
+          - "token generation"
+          - "rate limiting"
+        description: "Basic login handler with password verification, JWT token generation, and rate limiting"
+
+      - path: "src/auth/handlers/register.{ts,py,rs,go}"
+        must_contain:
+          - "Argon2id"
+          - "password hashing"
+          - "validation"
+        description: "User registration with Argon2id password hashing (64MB memory, 3 iterations, 4 threads)"
+
+      - path: "config/cors.{ts,py,rs,go,json}"
+        must_contain:
+          - "origin"
+          - "credentials"
+          - "allowedHeaders"
+        description: "CORS configuration with restrictive origins, credentials handling, and allowed headers"
+
+    intermediate:
+      - path: "src/auth/oauth/pkce.{ts,py,rs,go}"
+        must_contain:
+          - "code_verifier"
+          - "code_challenge"
+          - "S256"
+        description: "PKCE implementation with S256 challenge method and minimum 43-character entropy"
+
+      - path: "src/auth/oauth/callback.{ts,py,rs,go}"
+        must_contain:
+          - "authorization code"
+          - "code exchange"
+          - "exact redirect URI"
+        description: "OAuth 2.1 callback handler with authorization code exchange and exact redirect URI matching"
+
+      - path: "src/middleware/rate-limit.{ts,py,rs,go}"
+        must_contain:
+          - "sliding window"
+          - "per IP"
+          - "per user"
+          - "Redis"
+        description: "Rate limiting middleware using sliding window algorithm with tiered limits (10/min anonymous, 100/min authenticated)"
+
+      - path: "src/auth/rbac/policies.{json,yaml,conf}"
+        must_contain:
+          - "roles"
+          - "permissions"
+          - "resources"
+        description: "RBAC policy definitions with roles, permissions, and resource mappings"
+
+      - path: "src/auth/rbac/enforcer.{ts,py,rs,go}"
+        must_contain:
+          - "Casbin"
+          - "policy enforcement"
+          - "permission check"
+        description: "Authorization enforcement using Casbin for RBAC/ABAC policy checks"
+
+    advanced:
+      - path: "src/auth/passkeys/registration.{ts,py,rs,go}"
+        must_contain:
+          - "WebAuthn"
+          - "challenge generation"
+          - "attestation verification"
+          - "credential storage"
+        description: "Passkey registration flow with WebAuthn challenge generation and attestation verification"
+
+      - path: "src/auth/passkeys/authentication.{ts,py,rs,go}"
+        must_contain:
+          - "WebAuthn"
+          - "assertion verification"
+          - "credential lookup"
+        description: "Passkey authentication with WebAuthn assertion verification and credential validation"
+
+      - path: "src/auth/mfa/totp.{ts,py,rs,go}"
+        must_contain:
+          - "TOTP"
+          - "secret generation"
+          - "token verification"
+          - "backup codes"
+        description: "Multi-factor authentication with TOTP implementation and backup code generation"
+
+      - path: "src/auth/session/store.{ts,py,rs,go}"
+        must_contain:
+          - "session storage"
+          - "Redis"
+          - "session expiration"
+          - "concurrent session handling"
+        description: "Session store implementation with Redis backend, expiration handling, and concurrent session management"
+
+      - path: "src/audit/auth-events.{ts,py,rs,go}"
+        must_contain:
+          - "login events"
+          - "permission denied"
+          - "failed authentication"
+          - "audit logging"
+        description: "Authentication audit logging for security events (login, logout, failed auth, permission denied)"
+
+  auth:
+    jwt:
+      - path: "keys/jwt/{private,public}.pem"
+        must_contain:
+          - "BEGIN"
+          - "KEY"
+        description: "JWT signing keys (EdDSA or ES256 key pairs generated via scripts/generate_jwt_keys.py)"
+
+      - path: "src/auth/jwt/middleware.{ts,py,rs,go}"
+        must_contain:
+          - "token extraction"
+          - "signature verification"
+          - "claims validation"
+          - "exp check"
+        description: "JWT middleware with token extraction, signature verification, and claims validation (iss, sub, aud, exp, iat, jti)"
+
+      - path: "src/auth/jwt/refresh.{ts,py,rs,go}"
+        must_contain:
+          - "refresh token rotation"
+          - "invalidate old token"
+          - "generate new tokens"
+        description: "Refresh token rotation handler that generates new access and refresh tokens while invalidating old refresh token"
+
+    oauth:
+      - path: "src/auth/oauth/providers/{google,github,azure}.{ts,py,rs,go}"
+        must_contain:
+          - "client_id"
+          - "authorization_endpoint"
+          - "token_endpoint"
+          - "PKCE"
+        description: "OAuth 2.1 provider configurations with PKCE-enabled authorization and token endpoints"
+
+      - path: "src/auth/oauth/token-storage.{ts,py,rs,go}"
+        must_contain:
+          - "HTTP-only cookie"
+          - "SameSite=Strict"
+          - "secure flag"
+        description: "OAuth token storage using HTTP-only cookies with SameSite=Strict and secure flags"
+
+    session:
+      - path: "src/auth/session/manager.{ts,py,rs,go}"
+        must_contain:
+          - "session creation"
+          - "session validation"
+          - "session destruction"
+          - "CSRF protection"
+        description: "Session manager with creation, validation, destruction, and CSRF protection"
+
+      - path: "src/auth/session/cookie-config.{ts,py,rs,go,json}"
+        must_contain:
+          - "httpOnly"
+          - "secure"
+          - "sameSite"
+          - "maxAge"
+        description: "Session cookie configuration with httpOnly, secure, sameSite=Strict, and appropriate maxAge"
+
+  backend_framework:
+    nextjs:
+      - path: "middleware.ts"
+        must_contain:
+          - "withAuth"
+          - "authorized callback"
+          - "matcher"
+        description: "Next.js middleware for protected routes with role-based authorization"
+
+      - path: "app/api/auth/[...nextauth]/route.ts"
+        must_contain:
+          - "NextAuth"
+          - "providers"
+          - "callbacks"
+          - "session"
+        description: "Next.js Auth.js route handler with provider configuration and session callbacks"
+
+      - path: "lib/auth.ts"
+        must_contain:
+          - "authOptions"
+          - "jwt callback"
+          - "session callback"
+        description: "Auth.js configuration with JWT and session callbacks for Next.js"
+
+    fastapi:
+      - path: "app/dependencies/auth.py"
+        must_contain:
+          - "Depends"
+          - "get_current_user"
+          - "HTTPBearer"
+        description: "FastAPI authentication dependencies with JWT bearer token validation"
+
+      - path: "app/routers/auth.py"
+        must_contain:
+          - "APIRouter"
+          - "/login"
+          - "/register"
+          - "/refresh"
+        description: "FastAPI authentication routes for login, registration, and token refresh"
+
+      - path: "app/middleware/security.py"
+        must_contain:
+          - "CORSMiddleware"
+          - "TrustedHostMiddleware"
+          - "security headers"
+        description: "FastAPI security middleware with CORS and security headers"
+
+    express:
+      - path: "src/middleware/passport.{ts,js}"
+        must_contain:
+          - "passport"
+          - "strategy"
+          - "JWT"
+        description: "Express Passport.js configuration with JWT strategy"
+
+      - path: "src/routes/auth.{ts,js}"
+        must_contain:
+          - "Router"
+          - "POST /login"
+          - "POST /register"
+          - "POST /refresh"
+        description: "Express authentication routes for login, registration, and token refresh"
+
+    axum:
+      - path: "src/handlers/auth.rs"
+        must_contain:
+          - "async fn login"
+          - "async fn register"
+          - "Json"
+        description: "Axum authentication handlers for login and registration"
+
+      - path: "src/middleware/jwt_auth.rs"
+        must_contain:
+          - "middleware::from_fn"
+          - "Bearer"
+          - "jsonwebtoken"
+        description: "Axum JWT authentication middleware using tower middleware"
+
+scaffolding:
+  - command: "python scripts/generate_jwt_keys.py --algorithm EdDSA --output keys/jwt/"
+    creates:
+      - "keys/jwt/private.pem"
+      - "keys/jwt/public.pem"
+    description: "Generate EdDSA key pair for JWT signing (preferred over ES256/RS256 for performance)"
+
+  - command: "python scripts/validate_oauth_config.py --config config/oauth.{json,yaml}"
+    validates:
+      - "PKCE enabled"
+      - "exact redirect URI matching"
+      - "no implicit grant"
+      - "TLS 1.2+ required"
+    description: "Validate OAuth 2.1 compliance (mandatory PKCE, exact redirect URIs, removed implicit grant)"
+
+  - template: "examples/authjs-nextjs/"
+    creates:
+      - "app/api/auth/[...nextauth]/route.ts"
+      - "middleware.ts"
+      - "lib/auth.ts"
+    description: "Auth.js + Next.js starter with OAuth providers, credentials, and session management"
+
+  - template: "examples/keycloak-fastapi/"
+    creates:
+      - "app/dependencies/auth.py"
+      - "app/routers/auth.py"
+      - "docker-compose.yml"
+    description: "Keycloak + FastAPI integration with OIDC and Docker setup"
+
+  - template: "examples/passkeys-demo/"
+    creates:
+      - "src/auth/passkeys/registration.{ts,py}"
+      - "src/auth/passkeys/authentication.{ts,py}"
+    description: "Runnable passkey implementation with @simplewebauthn/server"
+
+  - directory: "src/auth/"
+    subdirectories:
+      - "handlers/"
+      - "middleware/"
+      - "oauth/"
+      - "jwt/"
+      - "passkeys/"
+      - "rbac/"
+      - "session/"
+    description: "Standard authentication directory structure"
+
+  - directory: "keys/"
+    subdirectories:
+      - "jwt/"
+      - "passkeys/"
+    description: "Cryptographic key storage (add to .gitignore)"
+
+  - file: ".env.example"
+    must_contain:
+      - "JWT_SECRET"
+      - "JWT_ALGORITHM"
+      - "ACCESS_TOKEN_LIFETIME"
+      - "REFRESH_TOKEN_LIFETIME"
+      - "OAUTH_CLIENT_ID"
+      - "OAUTH_CLIENT_SECRET"
+    description: "Environment variables template for authentication configuration"
+
+metadata:
+  primary_blueprints:
+    - "api-first"
+    - "security"
+  contributes_to:
+    - "Authentication"
+    - "Authorization"
+    - "API Security"
+    - "User Management"
+  library_requirements:
+    typescript:
+      - "Auth.js v5 (next-auth)"
+      - "jose 5.x (JWT)"
+      - "@simplewebauthn/server 11.x (Passkeys)"
+      - "zod 3.x (validation)"
+      - "casbin 1.x (RBAC/ABAC)"
+    python:
+      - "authlib 1.3+ (OAuth/OIDC)"
+      - "joserfc 1.x (JWT)"
+      - "py_webauthn 2.x (Passkeys)"
+      - "argon2-cffi 24.x (password hashing)"
+      - "pydantic 2.x (validation)"
+      - "pycasbin 1.x (RBAC/ABAC)"
+    rust:
+      - "jsonwebtoken 10.x (JWT)"
+      - "oauth2 5.x (OAuth client)"
+      - "webauthn-rs 0.5.x (Passkeys)"
+      - "argon2 0.5.x (password hashing)"
+      - "casbin-rs 2.x (RBAC/ABAC)"
+    go:
+      - "golang-jwt/jwt v5 (JWT)"
+      - "coreos/go-oidc v3 (OIDC)"
+      - "go-webauthn/webauthn 0.11.x (Passkeys)"
+      - "golang.org/x/crypto/argon2 (password hashing)"
+      - "casbin/casbin v2 (RBAC/ABAC)"
+  security_standards:
+    - "OAuth 2.1 (RFC 9798)"
+    - "PKCE (RFC 7636) - MANDATORY"
+    - "OIDC Core 1.0"
+    - "WebAuthn Level 2"
+    - "OWASP ASVS 4.0"
+    - "NIST SP 800-63B"
+  critical_requirements:
+    - "PKCE mandatory for ALL OAuth flows"
+    - "Exact redirect URI matching (no wildcards)"
+    - "TLS 1.2+ required"
+    - "No implicit grant flow"
+    - "No resource owner password credentials"
+    - "EdDSA or ES256 for JWT signing (not RS256)"
+    - "Argon2id for password hashing (64MB, 3 iterations, 4 threads)"
+    - "Access token: 5-15 minutes"
+    - "Refresh token: 1-7 days with rotation"
+    - "Tokens in memory (access) or HTTP-only cookies (refresh)"
+    - "Never log tokens"
+    - "Rate limiting with sliding window"
+    - "Security headers on all responses"
+  integration_points:
+    - skill: "building-apis"
+      provides: "JWT middleware, error responses (401/403), OpenAPI security schemas"
+    - skill: "implementing-forms"
+      provides: "Login/register forms, validation, password strength indicators"
+    - skill: "building-dashboards"
+      provides: "Role-based widget visibility, permission-based filtering"
+    - skill: "implementing-observability"
+      provides: "Auth event logging, failed login tracking, security alerting"

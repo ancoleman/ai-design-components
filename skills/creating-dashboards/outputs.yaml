@@ -1,0 +1,454 @@
+skill: "creating-dashboards"
+version: "1.0"
+domain: "frontend"
+
+# Base outputs required for all dashboard implementations
+base_outputs:
+  - path: "components/"
+    must_contain: ["widgets/", "layouts/", "filters/"]
+    reason: "Core dashboard component structure (widgets, layouts, filters)"
+
+  - path: "components/widgets/"
+    must_contain: []
+    reason: "Individual widget components (KPI cards, charts, tables)"
+
+  - path: "components/layouts/"
+    must_contain: []
+    reason: "Dashboard layout components (grid systems, responsive containers)"
+
+  - path: "context/"
+    must_contain: []
+    reason: "Global state management for filters and dashboard coordination"
+
+  - path: "package.json"
+    must_contain: ["dependencies", "scripts"]
+    reason: "Project dependencies and build scripts"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "components/KPICard.tsx"
+        must_contain: ["interface KPICard", "value:", "trend:"]
+        reason: "Basic KPI card component with value and trend"
+
+      - path: "components/SimpleDashboard.tsx"
+        must_contain: ["Grid", "KPICard"]
+        reason: "Simple static dashboard layout with KPI cards"
+
+      - path: "package.json"
+        must_contain: ["@tremor/react"]
+        reason: "Tremor library for quick dashboard development"
+
+      - path: "pages/Dashboard.tsx"
+        must_contain: ["Card", "Metric", "Text"]
+        reason: "Basic dashboard page using Tremor components"
+
+      - path: "styles/dashboard.css"
+        must_contain: [".dashboard", ".widget", "grid"]
+        reason: "Basic dashboard styling with grid layout"
+
+    intermediate:
+      - path: "components/widgets/KPICard.tsx"
+        must_contain: ["value", "trend", "sparkline", "onClick"]
+        reason: "Enhanced KPI card with sparkline and interactivity"
+
+      - path: "components/widgets/ChartWidget.tsx"
+        must_contain: ["AreaChart", "loading", "error"]
+        reason: "Chart widget with loading and error states"
+
+      - path: "components/widgets/TableWidget.tsx"
+        must_contain: ["pagination", "sorting"]
+        reason: "Table widget with basic interactivity"
+
+      - path: "components/filters/FilterPanel.tsx"
+        must_contain: ["DateRangePicker", "onChange"]
+        reason: "Filter panel with date range selection"
+
+      - path: "context/DashboardContext.tsx"
+        must_contain: ["createContext", "filters", "setFilters"]
+        reason: "Context for coordinating filters across widgets"
+
+      - path: "hooks/useSSEUpdates.ts"
+        must_contain: ["EventSource", "useEffect"]
+        reason: "Server-sent events hook for real-time updates"
+
+      - path: "utils/formatters.ts"
+        must_contain: ["formatLargeNumber", "formatCurrency", "formatPercentage"]
+        reason: "Number formatting utilities for metrics"
+
+      - path: "components/DashboardGrid.tsx"
+        must_contain: ["LazyLoad", "WidgetSkeleton"]
+        reason: "Lazy loading grid for performance optimization"
+
+      - path: "package.json"
+        must_contain: ["@tremor/react", "react-lazyload"]
+        reason: "Dashboard libraries with lazy loading support"
+
+    advanced:
+      - path: "components/widgets/KPICard.tsx"
+        must_contain: ["value", "trend", "sparkline", "comparison", "status", "icon"]
+        reason: "Full-featured KPI card with all visual elements"
+
+      - path: "components/widgets/ChartWidget.tsx"
+        must_contain: ["AreaChart", "BarChart", "LineChart", "loading", "error", "export"]
+        reason: "Multi-type chart widget with export capability"
+
+      - path: "components/widgets/TableWidget.tsx"
+        must_contain: ["pagination", "sorting", "filtering", "export"]
+        reason: "Advanced table widget with full interactivity"
+
+      - path: "components/layouts/CustomizableGrid.tsx"
+        must_contain: ["react-grid-layout", "Responsive", "onLayoutChange", "localStorage"]
+        reason: "Drag-and-drop customizable dashboard grid with persistence"
+
+      - path: "components/layouts/WidgetCatalog.tsx"
+        must_contain: ["AVAILABLE_WIDGETS", "addWidget", "removeWidget"]
+        reason: "Widget catalog for dashboard customization"
+
+      - path: "components/filters/AdvancedFilterPanel.tsx"
+        must_contain: ["DateRangePicker", "MultiSelect", "SearchInput", "FilterPresets"]
+        reason: "Advanced filter panel with multiple filter types and presets"
+
+      - path: "context/DashboardContext.tsx"
+        must_contain: ["createContext", "filters", "setFilters", "refreshInterval", "autoRefresh"]
+        reason: "Full dashboard context with auto-refresh support"
+
+      - path: "hooks/useWebSocket.ts"
+        must_contain: ["WebSocket", "reconnect", "heartbeat"]
+        reason: "WebSocket hook with reconnection and heartbeat"
+
+      - path: "hooks/useSmartPolling.ts"
+        must_contain: ["setInterval", "document.hidden", "pause"]
+        reason: "Smart polling with tab visibility detection"
+
+      - path: "hooks/useCachedWidget.ts"
+        must_contain: ["useRef", "cache", "ttl", "timestamp"]
+        reason: "Widget-level caching hook for performance"
+
+      - path: "utils/exportDashboard.ts"
+        must_contain: ["exportToPDF", "exportToImage", "exportToCSV"]
+        reason: "Dashboard export utilities for multiple formats"
+
+      - path: "utils/performanceMonitor.ts"
+        must_contain: ["measureRenderTime", "trackDataFetch", "reportMetrics"]
+        reason: "Performance monitoring and analytics"
+
+      - path: "config/dashboardTemplates.json"
+        must_contain: ["templates", "widgets", "layouts"]
+        reason: "Pre-built dashboard template configurations"
+
+      - path: "package.json"
+        must_contain: ["react-grid-layout", "@tremor/react", "react-lazyload"]
+        reason: "Full dashboard toolkit with customization support"
+
+  frontend_framework:
+    react:
+      - path: "components/DashboardProvider.tsx"
+        must_contain: ["createContext", "useContext", "useState", "useEffect"]
+        reason: "React Context-based dashboard provider"
+
+      - path: "hooks/useDashboard.ts"
+        must_contain: ["useContext", "DashboardContext"]
+        reason: "React hook for accessing dashboard context"
+
+      - path: "components/widgets/KPICard.tsx"
+        must_contain: ["React.FC", "interface", "props"]
+        reason: "React functional component with TypeScript"
+
+      - path: "tsconfig.json"
+        must_contain: ["jsx", "react"]
+        reason: "TypeScript configuration for React"
+
+    vue:
+      - path: "components/DashboardProvider.vue"
+        must_contain: ["provide", "inject", "ref", "reactive"]
+        reason: "Vue Composition API dashboard provider"
+
+      - path: "composables/useDashboard.ts"
+        must_contain: ["inject", "computed"]
+        reason: "Vue composable for dashboard state"
+
+      - path: "components/widgets/KPICard.vue"
+        must_contain: ["<template>", "<script setup>", "defineProps"]
+        reason: "Vue 3 component with script setup"
+
+    svelte:
+      - path: "stores/dashboardStore.ts"
+        must_contain: ["writable", "derived", "subscribe"]
+        reason: "Svelte store for dashboard state management"
+
+      - path: "components/widgets/KPICard.svelte"
+        must_contain: ["<script>", "export let", "$"]
+        reason: "Svelte component with reactive props"
+
+  styling:
+    tailwind:
+      - path: "tailwind.config.js"
+        must_contain: ["theme:", "extend:", "colors:", "spacing:"]
+        reason: "Tailwind configuration with custom dashboard tokens"
+
+      - path: "components/widgets/KPICard.tsx"
+        must_contain: ["className", "grid", "flex"]
+        reason: "Tailwind utility classes for styling"
+
+      - path: "styles/dashboard.css"
+        must_contain: ["@tailwind", "@layer"]
+        reason: "Tailwind directives and custom layers"
+
+    css_modules:
+      - path: "components/widgets/KPICard.module.css"
+        must_contain: [".card", ".value", ".trend"]
+        reason: "CSS Modules for component styling"
+
+      - path: "components/widgets/KPICard.tsx"
+        must_contain: ["import styles from", "styles.card"]
+        reason: "CSS Module imports in React components"
+
+    styled_components:
+      - path: "components/widgets/StyledKPICard.tsx"
+        must_contain: ["styled.", "props.theme", "css"]
+        reason: "Styled-components for dynamic styling"
+
+      - path: "theme/dashboardTheme.ts"
+        must_contain: ["export const dashboardTheme", "colors", "spacing"]
+        reason: "Theme configuration for styled-components"
+
+    scss:
+      - path: "styles/dashboard.scss"
+        must_contain: ["$dashboard-", "@mixin", "@import"]
+        reason: "SCSS variables and mixins for dashboard styling"
+
+      - path: "styles/_variables.scss"
+        must_contain: ["$widget-bg:", "$kpi-value-size:"]
+        reason: "SCSS variables for dashboard design tokens"
+
+  state_management:
+    context:
+      - path: "context/DashboardContext.tsx"
+        must_contain: ["createContext", "DashboardContext.Provider", "value"]
+        reason: "React Context for dashboard state"
+
+      - path: "hooks/useDashboard.ts"
+        must_contain: ["useContext", "DashboardContext"]
+        reason: "Hook to consume dashboard context"
+
+    zustand:
+      - path: "stores/useDashboardStore.ts"
+        must_contain: ["create", "persist", "filters", "setFilters"]
+        reason: "Zustand store with persistence for dashboard state"
+
+      - path: "components/Dashboard.tsx"
+        must_contain: ["useDashboardStore", "filters", "setFilters"]
+        reason: "Component consuming Zustand dashboard store"
+
+    redux:
+      - path: "store/dashboardSlice.ts"
+        must_contain: ["createSlice", "setFilters", "updateWidget"]
+        reason: "Redux slice for dashboard state management"
+
+      - path: "store/index.ts"
+        must_contain: ["configureStore", "dashboardReducer"]
+        reason: "Redux store configuration with dashboard slice"
+
+    pinia:
+      - path: "stores/dashboardStore.ts"
+        must_contain: ["defineStore", "state", "actions", "getters"]
+        reason: "Pinia store for Vue dashboard state"
+
+      - path: "components/Dashboard.vue"
+        must_contain: ["useDashboardStore", "storeToRefs"]
+        reason: "Vue component consuming Pinia store"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "components/widgets/KPICard.tsx"
+    reason: "Initialize basic KPI card component"
+
+  - path: "components/widgets/ChartWidget.tsx"
+    reason: "Initialize chart widget component"
+
+  - path: "components/layouts/DashboardGrid.tsx"
+    reason: "Initialize dashboard grid layout component"
+
+  - path: "components/filters/FilterPanel.tsx"
+    reason: "Initialize filter panel component"
+
+  - path: "context/DashboardContext.tsx"
+    reason: "Initialize dashboard context for state management"
+
+  - path: "hooks/useDashboard.ts"
+    reason: "Initialize dashboard context hook"
+
+  - path: "utils/formatters.ts"
+    reason: "Initialize number formatting utilities"
+
+  - path: "types/dashboard.ts"
+    reason: "Initialize TypeScript types and interfaces"
+
+  - path: "pages/Dashboard.tsx"
+    reason: "Initialize main dashboard page component"
+
+  - path: "styles/dashboard.css"
+    reason: "Initialize dashboard base styles"
+
+  - path: "config/widgets.ts"
+    reason: "Initialize widget catalog configuration"
+
+  - path: "package.json"
+    reason: "Initialize npm dependencies and scripts"
+
+  - path: "tsconfig.json"
+    reason: "TypeScript configuration"
+
+  - path: ".gitignore"
+    reason: "Ignore node_modules and build artifacts"
+
+  - path: "README.md"
+    reason: "Document dashboard architecture and usage"
+
+# Metadata
+metadata:
+  primary_blueprints: ["dashboard", "frontend"]
+  contributes_to:
+    - "Dashboard layout and grid systems"
+    - "KPI cards with trends and sparklines"
+    - "Real-time data updates (SSE, WebSocket, polling)"
+    - "Cross-widget filter coordination"
+    - "Widget catalog and customization"
+    - "Performance optimization (lazy loading, caching, parallel fetching)"
+    - "Export capabilities (PDF, images, data)"
+    - "Responsive design (desktop, tablet, mobile)"
+
+  common_patterns:
+    - "KPI cards with value, trend, comparison, and sparkline"
+    - "Widget-based architecture with reusable components"
+    - "Global filter context coordinating across all widgets"
+    - "Real-time updates via Server-Sent Events (SSE)"
+    - "Lazy loading for performance with skeleton states"
+    - "Drag-and-drop grid customization with react-grid-layout"
+    - "Dashboard templates for quick setup"
+    - "Tremor library for pre-built dashboard components"
+    - "Widget-level caching with TTL expiration"
+    - "Smart polling with tab visibility detection"
+    - "Responsive breakpoints (desktop >1200px, tablet 768-1200px, mobile <768px)"
+
+  integration_points:
+    data_viz: "Uses chart components for visualization widgets (AreaChart, BarChart, LineChart)"
+    tables: "Uses data grid components for table widgets with sorting/filtering"
+    design_tokens: "Uses design tokens for consistent theming and styling"
+    forms: "Uses form components for filter inputs (DateRangePicker, MultiSelect)"
+    feedback: "Uses feedback components for loading states and error messages"
+
+  typical_directory_structure: |
+    project/
+    ├── components/
+    │   ├── widgets/
+    │   │   ├── KPICard.tsx              # KPI card with trends
+    │   │   ├── ChartWidget.tsx          # Chart visualization widget
+    │   │   ├── TableWidget.tsx          # Data table widget
+    │   │   └── WidgetContainer.tsx      # Common widget wrapper
+    │   ├── layouts/
+    │   │   ├── DashboardGrid.tsx        # Static grid layout
+    │   │   ├── CustomizableGrid.tsx     # Drag-and-drop grid
+    │   │   └── ResponsiveLayout.tsx     # Responsive container
+    │   ├── filters/
+    │   │   ├── FilterPanel.tsx          # Main filter panel
+    │   │   ├── DateRangePicker.tsx      # Date range filter
+    │   │   └── CategoryFilter.tsx       # Category multi-select
+    │   └── common/
+    │       ├── WidgetSkeleton.tsx       # Loading skeleton
+    │       └── ErrorBoundary.tsx        # Error handling
+    ├── context/
+    │   └── DashboardContext.tsx         # Global dashboard state
+    ├── hooks/
+    │   ├── useDashboard.ts              # Dashboard context hook
+    │   ├── useSSEUpdates.ts             # Server-sent events
+    │   ├── useWebSocket.ts              # WebSocket connection
+    │   ├── useSmartPolling.ts           # Smart polling
+    │   └── useCachedWidget.ts           # Widget caching
+    ├── utils/
+    │   ├── formatters.ts                # Number formatting
+    │   ├── exportDashboard.ts           # Export utilities
+    │   └── performanceMonitor.ts        # Performance tracking
+    ├── types/
+    │   └── dashboard.ts                 # TypeScript interfaces
+    ├── config/
+    │   ├── widgets.ts                   # Widget catalog
+    │   └── templates.ts                 # Dashboard templates
+    ├── pages/
+    │   ├── Dashboard.tsx                # Main dashboard page
+    │   ├── SalesDashboard.tsx           # Sales analytics
+    │   └── MonitoringDashboard.tsx      # Real-time monitoring
+    ├── styles/
+    │   ├── dashboard.css                # Base styles
+    │   └── widgets.css                  # Widget styles
+    ├── package.json                     # Dependencies
+    ├── tsconfig.json                    # TypeScript config
+    └── README.md                        # Documentation
+
+  tools_required:
+    - name: "@tremor/react"
+      version: "^3.0.0"
+      purpose: "Pre-built dashboard components (KPI cards, charts, tables)"
+      install: "npm install @tremor/react"
+
+    - name: "react-grid-layout"
+      version: "^1.4.0"
+      purpose: "Drag-and-drop grid system for customizable dashboards"
+      install: "npm install react-grid-layout"
+
+    - name: "react-lazyload"
+      version: "^3.2.0"
+      purpose: "Lazy loading for performance optimization"
+      install: "npm install react-lazyload"
+
+    - name: "recharts"
+      version: "^2.0.0"
+      purpose: "Alternative charting library for custom visualizations"
+      install: "npm install recharts"
+
+  validation_checks:
+    - "All widgets have loading, error, and success states"
+    - "KPI cards display value, trend, and comparison"
+    - "Filter context coordinates state across widgets"
+    - "Real-time updates implemented (SSE, WebSocket, or polling)"
+    - "Lazy loading used for performance optimization"
+    - "Widget-level caching implemented with TTL"
+    - "Responsive breakpoints defined (desktop, tablet, mobile)"
+    - "Dashboard templates available for quick setup"
+    - "Export functionality works (PDF, image, data)"
+    - "Dashboard layout persists to localStorage (if customizable)"
+
+  anti_patterns:
+    - name: "Fetching all widget data sequentially"
+      avoid: "await fetchKPIs(); await fetchCharts(); await fetchTables();"
+      use: "Promise.all([fetchKPIs(), fetchCharts(), fetchTables()])"
+
+    - name: "No loading states for widgets"
+      avoid: "Widgets show nothing while loading"
+      use: "Skeleton loaders or spinners for each widget"
+
+    - name: "Independent filter state per widget"
+      avoid: "Each widget manages its own filters"
+      use: "Global filter context coordinating all widgets"
+
+    - name: "Continuous polling without visibility detection"
+      avoid: "setInterval runs even when tab is hidden"
+      use: "Smart polling that pauses when document.hidden is true"
+
+    - name: "No widget error boundaries"
+      avoid: "One widget error crashes entire dashboard"
+      use: "Error boundaries wrapping each widget independently"
+
+    - name: "Hardcoded widget layouts"
+      avoid: "Fixed positions that don't adapt to screen size"
+      use: "Responsive grid with breakpoints or user customization"
+
+    - name: "Fetching same data repeatedly"
+      avoid: "Re-fetching identical data on every render"
+      use: "Widget-level caching with TTL expiration"
+
+    - name: "No export functionality"
+      avoid: "Users can't export dashboard insights"
+      use: "Export to PDF, image, or CSV for sharing"

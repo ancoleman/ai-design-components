@@ -1,0 +1,390 @@
+skill: "implementing-api-patterns"
+version: "1.0"
+domain: "backend"
+
+base_outputs:
+  - path: "src/api/"
+    must_contain:
+      - "API route handlers"
+      - "Request/response models"
+      - "Input validation schemas"
+
+  - path: "src/middleware/"
+    must_contain:
+      - "Authentication middleware"
+      - "Error handling middleware"
+      - "Request logging"
+
+  - path: "tests/api/"
+    must_contain:
+      - "Endpoint tests"
+      - "Integration tests"
+      - "Mock data fixtures"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "src/api/routes.py"
+        must_contain:
+          - "Basic CRUD endpoints"
+          - "Simple validation"
+          - "JSON responses"
+
+      - path: "src/models.py"
+        must_contain:
+          - "Request models"
+          - "Response models"
+
+      - path: ".env.example"
+        must_contain:
+          - "Database configuration"
+          - "API configuration"
+
+    intermediate:
+      - path: "src/api/"
+        must_contain:
+          - "Pagination implementation"
+          - "Error handling with status codes"
+          - "Rate limiting configuration"
+
+      - path: "src/middleware/auth.py"
+        must_contain:
+          - "JWT authentication"
+          - "API key validation"
+
+      - path: "src/cache/"
+        must_contain:
+          - "Response caching"
+          - "Cache invalidation"
+
+      - path: "docs/api.md"
+        must_contain:
+          - "API documentation"
+          - "Authentication guide"
+
+    advanced:
+      - path: "src/api/versioning/"
+        must_contain:
+          - "API version routing"
+          - "Version deprecation strategy"
+
+      - path: "src/middleware/rate_limit.py"
+        must_contain:
+          - "Token bucket algorithm"
+          - "Sliding window implementation"
+          - "Redis-backed rate limiting"
+
+      - path: "src/cache/distributed.py"
+        must_contain:
+          - "Redis caching layer"
+          - "Cache warming strategies"
+          - "Distributed cache invalidation"
+
+      - path: "openapi.yaml"
+        must_contain:
+          - "OpenAPI 3.1 specification"
+          - "Schema definitions"
+          - "Security schemes"
+
+      - path: "tests/load/"
+        must_contain:
+          - "Load testing scripts"
+          - "Performance benchmarks"
+
+  backend_framework:
+    fastapi:
+      - path: "src/main.py"
+        must_contain:
+          - "FastAPI() app initialization"
+          - "CORS middleware configuration"
+          - "Automatic OpenAPI docs at /docs"
+
+      - path: "src/models.py"
+        must_contain:
+          - "from pydantic import BaseModel"
+          - "Field validators"
+          - "Response model schemas"
+
+      - path: "src/api/routes/"
+        must_contain:
+          - "@app.get(), @app.post() decorators"
+          - "async def handlers"
+          - "HTTPException for errors"
+
+      - path: "requirements.txt"
+        must_contain:
+          - "fastapi"
+          - "uvicorn[standard]"
+          - "pydantic"
+
+    express:
+      - path: "src/server.ts"
+        must_contain:
+          - "express() app initialization"
+          - "app.use() middleware"
+          - "app.listen() server start"
+
+      - path: "src/routes/"
+        must_contain:
+          - "express.Router()"
+          - "router.get(), router.post()"
+          - "Error handling middleware"
+
+      - path: "src/validation/"
+        must_contain:
+          - "Zod or Joi schemas"
+          - "Request validation middleware"
+
+      - path: "package.json"
+        must_contain:
+          - "express"
+          - "typescript"
+
+    hono:
+      - path: "src/index.ts"
+        must_contain:
+          - "new Hono()"
+          - "app.route() definitions"
+          - "c.json() responses"
+
+      - path: "src/validators/"
+        must_contain:
+          - "zValidator middleware"
+          - "Zod schemas"
+
+      - path: "package.json"
+        must_contain:
+          - "hono"
+          - "@hono/zod-validator"
+
+    axum:
+      - path: "src/main.rs"
+        must_contain:
+          - "use axum::Router"
+          - "Router::new()"
+          - "tokio::main"
+
+      - path: "src/handlers/"
+        must_contain:
+          - "async fn handlers"
+          - "Json<T> extractors"
+          - "StatusCode responses"
+
+      - path: "Cargo.toml"
+        must_contain:
+          - "axum"
+          - "tokio"
+          - "serde"
+
+    gin:
+      - path: "main.go"
+        must_contain:
+          - "gin.Default()"
+          - "r.GET(), r.POST()"
+          - "c.JSON() responses"
+
+      - path: "handlers/"
+        must_contain:
+          - "func handlers"
+          - "c.ShouldBindJSON()"
+          - "gin.H responses"
+
+      - path: "go.mod"
+        must_contain:
+          - "github.com/gin-gonic/gin"
+
+    trpc:
+      - path: "src/server/trpc.ts"
+        must_contain:
+          - "initTRPC.create()"
+          - "t.router()"
+          - "t.procedure definitions"
+
+      - path: "src/server/routers/"
+        must_contain:
+          - "Router definitions"
+          - "Zod input validation"
+          - "query/mutation procedures"
+
+      - path: "src/client/trpc.ts"
+        must_contain:
+          - "createTRPCClient()"
+          - "Type exports"
+
+      - path: "package.json"
+        must_contain:
+          - "@trpc/server"
+          - "@trpc/client"
+          - "zod"
+
+  api_pattern:
+    rest:
+      - path: "src/api/resources/"
+        must_contain:
+          - "Resource-based routing"
+          - "HTTP method handlers"
+          - "Status code usage"
+
+      - path: "src/api/pagination.py"
+        must_contain:
+          - "Cursor-based pagination"
+          - "next_cursor generation"
+          - "has_more flag"
+
+    graphql:
+      - path: "src/schema.graphql"
+        must_contain:
+          - "type definitions"
+          - "Query/Mutation types"
+          - "Input types"
+
+      - path: "src/resolvers/"
+        must_contain:
+          - "Query resolvers"
+          - "Mutation resolvers"
+          - "DataLoader for N+1 prevention"
+
+      - path: "src/graphql_server.py"
+        must_contain:
+          - "Strawberry/Pothos/async-graphql setup"
+          - "GraphQL endpoint"
+
+    grpc:
+      - path: "proto/"
+        must_contain:
+          - ".proto service definitions"
+          - "message types"
+          - "RPC methods"
+
+      - path: "src/grpc_server.rs"
+        must_contain:
+          - "tonic::transport::Server"
+          - "Service implementation"
+          - "Streaming handlers"
+
+      - path: "Cargo.toml"
+        must_contain:
+          - "tonic"
+          - "prost"
+
+scaffolding:
+  - type: "directory"
+    path: "src/api"
+    description: "API route handlers and endpoints"
+
+  - type: "directory"
+    path: "src/middleware"
+    description: "Authentication, rate limiting, error handling middleware"
+
+  - type: "directory"
+    path: "src/models"
+    description: "Request/response models and validation schemas"
+
+  - type: "directory"
+    path: "src/cache"
+    description: "Caching layer implementation"
+
+  - type: "directory"
+    path: "tests/api"
+    description: "API endpoint tests"
+
+  - type: "file"
+    path: "src/api/__init__.py"
+    template: |
+      """API module initialization"""
+      from .routes import router
+
+      __all__ = ["router"]
+
+  - type: "file"
+    path: "src/middleware/__init__.py"
+    template: |
+      """Middleware module initialization"""
+      from .auth import auth_middleware
+      from .error_handler import error_handler
+
+      __all__ = ["auth_middleware", "error_handler"]
+
+  - type: "file"
+    path: ".env.example"
+    template: |
+      # API Configuration
+      API_HOST=0.0.0.0
+      API_PORT=8000
+      API_VERSION=v1
+
+      # Database
+      DATABASE_URL=postgresql://user:pass@localhost:5432/db
+
+      # Authentication
+      JWT_SECRET=your-secret-key-here
+      JWT_ALGORITHM=HS256
+      JWT_EXPIRATION_HOURS=24
+
+      # Rate Limiting
+      RATE_LIMIT_ENABLED=true
+      RATE_LIMIT_REQUESTS=100
+      RATE_LIMIT_WINDOW=60
+
+      # Caching
+      CACHE_ENABLED=true
+      REDIS_URL=redis://localhost:6379/0
+      CACHE_TTL_SECONDS=300
+
+metadata:
+  primary_blueprints:
+    - "api-first"
+
+  contributes_to:
+    - "API endpoint implementation"
+    - "Request/response handling"
+    - "Pagination strategies"
+    - "Rate limiting"
+    - "Caching layer"
+    - "OpenAPI documentation"
+    - "Frontend integration"
+
+  integrates_with:
+    - "configuring-databases"  # Database queries
+    - "implementing-authentication"  # Auth middleware
+    - "building-forms"  # Form submission endpoints
+    - "building-tables"  # Paginated data endpoints
+    - "building-dashboards"  # Data aggregation endpoints
+    - "implementing-ai-chat"  # SSE streaming endpoints
+
+  common_file_patterns:
+    - "src/api/**/*.{py,ts,rs,go}"
+    - "src/routes/**/*.{py,ts,rs,go}"
+    - "src/middleware/**/*.{py,ts,rs,go}"
+    - "src/models/**/*.{py,ts,rs,go}"
+    - "proto/**/*.proto"
+    - "openapi.{yaml,json}"
+    - "tests/api/**/*"
+
+  key_technologies:
+    rest:
+      - "FastAPI (Python)"
+      - "Hono (TypeScript)"
+      - "Axum (Rust)"
+      - "Gin (Go)"
+    graphql:
+      - "Strawberry (Python)"
+      - "async-graphql (Rust)"
+      - "gqlgen (Go)"
+      - "Pothos (TypeScript)"
+    grpc:
+      - "Tonic (Rust)"
+      - "Connect-Go (Go)"
+      - "grpcio (Python)"
+      - "@connectrpc/connect (TypeScript)"
+    type_safe:
+      - "tRPC (TypeScript)"
+
+  validation_criteria:
+    - "Endpoints return appropriate HTTP status codes"
+    - "Request validation rejects invalid input"
+    - "Pagination includes next_cursor and has_more"
+    - "Rate limiting enforces configured limits"
+    - "OpenAPI documentation is accessible"
+    - "Error responses include clear messages"
+    - "Authentication middleware protects secured routes"

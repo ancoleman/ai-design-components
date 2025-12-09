@@ -1234,4 +1234,468 @@ All manifests include:
 
 ---
 
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "Kubernetes Deployment manifests":
+    primary_skill: operating-kubernetes
+    required_files:
+      - kubernetes/deployment.yaml
+      - kubernetes/service.yaml
+    content_checks:
+      - pattern: "kind: Deployment"
+        in: kubernetes/deployment.yaml
+      - pattern: "resources:\\s*(requests|limits):"
+        in: kubernetes/deployment.yaml
+      - pattern: "kind: Service"
+        in: kubernetes/service.yaml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Health checks configuration":
+    primary_skill: operating-kubernetes
+    required_files:
+      - kubernetes/deployment.yaml
+    content_checks:
+      - pattern: "livenessProbe:"
+        in: kubernetes/deployment.yaml
+      - pattern: "readinessProbe:"
+        in: kubernetes/deployment.yaml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Namespace and ConfigMap":
+    primary_skill: operating-kubernetes
+    required_files:
+      - kubernetes/namespace.yaml
+      - kubernetes/configmap.yaml
+    content_checks:
+      - pattern: "kind: Namespace"
+        in: kubernetes/namespace.yaml
+      - pattern: "kind: ConfigMap"
+        in: kubernetes/configmap.yaml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Horizontal Pod Autoscaler":
+    primary_skill: operating-kubernetes
+    required_files:
+      - kubernetes/hpa.yaml
+    content_checks:
+      - pattern: "kind: HorizontalPodAutoscaler"
+        in: kubernetes/hpa.yaml
+      - pattern: "minReplicas:|maxReplicas:"
+        in: kubernetes/hpa.yaml
+      - pattern: "metrics:"
+        in: kubernetes/hpa.yaml
+    maturity_required: [intermediate, advanced]
+
+  "Network policies":
+    primary_skill: operating-kubernetes
+    required_files:
+      - kubernetes/networkpolicy.yaml
+    content_checks:
+      - pattern: "kind: NetworkPolicy"
+        in: kubernetes/networkpolicy.yaml
+      - pattern: "podSelector:"
+        in: kubernetes/networkpolicy.yaml
+      - pattern: "policyTypes:"
+        in: kubernetes/networkpolicy.yaml
+    maturity_required: [intermediate, advanced]
+
+  "RBAC configuration":
+    primary_skill: operating-kubernetes
+    required_files:
+      - kubernetes/rbac.yaml
+    content_checks:
+      - pattern: "kind: Role|kind: RoleBinding"
+        in: kubernetes/rbac.yaml
+      - pattern: "rules:"
+        in: kubernetes/rbac.yaml
+    maturity_required: [intermediate, advanced]
+
+  "Pod Disruption Budget":
+    primary_skill: operating-kubernetes
+    required_files:
+      - kubernetes/pdb.yaml
+    content_checks:
+      - pattern: "kind: PodDisruptionBudget"
+        in: kubernetes/pdb.yaml
+      - pattern: "minAvailable"
+        in: kubernetes/pdb.yaml
+    maturity_required: [intermediate, advanced]
+
+  "Kustomize overlays":
+    primary_skill: operating-kubernetes
+    required_files:
+      - kubernetes/kustomization.yaml
+      - kubernetes/overlays/production/kustomization.yaml
+      - kubernetes/overlays/staging/kustomization.yaml
+    content_checks:
+      - pattern: "resources:|apiVersion: kustomize"
+        in: kubernetes/kustomization.yaml
+    maturity_required: [advanced]
+
+  "ServiceMonitor for Prometheus":
+    primary_skill: operating-kubernetes
+    required_files:
+      - kubernetes/servicemonitor.yaml
+    content_checks:
+      - pattern: "kind: ServiceMonitor"
+        in: kubernetes/servicemonitor.yaml
+      - pattern: "endpoints:"
+        in: kubernetes/servicemonitor.yaml
+    maturity_required: [advanced]
+
+  "Multi-stage Dockerfile":
+    primary_skill: writing-dockerfiles
+    required_files:
+      - Dockerfile
+      - .dockerignore
+    content_checks:
+      - pattern: "FROM.*AS builder"
+        in: Dockerfile
+      - pattern: "COPY --from=builder"
+        in: Dockerfile
+      - pattern: "USER"
+        in: Dockerfile
+      - pattern: "\\.git|node_modules|__pycache__"
+        in: .dockerignore
+    maturity_required: [intermediate, advanced]
+
+  "Docker Compose for development":
+    primary_skill: writing-dockerfiles
+    required_files:
+      - docker-compose.yml
+    content_checks:
+      - pattern: "services:|build:|ports:"
+        in: docker-compose.yml
+    maturity_required: [intermediate, advanced]
+
+  "Ingress configuration":
+    primary_skill: configuring-nginx
+    required_files:
+      - kubernetes/ingress.yaml
+    content_checks:
+      - pattern: "kind: Ingress"
+        in: kubernetes/ingress.yaml
+      - pattern: "cert-manager\\.io/cluster-issuer|tls:"
+        in: kubernetes/ingress.yaml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Nginx security headers":
+    primary_skill: configuring-nginx
+    required_files:
+      - kubernetes/ingress.yaml
+    content_checks:
+      - pattern: "nginx\\.ingress\\.kubernetes\\.io/(ssl-redirect|rate-limit)"
+        in: kubernetes/ingress.yaml
+    maturity_required: [intermediate, advanced]
+
+  "CI/CD pipeline":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/workflows/ci.yml
+      - .github/workflows/cd-staging.yml
+      - .github/workflows/cd-production.yml
+    content_checks:
+      - pattern: "on:|jobs:|steps:"
+        in: .github/workflows/ci.yml
+      - pattern: "kubectl apply|deploy"
+        in: .github/workflows/cd-staging.yml
+    maturity_required: [intermediate, advanced]
+
+  "Docker build and push workflow":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/workflows/ci.yml
+    content_checks:
+      - pattern: "docker/build-push-action|docker/login-action"
+        in: .github/workflows/ci.yml
+    maturity_required: [intermediate, advanced]
+
+  "Security scanning workflow":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/workflows/security-scan.yaml
+    content_checks:
+      - pattern: "trivy-action|aquasecurity"
+        in: .github/workflows/security-scan.yaml
+      - pattern: "severity: 'CRITICAL,HIGH'"
+        in: .github/workflows/security-scan.yaml
+    maturity_required: [advanced]
+
+  "Prometheus configuration":
+    primary_skill: implementing-observability
+    required_files:
+      - monitoring/prometheus/prometheus.yml
+      - monitoring/prometheus/alert_rules.yml
+    content_checks:
+      - pattern: "scrape_configs:|job_name:"
+        in: monitoring/prometheus/prometheus.yml
+      - pattern: "alert:|expr:"
+        in: monitoring/prometheus/alert_rules.yml
+    maturity_required: [intermediate, advanced]
+
+  "Grafana dashboards":
+    primary_skill: implementing-observability
+    required_files:
+      - monitoring/grafana/dashboards/kubernetes-overview.json
+    content_checks:
+      - pattern: '"type":\\s*"(graph|gauge|stat)"'
+        in: monitoring/grafana/dashboards/
+      - pattern: '"title".*Kubernetes|"title".*Pod'
+        in: monitoring/grafana/dashboards/
+    maturity_required: [intermediate, advanced]
+
+  "Istio service mesh (if enabled)":
+    primary_skill: implementing-service-mesh
+    required_files:
+      - mesh/istio/virtualservice.yaml
+      - mesh/istio/destinationrule.yaml
+      - mesh/istio/peer-authentication.yaml
+    content_checks:
+      - pattern: "kind: VirtualService"
+        in: mesh/istio/virtualservice.yaml
+      - pattern: "kind: DestinationRule"
+        in: mesh/istio/destinationrule.yaml
+      - pattern: "kind: PeerAuthentication"
+        in: mesh/istio/peer-authentication.yaml
+      - pattern: "STRICT"
+        in: mesh/istio/peer-authentication.yaml
+    maturity_required: [advanced]
+
+  "StatefulSet for database (if stateful)":
+    primary_skill: using-relational-databases
+    required_files:
+      - kubernetes/statefulset.yaml
+      - kubernetes/storageclass.yaml
+    content_checks:
+      - pattern: "kind: StatefulSet"
+        in: kubernetes/statefulset.yaml
+      - pattern: "volumeClaimTemplates:"
+        in: kubernetes/statefulset.yaml
+      - pattern: "kind: StorageClass"
+        in: kubernetes/storageclass.yaml
+    maturity_required: [intermediate, advanced]
+
+  "Deployment scripts":
+    primary_skill: operating-kubernetes
+    required_files:
+      - scripts/deploy.sh
+      - scripts/rollback.sh
+    content_checks:
+      - pattern: "kubectl apply"
+        in: scripts/deploy.sh
+      - pattern: "kubectl rollout"
+        in: scripts/rollback.sh
+    maturity_required: [starter, intermediate, advanced]
+
+  "Makefile with common operations":
+    primary_skill: assembling-components
+    required_files:
+      - Makefile
+    content_checks:
+      - pattern: "\\.PHONY:|deploy|rollback"
+        in: Makefile
+      - pattern: "kubectl"
+        in: Makefile
+    maturity_required: [intermediate, advanced]
+
+  "Documentation":
+    primary_skill: assembling-components
+    required_files:
+      - docs/README.md
+      - docs/ARCHITECTURE.md
+      - docs/RUNBOOK.md
+    content_checks:
+      - pattern: "Deployment|Kubernetes|Setup"
+        in: docs/README.md
+      - pattern: "Architecture|System|Components"
+        in: docs/ARCHITECTURE.md
+      - pattern: "Operations|Troubleshooting|Common tasks"
+        in: docs/RUNBOOK.md
+    maturity_required: [intermediate, advanced]
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Learning-focused with basic Kubernetes deployment, local development, minimal automation"
+
+    require_additionally:
+      - "Kubernetes Deployment manifests"
+      - "Health checks configuration"
+      - "Namespace and ConfigMap"
+      - "Ingress configuration"
+      - "Multi-stage Dockerfile"
+      - "Deployment scripts"
+
+    skip_deliverables:
+      - "Horizontal Pod Autoscaler"
+      - "Network policies"
+      - "RBAC configuration"
+      - "Pod Disruption Budget"
+      - "Kustomize overlays"
+      - "ServiceMonitor for Prometheus"
+      - "CI/CD pipeline"
+      - "Security scanning workflow"
+      - "Prometheus configuration"
+      - "Grafana dashboards"
+      - "Istio service mesh (if enabled)"
+      - "StatefulSet for database (if stateful)"
+      - "Makefile with common operations"
+
+    empty_dirs_allowed:
+      - kubernetes/overlays/
+      - monitoring/prometheus/
+      - monitoring/grafana/dashboards/
+      - mesh/
+      - tests/integration/
+
+    generation_adjustments:
+      - Use fixed replicas (3 pods) instead of HPA
+      - ClusterIP service with basic Ingress
+      - Docker Compose for local development
+      - Simple deployment script without GitOps
+      - Extensive inline comments in manifests
+      - README with step-by-step deployment guide
+
+  intermediate:
+    description: "Production-ready with autoscaling, monitoring, security policies, and CI/CD automation"
+
+    require_additionally:
+      - "Horizontal Pod Autoscaler"
+      - "Network policies"
+      - "RBAC configuration"
+      - "Pod Disruption Budget"
+      - "Docker Compose for development"
+      - "Nginx security headers"
+      - "CI/CD pipeline"
+      - "Docker build and push workflow"
+      - "Prometheus configuration"
+      - "Grafana dashboards"
+      - "Makefile with common operations"
+      - "Documentation"
+
+    skip_deliverables:
+      - "Kustomize overlays"
+      - "ServiceMonitor for Prometheus"
+      - "Security scanning workflow"
+      - "Istio service mesh (if enabled)"
+
+    empty_dirs_allowed:
+      - kubernetes/overlays/
+      - mesh/
+      - tests/performance/
+
+    generation_adjustments:
+      - HPA with CPU/memory metrics
+      - NetworkPolicies with default-deny
+      - RBAC with least-privilege service accounts
+      - GitHub Actions CI/CD with staging deployment
+      - Prometheus metrics and basic alerting
+      - Grafana dashboards for cluster and app metrics
+      - Let's Encrypt TLS with cert-manager
+
+  advanced:
+    description: "Enterprise-scale with Kustomize overlays, service mesh, advanced monitoring, comprehensive security"
+
+    require_additionally:
+      - "Kustomize overlays"
+      - "ServiceMonitor for Prometheus"
+      - "Security scanning workflow"
+      - "Istio service mesh (if enabled)"
+      - "StatefulSet for database (if stateful)"
+
+    skip_deliverables: []
+
+    empty_dirs_allowed:
+      - data/
+      - logs/
+
+    generation_adjustments:
+      - Kustomize with dev/staging/production overlays
+      - Vertical Pod Autoscaler for resource optimization
+      - Istio service mesh with strict mTLS
+      - Pod Security Standards (Restricted)
+      - ArgoCD GitOps deployment
+      - Multi-cluster setup capability
+      - Comprehensive monitoring (Prometheus Operator)
+      - Advanced alerting with SLOs
+      - Security scanning in CI (Trivy, Grype)
+      - SLSA provenance generation
+      - Cost analysis and optimization scripts
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **File Existence Check**
+   - Verify all `required_files` exist for the selected maturity level
+   - Allow `empty_dirs_allowed` to be empty or non-existent
+
+2. **Content Pattern Matching**
+   - Run regex `pattern` checks against file contents
+   - Ensure Kubernetes manifests have required fields
+   - Verify Docker multi-stage builds
+   - Check CI/CD workflow structure
+
+3. **Cross-Skill Integration**
+   - Validate Docker images referenced in Kubernetes manifests exist
+   - Ensure Ingress annotations match nginx configuration
+   - Verify ServiceMonitor matches Prometheus scrape config
+   - Check service mesh manifests reference correct services
+
+4. **Maturity-Specific Validation**
+   - **Starter**: Basic deployment works, health checks pass, Ingress accessible
+   - **Intermediate**: HPA scales, NetworkPolicies enforced, CI/CD deploys to staging
+   - **Advanced**: Kustomize overlays apply, service mesh mTLS active, security scanning passes
+
+5. **Report Generation**
+   ```
+   ✓ Kubernetes Deployment manifests (operating-kubernetes)
+   ✓ Health checks configuration (operating-kubernetes)
+   ✓ Multi-stage Dockerfile (writing-dockerfiles)
+   ✓ Ingress configuration (configuring-nginx)
+   ✗ Horizontal Pod Autoscaler (operating-kubernetes) - SKIPPED (starter)
+   ✗ Network policies (operating-kubernetes) - SKIPPED (starter)
+
+   Validation: 15/20 required deliverables present (5 skipped for starter maturity)
+   Status: PASSED
+   ```
+
+### Common Validation Failures
+
+**Issue**: Missing resource requests/limits
+- **Check**: `resources: (requests|limits):` in deployment.yaml
+- **Fix**: Add CPU/memory requests and limits to all containers
+
+**Issue**: No health checks configured
+- **Check**: `livenessProbe:|readinessProbe:` in deployment.yaml
+- **Fix**: Add HTTP health check endpoints
+
+**Issue**: Ingress missing TLS configuration
+- **Check**: `tls:|cert-manager.io` in ingress.yaml
+- **Fix**: Add cert-manager annotation or TLS secret
+
+**Issue**: CI/CD workflow doesn't build Docker image
+- **Check**: `docker/build-push-action` in ci.yml
+- **Fix**: Add Docker build and push step
+
+**Issue**: Prometheus not scraping metrics
+- **Check**: `kind: ServiceMonitor` exists
+- **Fix**: Create ServiceMonitor with correct selector
+
+**Issue**: Service mesh mTLS not enforced
+- **Check**: `STRICT` in peer-authentication.yaml
+- **Fix**: Change mTLS mode from PERMISSIVE to STRICT
+
+---
+
 **Blueprint Complete**

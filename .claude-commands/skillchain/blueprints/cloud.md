@@ -1,7 +1,7 @@
 # Cloud Deployment Blueprint
 
-**Version:** 1.1.0
-**Last Updated:** 2025-12-08
+**Version:** 1.0.0
+**Last Updated:** 2024-12-06
 **Category:** Cloud Infrastructure
 
 ---
@@ -22,11 +22,6 @@ Pre-configured skill chain optimized for deploying applications to cloud platfor
 - serverless
 - lambda
 - cloud infrastructure
-- terraform
-- aws infrastructure
-- provision aws
-- provision gcp
-- provision azure
 
 **Secondary (medium confidence):**
 - cloud functions
@@ -37,10 +32,9 @@ Pre-configured skill chain optimized for deploying applications to cloud platfor
 - fargate
 - kubernetes
 - docker deploy
+- terraform
 - cloudformation
 - infrastructure as code
-- pulumi
-- cdk
 
 **Example goals that match:**
 - "deploy my app to AWS"
@@ -1306,6 +1300,586 @@ aws service-quotas request-service-quota-increase \
 - Serverless as default deployment model
 - Comprehensive security and cost optimization
 - Full observability stack
+
+---
+
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "Terraform infrastructure configuration":
+    primary_skill: writing-infrastructure-code
+    required_files:
+      - terraform/main.tf
+      - terraform/variables.tf
+      - terraform/outputs.tf
+      - terraform/versions.tf
+    content_checks:
+      - pattern: "terraform\\s*\\{|provider\\s+\""
+        in: terraform/main.tf
+      - pattern: "variable\\s+\""
+        in: terraform/variables.tf
+      - pattern: "output\\s+\""
+        in: terraform/outputs.tf
+      - pattern: "required_version|required_providers"
+        in: terraform/versions.tf
+    maturity_required: [starter, intermediate, advanced]
+
+  "Remote state backend configuration":
+    primary_skill: writing-infrastructure-code
+    required_files:
+      - terraform/backend.tf
+    content_checks:
+      - pattern: "backend\\s+\"s3\"|backend\\s+\"gcs\"|backend\\s+\"azurerm\""
+        in: terraform/backend.tf
+      - pattern: "encrypt\\s*=\\s*true"
+        in: terraform/backend.tf
+        maturity: [intermediate, advanced]
+    maturity_required: [intermediate, advanced]
+
+  "VPC networking configuration":
+    primary_skill: writing-infrastructure-code
+    required_files:
+      - terraform/modules/vpc/main.tf
+    content_checks:
+      - pattern: "aws_vpc|google_compute_network|azurerm_virtual_network"
+        in: terraform/modules/vpc/main.tf
+      - pattern: "subnet"
+        in: terraform/modules/vpc/main.tf
+    maturity_required: [intermediate, advanced]
+
+  "AWS serverless deployment":
+    primary_skill: deploying-on-aws
+    required_files:
+      - infrastructure/aws/lambda.tf
+      - infrastructure/aws/api-gateway.tf
+      - infrastructure/aws/dynamodb.tf
+    content_checks:
+      - pattern: "aws_lambda_function"
+        in: infrastructure/aws/lambda.tf
+      - pattern: "aws_apigatewayv2_api"
+        in: infrastructure/aws/api-gateway.tf
+      - pattern: "aws_dynamodb_table"
+        in: infrastructure/aws/dynamodb.tf
+    maturity_required: [starter, intermediate, advanced]
+    condition: "provider == 'aws' AND deployment_model == 'serverless'"
+
+  "AWS container deployment (ECS Fargate)":
+    primary_skill: deploying-on-aws
+    required_files:
+      - infrastructure/aws/ecs-cluster.tf
+      - infrastructure/aws/ecs-service.tf
+      - infrastructure/aws/ecs-task-definition.tf
+      - infrastructure/aws/alb.tf
+    content_checks:
+      - pattern: "aws_ecs_cluster"
+        in: infrastructure/aws/ecs-cluster.tf
+      - pattern: "launch_type\\s*=\\s*\"FARGATE\""
+        in: infrastructure/aws/ecs-service.tf
+      - pattern: "container_definitions"
+        in: infrastructure/aws/ecs-task-definition.tf
+      - pattern: "load_balancer_type\\s*=\\s*\"application\""
+        in: infrastructure/aws/alb.tf
+    maturity_required: [starter, intermediate, advanced]
+    condition: "provider == 'aws' AND deployment_model == 'containers'"
+
+  "AWS Kubernetes deployment (EKS)":
+    primary_skill: deploying-on-aws
+    required_files:
+      - infrastructure/aws/eks-cluster.tf
+      - infrastructure/aws/eks-addons.tf
+      - k8s/manifests/deployment.yaml
+      - k8s/manifests/service.yaml
+    content_checks:
+      - pattern: "aws_eks_cluster|aws_eks_node_group"
+        in: infrastructure/aws/eks-cluster.tf
+      - pattern: "aws_eks_addon"
+        in: infrastructure/aws/eks-addons.tf
+      - pattern: "kind: Deployment"
+        in: k8s/manifests/deployment.yaml
+      - pattern: "kind: Service"
+        in: k8s/manifests/service.yaml
+    maturity_required: [intermediate, advanced]
+    condition: "provider == 'aws' AND deployment_model == 'kubernetes'"
+
+  "GCP Cloud Run deployment":
+    primary_skill: deploying-on-gcp
+    required_files:
+      - infrastructure/gcp/cloud-run.tf
+      - infrastructure/gcp/cloud-run-iam.tf
+      - Dockerfile
+    content_checks:
+      - pattern: "google_cloud_run_service"
+        in: infrastructure/gcp/cloud-run.tf
+      - pattern: "google_cloud_run_service_iam"
+        in: infrastructure/gcp/cloud-run-iam.tf
+      - pattern: "FROM|EXPOSE|CMD"
+        in: Dockerfile
+    maturity_required: [starter, intermediate, advanced]
+    condition: "provider == 'gcp' AND deployment_model == 'managed_platform'"
+
+  "GCP Kubernetes deployment (GKE)":
+    primary_skill: deploying-on-gcp
+    required_files:
+      - infrastructure/gcp/gke-cluster.tf
+      - infrastructure/gcp/gke-workload-identity.tf
+      - k8s/deployment.yaml
+      - k8s/service.yaml
+    content_checks:
+      - pattern: "google_container_cluster|google_container_node_pool"
+        in: infrastructure/gcp/gke-cluster.tf
+      - pattern: "workload_identity_user"
+        in: infrastructure/gcp/gke-workload-identity.tf
+      - pattern: "kind: Deployment"
+        in: k8s/deployment.yaml
+    maturity_required: [intermediate, advanced]
+    condition: "provider == 'gcp' AND deployment_model == 'kubernetes'"
+
+  "Azure Container Apps deployment":
+    primary_skill: deploying-on-azure
+    required_files:
+      - infrastructure/azure/container-apps.bicep
+      - infrastructure/azure/container-apps-environment.bicep
+      - Dockerfile
+    content_checks:
+      - pattern: "Microsoft.App/containerApps"
+        in: infrastructure/azure/container-apps.bicep
+      - pattern: "Microsoft.App/managedEnvironments"
+        in: infrastructure/azure/container-apps-environment.bicep
+      - pattern: "FROM|EXPOSE|CMD"
+        in: Dockerfile
+    maturity_required: [starter, intermediate, advanced]
+    condition: "provider == 'azure' AND deployment_model == 'managed_platform'"
+
+  "Azure Kubernetes deployment (AKS)":
+    primary_skill: deploying-on-azure
+    required_files:
+      - infrastructure/azure/aks-cluster.bicep
+      - infrastructure/azure/aks-workload-identity.bicep
+      - k8s/manifests/deployment.yaml
+      - k8s/manifests/service.yaml
+    content_checks:
+      - pattern: "Microsoft.ContainerService/managedClusters"
+        in: infrastructure/azure/aks-cluster.bicep
+      - pattern: "federatedIdentityCredentials"
+        in: infrastructure/azure/aks-workload-identity.bicep
+      - pattern: "kind: Deployment"
+        in: k8s/manifests/deployment.yaml
+    maturity_required: [intermediate, advanced]
+    condition: "provider == 'azure' AND deployment_model == 'kubernetes'"
+
+  "IAM roles and policies":
+    primary_skill: deploying-on-aws
+    required_files:
+      - infrastructure/aws/iam.tf
+    content_checks:
+      - pattern: "aws_iam_role|aws_iam_policy"
+        in: infrastructure/aws/iam.tf
+      - pattern: "least.privilege|least-privilege"
+        in: infrastructure/aws/iam.tf
+    maturity_required: [starter, intermediate, advanced]
+    condition: "provider == 'aws'"
+
+  "Security groups and network ACLs":
+    primary_skill: deploying-on-aws
+    required_files:
+      - infrastructure/aws/security-groups.tf
+    content_checks:
+      - pattern: "aws_security_group"
+        in: infrastructure/aws/security-groups.tf
+    maturity_required: [starter, intermediate, advanced]
+    condition: "provider == 'aws'"
+
+  "CloudWatch monitoring and alarms":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/cloudwatch/alarms.tf
+      - observability/cloudwatch/log-groups.tf
+    content_checks:
+      - pattern: "aws_cloudwatch_metric_alarm|comparison_operator"
+        in: observability/cloudwatch/alarms.tf
+      - pattern: "aws_cloudwatch_log_group|retention_in_days"
+        in: observability/cloudwatch/log-groups.tf
+    maturity_required: [intermediate, advanced]
+    condition: "provider == 'aws'"
+
+  "Prometheus and Grafana configuration":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/prometheus.yml
+      - observability/grafana/dashboards/overview.json
+    content_checks:
+      - pattern: "scrape_configs:|job_name:"
+        in: observability/prometheus.yml
+      - pattern: "dashboard|panels"
+        in: observability/grafana/dashboards/overview.json
+    maturity_required: [starter, intermediate, advanced]
+
+  "OpenTelemetry collector configuration":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/otel-collector.yaml
+    content_checks:
+      - pattern: "receivers:|processors:|exporters:|service:"
+        in: observability/otel-collector.yaml
+    maturity_required: [intermediate, advanced]
+
+  "Kubernetes monitoring stack (LGTM)":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/kubernetes/alloy-daemonset.yaml
+      - observability/kubernetes/prometheus-operator.yaml
+    content_checks:
+      - pattern: "DaemonSet|opentelemetry"
+        in: observability/kubernetes/alloy-daemonset.yaml
+      - pattern: "Prometheus|ServiceMonitor"
+        in: observability/kubernetes/prometheus-operator.yaml
+    maturity_required: [advanced]
+    condition: "deployment_model == 'kubernetes'"
+
+  "Security hardening baseline":
+    primary_skill: security-hardening
+    required_files:
+      - security/baseline/ssh-hardening.conf
+      - security/policies/network-policy-default-deny.yaml
+    content_checks:
+      - pattern: "PermitRootLogin|PasswordAuthentication"
+        in: security/baseline/ssh-hardening.conf
+      - pattern: "NetworkPolicy|Ingress"
+        in: security/policies/network-policy-default-deny.yaml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Container security hardening":
+    primary_skill: security-hardening
+    required_files:
+      - security/baseline/Dockerfile.secure
+      - security/policies/pod-security-hardened.yaml
+    content_checks:
+      - pattern: "USER|nonroot"
+        in: security/baseline/Dockerfile.secure
+      - pattern: "securityContext|runAsNonRoot"
+        in: security/policies/pod-security-hardened.yaml
+    maturity_required: [intermediate, advanced]
+
+  "CIS benchmark compliance reports":
+    primary_skill: security-hardening
+    required_files:
+      - security/cis-reports/
+    content_checks:
+      - pattern: "cis-benchmark|compliance"
+        in: security/cis-reports/
+    maturity_required: [intermediate, advanced]
+
+  "Web Application Firewall (WAF)":
+    primary_skill: security-hardening
+    required_files:
+      - infrastructure/aws/waf.tf
+    content_checks:
+      - pattern: "aws_wafv2_web_acl"
+        in: infrastructure/aws/waf.tf
+    maturity_required: [advanced]
+    condition: "provider == 'aws'"
+
+  "Cost allocation tagging":
+    primary_skill: optimizing-costs
+    required_files:
+      - finops/cost_allocation_tags.yaml
+    content_checks:
+      - pattern: "Owner|Project|Environment|CostCenter"
+        in: finops/cost_allocation_tags.yaml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Budget alerts and monitoring":
+    primary_skill: optimizing-costs
+    required_files:
+      - finops/budget_alerts.yaml
+      - terraform/aws_cost_budgets.tf
+    content_checks:
+      - pattern: "threshold|notification"
+        in: finops/budget_alerts.yaml
+      - pattern: "aws_budgets_budget|aws_sns_topic"
+        in: terraform/aws_cost_budgets.tf
+    maturity_required: [starter, intermediate, advanced]
+    condition: "provider == 'aws'"
+
+  "Right-sizing recommendations":
+    primary_skill: optimizing-costs
+    required_files:
+      - finops/rightsizing_report.md
+    content_checks:
+      - pattern: "utilization|recommendation|savings_estimate"
+        in: finops/rightsizing_report.md
+    maturity_required: [intermediate, advanced]
+
+  "Idle resource cleanup automation":
+    primary_skill: optimizing-costs
+    required_files:
+      - scripts/cleanup_idle_resources.py
+    content_checks:
+      - pattern: "unattached_volumes|old_snapshots|stopped_instances"
+        in: scripts/cleanup_idle_resources.py
+    maturity_required: [intermediate, advanced]
+
+  "Savings Plans and Reserved Instances":
+    primary_skill: optimizing-costs
+    required_files:
+      - finops/commitment_analysis.md
+      - terraform/aws_savings_plan.tf
+    content_checks:
+      - pattern: "reserved_instances|savings_plans|coverage"
+        in: finops/commitment_analysis.md
+      - pattern: "aws_savingsplans_plan"
+        in: terraform/aws_savings_plan.tf
+    maturity_required: [intermediate, advanced]
+    condition: "provider == 'aws'"
+
+  "Storage lifecycle policies":
+    primary_skill: optimizing-costs
+    required_files:
+      - terraform/aws_s3_lifecycle.tf
+    content_checks:
+      - pattern: "aws_s3_bucket_lifecycle_configuration|intelligent_tiering"
+        in: terraform/aws_s3_lifecycle.tf
+    maturity_required: [intermediate, advanced]
+    condition: "provider == 'aws'"
+
+  "Kubernetes cost optimization":
+    primary_skill: optimizing-costs
+    required_files:
+      - kubernetes/kubecost-deployment.yaml
+      - kubernetes/resource-quotas.yaml
+      - kubernetes/vpa-configuration.yaml
+    content_checks:
+      - pattern: "kubecost|cost-analyzer"
+        in: kubernetes/kubecost-deployment.yaml
+      - pattern: "ResourceQuota|LimitRange"
+        in: kubernetes/resource-quotas.yaml
+      - pattern: "VerticalPodAutoscaler"
+        in: kubernetes/vpa-configuration.yaml
+    maturity_required: [advanced]
+    condition: "deployment_model == 'kubernetes'"
+
+  "CI/CD deployment pipeline":
+    primary_skill: assembling-components
+    required_files:
+      - .github/workflows/deploy-aws.yml
+    content_checks:
+      - pattern: "aws-actions/configure-aws-credentials|terraform"
+        in: .github/workflows/deploy-aws.yml
+    maturity_required: [intermediate, advanced]
+    condition: "provider == 'aws'"
+
+  "Infrastructure documentation":
+    primary_skill: assembling-components
+    required_files:
+      - docs/architecture.md
+      - docs/deployment-guide.md
+      - docs/troubleshooting.md
+    content_checks:
+      - pattern: "architecture|diagram"
+        in: docs/architecture.md
+      - pattern: "deployment|steps|terraform"
+        in: docs/deployment-guide.md
+    maturity_required: [intermediate, advanced]
+
+  "Disaster recovery configuration":
+    primary_skill: deploying-on-aws
+    required_files:
+      - infrastructure/aws/backup.tf
+      - infrastructure/aws/disaster-recovery.tf
+    content_checks:
+      - pattern: "aws_backup_plan|aws_backup_vault"
+        in: infrastructure/aws/backup.tf
+      - pattern: "aws_route53_health_check"
+        in: infrastructure/aws/disaster-recovery.tf
+    maturity_required: [advanced]
+    condition: "provider == 'aws'"
+
+  "Multi-region failover":
+    primary_skill: deploying-on-aws
+    required_files:
+      - infrastructure/aws/disaster-recovery.tf
+    content_checks:
+      - pattern: "aws_route53_health_check|failover"
+        in: infrastructure/aws/disaster-recovery.tf
+    maturity_required: [advanced]
+    condition: "provider == 'aws' AND environment == 'production'"
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Single-region, development-focused, cost-optimized, minimal complexity"
+
+    require_additionally:
+      - "Terraform infrastructure configuration"
+      - "VPC networking configuration (simplified, single-AZ)"
+      - "IAM roles and policies (basic least-privilege)"
+      - "Security groups and network ACLs"
+      - "Prometheus and Grafana configuration"
+      - "Security hardening baseline"
+      - "Cost allocation tagging"
+      - "Budget alerts and monitoring"
+
+    skip_deliverables:
+      - "Remote state backend configuration (use local state)"
+      - "Kubernetes monitoring stack (LGTM)"
+      - "CIS benchmark compliance reports"
+      - "Web Application Firewall (WAF)"
+      - "Right-sizing recommendations"
+      - "Idle resource cleanup automation"
+      - "Savings Plans and Reserved Instances"
+      - "Storage lifecycle policies"
+      - "Kubernetes cost optimization"
+      - "CI/CD deployment pipeline"
+      - "Infrastructure documentation (minimal README only)"
+      - "Disaster recovery configuration"
+      - "Multi-region failover"
+
+    empty_dirs_allowed:
+      - "security/monitoring/"
+      - "security/compliance/"
+      - "tests/integration/"
+      - "docs/architecture/"
+      - "k8s/manifests/"
+
+    generation_adjustments:
+      - Use local Terraform state backend
+      - Single availability zone deployment
+      - Minimal instance sizes (t3.micro, t3.small)
+      - Basic monitoring with CloudWatch/Stackdriver
+      - Simple security hardening (SSH, security groups)
+      - Development environment configuration only
+      - Inline documentation and comments
+      - Step-by-step deployment README
+
+  intermediate:
+    description: "Multi-environment, production-ready, automated deployments, comprehensive monitoring"
+
+    require_additionally:
+      - "Remote state backend configuration"
+      - "VPC networking configuration (multi-AZ, NAT gateways)"
+      - "CloudWatch monitoring and alarms OR Prometheus and Grafana configuration"
+      - "OpenTelemetry collector configuration"
+      - "Container security hardening"
+      - "CIS benchmark compliance reports"
+      - "Right-sizing recommendations"
+      - "Idle resource cleanup automation"
+      - "Savings Plans and Reserved Instances"
+      - "Storage lifecycle policies"
+      - "CI/CD deployment pipeline"
+      - "Infrastructure documentation"
+
+    skip_deliverables:
+      - "Kubernetes monitoring stack (LGTM, unless Kubernetes)"
+      - "Web Application Firewall (WAF)"
+      - "Kubernetes cost optimization (unless Kubernetes)"
+      - "Disaster recovery configuration"
+      - "Multi-region failover"
+
+    empty_dirs_allowed:
+      - "security/monitoring/"
+      - "tests/performance/"
+
+    generation_adjustments:
+      - S3/GCS/Azure backend with state locking
+      - Multi-AZ deployment for high availability
+      - Separate dev/staging/prod environments
+      - Automated CI/CD with Terraform plan/apply
+      - Comprehensive CloudWatch/Stackdriver monitoring
+      - Security scanning in CI/CD (Checkov, Trivy)
+      - Cost optimization scripts and alerts
+      - Environment-specific tfvars files
+      - Auto-scaling enabled with appropriate policies
+      - Detailed deployment and operational documentation
+
+  advanced:
+    description: "Enterprise-scale, multi-region HA, comprehensive security, full compliance, advanced cost optimization"
+
+    require_additionally:
+      - "Remote state backend configuration (encrypted, with locking)"
+      - "VPC networking configuration (multi-region, hub-spoke if applicable)"
+      - "Kubernetes monitoring stack (LGTM, if Kubernetes)"
+      - "Web Application Firewall (WAF)"
+      - "CIS benchmark compliance reports"
+      - "Container security hardening"
+      - "Right-sizing recommendations"
+      - "Idle resource cleanup automation"
+      - "Savings Plans and Reserved Instances"
+      - "Storage lifecycle policies"
+      - "Kubernetes cost optimization (if Kubernetes)"
+      - "CI/CD deployment pipeline"
+      - "Infrastructure documentation"
+      - "Disaster recovery configuration"
+      - "Multi-region failover"
+
+    skip_deliverables: []
+
+    empty_dirs_allowed:
+      - "tests/chaos/"
+
+    generation_adjustments:
+      - Enable all security features (WAF, GuardDuty, Security Hub)
+      - Multi-region deployment with failover
+      - Advanced monitoring (Prometheus, Grafana, LGTM stack)
+      - Runtime security monitoring (Falco)
+      - OPA/Gatekeeper policy enforcement
+      - Full CIS benchmark compliance
+      - Automated compliance reporting
+      - Advanced cost optimization (Spot instances, Savings Plans)
+      - Unit cost tracking and anomaly detection
+      - Comprehensive testing (unit, integration, security, disaster recovery)
+      - Detailed architecture diagrams and runbooks
+      - SLA/SLO definitions and monitoring
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **File Existence Check**: Verify all `required_files` exist for the selected maturity level
+2. **Content Pattern Check**: Verify `content_checks` patterns match within specified files
+3. **Condition Evaluation**: Only validate deliverables where conditions are met (provider, deployment_model, etc.)
+4. **Maturity Alignment**: Ensure maturity-specific files are present/absent according to profile
+5. **Cross-Skill Integration**: Verify files from different skills reference each other correctly
+
+**Validation Output:**
+```
+✅ Terraform infrastructure configuration - PASS
+✅ Remote state backend configuration - PASS
+✅ AWS serverless deployment - PASS
+✅ IAM roles and policies - PASS
+✅ Security groups and network ACLs - PASS
+✅ CloudWatch monitoring and alarms - PASS
+✅ Security hardening baseline - PASS
+✅ Cost allocation tagging - PASS
+✅ Budget alerts and monitoring - PASS
+⚠️  CI/CD deployment pipeline - WARNING: Pattern 'terraform' not found in .github/workflows/deploy-aws.yml
+❌ Web Application Firewall (WAF) - FAIL: Required file infrastructure/aws/waf.tf not found (advanced maturity)
+
+Summary: 9/11 deliverables validated successfully (2 issues found)
+```
+
+**Post-Generation Commands:**
+```bash
+# Validate all deliverables for current maturity level
+skillchain validate cloud
+
+# Check specific deliverable
+skillchain validate cloud --deliverable "Remote state backend configuration"
+
+# Generate missing deliverables report
+skillchain validate cloud --report missing
+
+# Fix validation issues interactively
+skillchain validate cloud --fix
+```
 
 ---
 

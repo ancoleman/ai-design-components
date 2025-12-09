@@ -1,0 +1,175 @@
+skill: "optimizing-sql"
+version: "1.0"
+domain: "data"
+
+base_outputs:
+  # Core analysis outputs
+  - path: "analysis/explain-plan.md"
+    must_contain: ["EXPLAIN", "execution plan", "cost", "rows"]
+
+  - path: "analysis/performance-report.md"
+    must_contain: ["bottleneck", "optimization", "recommendation"]
+
+  - path: "analysis/slow-query-analysis.md"
+    must_contain: ["query performance", "scan type", "timing"]
+
+  # Index definitions
+  - path: "sql/indexes/create-indexes.sql"
+    must_contain: ["CREATE INDEX", "ON"]
+
+  - path: "sql/indexes/index-strategy.md"
+    must_contain: ["index", "selectivity", "decision"]
+
+  # Optimized queries
+  - path: "sql/optimized/queries.sql"
+    must_contain: ["SELECT", "FROM", "WHERE"]
+
+  - path: "sql/optimized/before-after.md"
+    must_contain: ["before", "after", "performance improvement"]
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "sql/indexes/basic-indexes.sql"
+        must_contain: ["CREATE INDEX", "single column"]
+
+      - path: "analysis/quick-wins.md"
+        must_contain: ["missing index", "sequential scan", "recommendation"]
+
+    intermediate:
+      - path: "sql/indexes/composite-indexes.sql"
+        must_contain: ["CREATE INDEX", "multiple columns", "column order"]
+
+      - path: "sql/optimized/query-rewrites.sql"
+        must_contain: ["anti-pattern", "refactored", "JOIN"]
+
+      - path: "analysis/execution-plan-analysis.md"
+        must_contain: ["EXPLAIN ANALYZE", "scan type", "cost estimation"]
+
+    advanced:
+      - path: "sql/indexes/advanced-indexes.sql"
+        must_contain: ["partial index", "expression index", "covering index", "INCLUDE"]
+
+      - path: "sql/optimized/window-functions.sql"
+        must_contain: ["WINDOW", "PARTITION BY", "RANK", "ROW_NUMBER"]
+
+      - path: "sql/optimized/cte-optimization.sql"
+        must_contain: ["WITH", "CTE", "recursive"]
+
+      - path: "analysis/comprehensive-audit.md"
+        must_contain: ["index usage", "table statistics", "maintenance recommendations"]
+
+      - path: "sql/maintenance/statistics-update.sql"
+        must_contain: ["ANALYZE", "UPDATE STATISTICS", "VACUUM"]
+
+  database:
+    postgres:
+      - path: "sql/postgres/explain-analysis.sql"
+        must_contain: ["EXPLAIN ANALYZE", "PostgreSQL"]
+
+      - path: "sql/postgres/indexes.sql"
+        must_contain: ["B-tree", "GIN", "GiST", "BRIN"]
+
+      - path: "sql/postgres/optimizations.sql"
+        must_contain: ["partial index", "expression index", "INCLUDE"]
+
+      - path: "analysis/postgres-specific.md"
+        must_contain: ["PostgreSQL", "planner", "statistics"]
+
+    mysql:
+      - path: "sql/mysql/explain-analysis.sql"
+        must_contain: ["EXPLAIN", "FORMAT=JSON", "MySQL"]
+
+      - path: "sql/mysql/indexes.sql"
+        must_contain: ["B-tree", "Full-text", "InnoDB"]
+
+      - path: "sql/mysql/query-hints.sql"
+        must_contain: ["USE INDEX", "FORCE INDEX", "IGNORE INDEX"]
+
+      - path: "analysis/mysql-specific.md"
+        must_contain: ["MySQL", "storage engine", "optimizer"]
+
+    sqlserver:
+      - path: "sql/sqlserver/execution-plan-analysis.md"
+        must_contain: ["SQL Server", "execution plan", "graphical"]
+
+      - path: "sql/sqlserver/indexes.sql"
+        must_contain: ["CLUSTERED", "NONCLUSTERED", "INCLUDE"]
+
+      - path: "sql/sqlserver/query-store.sql"
+        must_contain: ["QUERY_STORE", "sp_query_store"]
+
+      - path: "analysis/sqlserver-specific.md"
+        must_contain: ["SQL Server", "query optimizer", "statistics"]
+
+    snowflake:
+      - path: "sql/snowflake/clustering.sql"
+        must_contain: ["CLUSTER BY", "clustering key", "micro-partitions"]
+
+      - path: "sql/snowflake/query-profile.md"
+        must_contain: ["query profile", "partition pruning", "spillage"]
+
+      - path: "sql/snowflake/warehouse-sizing.md"
+        must_contain: ["warehouse size", "scaling", "concurrency"]
+
+      - path: "analysis/snowflake-specific.md"
+        must_contain: ["Snowflake", "clustering", "query optimization"]
+
+scaffolding:
+  - path: "analysis/"
+    description: "Directory for query performance analysis and reports"
+
+  - path: "sql/indexes/"
+    description: "Directory for index creation scripts and strategies"
+
+  - path: "sql/optimized/"
+    description: "Directory for optimized query implementations"
+
+  - path: "sql/maintenance/"
+    description: "Directory for database maintenance scripts"
+
+  - path: "sql/postgres/"
+    description: "Directory for PostgreSQL-specific optimizations"
+
+  - path: "sql/mysql/"
+    description: "Directory for MySQL-specific optimizations"
+
+  - path: "sql/sqlserver/"
+    description: "Directory for SQL Server-specific optimizations"
+
+  - path: "sql/snowflake/"
+    description: "Directory for Snowflake-specific optimizations"
+
+  - path: "reports/"
+    description: "Directory for performance benchmarking reports"
+
+metadata:
+  primary_blueprints: ["data-pipeline"]
+  contributes_to:
+    - "Query optimization and performance tuning"
+    - "Index strategy and design"
+    - "Database schema optimization"
+    - "Execution plan analysis"
+    - "SQL query rewriting and refactoring"
+
+  typical_triggers:
+    - "Slow database queries"
+    - "High query execution time"
+    - "Sequential scans on large tables"
+    - "Missing or inefficient indexes"
+    - "N+1 query problems"
+    - "Correlated subquery performance issues"
+    - "Complex JOIN optimization needs"
+
+  output_patterns:
+    analysis: "Performance analysis reports and execution plan breakdowns"
+    sql_scripts: "Index definitions, optimized queries, and maintenance scripts"
+    documentation: "Optimization strategies and database-specific guidance"
+    before_after: "Side-by-side comparisons showing performance improvements"
+
+  integration_points:
+    - "Observability tools for slow query detection"
+    - "APM platforms for query tracing"
+    - "CI/CD pipelines for index deployment"
+    - "Database migration tools (Flyway, Liquibase)"
+    - "ORM query analysis (Django, Hibernate, Prisma)"

@@ -1,0 +1,259 @@
+skill: "deploying-on-gcp"
+version: "1.0"
+domain: "cloud"
+
+base_outputs:
+  # Core Terraform infrastructure files - ALWAYS produced
+  - path: "infrastructure/gcp/main.tf"
+    must_contain: ["terraform", "google", "provider"]
+    description: "Main Terraform configuration with provider setup"
+
+  - path: "infrastructure/gcp/variables.tf"
+    must_contain: ["variable", "project", "region"]
+    description: "Terraform variable definitions for GCP project and region"
+
+  - path: "infrastructure/gcp/outputs.tf"
+    must_contain: ["output"]
+    description: "Terraform outputs for resource endpoints and identifiers"
+
+  - path: "infrastructure/gcp/iam.tf"
+    must_contain: ["google_service_account", "google_project_iam"]
+    description: "IAM service accounts and role bindings"
+
+  - path: "infrastructure/gcp/networking.tf"
+    must_contain: ["google_compute_network", "google_compute_subnetwork"]
+    description: "VPC network and subnet configuration"
+
+  - path: ".gcloudignore"
+    must_contain: ["node_modules", ".git"]
+    description: "Files to ignore when deploying with gcloud"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Single-region, basic setup, minimal complexity
+      - path: "infrastructure/gcp/backend.tf"
+        must_contain: ["backend", "local"]
+        description: "Local Terraform state backend for starter projects"
+
+      - path: "deploy.sh"
+        must_contain: ["gcloud", "deploy"]
+        description: "Simple deployment script using gcloud CLI"
+
+      - path: "README.md"
+        must_contain: ["Prerequisites", "gcloud auth login", "terraform init"]
+        description: "Setup and deployment instructions"
+
+    intermediate:
+      # Multi-environment, remote state, automated deployments
+      - path: "infrastructure/gcp/backend.tf"
+        must_contain: ["backend", "gcs", "bucket"]
+        description: "GCS backend for remote Terraform state"
+
+      - path: "infrastructure/gcp/environments/dev/terraform.tfvars"
+        must_contain: ["project", "region"]
+        description: "Development environment variables"
+
+      - path: "infrastructure/gcp/environments/staging/terraform.tfvars"
+        must_contain: ["project", "region"]
+        description: "Staging environment variables"
+
+      - path: "infrastructure/gcp/environments/prod/terraform.tfvars"
+        must_contain: ["project", "region"]
+        description: "Production environment variables"
+
+      - path: "infrastructure/gcp/monitoring.tf"
+        must_contain: ["google_monitoring", "google_logging"]
+        description: "Cloud Monitoring and Logging configuration"
+
+      - path: "scripts/deploy-environment.sh"
+        must_contain: ["terraform", "workspace", "apply"]
+        description: "Environment-aware deployment script"
+
+    advanced:
+      # Multi-region, HA, disaster recovery, comprehensive security
+      - path: "infrastructure/gcp/backend.tf"
+        must_contain: ["backend", "gcs", "bucket", "encryption"]
+        description: "Encrypted GCS backend with state locking"
+
+      - path: "infrastructure/gcp/environments/dev/terraform.tfvars"
+        must_contain: ["project", "region"]
+        description: "Development environment configuration"
+
+      - path: "infrastructure/gcp/environments/staging/terraform.tfvars"
+        must_contain: ["project", "region"]
+        description: "Staging environment configuration"
+
+      - path: "infrastructure/gcp/environments/prod/terraform.tfvars"
+        must_contain: ["project", "region", "multi_region"]
+        description: "Production multi-region configuration"
+
+      - path: "infrastructure/gcp/vpc-peering.tf"
+        must_contain: ["google_compute_network_peering"]
+        description: "VPC peering for multi-region or hybrid connectivity"
+
+      - path: "infrastructure/gcp/security.tf"
+        must_contain: ["google_secret_manager", "google_kms", "encryption"]
+        description: "Secret Manager and KMS encryption configuration"
+
+      - path: "infrastructure/gcp/monitoring.tf"
+        must_contain: ["google_monitoring_alert_policy", "google_logging_metric"]
+        description: "Comprehensive monitoring, alerting, and log-based metrics"
+
+      - path: "infrastructure/gcp/backup.tf"
+        must_contain: ["google_compute_snapshot", "schedule"]
+        description: "Automated backup and disaster recovery configuration"
+
+      - path: "infrastructure/gcp/vpc-service-controls.tf"
+        must_contain: ["google_access_context_manager", "perimeter"]
+        description: "VPC Service Controls for data exfiltration protection"
+
+      - path: "scripts/disaster-recovery.sh"
+        must_contain: ["backup", "restore", "snapshot"]
+        description: "Disaster recovery and failover procedures"
+
+  infrastructure:
+    kubernetes:
+      # GKE deployment files
+      - path: "infrastructure/gcp/gke-cluster.tf"
+        must_contain: ["google_container_cluster", "google_container_node_pool"]
+        description: "GKE cluster and node pool configuration"
+
+      - path: "infrastructure/gcp/gke-workload-identity.tf"
+        must_contain: ["google_service_account", "workload_identity_user"]
+        description: "Workload Identity for secure GCP service access"
+
+      - path: "k8s/deployment.yaml"
+        must_contain: ["apiVersion", "kind: Deployment", "spec"]
+        description: "Kubernetes deployment manifest"
+
+      - path: "k8s/service.yaml"
+        must_contain: ["apiVersion", "kind: Service", "type"]
+        description: "Kubernetes service manifest"
+
+      - path: "k8s/ingress.yaml"
+        must_contain: ["apiVersion", "kind: Ingress"]
+        description: "Kubernetes ingress for external access"
+
+      - path: "k8s/configmap.yaml"
+        must_contain: ["apiVersion", "kind: ConfigMap"]
+        description: "Application configuration as ConfigMap"
+
+      - path: "skaffold.yaml"
+        must_contain: ["apiVersion", "build", "deploy"]
+        description: "Skaffold configuration for local development and deployment"
+
+    managed_platform:
+      # Cloud Run deployment
+      - path: "infrastructure/gcp/cloud-run.tf"
+        must_contain: ["google_cloud_run_service", "template", "containers"]
+        description: "Cloud Run service configuration"
+
+      - path: "infrastructure/gcp/cloud-run-iam.tf"
+        must_contain: ["google_cloud_run_service_iam", "invoker"]
+        description: "Cloud Run IAM permissions for invokers"
+
+      - path: "Dockerfile"
+        must_contain: ["FROM", "EXPOSE", "CMD"]
+        description: "Container image for Cloud Run deployment"
+
+      - path: ".dockerignore"
+        must_contain: ["node_modules", ".git", "*.md"]
+        description: "Files to exclude from Docker build context"
+
+      - path: "cloudbuild.yaml"
+        must_contain: ["steps", "docker", "build", "gcloud", "run", "deploy"]
+        description: "Cloud Build pipeline for automated deployments"
+
+      # Cloud Functions deployment
+      - path: "infrastructure/gcp/cloud-functions.tf"
+        must_contain: ["google_cloudfunctions2_function", "runtime"]
+        description: "Cloud Functions (2nd gen) configuration"
+
+      - path: "functions/main.py"
+        must_contain: ["def", "request", "response"]
+        description: "Cloud Function entry point (Python example)"
+
+      - path: "functions/requirements.txt"
+        must_contain: ["functions-framework"]
+        description: "Python dependencies for Cloud Functions"
+
+    docker_compose:
+      # Compute Engine with Docker Compose
+      - path: "infrastructure/gcp/compute-instance.tf"
+        must_contain: ["google_compute_instance", "metadata_startup_script"]
+        description: "Compute Engine VM instance configuration"
+
+      - path: "infrastructure/gcp/firewall.tf"
+        must_contain: ["google_compute_firewall", "allow", "tcp"]
+        description: "Firewall rules for VM access"
+
+      - path: "docker-compose.yml"
+        must_contain: ["version", "services"]
+        description: "Docker Compose service definitions"
+
+      - path: "scripts/startup.sh"
+        must_contain: ["docker", "compose", "up"]
+        description: "VM startup script to launch Docker Compose"
+
+      - path: ".env.example"
+        must_contain: ["PROJECT_ID", "REGION"]
+        description: "Environment variable template"
+
+scaffolding:
+  # Supporting files that enhance but aren't core deployment artifacts
+  - path: "infrastructure/gcp/terraform.tfvars.example"
+    reason: "Template for project-specific Terraform variables"
+
+  - path: "scripts/init-gcp-project.sh"
+    reason: "Script to enable required GCP APIs and create service accounts"
+
+  - path: "scripts/validate-deployment.sh"
+    reason: "Post-deployment validation and health checks"
+
+  - path: "docs/architecture.md"
+    reason: "Architecture diagram and design decisions"
+
+  - path: "docs/runbook.md"
+    reason: "Operational procedures and troubleshooting guide"
+
+  - path: ".terraform-version"
+    reason: "Specify required Terraform version for consistency"
+
+  - path: ".github/workflows/terraform-plan.yml"
+    reason: "CI pipeline for Terraform validation and planning"
+
+  - path: ".github/workflows/deploy.yml"
+    reason: "CI/CD pipeline for automated deployments"
+
+metadata:
+  primary_blueprints: ["cloud"]
+  contributes_to:
+    - "GCP infrastructure provisioning"
+    - "Cloud deployment automation"
+    - "Infrastructure as Code"
+    - "Multi-environment management"
+    - "Cloud security and compliance"
+    - "Disaster recovery and high availability"
+
+  common_combinations:
+    - skill: "infrastructure-as-code"
+      reason: "Terraform best practices and module patterns"
+
+    - skill: "kubernetes-operations"
+      reason: "GKE cluster management and workload deployment"
+
+    - skill: "building-ci-pipelines"
+      reason: "Cloud Build and GitHub Actions integration"
+
+    - skill: "secret-management"
+      reason: "Secret Manager and sensitive data handling"
+
+    - skill: "observability"
+      reason: "Cloud Monitoring, Logging, and Trace integration"
+
+    - skill: "data-architecture"
+      reason: "BigQuery, Cloud Storage, and data pipeline deployment"
+
+    - skill: "implementing-mlops"
+      reason: "Vertex AI and ML infrastructure on GCP"

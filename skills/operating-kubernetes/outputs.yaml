@@ -1,0 +1,473 @@
+skill: "operating-kubernetes"
+version: "1.0"
+domain: "infrastructure"
+
+# Base outputs required for all Kubernetes operations projects
+base_outputs:
+  - path: "kubernetes/"
+    must_contain: ["deployment.yaml", "service.yaml"]
+    reason: "Core Kubernetes deployment and service manifests"
+
+  - path: "kubernetes/deployment.yaml"
+    must_contain: ["kind: Deployment", "resources:", "limits:", "requests:"]
+    reason: "Deployment with resource requests and limits configured"
+
+  - path: "kubernetes/service.yaml"
+    must_contain: ["kind: Service", "selector:", "ports:"]
+    reason: "Service for exposing application"
+
+  - path: "scripts/"
+    must_contain: []
+    reason: "Operational scripts for common K8s tasks"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "kubernetes/deployment.yaml"
+        must_contain: ["replicas:", "livenessProbe:", "readinessProbe:"]
+        reason: "Basic deployment with health checks"
+
+      - path: "kubernetes/configmap.yaml"
+        must_contain: ["kind: ConfigMap", "data:"]
+        reason: "ConfigMap for application configuration"
+
+      - path: "kubernetes/namespace.yaml"
+        must_contain: ["kind: Namespace"]
+        reason: "Namespace for workload isolation"
+
+      - path: "scripts/deploy.sh"
+        must_contain: ["kubectl apply", "-f"]
+        reason: "Simple deployment script"
+
+    intermediate:
+      - path: "kubernetes/hpa.yaml"
+        must_contain: ["kind: HorizontalPodAutoscaler", "minReplicas:", "maxReplicas:", "metrics:"]
+        reason: "Horizontal Pod Autoscaler for scaling"
+
+      - path: "kubernetes/pdb.yaml"
+        must_contain: ["kind: PodDisruptionBudget", "minAvailable"]
+        reason: "Pod Disruption Budget for high availability"
+
+      - path: "kubernetes/networkpolicy.yaml"
+        must_contain: ["kind: NetworkPolicy", "podSelector:", "policyTypes:"]
+        reason: "NetworkPolicy for zero-trust security"
+
+      - path: "kubernetes/resourcequota.yaml"
+        must_contain: ["kind: ResourceQuota", "hard:"]
+        reason: "ResourceQuota for namespace limits"
+
+      - path: "kubernetes/rbac.yaml"
+        must_contain: ["kind: Role", "kind: RoleBinding", "rules:"]
+        reason: "RBAC for least-privilege access"
+
+      - path: "scripts/validate-resources.sh"
+        must_contain: ["kubectl get pods", "resources"]
+        reason: "Script to audit resource configurations"
+
+    advanced:
+      - path: "kubernetes/kustomization.yaml"
+        must_contain: ["resources:", "apiVersion: kustomize"]
+        reason: "Kustomize for environment-specific configs"
+
+      - path: "kubernetes/overlays/production/"
+        must_contain: ["kustomization.yaml"]
+        reason: "Production overlay with specific configurations"
+
+      - path: "kubernetes/overlays/staging/"
+        must_contain: ["kustomization.yaml"]
+        reason: "Staging overlay for testing"
+
+      - path: "kubernetes/vpa.yaml"
+        must_contain: ["kind: VerticalPodAutoscaler", "updateMode:"]
+        reason: "VPA for automated resource rightsizing"
+
+      - path: "kubernetes/pod-security.yaml"
+        must_contain: ["pod-security.kubernetes.io/enforce"]
+        reason: "Pod Security Standards enforcement"
+
+      - path: "kubernetes/servicemonitor.yaml"
+        must_contain: ["kind: ServiceMonitor", "endpoints:"]
+        reason: "Prometheus ServiceMonitor for metrics"
+
+      - path: "scripts/audit-networkpolicies.sh"
+        must_contain: ["kubectl get networkpolicy", "namespace"]
+        reason: "Audit script for NetworkPolicy coverage"
+
+      - path: "scripts/cost-analysis.sh"
+        must_contain: ["kubectl top", "resources"]
+        reason: "Resource cost analysis script"
+
+  service_mesh:
+    istio:
+      - path: "kubernetes/istio/virtualservice.yaml"
+        must_contain: ["kind: VirtualService", "http:"]
+        reason: "Istio VirtualService for traffic routing"
+
+      - path: "kubernetes/istio/destinationrule.yaml"
+        must_contain: ["kind: DestinationRule", "trafficPolicy:"]
+        reason: "Istio DestinationRule for load balancing"
+
+      - path: "kubernetes/istio/gateway.yaml"
+        must_contain: ["kind: Gateway", "servers:"]
+        reason: "Istio Gateway for ingress"
+
+      - path: "kubernetes/istio/peerauthentication.yaml"
+        must_contain: ["kind: PeerAuthentication", "mtls:"]
+        reason: "mTLS configuration for service mesh"
+
+    linkerd:
+      - path: "kubernetes/linkerd/server.yaml"
+        must_contain: ["kind: Server", "proxyProtocol:"]
+        reason: "Linkerd Server resource"
+
+      - path: "kubernetes/linkerd/serverauthorization.yaml"
+        must_contain: ["kind: ServerAuthorization", "server:"]
+        reason: "Linkerd authorization policy"
+
+      - path: "kubernetes/deployment.yaml"
+        must_contain: ["linkerd.io/inject", "enabled"]
+        reason: "Linkerd injection annotation"
+
+    none:
+      - path: "kubernetes/ingress.yaml"
+        must_contain: ["kind: Ingress", "rules:", "host:"]
+        reason: "Standard Ingress for external access"
+
+  observability:
+    prometheus_grafana:
+      - path: "kubernetes/servicemonitor.yaml"
+        must_contain: ["kind: ServiceMonitor", "interval:"]
+        reason: "Prometheus scraping configuration"
+
+      - path: "kubernetes/prometheusrule.yaml"
+        must_contain: ["kind: PrometheusRule", "alert:"]
+        reason: "Prometheus alerting rules"
+
+      - path: "monitoring/grafana-dashboard.json"
+        must_contain: ['"type":', '"title":']
+        reason: "Grafana dashboard for Kubernetes metrics"
+
+    datadog:
+      - path: "kubernetes/deployment.yaml"
+        must_contain: ["ad.datadoghq.com"]
+        reason: "Datadog autodiscovery annotations"
+
+      - path: "kubernetes/datadog-agent.yaml"
+        must_contain: ["datadog/agent"]
+        reason: "Datadog agent DaemonSet"
+
+    newrelic:
+      - path: "kubernetes/newrelic-infrastructure.yaml"
+        must_contain: ["newrelic/infrastructure-k8s"]
+        reason: "New Relic infrastructure monitoring"
+
+  cloud_provider:
+    aws:
+      - path: "kubernetes/storageclass.yaml"
+        must_contain: ["provisioner: ebs.csi.aws.com", "type: gp3"]
+        reason: "AWS EBS storage class for persistent volumes"
+
+      - path: "kubernetes/service.yaml"
+        must_contain: ["service.beta.kubernetes.io/aws-load-balancer"]
+        reason: "AWS load balancer annotations"
+
+    gcp:
+      - path: "kubernetes/storageclass.yaml"
+        must_contain: ["provisioner: pd.csi.storage.gke.io", "type: pd-ssd"]
+        reason: "GCP persistent disk storage class"
+
+      - path: "kubernetes/service.yaml"
+        must_contain: ["cloud.google.com/load-balancer-type"]
+        reason: "GCP load balancer annotations"
+
+    azure:
+      - path: "kubernetes/storageclass.yaml"
+        must_contain: ["provisioner: disk.csi.azure.com", "skuName:"]
+        reason: "Azure disk storage class"
+
+      - path: "kubernetes/service.yaml"
+        must_contain: ["service.beta.kubernetes.io/azure-load-balancer"]
+        reason: "Azure load balancer annotations"
+
+  iac_tool:
+    terraform:
+      - path: "terraform/kubernetes.tf"
+        must_contain: ["kubernetes_deployment", "kubernetes_service"]
+        reason: "Terraform Kubernetes provider resources"
+
+      - path: "terraform/variables.tf"
+        must_contain: ["variable", "replicas"]
+        reason: "Terraform variables for configuration"
+
+    pulumi:
+      - path: "pulumi/index.ts"
+        must_contain: ["k8s.apps.v1.Deployment", "k8s.core.v1.Service"]
+        reason: "Pulumi Kubernetes resources"
+
+      - path: "pulumi/Pulumi.yaml"
+        must_contain: ["name:", "runtime:"]
+        reason: "Pulumi project configuration"
+
+    helm:
+      - path: "helm/Chart.yaml"
+        must_contain: ["name:", "version:", "apiVersion: v2"]
+        reason: "Helm chart metadata"
+
+      - path: "helm/values.yaml"
+        must_contain: ["replicas:", "image:"]
+        reason: "Helm values for customization"
+
+      - path: "helm/templates/deployment.yaml"
+        must_contain: ["{{", "Values.", "Release."]
+        reason: "Helm templated deployment"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "kubernetes/"
+    type: "directory"
+    description: "Root directory for Kubernetes manifests"
+
+  - path: "kubernetes/base/"
+    type: "directory"
+    description: "Base Kustomize manifests"
+
+  - path: "kubernetes/overlays/"
+    type: "directory"
+    description: "Environment-specific overlays"
+
+  - path: "kubernetes/overlays/development/"
+    type: "directory"
+    description: "Development environment configuration"
+
+  - path: "kubernetes/overlays/staging/"
+    type: "directory"
+    description: "Staging environment configuration"
+
+  - path: "kubernetes/overlays/production/"
+    type: "directory"
+    description: "Production environment configuration"
+
+  - path: "scripts/"
+    type: "directory"
+    description: "Operational and maintenance scripts"
+
+  - path: "monitoring/"
+    type: "directory"
+    description: "Monitoring dashboards and configurations"
+
+  - path: "docs/RUNBOOK.md"
+    type: "file"
+    template: |
+      # Kubernetes Operations Runbook
+
+      ## Common Operations
+
+      ### Deploy Application
+      ```bash
+      kubectl apply -f kubernetes/
+      kubectl rollout status deployment/<app-name>
+      ```
+
+      ### Scale Application
+      ```bash
+      kubectl scale deployment/<app-name> --replicas=5
+      ```
+
+      ### Check Pod Status
+      ```bash
+      kubectl get pods
+      kubectl describe pod <pod-name>
+      kubectl logs <pod-name>
+      ```
+
+      ### Troubleshooting
+
+      **Pod Pending:**
+      - Check resource requests: `kubectl describe pod <pod-name>`
+      - Verify node capacity: `kubectl top nodes`
+      - Check events: `kubectl get events`
+
+      **CrashLoopBackOff:**
+      - View logs: `kubectl logs <pod-name> --previous`
+      - Check liveness probe configuration
+      - Increase resource limits if OOMKilled
+
+      **Service Not Accessible:**
+      - Check endpoints: `kubectl get endpoints <service-name>`
+      - Verify NetworkPolicy: `kubectl get networkpolicy`
+      - Check Ingress: `kubectl describe ingress <ingress-name>`
+
+  - path: "kubernetes/README.md"
+    type: "file"
+    template: |
+      # Kubernetes Manifests
+
+      This directory contains Kubernetes manifests for deploying and operating the application.
+
+      ## Structure
+
+      ```
+      kubernetes/
+      ├── base/                  # Base manifests (Kustomize)
+      ├── overlays/              # Environment-specific configs
+      │   ├── development/
+      │   ├── staging/
+      │   └── production/
+      ├── deployment.yaml        # Application deployment
+      ├── service.yaml           # Service definition
+      ├── configmap.yaml         # Configuration
+      ├── hpa.yaml              # Horizontal Pod Autoscaler
+      ├── networkpolicy.yaml    # Network policies
+      └── rbac.yaml             # RBAC configuration
+      ```
+
+      ## Deployment
+
+      ### Using kubectl
+      ```bash
+      kubectl apply -f kubernetes/
+      ```
+
+      ### Using Kustomize
+      ```bash
+      kubectl apply -k kubernetes/overlays/production/
+      ```
+
+      ## Resource Management
+
+      All pods have resource requests and limits configured:
+      - **Guaranteed QoS:** requests == limits (critical services)
+      - **Burstable QoS:** limits > requests (most applications)
+
+      ## Security
+
+      - NetworkPolicies implement default-deny
+      - RBAC enforces least-privilege
+      - Pod Security Standards: Restricted
+
+      ## Monitoring
+
+      Prometheus metrics exposed at `/metrics` endpoint.
+      Grafana dashboards in `monitoring/` directory.
+
+# Metadata
+metadata:
+  primary_blueprints: ["k8s", "ml-pipeline", "api-first"]
+  contributes_to:
+    - "Kubernetes deployment and operations"
+    - "Resource management and autoscaling"
+    - "Security hardening and NetworkPolicies"
+    - "High availability and fault tolerance"
+    - "Observability and monitoring"
+
+  common_patterns:
+    - name: "Resource Management"
+      description: "CPU/memory requests and limits with QoS classes"
+      files: ["kubernetes/deployment.yaml"]
+
+    - name: "Autoscaling"
+      description: "HPA for horizontal scaling, VPA for vertical"
+      files: ["kubernetes/hpa.yaml", "kubernetes/vpa.yaml"]
+
+    - name: "Zero-Trust Networking"
+      description: "NetworkPolicies with default-deny"
+      files: ["kubernetes/networkpolicy.yaml"]
+
+    - name: "High Availability"
+      description: "Multi-replica with topology spread and PDB"
+      files: ["kubernetes/deployment.yaml", "kubernetes/pdb.yaml"]
+
+    - name: "Security Hardening"
+      description: "RBAC, Pod Security Standards, non-root containers"
+      files: ["kubernetes/rbac.yaml", "kubernetes/pod-security.yaml"]
+
+  integration_points:
+    ci_cd: "Deploy to Kubernetes from CI/CD pipelines"
+    observability: "Prometheus metrics and Grafana dashboards"
+    secret_management: "External Secrets Operator or Sealed Secrets"
+    service_mesh: "Istio or Linkerd for advanced traffic management"
+    storage: "Persistent volumes with CSI drivers"
+
+  typical_directory_structure: |
+    project/
+    ├── kubernetes/
+    │   ├── base/
+    │   │   ├── deployment.yaml
+    │   │   ├── service.yaml
+    │   │   ├── configmap.yaml
+    │   │   ├── hpa.yaml
+    │   │   ├── pdb.yaml
+    │   │   ├── networkpolicy.yaml
+    │   │   ├── rbac.yaml
+    │   │   └── kustomization.yaml
+    │   ├── overlays/
+    │   │   ├── development/
+    │   │   ├── staging/
+    │   │   └── production/
+    │   └── monitoring/
+    │       ├── servicemonitor.yaml
+    │       └── prometheusrule.yaml
+    ├── scripts/
+    │   ├── validate-resources.sh
+    │   ├── audit-networkpolicies.sh
+    │   └── cost-analysis.sh
+    ├── monitoring/
+    │   └── grafana-dashboard.json
+    └── docs/
+        └── RUNBOOK.md
+
+  validation_checks:
+    - "All deployments have resource requests and limits"
+    - "Health checks (liveness and readiness) configured"
+    - "NetworkPolicies present in all namespaces"
+    - "RBAC configured with least privilege"
+    - "Pod Security Standards enforced"
+    - "HPA configured for stateless workloads"
+    - "PDB configured to prevent over-disruption"
+    - "Non-root containers enforced"
+    - "ServiceMonitor exists for monitoring"
+
+  tools:
+    manifest_validation:
+      - name: "kubeval"
+        use_when: "Validate YAML syntax"
+      - name: "kube-score"
+        use_when: "Best practices validation"
+      - name: "conftest"
+        use_when: "Policy enforcement with OPA"
+
+    deployment:
+      - name: "kubectl"
+        use_when: "Direct manifest application"
+      - name: "kustomize"
+        use_when: "Environment-specific overlays"
+      - name: "helm"
+        use_when: "Parameterized deployments"
+
+    policy:
+      - name: "Kyverno"
+        use_when: "Kubernetes-native policy engine"
+      - name: "OPA Gatekeeper"
+        use_when: "Complex policy enforcement"
+
+  anti_patterns:
+    - name: "No resource limits"
+      avoid: "Pods without CPU/memory limits"
+      use: "Always set requests and limits"
+
+    - name: "BestEffort QoS in production"
+      avoid: "Pods with no resource configuration"
+      use: "Guaranteed or Burstable QoS"
+
+    - name: "No NetworkPolicies"
+      avoid: "Open network without restrictions"
+      use: "Default-deny with explicit allow rules"
+
+    - name: "Running as root"
+      avoid: "Privileged containers"
+      use: "Non-root user with read-only filesystem"
+
+    - name: "No health checks"
+      avoid: "Pods without liveness/readiness probes"
+      use: "Always configure health checks"

@@ -1,0 +1,338 @@
+skill: "generating-documentation"
+version: "1.0"
+domain: "developer"
+
+base_outputs:
+  - path: "README.md"
+    must_contain:
+      - "# Project Title"
+      - "## Installation"
+      - "## Usage"
+    description: "Root README with project overview, installation, and basic usage"
+
+  - path: "docs/"
+    must_contain: []
+    description: "Documentation directory for guides, references, and generated docs"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "README.md"
+        must_contain: ["# Project Title", "## Installation", "## Usage"]
+        description: "Basic README with getting started info"
+
+      - path: "docs/getting-started.md"
+        must_contain: ["# Getting Started"]
+        description: "Quick start guide for new users"
+
+    intermediate:
+      - path: "docs/api/"
+        must_contain: []
+        description: "API documentation directory (OpenAPI specs, generated docs)"
+
+      - path: "docs/api/openapi.yaml"
+        must_contain: ["openapi: 3.", "info:", "paths:"]
+        description: "OpenAPI specification for REST APIs"
+
+      - path: "docs/architecture/"
+        must_contain: []
+        description: "Architecture documentation and ADRs"
+
+      - path: "docs/architecture/adr/"
+        must_contain: []
+        description: "Architecture Decision Records directory"
+
+      - path: "docs/architecture/adr/0001-initial-architecture.md"
+        must_contain: ["# ", "* Status:", "## Context and Problem Statement", "## Decision Outcome"]
+        description: "First ADR documenting initial architecture decisions"
+
+      - path: ".github/workflows/docs.yml"
+        must_contain: ["name:", "on:", "jobs:"]
+        description: "CI workflow for building and deploying documentation"
+
+    advanced:
+      - path: "docusaurus.config.js"
+        must_contain: ["module.exports", "title:", "themeConfig:"]
+        description: "Docusaurus configuration for comprehensive documentation site"
+
+      - path: "mkdocs.yml"
+        must_contain: ["site_name:", "theme:", "nav:"]
+        description: "MkDocs configuration (alternative to Docusaurus)"
+
+      - path: "docs/api/openapi.yaml"
+        must_contain: ["openapi: 3.", "servers:", "components:", "securitySchemes:"]
+        description: "Complete OpenAPI spec with security, components, examples"
+
+      - path: "docs/contributing.md"
+        must_contain: ["# Contributing", "## Code of Conduct", "## Development Setup"]
+        description: "Contribution guidelines for open source or team collaboration"
+
+      - path: "docs/architecture/diagrams/"
+        must_contain: []
+        description: "System diagrams (Mermaid, PlantUML, D2)"
+
+      - path: "package.json"
+        must_contain: ["\"docs:build\"", "\"docs:serve\""]
+        description: "Package.json with documentation build scripts"
+
+  backend_framework:
+    express:
+      - path: "docs/api/openapi.yaml"
+        must_contain: ["openapi: 3.", "paths:"]
+        description: "OpenAPI specification for Express REST API"
+
+    fastapi:
+      - path: "docs/api/openapi.json"
+        must_contain: ["openapi", "paths"]
+        description: "Auto-generated OpenAPI from FastAPI (JSON format)"
+
+    nestjs:
+      - path: "docs/api/openapi.yaml"
+        must_contain: ["openapi: 3.", "paths:"]
+        description: "OpenAPI specification for NestJS API (via @nestjs/swagger)"
+
+    django:
+      - path: "docs/api/schema.yml"
+        must_contain: ["openapi:", "paths:"]
+        description: "OpenAPI schema for Django REST framework"
+
+  frontend_framework:
+    react:
+      - path: "typedoc.json"
+        must_contain: ["entryPoints", "out"]
+        description: "TypeDoc configuration for React component documentation"
+
+      - path: "docs/components/"
+        must_contain: []
+        description: "Component documentation directory"
+
+    vue:
+      - path: "typedoc.json"
+        must_contain: ["entryPoints", "out"]
+        description: "TypeDoc configuration for Vue component documentation"
+
+    angular:
+      - path: "typedoc.json"
+        must_contain: ["entryPoints", "out"]
+        description: "TypeDoc configuration for Angular component documentation"
+
+scaffolding:
+  - path: "docs/index.md"
+    content: |
+      # Documentation Home
+
+      Welcome to the project documentation.
+
+      ## Quick Links
+
+      - [Getting Started](./getting-started.md)
+      - [API Documentation](./api/)
+      - [Architecture](./architecture/)
+
+      ## Overview
+
+      [Project description goes here]
+    description: "Documentation homepage with navigation"
+
+  - path: "docs/getting-started.md"
+    content: |
+      # Getting Started
+
+      ## Prerequisites
+
+      - [List prerequisites]
+
+      ## Installation
+
+      ```bash
+      # Installation commands
+      ```
+
+      ## Quick Start
+
+      ```bash
+      # Quick start commands
+      ```
+
+      ## Next Steps
+
+      - [Link to guides]
+    description: "Getting started guide template"
+
+  - path: "docs/architecture/README.md"
+    content: |
+      # Architecture Documentation
+
+      ## Overview
+
+      System architecture overview and key decisions.
+
+      ## Architecture Decision Records (ADRs)
+
+      - [ADR-0001: Initial Architecture](./adr/0001-initial-architecture.md)
+
+      ## Diagrams
+
+      See [diagrams/](./diagrams/) for system architecture diagrams.
+    description: "Architecture documentation index"
+
+  - path: "docs/architecture/adr/README.md"
+    content: |
+      # Architecture Decision Records
+
+      This directory contains Architecture Decision Records (ADRs) using the MADR template.
+
+      ## Index
+
+      - [ADR-0001: Initial Architecture](./0001-initial-architecture.md)
+
+      ## Creating New ADRs
+
+      Use the MADR template to document significant architectural decisions.
+    description: "ADR directory index"
+
+  - path: ".github/workflows/docs.yml"
+    content: |
+      name: Documentation
+
+      on:
+        push:
+          branches: [main]
+        pull_request:
+          branches: [main]
+
+      jobs:
+        build:
+          runs-on: ubuntu-latest
+          steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                node-version: '20'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Generate API docs
+              run: npm run docs:api
+
+            - name: Generate code docs
+              run: npm run docs:code
+
+            - name: Build documentation site
+              run: npm run docs:build
+
+            - name: Deploy to GitHub Pages
+              if: github.ref == 'refs/heads/main'
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                github_token: ${{ secrets.GITHUB_TOKEN }}
+                publish_dir: ./build
+    description: "CI workflow for automated documentation generation and deployment"
+
+metadata:
+  primary_blueprints:
+    - "api-first"
+
+  contributes_to:
+    - "Documentation"
+    - "Developer Experience"
+    - "API Design"
+    - "Knowledge Management"
+
+  output_categories:
+    api_documentation:
+      - "docs/api/openapi.yaml"
+      - "docs/api/openapi.json"
+      - "docs/api/schema.yml"
+
+    code_documentation:
+      - "typedoc.json"
+      - "docs/api/"
+      - "docs/components/"
+
+    documentation_sites:
+      - "docusaurus.config.js"
+      - "mkdocs.yml"
+      - "docs/"
+
+    architecture_decisions:
+      - "docs/architecture/adr/"
+      - "docs/architecture/diagrams/"
+
+    automation:
+      - ".github/workflows/docs.yml"
+      - "package.json"
+
+  tool_choices:
+    doc_site:
+      - name: "Docusaurus"
+        indicator: "docusaurus.config.js"
+        description: "React-based documentation site with versioning and i18n"
+
+      - name: "MkDocs Material"
+        indicator: "mkdocs.yml"
+        description: "Python-based documentation site with Material theme"
+
+    api_docs:
+      - name: "OpenAPI 3.x"
+        indicator: "openapi.yaml"
+        description: "Standard API specification format"
+
+      - name: "Swagger UI"
+        indicator: "swagger-ui"
+        description: "Interactive API documentation"
+
+      - name: "Redoc"
+        indicator: "redoc"
+        description: "Beautiful read-only API documentation"
+
+    code_docs:
+      - name: "TypeDoc"
+        indicator: "typedoc.json"
+        description: "TypeScript documentation generator"
+
+      - name: "Sphinx"
+        indicator: "docs/conf.py"
+        description: "Python documentation generator"
+
+    diagrams:
+      - name: "Mermaid"
+        indicator: "```mermaid"
+        description: "Markdown-based diagrams"
+
+      - name: "PlantUML"
+        indicator: "@startuml"
+        description: "UML diagram generation"
+
+      - name: "D2"
+        indicator: ".d2"
+        description: "Modern declarative diagram language"
+
+  validation_rules:
+    - rule: "OpenAPI specs must be valid OpenAPI 3.x"
+      paths: ["docs/api/openapi.yaml", "docs/api/openapi.json"]
+
+    - rule: "ADRs must follow MADR template format"
+      paths: ["docs/architecture/adr/*.md"]
+
+    - rule: "All Markdown files must pass linting"
+      paths: ["docs/**/*.md"]
+
+    - rule: "Code documentation must generate without errors"
+      paths: ["typedoc.json", "docs/conf.py"]
+
+  integration_points:
+    - skill: "api-patterns"
+      connection: "Documents API endpoints and patterns"
+
+    - skill: "building-ci-pipelines"
+      connection: "Automates documentation generation in CI/CD"
+
+    - skill: "testing-strategies"
+      connection: "Documents test patterns and coverage"
+
+    - skill: "sdk-design"
+      connection: "Generates SDK documentation"

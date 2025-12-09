@@ -1,0 +1,262 @@
+skill: "building-ci-pipelines"
+version: "1.0"
+domain: "devops"
+
+base_outputs:
+  # Core CI/CD pipeline files ALWAYS produced
+  - path: ".github/workflows/ci.yml"
+    must_contain: ["on:", "jobs:", "steps:"]
+    description: "Primary CI workflow with lint, test, and build stages"
+
+  - path: ".github/workflows/cd.yml"
+    must_contain: ["on:", "jobs:", "deploy"]
+    description: "Deployment workflow with deployment automation"
+
+  - path: ".github/dependabot.yml"
+    must_contain: ["version:", "updates:"]
+    description: "Dependabot configuration for automated dependency updates"
+
+  - path: "scripts/validate-ci.sh"
+    must_contain: ["#!/bin/bash", "validate"]
+    description: "Script to validate CI pipeline configuration locally"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: ".github/workflows/basic-ci.yml"
+        must_contain: ["lint", "test", "build"]
+        description: "Simple sequential CI workflow for single repository"
+
+      - path: "README.md"
+        must_contain: ["CI/CD", "Build Status"]
+        description: "Documentation with CI/CD badge and setup instructions"
+
+      - path: ".gitignore"
+        must_contain: ["node_modules", ".env"]
+        description: "Git ignore file for CI artifacts and secrets"
+
+    intermediate:
+      - path: ".github/workflows/matrix-test.yml"
+        must_contain: ["strategy:", "matrix:"]
+        description: "Matrix strategy for multi-platform/multi-version testing"
+
+      - path: ".github/workflows/security-scan.yml"
+        must_contain: ["gitleaks|snyk|trivy", "security"]
+        description: "Security scanning workflow with vulnerability detection"
+
+      - path: ".github/workflows/cache-optimization.yml"
+        must_contain: ["actions/cache", "cache:", "key:"]
+        description: "Optimized workflow with dependency and build caching"
+
+      - path: ".github/workflows/pull-request.yml"
+        must_contain: ["pull_request:", "affected|changed"]
+        description: "PR workflow with affected package detection"
+
+      - path: "scripts/affected-projects.sh"
+        must_contain: ["git diff", "affected"]
+        description: "Script to detect affected projects in monorepo"
+
+    advanced:
+      - path: ".github/workflows/slsa-provenance.yml"
+        must_contain: ["slsa-framework", "provenance", "id-token: write"]
+        description: "SLSA Level 3 provenance generation workflow"
+
+      - path: ".github/workflows/reusable-build.yml"
+        must_contain: ["workflow_call:", "inputs:", "outputs:"]
+        description: "Reusable workflow for shared build logic"
+
+      - path: ".github/workflows/monorepo-parallel.yml"
+        must_contain: ["turborepo|nx", "affected", "parallel"]
+        description: "Advanced monorepo workflow with parallel execution"
+
+      - path: ".github/workflows/canary-deploy.yml"
+        must_contain: ["canary", "traffic", "rollback"]
+        description: "Canary deployment with progressive rollout"
+
+      - path: "scripts/performance-analysis.py"
+        must_contain: ["def analyze", "metrics", "duration"]
+        description: "CI performance analysis and optimization recommendations"
+
+  ci_cd:
+    github_actions:
+      - path: ".github/workflows/ci.yml"
+        must_contain: ["runs-on:", "steps:", "actions/checkout"]
+        description: "GitHub Actions CI workflow"
+
+      - path: ".github/workflows/oidc-deploy.yml"
+        must_contain: ["id-token: write", "aws-actions/configure-aws-credentials|google-github-actions/auth"]
+        description: "OIDC-based deployment workflow (no stored credentials)"
+
+      - path: ".github/actions/custom-action/action.yml"
+        must_contain: ["name:", "description:", "runs:"]
+        description: "Custom composite action for reusable logic"
+
+      - path: ".github/workflows/docker-build.yml"
+        must_contain: ["docker/build-push-action", "docker/login-action"]
+        description: "Docker image build and push workflow"
+
+    gitlab_ci:
+      - path: ".gitlab-ci.yml"
+        must_contain: ["stages:", "script:", "rules:"]
+        description: "GitLab CI pipeline configuration"
+
+      - path: ".gitlab-ci-templates/build-template.yml"
+        must_contain: ["extends:", ".build_template"]
+        description: "Reusable GitLab CI job templates"
+
+      - path: ".gitlab-ci.yml"
+        must_contain: ["include:", "trigger:", "pipeline"]
+        description: "Parent-child pipeline configuration for monorepos"
+
+    jenkins:
+      - path: "Jenkinsfile"
+        must_contain: ["pipeline", "agent", "stages"]
+        description: "Declarative Jenkins pipeline"
+
+      - path: "Jenkinsfile.groovy"
+        must_contain: ["node", "stage", "sh"]
+        description: "Scripted Jenkins pipeline with Groovy DSL"
+
+      - path: "jenkins/shared-library/vars/buildPipeline.groovy"
+        must_contain: ["def call", "pipeline"]
+        description: "Jenkins shared library for reusable pipeline logic"
+
+    argo_workflows:
+      - path: "argo-workflows/ci-workflow.yaml"
+        must_contain: ["apiVersion: argoproj.io", "kind: Workflow", "templates:"]
+        description: "Argo Workflows DAG-based CI pipeline"
+
+      - path: "argo-workflows/workflow-template.yaml"
+        must_contain: ["kind: WorkflowTemplate", "entrypoint:"]
+        description: "Reusable Argo workflow template"
+
+      - path: "argo-workflows/cron-workflow.yaml"
+        must_contain: ["kind: CronWorkflow", "schedule:"]
+        description: "Scheduled Argo workflow for periodic tasks"
+
+  infrastructure:
+    kubernetes:
+      - path: ".github/workflows/k8s-deploy.yml"
+        must_contain: ["kubectl", "apply", "deployment"]
+        description: "Kubernetes deployment workflow"
+
+      - path: "argo-workflows/ci-workflow.yaml"
+        must_contain: ["apiVersion: argoproj.io", "kind: Workflow"]
+        description: "Argo Workflows for Kubernetes-native CI"
+
+      - path: "k8s/ci-runner-deployment.yaml"
+        must_contain: ["kind: Deployment", "runner|agent"]
+        description: "Self-hosted CI runner deployment in Kubernetes"
+
+    docker_compose:
+      - path: ".github/workflows/docker-compose-test.yml"
+        must_contain: ["docker-compose", "up", "test"]
+        description: "CI workflow using docker-compose for integration tests"
+
+      - path: "docker-compose.ci.yml"
+        must_contain: ["version:", "services:", "test"]
+        description: "Docker Compose configuration for CI environment"
+
+    managed_platform:
+      - path: ".github/workflows/deploy-aws.yml"
+        must_contain: ["aws-actions", "deploy"]
+        description: "AWS deployment workflow (ECS, Lambda, or EKS)"
+
+      - path: ".github/workflows/deploy-gcp.yml"
+        must_contain: ["google-github-actions", "deploy"]
+        description: "GCP deployment workflow (Cloud Run, GKE, or Functions)"
+
+      - path: ".github/workflows/deploy-azure.yml"
+        must_contain: ["azure/", "deploy"]
+        description: "Azure deployment workflow (AKS, Container Apps, or Functions)"
+
+  language:
+    python:
+      - path: ".github/workflows/python-ci.yml"
+        must_contain: ["actions/setup-python", "pytest|unittest"]
+        description: "Python CI with linting, type checking, and testing"
+
+      - path: "pyproject.toml"
+        must_contain: ["[tool."]
+        description: "Python project configuration for linters and formatters"
+
+    javascript:
+      - path: ".github/workflows/node-ci.yml"
+        must_contain: ["actions/setup-node", "npm|yarn|pnpm"]
+        description: "Node.js CI with ESLint, TypeScript, and Jest"
+
+      - path: "package.json"
+        must_contain: ["scripts:", "lint", "test"]
+        description: "NPM scripts for CI tasks"
+
+    rust:
+      - path: ".github/workflows/rust-ci.yml"
+        must_contain: ["dtolnay/rust-toolchain", "cargo"]
+        description: "Rust CI with clippy, rustfmt, and cargo test"
+
+      - path: "rust-toolchain.toml"
+        must_contain: ["channel"]
+        description: "Rust toolchain configuration"
+
+    go:
+      - path: ".github/workflows/go-ci.yml"
+        must_contain: ["actions/setup-go", "go test"]
+        description: "Go CI with golangci-lint and race detection"
+
+      - path: ".golangci.yml"
+        must_contain: ["linters:"]
+        description: "golangci-lint configuration"
+
+  supply_chain_security:
+    slsa:
+      - path: ".github/workflows/slsa-build.yml"
+        must_contain: ["slsa-framework/slsa-github-generator", "provenance"]
+        description: "SLSA Level 3 provenance generation"
+
+      - path: "scripts/verify-slsa-provenance.sh"
+        must_contain: ["cosign verify-attestation", "slsaprovenance"]
+        description: "Script to verify SLSA provenance"
+
+    sbom:
+      - path: ".github/workflows/sbom-generation.yml"
+        must_contain: ["anchore/sbom-action|syft", "spdx|cyclonedx"]
+        description: "SBOM generation workflow"
+
+      - path: "scripts/analyze-sbom.py"
+        must_contain: ["def analyze", "vulnerabilities|dependencies"]
+        description: "SBOM analysis and vulnerability reporting"
+
+    signing:
+      - path: ".github/workflows/artifact-signing.yml"
+        must_contain: ["sigstore/cosign-installer", "cosign sign"]
+        description: "Artifact signing with Cosign"
+
+scaffolding:
+  - path: ".github/workflows/.cache/"
+    reason: "Cache directory for workflow artifacts (auto-generated)"
+
+  - path: ".github/workflows/logs/"
+    reason: "Workflow logs directory (useful for debugging)"
+
+  - path: "scripts/ci-tools/"
+    reason: "Directory for CI utility scripts and helpers"
+
+  - path: ".turbo/"
+    reason: "Turborepo cache directory (auto-generated for monorepos)"
+
+  - path: ".nx/"
+    reason: "Nx cache directory (auto-generated for monorepos)"
+
+metadata:
+  primary_blueprints: ["ci-cd"]
+  contributes_to:
+    - "CI/CD automation"
+    - "Automated testing workflows"
+    - "Build and deployment pipelines"
+    - "Supply chain security (SLSA, SBOM)"
+    - "Monorepo optimization"
+    - "Multi-platform builds"
+    - "Security scanning"
+    - "Performance optimization"
+    - "Artifact signing and verification"
+    - "OIDC-based authentication"

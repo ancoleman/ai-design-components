@@ -1,0 +1,283 @@
+skill: "managing-media"
+version: "1.0"
+domain: "frontend"
+
+base_outputs:
+  - path: "src/components/media/FileUpload.tsx"
+    must_contain: ["useDropzone", "acceptedFiles", "drag", "upload"]
+    description: "Base file upload component with drag-and-drop support"
+
+  - path: "src/components/media/ImageGallery.tsx"
+    must_contain: ["gallery", "lightbox", "thumbnail", "lazy"]
+    description: "Image gallery component with responsive layout"
+
+  - path: "src/types/media.ts"
+    must_contain: ["File", "MediaType", "UploadConfig"]
+    description: "TypeScript type definitions for media components"
+
+  - path: "src/utils/media-validation.ts"
+    must_contain: ["validateFileSize", "validateFileType", "maxFileSize"]
+    description: "Media file validation utilities"
+
+  - path: "src/config/upload.config.ts"
+    must_contain: ["maxFileSize", "allowedTypes", "extensions"]
+    description: "Upload configuration for file size and type constraints"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "src/components/media/BasicUpload.tsx"
+        must_contain: ["drag-and-drop", "file validation", "preview"]
+        description: "Simple file upload with validation for files under 10MB"
+
+      - path: "src/components/media/SimpleGallery.tsx"
+        must_contain: ["grid", "responsive", "alt text"]
+        description: "Basic grid gallery with accessibility"
+
+      - path: "src/components/media/VideoEmbed.tsx"
+        must_contain: ["video", "controls", "poster"]
+        description: "Simple video embed with native controls"
+
+    intermediate:
+      - path: "src/components/media/ChunkedUpload.tsx"
+        must_contain: ["chunk", "progress", "resume", "retry"]
+        description: "Chunked upload for files larger than 10MB with resume capability"
+
+      - path: "src/components/media/ImageCarousel.tsx"
+        must_contain: ["swipe", "navigation", "autoplay", "ARIA"]
+        description: "Image carousel with touch support and accessibility"
+
+      - path: "src/components/media/VideoPlayer.tsx"
+        must_contain: ["video.js", "controls", "captions", "playback rate"]
+        description: "Custom video player with captions and controls"
+
+      - path: "src/components/media/AudioPlayer.tsx"
+        must_contain: ["audio", "play", "pause", "volume", "seek"]
+        description: "Audio player with standard controls"
+
+      - path: "src/components/media/PDFViewer.tsx"
+        must_contain: ["react-pdf", "page navigation", "zoom"]
+        description: "PDF document viewer with navigation"
+
+      - path: "src/utils/image-optimization.ts"
+        must_contain: ["srcset", "sizes", "webp", "responsive"]
+        description: "Image optimization utilities for responsive images"
+
+      - path: "src/hooks/useImageLazyLoad.ts"
+        must_contain: ["IntersectionObserver", "lazy", "loading"]
+        description: "Custom hook for lazy loading images"
+
+    advanced:
+      - path: "src/components/media/AdvancedGallery.tsx"
+        must_contain: ["masonry", "infinite scroll", "virtualization", "lightbox"]
+        description: "Advanced gallery with masonry layout and virtualization"
+
+      - path: "src/components/media/ImageCropUpload.tsx"
+        must_contain: ["crop", "rotate", "resize", "alt text"]
+        description: "Image upload with client-side editing and crop tools"
+
+      - path: "src/components/media/StreamingVideoPlayer.tsx"
+        must_contain: ["HLS", "DASH", "adaptive", "quality"]
+        description: "Video player with adaptive bitrate streaming"
+
+      - path: "src/components/media/WaveformAudioPlayer.tsx"
+        must_contain: ["wavesurfer", "waveform", "timeline", "playlist"]
+        description: "Audio player with waveform visualization"
+
+      - path: "src/components/media/S3DirectUpload.tsx"
+        must_contain: ["presigned URL", "direct upload", "S3", "callback"]
+        description: "Direct upload to S3/cloud storage with signed URLs"
+
+      - path: "src/utils/media-compression.ts"
+        must_contain: ["compress", "quality", "format conversion", "webp"]
+        description: "Client-side media compression before upload"
+
+      - path: "src/hooks/useMediaOptimization.ts"
+        must_contain: ["CDN", "cache", "format", "quality"]
+        description: "Hook for optimizing media delivery with CDN integration"
+
+      - path: "src/services/upload-queue.ts"
+        must_contain: ["queue", "parallel", "retry", "cancel"]
+        description: "Upload queue manager for parallel uploads with retry logic"
+
+  frontend_framework:
+    react:
+      - path: "src/components/media/MediaUpload.tsx"
+        must_contain: ["useCallback", "useDropzone", "useState"]
+        description: "React file upload component using react-dropzone"
+
+      - path: "src/components/media/ReactImageGallery.tsx"
+        must_contain: ["react-image-gallery", "ImageGallery", "items"]
+        description: "Image gallery using react-image-gallery library"
+
+      - path: "src/components/media/ReactPDFViewer.tsx"
+        must_contain: ["react-pdf", "Document", "Page"]
+        description: "PDF viewer using react-pdf library"
+
+      - path: "src/hooks/useFileUpload.ts"
+        must_contain: ["useState", "useCallback", "upload", "progress"]
+        description: "Custom React hook for file upload logic"
+
+      - path: "src/hooks/useMediaPlayer.ts"
+        must_contain: ["useRef", "useEffect", "video.js OR audio"]
+        description: "Custom React hook for media player initialization"
+
+    vue:
+      - path: "src/components/media/VueFileUpload.vue"
+        must_contain: ["<template>", "drag", "drop", "v-model"]
+        description: "Vue file upload component with drag-and-drop"
+
+      - path: "src/components/media/VueImageGallery.vue"
+        must_contain: ["<template>", "gallery", "v-for", "lightbox"]
+        description: "Vue image gallery with lightbox"
+
+      - path: "src/composables/useFileUpload.ts"
+        must_contain: ["ref", "computed", "upload", "Vue 3"]
+        description: "Vue composable for file upload logic"
+
+    svelte:
+      - path: "src/components/media/SvelteFileUpload.svelte"
+        must_contain: ["<script>", "on:drop", "bind:", "upload"]
+        description: "Svelte file upload component"
+
+      - path: "src/components/media/SvelteGallery.svelte"
+        must_contain: ["each", "gallery", "lightbox"]
+        description: "Svelte image gallery component"
+
+  styling:
+    tailwind:
+      - path: "src/components/media/TailwindUpload.tsx"
+        must_contain: ["className", "border-dashed", "hover:", "transition"]
+        description: "File upload styled with Tailwind utility classes"
+
+      - path: "src/components/media/TailwindGallery.tsx"
+        must_contain: ["grid", "gap-", "rounded-", "aspect-"]
+        description: "Image gallery using Tailwind grid and utilities"
+
+    css-modules:
+      - path: "src/components/media/FileUpload.module.css"
+        must_contain: [".upload-zone", ".drag-active", "border", "transition"]
+        description: "CSS Modules styles for file upload component"
+
+      - path: "src/components/media/Gallery.module.css"
+        must_contain: [".gallery", ".thumbnail", "grid", "gap"]
+        description: "CSS Modules styles for gallery component"
+
+    styled-components:
+      - path: "src/components/media/StyledUpload.tsx"
+        must_contain: ["styled", "UploadZone", "css", "${props"]
+        description: "File upload using styled-components"
+
+      - path: "src/components/media/StyledGallery.tsx"
+        must_contain: ["styled", "Grid", "Thumbnail", "lightbox"]
+        description: "Gallery using styled-components with theme tokens"
+
+scaffolding:
+  - path: "public/uploads/.gitkeep"
+    reason: "Placeholder for user-uploaded files directory"
+
+  - path: "public/images/placeholders/avatar.svg"
+    reason: "Default avatar placeholder image"
+
+  - path: "public/images/placeholders/image-placeholder.svg"
+    reason: "Generic image placeholder for broken/missing images"
+
+  - path: "src/assets/media-icons/upload-cloud.svg"
+    reason: "Upload icon for drag-and-drop zones"
+
+  - path: "src/assets/media-icons/file-icons.svg"
+    reason: "File type icons (PDF, DOC, video, audio)"
+
+metadata:
+  primary_blueprints: ["dashboard", "frontend"]
+
+  contributes_to:
+    - "File upload components with drag-and-drop"
+    - "Image galleries with lightbox and carousel"
+    - "Video players with custom controls and captions"
+    - "Audio players with waveform visualization"
+    - "PDF and document viewers"
+    - "Media optimization (responsive images, lazy loading)"
+    - "Cloud storage integration (S3, Cloudinary)"
+    - "Chunked and resumable uploads for large files"
+    - "Media accessibility (alt text, captions, transcripts)"
+    - "Performance optimization (compression, CDN)"
+
+  dependencies:
+    libraries:
+      - name: "react-dropzone"
+        purpose: "Drag-and-drop file upload"
+        install: "npm install react-dropzone"
+
+      - name: "react-image-gallery"
+        purpose: "Feature-complete image gallery"
+        install: "npm install react-image-gallery"
+
+      - name: "video.js"
+        purpose: "Custom video player"
+        install: "npm install video.js"
+
+      - name: "wavesurfer.js"
+        purpose: "Audio waveform visualization"
+        install: "npm install wavesurfer.js"
+
+      - name: "react-pdf"
+        purpose: "PDF rendering in React"
+        install: "npm install react-pdf"
+
+      - name: "browser-image-compression"
+        purpose: "Client-side image compression"
+        install: "npm install browser-image-compression"
+        optional: true
+
+    skills:
+      - "design-tokens" # For theming media components
+      - "forms" # For file input fields
+      - "feedback" # For upload progress and notifications
+
+  file_types:
+    generated:
+      - "*.tsx (React media components)"
+      - "*.ts (Media utilities and types)"
+      - "*.css (Component styles)"
+      - "*.json (Upload configuration)"
+
+    referenced:
+      - "examples/*.tsx (Working implementations)"
+      - "references/*.md (Detailed patterns)"
+      - "scripts/*.py, *.js (Optimization utilities)"
+      - "assets/*.json (Configuration templates)"
+
+  key_patterns:
+    upload:
+      - "Drag-and-drop with visual feedback"
+      - "File validation (type, size)"
+      - "Progress tracking"
+      - "Chunked upload for large files"
+      - "Preview before upload"
+      - "Direct cloud storage upload"
+
+    display:
+      - "Responsive image galleries"
+      - "Lazy loading with IntersectionObserver"
+      - "Lightbox/modal for full-size view"
+      - "Carousel with touch/swipe"
+      - "Custom video player controls"
+      - "Audio waveform visualization"
+      - "PDF page navigation"
+
+    optimization:
+      - "Responsive images (srcset, sizes)"
+      - "Modern formats (WebP, AVIF)"
+      - "Client-side compression"
+      - "CDN integration"
+      - "Adaptive bitrate streaming"
+      - "Progressive JPEG"
+
+    accessibility:
+      - "Alt text for images"
+      - "Captions for videos"
+      - "Transcripts for audio"
+      - "Keyboard navigation"
+      - "ARIA labels and roles"
+      - "Focus management"

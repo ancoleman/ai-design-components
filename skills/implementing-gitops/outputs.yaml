@@ -1,0 +1,183 @@
+skill: "implementing-gitops"
+version: "1.0"
+domain: "devops"
+
+base_outputs:
+  - path: "gitops/README.md"
+    must_contain: ["GitOps", "repository structure", "deployment workflow"]
+    description: "Documentation explaining GitOps setup, repository layout, and deployment processes"
+
+  - path: "k8s/base/kustomization.yaml"
+    must_contain: ["apiVersion: kustomize.config.k8s.io", "resources"]
+    description: "Base Kustomize configuration defining common Kubernetes resources"
+
+  - path: "k8s/base/deployment.yaml"
+    must_contain: ["kind: Deployment", "spec:", "containers:"]
+    description: "Base Kubernetes Deployment manifest"
+
+  - path: "k8s/base/service.yaml"
+    must_contain: ["kind: Service", "spec:", "selector:"]
+    description: "Base Kubernetes Service manifest"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "k8s/overlays/dev/kustomization.yaml"
+        must_contain: ["bases:", "../base", "namespace:"]
+        description: "Development environment Kustomize overlay"
+
+      - path: "k8s/overlays/prod/kustomization.yaml"
+        must_contain: ["bases:", "../base", "namespace:", "replicas:"]
+        description: "Production environment Kustomize overlay with resource patches"
+
+    intermediate:
+      - path: "k8s/overlays/dev/kustomization.yaml"
+        must_contain: ["bases:", "patchesStrategicMerge:"]
+        description: "Development overlay with strategic merge patches"
+
+      - path: "k8s/overlays/staging/kustomization.yaml"
+        must_contain: ["bases:", "../base", "namespace:"]
+        description: "Staging environment for pre-production testing"
+
+      - path: "k8s/overlays/prod/kustomization.yaml"
+        must_contain: ["bases:", "patchesStrategicMerge:", "replicas:"]
+        description: "Production overlay with replicas and resource tuning"
+
+      - path: "k8s/overlays/prod/hpa.yaml"
+        must_contain: ["kind: HorizontalPodAutoscaler", "minReplicas:", "maxReplicas:"]
+        description: "Horizontal Pod Autoscaler for production workloads"
+
+    advanced:
+      - path: "k8s/overlays/dev/kustomization.yaml"
+        must_contain: ["bases:", "patchesStrategicMerge:", "configMapGenerator:"]
+        description: "Development overlay with config generation"
+
+      - path: "k8s/overlays/staging/kustomization.yaml"
+        must_contain: ["bases:", "patchesStrategicMerge:", "namespace:"]
+        description: "Staging overlay with comprehensive patches"
+
+      - path: "k8s/overlays/prod/kustomization.yaml"
+        must_contain: ["bases:", "patchesStrategicMerge:", "patchesJson6902:"]
+        description: "Production overlay with JSON patches and advanced configurations"
+
+      - path: "k8s/overlays/prod/sealed-secret.yaml"
+        must_contain: ["kind: SealedSecret", "encryptedData:"]
+        description: "Encrypted secrets using Bitnami Sealed Secrets"
+
+      - path: ".github/workflows/update-image.yaml"
+        must_contain: ["on:", "jobs:", "image", "tag"]
+        description: "CI workflow to update image tags in GitOps repository"
+
+  gitops:
+    argocd:
+      - path: "gitops/argocd/application.yaml"
+        must_contain: ["kind: Application", "apiVersion: argoproj.io", "spec:", "source:", "destination:"]
+        description: "ArgoCD Application defining app deployment from Git"
+
+      - path: "gitops/argocd/project.yaml"
+        must_contain: ["kind: AppProject", "apiVersion: argoproj.io", "sourceRepos:"]
+        description: "ArgoCD Project for multi-tenancy and RBAC"
+
+    flux:
+      - path: "gitops/flux/gitrepository.yaml"
+        must_contain: ["kind: GitRepository", "apiVersion: source.toolkit.fluxcd.io", "url:", "ref:"]
+        description: "Flux GitRepository defining Git source for deployments"
+
+      - path: "gitops/flux/kustomization.yaml"
+        must_contain: ["kind: Kustomization", "apiVersion: kustomize.toolkit.fluxcd.io", "sourceRef:", "path:"]
+        description: "Flux Kustomization defining what to deploy from Git source"
+
+  infrastructure:
+    kubernetes:
+      argocd:
+        - path: "gitops/argocd/applicationset.yaml"
+          must_contain: ["kind: ApplicationSet", "generators:", "template:"]
+          description: "ArgoCD ApplicationSet for multi-environment/multi-cluster deployments"
+
+        - path: "gitops/argocd/sync-hooks/pre-sync-job.yaml"
+          must_contain: ["kind: Job", "argocd.argoproj.io/hook: PreSync"]
+          description: "PreSync hook for database migrations or setup tasks"
+
+        - path: "gitops/argocd/sync-hooks/post-sync-job.yaml"
+          must_contain: ["kind: Job", "argocd.argoproj.io/hook: PostSync"]
+          description: "PostSync hook for smoke tests or notifications"
+
+      flux:
+        - path: "gitops/flux/helmrelease.yaml"
+          must_contain: ["kind: HelmRelease", "chart:", "values:"]
+          description: "Flux HelmRelease for deploying Helm charts via GitOps"
+
+        - path: "gitops/flux/ocirepository.yaml"
+          must_contain: ["kind: OCIRepository", "url:", "ref:"]
+          description: "Flux OCIRepository for OCI artifact sources"
+
+        - path: "clusters/production/flux-system/kustomization.yaml"
+          must_contain: ["apiVersion: kustomize.config.k8s.io", "resources:"]
+          description: "Flux system configuration for production cluster"
+
+    multi_cluster:
+      - path: "clusters/dev/kustomization.yaml"
+        must_contain: ["apiVersion: kustomize.config.k8s.io", "resources:"]
+        description: "Development cluster GitOps configuration"
+
+      - path: "clusters/staging/kustomization.yaml"
+        must_contain: ["apiVersion: kustomize.config.k8s.io", "resources:"]
+        description: "Staging cluster GitOps configuration"
+
+      - path: "clusters/prod/kustomization.yaml"
+        must_contain: ["apiVersion: kustomize.config.k8s.io", "resources:"]
+        description: "Production cluster GitOps configuration"
+
+  progressive_delivery:
+    enabled:
+      - path: "gitops/rollouts/canary.yaml"
+        must_contain: ["kind: Rollout", "apiVersion: argoproj.io", "strategy:", "canary:"]
+        description: "Argo Rollouts canary deployment strategy"
+
+      - path: "gitops/rollouts/blue-green.yaml"
+        must_contain: ["kind: Rollout", "strategy:", "blueGreen:"]
+        description: "Argo Rollouts blue-green deployment strategy"
+
+      - path: "gitops/rollouts/analysistemplate.yaml"
+        must_contain: ["kind: AnalysisTemplate", "metrics:"]
+        description: "Analysis template for automated rollout validation"
+
+scaffolding:
+  - path: "gitops/"
+    reason: "Root directory for GitOps configurations (ArgoCD/Flux manifests)"
+
+  - path: "k8s/base/"
+    reason: "Base Kubernetes manifests shared across environments"
+
+  - path: "k8s/overlays/dev/"
+    reason: "Development environment Kustomize overlay"
+
+  - path: "k8s/overlays/staging/"
+    reason: "Staging environment Kustomize overlay (intermediate+)"
+
+  - path: "k8s/overlays/prod/"
+    reason: "Production environment Kustomize overlay"
+
+  - path: "clusters/dev/"
+    reason: "Per-cluster GitOps configuration for dev cluster (multi-cluster setups)"
+
+  - path: "clusters/staging/"
+    reason: "Per-cluster GitOps configuration for staging cluster (multi-cluster setups)"
+
+  - path: "clusters/prod/"
+    reason: "Per-cluster GitOps configuration for production cluster (multi-cluster setups)"
+
+  - path: "scripts/"
+    reason: "Automation scripts for drift detection, environment promotion, GitOps operations"
+
+metadata:
+  primary_blueprints: ["ci-cd", "k8s"]
+  contributes_to:
+    - "GitOps continuous delivery"
+    - "Pull-based deployments"
+    - "Automated drift detection and remediation"
+    - "Multi-cluster orchestration"
+    - "Progressive delivery (canary/blue-green)"
+    - "Environment promotion workflows"
+    - "Declarative infrastructure management"
+    - "Audit trail and compliance via Git history"

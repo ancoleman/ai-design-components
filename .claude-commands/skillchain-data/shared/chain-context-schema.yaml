@@ -1,0 +1,283 @@
+# Chain Context Schema
+# Version: 1.0.0
+# Purpose: Defines the shared state object that tracks skillchain execution,
+#          skill outputs, and deliverables validation across the entire chain.
+
+# This schema is used by:
+# - commands/skillchain/start.md (router - creates initial context)
+# - commands/skillchain/categories/*.md (orchestrators - updates and validates)
+# - commands/skillchain/blueprints/*.md (blueprint definitions reference this)
+
+chain_context:
+  # ============================================================================
+  # ROUTER METADATA (Set by start.md)
+  # ============================================================================
+  # Set when the skillchain is initially parsed and routed
+
+  blueprint:
+    type: string | null
+    description: "Matched blueprint name (e.g., 'ml-pipeline', 'api-first') or null if no blueprint matched"
+    example: "ml-pipeline"
+
+  original_goal:
+    type: string
+    description: "The user's original request/goal as provided to /skillchain"
+    example: "ml pipeline for deep learning, starter level"
+
+  detected_domains:
+    type: list[object]
+    description: "List of domains detected from goal analysis with confidence scores"
+    example:
+      - domain: "ai-ml"
+        score: 0.95
+        keywords: ["ml", "deep learning"]
+      - domain: "devops"
+        score: 0.4
+        keywords: ["pipeline"]
+
+  matched_skills:
+    type: list[object]
+    description: "Initial list of skills matched by router before orchestrator refines"
+    example:
+      - skill_id: "implementing-mlops"
+        plugin: "devops-skills"
+        priority: 1
+        estimated_questions: 3
+      - skill_id: "ai-data-engineering"
+        plugin: "data-engineering-skills"
+        priority: 2
+        estimated_questions: 4
+
+  # ============================================================================
+  # ORCHESTRATOR CONFIGURATION (Set by category orchestrator)
+  # ============================================================================
+  # Set after user interaction with the orchestrator
+
+  maturity:
+    type: enum
+    description: "Project maturity level selected by user (affects deliverables)"
+    values: ["starter", "intermediate", "advanced"]
+    example: "starter"
+
+  project_path:
+    type: string
+    description: "Absolute path to where the project is being generated"
+    example: "/Users/username/projects/my-ml-pipeline"
+
+  # ============================================================================
+  # EXECUTION TRACKING (Updated throughout chain execution)
+  # ============================================================================
+
+  skills_sequence:
+    type: list[object]
+    description: "Ordered list of skills to execute (finalized by orchestrator)"
+    example:
+      - skill_id: "implementing-mlops"
+        plugin: "devops-skills"
+        priority: 1
+        order: 1
+        status: "pending"  # pending | in_progress | completed | failed
+      - skill_id: "ai-data-engineering"
+        plugin: "data-engineering-skills"
+        priority: 2
+        order: 2
+        status: "pending"
+      - skill_id: "model-serving"
+        plugin: "backend-ai-skills"
+        priority: 3
+        order: 3
+        status: "pending"
+
+  skill_outputs:
+    type: object
+    description: "Populated as each skill completes - tracks what each skill produced"
+    structure:
+      "{skill_id}":
+        status:
+          type: enum
+          values: ["pending", "in_progress", "completed", "failed"]
+        files_created:
+          type: list[string]
+          description: "Paths to files created by this skill (relative to project_path)"
+        directories_created:
+          type: list[string]
+          description: "Paths to directories created by this skill (relative to project_path)"
+        deliverables_contributed:
+          type: list[string]
+          description: "Which blueprint deliverables this skill contributed to"
+        error_message:
+          type: string | null
+          description: "Error message if skill failed"
+    example:
+      "implementing-mlops":
+        status: "completed"
+        files_created:
+          - "src/models/train.py"
+          - "src/models/network.py"
+          - "pipelines/training_pipeline.py"
+        directories_created:
+          - "src/models"
+          - "pipelines"
+        deliverables_contributed:
+          - "MLflow experiment tracking"
+          - "Training pipeline"
+        error_message: null
+      "ai-data-engineering":
+        status: "completed"
+        files_created:
+          - "src/data/ingestion.py"
+          - "src/data/preprocessing.py"
+        directories_created:
+          - "src/data"
+        deliverables_contributed:
+          - "Data pipeline"
+        error_message: null
+
+  # ============================================================================
+  # DELIVERABLES VALIDATION (Updated during and after chain execution)
+  # ============================================================================
+
+  deliverables_status:
+    type: object
+    description: "Tracks blueprint deliverables against actual outputs"
+    structure:
+      "{deliverable_name}":
+        status:
+          type: enum
+          values: ["pending", "fulfilled", "missing", "skipped"]
+          description: |
+            - pending: Not yet checked
+            - fulfilled: Requirements met (files exist, content checks passed)
+            - missing: Required but not found or validation failed
+            - skipped: Not required for current maturity level
+        required_for_maturity:
+          type: list[string]
+          description: "Which maturity levels require this deliverable"
+          example: ["intermediate", "advanced"]
+        primary_skill:
+          type: string
+          description: "The skill primarily responsible for this deliverable"
+          example: "implementing-mlops"
+        contributors:
+          type: list[string]
+          description: "All skills that contributed to this deliverable"
+          example: ["implementing-mlops", "implementing-observability"]
+        validation_results:
+          type: object
+          description: "Results of validation checks"
+          structure:
+            files_exist:
+              type: boolean
+              description: "Whether all required files exist"
+            content_checks_passed:
+              type: boolean
+              description: "Whether content pattern checks passed"
+            missing_files:
+              type: list[string]
+              description: "List of files that are missing"
+            failed_checks:
+              type: list[string]
+              description: "List of content checks that failed"
+    example:
+      "MLflow experiment tracking":
+        status: "fulfilled"
+        required_for_maturity: ["starter", "intermediate", "advanced"]
+        primary_skill: "implementing-mlops"
+        contributors: ["implementing-mlops"]
+        validation_results:
+          files_exist: true
+          content_checks_passed: true
+          missing_files: []
+          failed_checks: []
+      "Feature store":
+        status: "skipped"
+        required_for_maturity: ["intermediate", "advanced"]
+        primary_skill: "ai-data-engineering"
+        contributors: []
+        validation_results:
+          files_exist: false
+          content_checks_passed: false
+          missing_files: ["src/features/store.py"]
+          failed_checks: []
+      "Grafana dashboards":
+        status: "missing"
+        required_for_maturity: ["starter", "intermediate", "advanced"]
+        primary_skill: "implementing-observability"
+        contributors: []
+        validation_results:
+          files_exist: false
+          content_checks_passed: false
+          missing_files: ["monitoring/grafana/dashboards/"]
+          failed_checks: []
+
+# ============================================================================
+# USAGE NOTES
+# ============================================================================
+
+# How orchestrators should use this schema:
+#
+# 1. INITIALIZATION (start.md):
+#    - Set blueprint, original_goal, detected_domains, matched_skills
+#    - Pass to orchestrator
+#
+# 2. CONFIGURATION (orchestrator):
+#    - Ask user for maturity level
+#    - Set maturity, project_path
+#    - Finalize skills_sequence
+#    - Initialize skill_outputs with "pending" status
+#    - Initialize deliverables_status from blueprint
+#
+# 3. EXECUTION (orchestrator):
+#    - For each skill in skills_sequence:
+#        a) Update status to "in_progress"
+#        b) Invoke skill
+#        c) Parse skill output or check filesystem
+#        d) Update skill_outputs with files_created, deliverables_contributed
+#        e) Update status to "completed" or "failed"
+#
+# 4. VALIDATION (orchestrator Step 5.5):
+#    - Load blueprint deliverables
+#    - Apply maturity filters (skip deliverables not required)
+#    - Check each required deliverable:
+#        * Verify required_files exist
+#        * Run content_checks
+#        * Update deliverables_status
+#    - Generate completion report
+#
+# 5. REMEDIATION (orchestrator):
+#    - If deliverables missing, offer to generate
+#    - Update chain_context with remediation actions
+#
+# 6. FINAL VALIDATION (start.md Step 8):
+#    - Verify completeness percentage
+#    - Save preferences with completion data
+
+# ============================================================================
+# INTEGRATION WITH BLUEPRINTS
+# ============================================================================
+
+# Blueprints should define deliverables like this:
+#
+# deliverables:
+#   "MLflow experiment tracking":
+#     primary_skill: implementing-mlops
+#     required_files:
+#       - src/models/train.py
+#     content_checks:
+#       - pattern: "import mlflow"
+#         in: src/models/train.py
+#     maturity_required: [starter, intermediate, advanced]
+#
+# The orchestrator loads this and populates deliverables_status
+
+# ============================================================================
+# SKILL OUTPUT PARSING
+# ============================================================================
+
+# Skills should output a parseable summary:
+#
+# "✓ Created: src/models/train.py, src/models/network.py
+#  ✓ Configured: MLflow tracking enabled
+#  ✓ Deliverables: Training pipeline, MLflow integration"
+#
+# Orchestrator parses this and updates chain_context.skill_outputs

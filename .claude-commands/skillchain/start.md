@@ -291,6 +291,16 @@ multi-domain    → Read {SKILLCHAIN_CMD}/categories/multi-domain.md   # 3+ doma
 - user_prefs: USER_PREFS (if PREFS_FILE exists, otherwise null)
 - registry_path: "{SKILLCHAIN_DATA}/registries/{domain}.yaml"
 
+# NEW: Chain context for tracking outputs
+- chain_context:
+    blueprint: "{matched_blueprint}" or null
+    original_goal: "$ARGUMENTS"
+    maturity: null  # Set by orchestrator after asking
+    skills_sequence: []  # Set by orchestrator
+    skill_outputs: {}  # Populated as skills complete
+    deliverables_status: {}  # Tracked against blueprint
+    project_path: null  # Set when project location determined
+
 ---
 
 ## Step 6: Orchestrator Takes Control
@@ -337,4 +347,58 @@ See `{SKILLCHAIN_DATA}/shared/preferences.md` for complete saving logic.
 
 ---
 
-**Router Complete - Total Lines: ~150**
+## Step 8: Post-Generation Validation (NEW)
+
+After orchestrator completes and before final success message:
+
+1. **Check if blueprint was used:**
+   ```
+   If chain_context.blueprint exists:
+     Read {SKILLCHAIN_DATA}/shared/validation.md
+     Run validate_chain(chain_context, project_path)
+   Else:
+     Run run_basic_completeness_check(project_path)
+   ```
+
+2. **Generate validation report:**
+   ```
+   Present results to user:
+
+   ┌────────────────────────────────────────┐
+   │ SKILLCHAIN COMPLETION REPORT           │
+   ├────────────────────────────────────────┤
+   │ ✓ Deliverable 1                        │
+   │ ✓ Deliverable 2                        │
+   │ ✗ Deliverable 3 - MISSING              │
+   │ ○ Deliverable 4 (skipped - starter)    │
+   ├────────────────────────────────────────┤
+   │ Completeness: X%                       │
+   └────────────────────────────────────────┘
+   ```
+
+3. **Handle incomplete builds:**
+   ```
+   If completeness < 80%:
+     "Some features weren't fully generated:
+      [list missing items]
+
+      Would you like me to:
+      A) Generate the missing components
+      B) Continue without them
+      C) See detailed validation report"
+
+     If user chooses A:
+       Generate missing components
+       Re-run validation
+   ```
+
+4. **Final success message:**
+   ```
+   If completeness >= 80%:
+     "✓ Skillchain completed successfully!
+      [summary of what was built]"
+   ```
+
+---
+
+**Router Complete - Total Lines: ~200**

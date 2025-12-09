@@ -1,0 +1,383 @@
+skill: "using-relational-databases"
+version: "1.0"
+domain: "backend"
+
+# Base outputs required for all relational database projects
+base_outputs:
+  - path: "db/migrations/"
+    must_contain: []
+    description: "Database migration files for schema versioning and evolution"
+
+  - path: "src/models/"
+    must_contain: []
+    description: "ORM models or query definitions representing database entities"
+
+  - path: "db/seeds/"
+    must_contain: []
+    description: "Seed data for development and testing"
+
+  - path: ".env.example"
+    must_contain: ["DATABASE_URL"]
+    description: "Example environment file with database connection template"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "db/migrations/001_initial_schema.sql"
+        must_contain: ["CREATE TABLE"]
+        description: "Initial schema migration with core tables"
+
+      - path: "src/models/user.*"
+        must_contain: []
+        description: "Basic user model for authentication"
+
+      - path: "db/seeds/sample_data.*"
+        must_contain: []
+        description: "Sample seed data for development"
+
+      - path: "src/db/connection.*"
+        must_contain: ["pool", "connect"]
+        description: "Basic database connection setup"
+
+    intermediate:
+      - path: "db/migrations/"
+        must_contain: ["*.sql|*.py|*.ts"]
+        description: "Multiple migration files tracking schema evolution"
+
+      - path: "src/models/"
+        must_contain: ["user.*", "*.relationships|*.relations"]
+        description: "Multiple models with relationships (foreign keys, joins)"
+
+      - path: "src/db/pool.*"
+        must_contain: ["pool", "max_connections|maxConnections"]
+        description: "Connection pooling configuration for performance"
+
+      - path: "db/seeds/"
+        must_contain: ["*.sql|*.py|*.ts"]
+        description: "Multiple seed files for different environments"
+
+      - path: "tests/integration/"
+        must_contain: ["test_database|database.test"]
+        description: "Integration tests against real database"
+
+    advanced:
+      - path: "db/migrations/"
+        must_contain: ["*.sql|*.py|*.ts"]
+        description: "Comprehensive migration history with multi-phase deployments"
+
+      - path: "src/models/"
+        must_contain: ["user.*", "*.index|*.indexes"]
+        description: "Optimized models with strategic indexes"
+
+      - path: "src/db/pool.*"
+        must_contain: ["pool", "max_connections|maxConnections", "timeout"]
+        description: "Production connection pooling with monitoring"
+
+      - path: "db/migrations/rollback/"
+        must_contain: []
+        description: "Rollback scripts for safe migration reversals"
+
+      - path: "tests/performance/"
+        must_contain: ["query", "benchmark"]
+        description: "Query performance tests and benchmarks"
+
+      - path: "monitoring/database_health.*"
+        must_contain: ["connections", "latency|performance"]
+        description: "Database health monitoring and alerting"
+
+      - path: "docs/schema.md"
+        must_contain: ["ERD|diagram", "tables", "relationships"]
+        description: "Schema documentation with ERD and table descriptions"
+
+  database:
+    postgres:
+      - path: "db/migrations/"
+        must_contain: ["CREATE TABLE|CREATE INDEX"]
+        description: "PostgreSQL migration files"
+
+      - path: ".env.example"
+        must_contain: ["postgres", "5432"]
+        description: "PostgreSQL connection string template"
+
+      - path: "src/db/connection.*"
+        must_contain: ["postgres|pg|psycopg"]
+        description: "PostgreSQL-specific connection configuration"
+
+    mysql:
+      - path: "db/migrations/"
+        must_contain: ["CREATE TABLE|CREATE INDEX"]
+        description: "MySQL migration files"
+
+      - path: ".env.example"
+        must_contain: ["mysql", "3306"]
+        description: "MySQL connection string template"
+
+      - path: "src/db/connection.*"
+        must_contain: ["mysql"]
+        description: "MySQL-specific connection configuration"
+
+    sqlite:
+      - path: "db/migrations/"
+        must_contain: ["CREATE TABLE|CREATE INDEX"]
+        description: "SQLite migration files"
+
+      - path: "db/database.db|db/app.db"
+        must_contain: []
+        description: "SQLite database file"
+
+      - path: "src/db/connection.*"
+        must_contain: ["sqlite"]
+        description: "SQLite-specific connection configuration"
+
+  backend_framework:
+    fastapi:
+      - path: "src/models/"
+        must_contain: ["SQLModel|Base"]
+        description: "SQLModel or SQLAlchemy models for FastAPI"
+
+      - path: "src/db/session.py"
+        must_contain: ["Session", "get_db"]
+        description: "FastAPI database session dependency"
+
+      - path: "requirements.txt"
+        must_contain: ["sqlalchemy|sqlmodel"]
+        description: "Python ORM dependencies"
+
+      - path: "alembic.ini|db/alembic.ini"
+        must_contain: ["alembic"]
+        description: "Alembic migration configuration"
+
+    express:
+      - path: "src/models/"
+        must_contain: ["export|class"]
+        description: "Prisma/Drizzle models for Express"
+
+      - path: "package.json"
+        must_contain: ["prisma|drizzle-orm"]
+        description: "TypeScript ORM dependencies"
+
+      - path: "prisma/schema.prisma|drizzle.config.ts"
+        must_contain: []
+        description: "ORM schema definition file"
+
+      - path: "src/db/client.*"
+        must_contain: ["PrismaClient|drizzle"]
+        description: "Database client initialization"
+
+    nextjs:
+      - path: "prisma/schema.prisma|drizzle/schema.ts"
+        must_contain: ["model|table"]
+        description: "Prisma or Drizzle schema for Next.js"
+
+      - path: "lib/db.*"
+        must_contain: ["PrismaClient|drizzle"]
+        description: "Database client singleton for Next.js"
+
+      - path: "package.json"
+        must_contain: ["prisma|drizzle-orm"]
+        description: "TypeScript ORM dependencies"
+
+    axum:
+      - path: "src/models.rs|src/models/"
+        must_contain: ["struct", "derive"]
+        description: "Rust structs for SQLx or SeaORM"
+
+      - path: "Cargo.toml"
+        must_contain: ["sqlx|sea-orm"]
+        description: "Rust ORM dependencies"
+
+      - path: "migrations/"
+        must_contain: ["*.sql"]
+        description: "SQLx or SeaORM migration files"
+
+      - path: "src/db/pool.rs|src/db/mod.rs"
+        must_contain: ["Pool", "connect"]
+        description: "Database connection pool setup"
+
+    gin:
+      - path: "models/"
+        must_contain: ["*.go"]
+        description: "Go structs for GORM or sqlc"
+
+      - path: "go.mod"
+        must_contain: ["gorm.io|sqlc"]
+        description: "Go ORM dependencies"
+
+      - path: "db/migrations/"
+        must_contain: ["*.sql"]
+        description: "Migration files for golang-migrate"
+
+      - path: "db/sqlc.yaml|queries.sql"
+        must_contain: []
+        description: "sqlc configuration or SQL query definitions"
+
+  orm_style:
+    prisma:
+      - path: "prisma/schema.prisma"
+        must_contain: ["datasource", "generator", "model"]
+        description: "Prisma schema definition"
+
+      - path: "prisma/migrations/"
+        must_contain: []
+        description: "Prisma migration history"
+
+      - path: "package.json"
+        must_contain: ["@prisma/client"]
+        description: "Prisma client dependency"
+
+    drizzle:
+      - path: "drizzle/schema.ts|src/db/schema.ts"
+        must_contain: ["pgTable|mysqlTable|sqliteTable"]
+        description: "Drizzle schema definitions"
+
+      - path: "drizzle.config.ts"
+        must_contain: ["defineConfig"]
+        description: "Drizzle configuration file"
+
+      - path: "drizzle/migrations/"
+        must_contain: ["*.sql"]
+        description: "Drizzle migration files"
+
+    sqlalchemy:
+      - path: "src/models/"
+        must_contain: ["Base", "Column"]
+        description: "SQLAlchemy model definitions"
+
+      - path: "alembic/"
+        must_contain: ["env.py", "versions/"]
+        description: "Alembic migration environment"
+
+      - path: "requirements.txt"
+        must_contain: ["sqlalchemy"]
+        description: "SQLAlchemy dependency"
+
+    sqlx:
+      - path: "src/models.rs|src/models/"
+        must_contain: ["FromRow", "derive"]
+        description: "SQLx struct definitions with FromRow derive"
+
+      - path: "migrations/"
+        must_contain: ["*.sql"]
+        description: "SQLx migration files"
+
+      - path: "Cargo.toml"
+        must_contain: ["sqlx"]
+        description: "SQLx dependency with features"
+
+    gorm:
+      - path: "models/"
+        must_contain: ["gorm.Model|gorm:\""]
+        description: "GORM model definitions with tags"
+
+      - path: "go.mod"
+        must_contain: ["gorm.io/gorm"]
+        description: "GORM dependency"
+
+      - path: "db/migrations/"
+        must_contain: ["*.go|*.sql"]
+        description: "GORM migration files"
+
+  deployment:
+    serverless:
+      - path: "src/db/connection.*"
+        must_contain: ["pool", "1|2", "connection_limit|max"]
+        description: "Serverless-optimized connection pooling (1-2 connections)"
+
+      - path: ".env.example"
+        must_contain: ["pgbouncer|pooler|neon|planetscale"]
+        description: "Connection pooler or serverless database URL"
+
+    traditional:
+      - path: "src/db/pool.*"
+        must_contain: ["pool", "10|20", "max_connections"]
+        description: "Traditional connection pooling (10-20 connections)"
+
+      - path: "docker-compose.yml"
+        must_contain: ["postgres|mysql", "volumes"]
+        description: "Local development database in Docker"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "db/migrations/"
+    reason: "Directory for database migration files"
+
+  - path: "db/seeds/"
+    reason: "Directory for seed data scripts"
+
+  - path: "src/models/"
+    reason: "Directory for ORM models or query definitions"
+
+  - path: "src/db/"
+    reason: "Directory for database connection and pooling logic"
+
+  - path: ".env.example"
+    reason: "Template for environment variables including DATABASE_URL"
+
+  - path: "tests/integration/"
+    reason: "Directory for database integration tests"
+
+  - path: "README.md"
+    reason: "Documentation for database setup and migration instructions"
+
+  - path: ".gitignore"
+    reason: "Ignore .env, database files (*.db), and generated files"
+
+# Metadata
+metadata:
+  primary_blueprints: ["api-first", "data-pipeline"]
+  contributes_to:
+    - "Database layer"
+    - "Data persistence"
+    - "CRUD operations"
+    - "Schema management"
+    - "Data migrations"
+    - "Connection pooling"
+    - "ORM integration"
+    - "Type-safe queries"
+    - "Transaction management"
+    - "Database seeding"
+
+  common_patterns:
+    - "Migration-based schema evolution (Alembic, Prisma Migrate, SQLx, golang-migrate)"
+    - "Connection pooling for performance (10-20 for APIs, 1-2 for serverless)"
+    - "ORM models with relationships (foreign keys, one-to-many, many-to-many)"
+    - "Seed data for development and testing environments"
+    - "Parameterized queries for SQL injection prevention"
+    - "Index optimization for filtered/sorted columns"
+    - "Transaction boundaries for multi-statement operations"
+    - "Integration tests against real database instances"
+
+  integration_points:
+    api_layer: "Provides data persistence for REST/GraphQL APIs"
+    authentication: "Stores user credentials and session data"
+    forms: "Persists form submissions and user input"
+    tables: "Source data for paginated, sorted, filtered table displays"
+    dashboards: "Aggregated data for KPIs and analytics"
+    search: "Full-text search capabilities (PostgreSQL tsvector, MySQL fulltext)"
+    background_jobs: "Stores job queues and task status"
+    caching: "Database-backed caching with query result memoization"
+
+  typical_directory_structure: |
+    project/
+    ├── db/
+    │   ├── migrations/              # Schema evolution history
+    │   │   ├── 001_initial_schema.sql
+    │   │   ├── 002_add_posts_table.sql
+    │   │   └── 003_add_indexes.sql
+    │   └── seeds/                   # Seed data
+    │       ├── users.sql
+    │       └── sample_posts.sql
+    ├── src/
+    │   ├── models/                  # ORM models
+    │   │   ├── user.{py,ts,rs,go}
+    │   │   ├── post.{py,ts,rs,go}
+    │   │   └── comment.{py,ts,rs,go}
+    │   └── db/                      # Database utilities
+    │       ├── connection.{py,ts,rs,go}
+    │       └── pool.{py,ts,rs,go}
+    ├── tests/
+    │   └── integration/
+    │       └── test_database.{py,test.ts,rs,go}
+    ├── .env.example                 # Connection string template
+    └── README.md                    # Setup instructions

@@ -1,0 +1,474 @@
+skill: "visualizing-data"
+version: "1.0"
+domain: "frontend"
+
+# Base outputs required for all data visualization projects
+base_outputs:
+  - path: "components/charts/"
+    must_contain: []
+    description: "Chart component implementations"
+
+  - path: "package.json"
+    must_contain: ["recharts"]
+    description: "Chart library dependencies (Recharts for React-based projects)"
+
+  - path: "types/chart-data.ts"
+    must_contain: ["interface", "type"]
+    description: "TypeScript types for chart data structures"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      # Starter: Basic chart types (bar, line, pie)
+      - path: "components/charts/BarChart.tsx"
+        must_contain: ["BarChart", "Bar", "XAxis", "YAxis"]
+        description: "Basic bar chart component for categorical comparisons"
+
+      - path: "components/charts/LineChart.tsx"
+        must_contain: ["LineChart", "Line", "XAxis", "YAxis"]
+        description: "Basic line chart component for trend visualization"
+
+      - path: "components/charts/PieChart.tsx"
+        must_contain: ["PieChart", "Pie", "Cell"]
+        description: "Basic pie chart component for composition (max 5-6 slices)"
+
+      - path: "utils/chart-colors.ts"
+        must_contain: ["#"]
+        description: "Color palette definitions (basic colors)"
+
+      - path: "data/sample-data.ts"
+        must_contain: ["export"]
+        description: "Sample datasets for development and testing"
+
+    intermediate:
+      # Intermediate: Extended chart types + accessibility
+      - path: "components/charts/BarChart.tsx"
+        must_contain: ["BarChart", "ResponsiveContainer"]
+        description: "Responsive bar chart with accessibility features"
+
+      - path: "components/charts/LineChart.tsx"
+        must_contain: ["LineChart", "ResponsiveContainer", "Tooltip"]
+        description: "Line chart with tooltips and responsive design"
+
+      - path: "components/charts/ScatterPlot.tsx"
+        must_contain: ["ScatterChart", "Scatter", "XAxis", "YAxis"]
+        description: "Scatter plot for exploring relationships"
+
+      - path: "components/charts/AreaChart.tsx"
+        must_contain: ["AreaChart", "Area"]
+        description: "Area chart for emphasizing magnitude over time"
+
+      - path: "components/charts/AccessibleChart.tsx"
+        must_contain: ["role=\"img\"", "aria-label"]
+        description: "Chart wrapper with WCAG 2.1 AA accessibility features"
+
+      - path: "utils/accessibility.ts"
+        must_contain: ["aria", "generateSummary"]
+        description: "Accessibility utilities (ARIA labels, summaries)"
+
+      - path: "utils/colorblind-palettes.ts"
+        must_contain: ["#648FFF", "#785EF0", "#DC267F"]
+        description: "Colorblind-safe color palettes (IBM palette recommended)"
+
+      - path: "hooks/useChartData.ts"
+        must_contain: ["useState", "useEffect"]
+        description: "React hooks for chart data management"
+
+      - path: "tests/charts/BarChart.test.tsx"
+        must_contain: ["render", "screen", "expect"]
+        description: "Unit tests for chart components"
+
+    advanced:
+      # Advanced: Complex visualizations + performance optimization
+      - path: "components/charts/primitives/"
+        must_contain: []
+        description: "Reusable chart primitive components"
+
+      - path: "components/charts/advanced/TreemapChart.tsx"
+        must_contain: ["Treemap"]
+        description: "Treemap for hierarchical composition visualization"
+
+      - path: "components/charts/advanced/SankeyDiagram.tsx"
+        must_contain: ["Sankey"]
+        description: "Sankey diagram for flow visualization"
+
+      - path: "components/charts/advanced/HeatmapChart.tsx"
+        must_contain: ["heatmap", "color scale"]
+        description: "Heatmap for matrix/calendar visualizations"
+
+      - path: "components/charts/advanced/ViolinPlot.tsx"
+        must_contain: ["violin", "distribution"]
+        description: "Violin plot for distribution visualization"
+
+      - path: "components/charts/accessibility/DataTableAlternative.tsx"
+        must_contain: ["table", "caption", "thead"]
+        description: "Screen reader accessible data table alternative"
+
+      - path: "components/charts/accessibility/KeyboardNavigation.tsx"
+        must_contain: ["onKeyDown", "tabIndex", "focus"]
+        description: "Keyboard navigation support for charts"
+
+      - path: "utils/performance/data-sampling.ts"
+        must_contain: ["downsample", "aggregate"]
+        description: "Data sampling for >1000 point datasets"
+
+      - path: "utils/performance/canvas-renderer.ts"
+        must_contain: ["canvas", "getContext"]
+        description: "Canvas rendering for >10K point datasets"
+
+      - path: "utils/chart-selection.ts"
+        must_contain: ["selectChartType", "dataType", "purpose"]
+        description: "Automated chart type selection based on data + purpose"
+
+      - path: "hooks/useResponsiveChart.ts"
+        must_contain: ["useMediaQuery", "breakpoint"]
+        description: "Responsive chart hooks for mobile adaptation"
+
+      - path: "tests/charts/accessibility.test.tsx"
+        must_contain: ["axe", "toHaveNoViolations"]
+        description: "Accessibility compliance tests (axe-core)"
+
+      - path: "tests/charts/performance.test.ts"
+        must_contain: ["benchmark", "render time"]
+        description: "Performance benchmarks for large datasets"
+
+      - path: "docs/chart-selection-guide.md"
+        must_contain: ["decision tree", "data type", "purpose"]
+        description: "Documentation for choosing appropriate chart types"
+
+  frontend_framework:
+    react:
+      - path: "package.json"
+        must_contain: ["recharts"]
+        description: "Recharts library for React declarative charts"
+
+      - path: "components/charts/"
+        must_contain: ["*.tsx"]
+        description: "React chart components with TypeScript"
+
+      - path: "hooks/useChartData.ts"
+        must_contain: ["useState", "useMemo"]
+        description: "React hooks for chart state management"
+
+    vue:
+      - path: "package.json"
+        must_contain: ["vue-chartjs"]
+        description: "Vue-ChartJs library for Vue.js"
+
+      - path: "components/charts/"
+        must_contain: ["*.vue"]
+        description: "Vue chart components (SFC format)"
+
+      - path: "composables/useChartData.ts"
+        must_contain: ["ref", "computed"]
+        description: "Vue composables for chart data"
+
+    svelte:
+      - path: "package.json"
+        must_contain: ["layerchart"]
+        description: "LayerChart library for Svelte"
+
+      - path: "components/charts/"
+        must_contain: ["*.svelte"]
+        description: "Svelte chart components"
+
+    vanilla:
+      - path: "package.json"
+        must_contain: ["d3"]
+        description: "D3.js library for vanilla JavaScript visualizations"
+
+      - path: "charts/"
+        must_contain: ["*.js"]
+        description: "Vanilla JavaScript chart implementations"
+
+  styling:
+    css_modules:
+      - path: "components/charts/Chart.module.css"
+        must_contain: [".chart", ".tooltip"]
+        description: "CSS modules for chart styling"
+
+    tailwind:
+      - path: "components/charts/"
+        must_contain: ["className", "bg-", "text-"]
+        description: "Charts styled with Tailwind utility classes"
+
+      - path: "tailwind.config.js"
+        must_contain: ["theme", "extend", "colors"]
+        description: "Tailwind config with chart color palette"
+
+    css_in_js:
+      - path: "components/charts/"
+        must_contain: ["styled", "css"]
+        description: "Charts with CSS-in-JS styling (styled-components/emotion)"
+
+    design_tokens:
+      - path: "tokens/chart-tokens.css"
+        must_contain: ["--chart-color-", "--chart-axis-", "--chart-grid-"]
+        description: "CSS custom properties for chart theming"
+
+      - path: "components/charts/"
+        must_contain: ["var(--chart-"]
+        description: "Charts referencing design token variables"
+
+  data_volume:
+    small:
+      # <1000 data points
+      - path: "components/charts/"
+        must_contain: ["SVG", "ResponsiveContainer"]
+        description: "Standard SVG rendering for small datasets (<1000 points)"
+
+    medium:
+      # 1K-10K data points
+      - path: "utils/data-sampling.ts"
+        must_contain: ["downsample", "aggregate", "LTTB"]
+        description: "Data sampling/aggregation (LTTB algorithm) for medium datasets"
+
+      - path: "components/charts/"
+        must_contain: ["useMemo", "data transformation"]
+        description: "Memoized data transformations to prevent re-renders"
+
+    large:
+      # 10K-100K data points
+      - path: "utils/canvas-rendering.ts"
+        must_contain: ["canvas", "getContext", "drawImage"]
+        description: "Canvas rendering for large datasets (>10K points)"
+
+      - path: "components/charts/CanvasChart.tsx"
+        must_contain: ["canvas", "useRef", "getContext"]
+        description: "Chart component using Canvas instead of SVG"
+
+    very_large:
+      # >100K data points
+      - path: "api/aggregation-endpoint.ts"
+        must_contain: ["aggregate", "group by", "SQL"]
+        description: "Server-side aggregation for very large datasets"
+
+      - path: "components/charts/StreamingChart.tsx"
+        must_contain: ["websocket", "stream", "incremental"]
+        description: "Streaming chart updates for real-time large data"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "components/charts/"
+    reason: "Directory for all chart component implementations"
+
+  - path: "utils/"
+    reason: "Utility functions for chart data processing and formatting"
+
+  - path: "types/chart-data.ts"
+    reason: "TypeScript type definitions for chart data structures"
+
+  - path: "data/sample-data.ts"
+    reason: "Sample datasets for development and testing"
+
+  - path: "assets/color-palettes/"
+    reason: "Colorblind-safe and accessible color palettes"
+
+  - path: "hooks/"
+    reason: "React hooks for chart state and data management (React projects)"
+
+  - path: "tests/charts/"
+    reason: "Unit and accessibility tests for chart components"
+
+  - path: "docs/CHART_SELECTION.md"
+    reason: "Guide for selecting appropriate chart types based on data and purpose"
+
+  - path: ".gitignore"
+    reason: "Ignore build artifacts, coverage reports, and node_modules"
+
+# Metadata
+metadata:
+  primary_blueprints: ["dashboard", "frontend"]
+  contributes_to:
+    - "Data visualization components"
+    - "Dashboard and analytics interfaces"
+    - "Chart library integration"
+    - "Accessible data representation"
+    - "Interactive data exploration"
+
+  visualization_types_covered:
+    tier_1_primitives:
+      - "Bar Chart (categorical comparisons)"
+      - "Line Chart (trends over time)"
+      - "Scatter Plot (relationships)"
+      - "Pie Chart (composition, <6 slices)"
+      - "Area Chart (magnitude over time)"
+    tier_2_purpose_driven:
+      - "Grouped Bar Chart (multi-category comparison)"
+      - "Lollipop Chart (ranked comparisons)"
+      - "Stream Graph (stacked temporal data)"
+      - "Violin Plot (distribution visualization)"
+      - "Box Plot (statistical distribution)"
+      - "Histogram (frequency distribution)"
+      - "Bubble Chart (3D relationships)"
+      - "Treemap (hierarchical composition)"
+      - "Sunburst (hierarchical composition with depth)"
+      - "Waterfall Chart (cumulative effect)"
+      - "Sankey Diagram (flow visualization)"
+      - "Chord Diagram (relationship matrix)"
+    tier_3_advanced:
+      - "Parallel Coordinates (multi-dimensional)"
+      - "Radar Chart (multi-variate comparison)"
+      - "Small Multiples (faceted comparison)"
+      - "Gantt Chart (temporal scheduling)"
+      - "Calendar Heatmap (daily patterns)"
+      - "Candlestick Chart (financial data)"
+      - "Force-Directed Graph (network visualization)"
+      - "Adjacency Matrix (network relationships)"
+      - "Choropleth Map (geographic aggregates)"
+      - "Symbol Map (geographic points)"
+
+  accessibility_features:
+    - "WCAG 2.1 AA compliance"
+    - "Colorblind-safe palettes (IBM palette: blue, purple, magenta, orange, yellow)"
+    - "Text alternatives (ARIA labels, descriptions)"
+    - "Keyboard navigation (Tab, Enter, Arrow keys)"
+    - "Data table alternatives for screen readers"
+    - "High contrast mode support"
+    - "Focus indicators"
+    - "Minimum 3:1 color contrast for UI elements"
+    - "Minimum 4.5:1 contrast for text"
+    - "Pattern fills (not color-only encoding)"
+
+  performance_strategies:
+    - "<1000 points: Standard SVG rendering"
+    - "1K-10K points: Data sampling/aggregation (LTTB algorithm)"
+    - "10K-100K points: Canvas rendering instead of SVG"
+    - ">100K points: Server-side aggregation and progressive loading"
+    - "Memoization to prevent unnecessary re-renders"
+    - "Virtual scrolling for large datasets"
+    - "Web Workers for data processing"
+    - "Lazy loading for dashboard multi-chart scenarios"
+
+  integration_points:
+    design_tokens: "References design-tokens skill for theming (--chart-color-*, --chart-axis-*, --chart-grid-*)"
+    dashboards: "Provides chart components for dashboard composition"
+    tables: "Complementary to tables skill (tabular vs visual data representation)"
+    backend_apis: "Consumes data from API endpoints, handles aggregation for large datasets"
+    state_management: "Integrates with React Context, Redux, or Zustand for shared chart state"
+
+  common_patterns:
+    - name: "Purpose-First Selection"
+      description: "Choose chart type based on data characteristics + analytical purpose"
+      files: ["utils/chart-selection.ts", "docs/CHART_SELECTION.md"]
+
+    - name: "Accessibility by Default"
+      description: "All charts include ARIA labels, colorblind-safe palettes, keyboard navigation"
+      files: ["components/charts/AccessibleChart.tsx", "utils/accessibility.ts"]
+
+    - name: "Responsive Design"
+      description: "Charts adapt to container size, mobile-friendly breakpoints"
+      files: ["hooks/useResponsiveChart.ts", "components/charts/ResponsiveChart.tsx"]
+
+    - name: "Performance Optimization by Data Volume"
+      description: "Automatic strategy selection based on dataset size"
+      files: ["utils/performance/", "utils/data-sampling.ts"]
+
+    - name: "Design Token Integration"
+      description: "Charts reference CSS custom properties for theme switching"
+      files: ["tokens/chart-tokens.css", "utils/chart-colors.ts"]
+
+  anti_patterns:
+    - name: "Chart-first thinking"
+      avoid: "Choosing chart based on aesthetics rather than data + purpose"
+      use: "Follow decision trees: data type + analytical purpose → chart type"
+
+    - name: "Pie charts for >6 categories"
+      avoid: "Hard to compare angles/areas beyond 5-6 slices"
+      use: "Sorted bar chart for clear comparisons"
+
+    - name: "Dual-axis charts"
+      avoid: "Often misleading, visually confusing"
+      use: "Small multiples (separate charts with shared scale)"
+
+    - name: "Rainbow color scales"
+      avoid: "Not perceptually uniform, not colorblind-safe"
+      use: "Sequential scales (single hue gradients) or diverging scales"
+
+    - name: "Missing context"
+      avoid: "Charts without axis labels, units, or legends"
+      use: "Always label axes, include units, provide context in tooltips"
+
+    - name: "Color-only encoding"
+      avoid: "Inaccessible for colorblind users"
+      use: "Combine color with patterns, textures, or explicit labels"
+
+    - name: "3D when 2D sufficient"
+      avoid: "Adds complexity, reduces clarity, harder to read values"
+      use: "2D charts unless 3D is truly necessary for data understanding"
+
+  libraries:
+    javascript_typescript:
+      - name: "Recharts"
+        use_when: "React business dashboards, declarative API, quick prototyping"
+        trust_score: "High"
+      - name: "D3.js"
+        use_when: "Custom visualizations, maximum flexibility, any framework"
+        trust_score: "High"
+      - name: "Plotly"
+        use_when: "Scientific/statistical charts, 3D visualizations, interactive features"
+        trust_score: "High"
+      - name: "Chart.js"
+        use_when: "Simple charts, lightweight, canvas-based"
+        trust_score: "High"
+      - name: "Apache ECharts"
+        use_when: "Complex dashboards, large datasets, rich interactions"
+        trust_score: "High"
+    python:
+      - name: "Plotly"
+        use_when: "Interactive charts, Jupyter notebooks, same API as JS"
+      - name: "Matplotlib"
+        use_when: "Publication-quality static plots, academic research"
+      - name: "Seaborn"
+        use_when: "Statistical visualizations, built on matplotlib"
+      - name: "Altair"
+        use_when: "Declarative grammar, Vega-Lite backend"
+
+  validation_checks:
+    - "All charts have ARIA labels with meaningful descriptions"
+    - "Color contrast meets WCAG 2.1 AA standards (3:1 for UI, 4.5:1 for text)"
+    - "Charts use colorblind-safe palettes (IBM or similar)"
+    - "Data table alternative provided for screen readers"
+    - "Keyboard navigation supported (Tab, Enter, Arrow keys)"
+    - "Chart type matches data characteristics and analytical purpose"
+    - "Axes labeled with units"
+    - "Performance optimized based on dataset size"
+    - "Charts responsive and mobile-friendly"
+    - "No truncated y-axis without clear indication"
+
+  typical_directory_structure: |
+    project/
+    ├── components/
+    │   └── charts/
+    │       ├── primitives/          # Reusable chart primitives
+    │       ├── BarChart.tsx          # Basic bar chart
+    │       ├── LineChart.tsx         # Basic line chart
+    │       ├── ScatterPlot.tsx       # Scatter plot
+    │       ├── AccessibleChart.tsx   # Accessibility wrapper
+    │       └── advanced/
+    │           ├── TreemapChart.tsx
+    │           ├── SankeyDiagram.tsx
+    │           └── ViolinPlot.tsx
+    ├── utils/
+    │   ├── chart-selection.ts        # Automated chart type selection
+    │   ├── accessibility.ts          # ARIA labels, summaries
+    │   ├── colorblind-palettes.ts    # Safe color schemes
+    │   └── performance/
+    │       ├── data-sampling.ts      # LTTB algorithm
+    │       └── canvas-renderer.ts    # Canvas rendering
+    ├── hooks/
+    │   ├── useChartData.ts           # Data management
+    │   └── useResponsiveChart.ts     # Responsive behavior
+    ├── types/
+    │   └── chart-data.ts             # TypeScript types
+    ├── data/
+    │   └── sample-data.ts            # Test datasets
+    ├── assets/
+    │   └── color-palettes/           # Color schemes
+    ├── tests/
+    │   └── charts/
+    │       ├── BarChart.test.tsx
+    │       └── accessibility.test.tsx
+    └── docs/
+        └── CHART_SELECTION.md        # Chart selection guide

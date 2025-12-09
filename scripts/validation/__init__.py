@@ -1,24 +1,27 @@
 """
 Skill Validation Package
 
-A comprehensive validation toolkit for Claude Skills, supporting both
-CI/CD pipelines and interactive development workflows.
+A comprehensive validation toolkit for Claude Skills and Skillchain Blueprints,
+supporting both CI/CD pipelines and interactive development workflows.
 
 Usage:
     CLI:
         python -m validation ci --format=junit -o results.xml
         python -m validation tui --completed
         python -m validation check building-forms
+        python -m validation blueprints          # Validate all blueprints
+        python -m validation blueprints api-first.md  # Validate single blueprint
 
     Programmatic:
-        from validation import Validator
+        from validation import Validator, BlueprintValidator
 
+        # Skill validation
         validator = Validator()
         report = validator.validate_all("./skills")
 
-        if not report.all_passed:
-            for result in report.failures:
-                print(f"{result.skill_name}: {result.errors}")
+        # Blueprint validation
+        bp_validator = BlueprintValidator()
+        bp_report = bp_validator.validate_all(blueprints_dir)
 """
 
 __version__ = "1.0.0"
@@ -34,11 +37,18 @@ from .result import (
 
 from .validator import Validator
 
+from .blueprints import (
+    BlueprintValidator,
+    BlueprintResult,
+    BlueprintReport,
+)
+
 from .rules import (
     ValidationRules,
     CommunityPractices,
     ProjectRules,
     ProjectRule,
+    BlueprintRules,
     load_rules,
     load_community_practices,
     load_project_rules,
@@ -60,7 +70,7 @@ __all__ = [
     # Version
     "__version__",
 
-    # Core
+    # Core - Skills
     "Validator",
     "ValidationResult",
     "ValidationReport",
@@ -68,11 +78,17 @@ __all__ = [
     "Severity",
     "Timer",
 
+    # Core - Blueprints
+    "BlueprintValidator",
+    "BlueprintResult",
+    "BlueprintReport",
+
     # Rules
     "ValidationRules",
     "CommunityPractices",
     "ProjectRules",
     "ProjectRule",
+    "BlueprintRules",
     "load_rules",
     "load_community_practices",
     "load_project_rules",

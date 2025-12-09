@@ -1,0 +1,176 @@
+skill: "writing-dockerfiles"
+version: "1.0"
+domain: "devops"
+
+base_outputs:
+  - path: "Dockerfile"
+    must_contain: ["FROM", "COPY", "RUN"]
+    description: "Primary Dockerfile for building container images"
+
+  - path: ".dockerignore"
+    must_contain: [".git", "node_modules", "__pycache__"]
+    description: "Exclude unnecessary files from Docker build context"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "Dockerfile"
+        must_contain: ["FROM", "COPY", "WORKDIR", "CMD"]
+        description: "Single-stage Dockerfile with basic configuration"
+
+      - path: ".dockerignore"
+        must_contain: [".git", ".env"]
+        description: "Basic .dockerignore excluding version control and secrets"
+
+    intermediate:
+      - path: "Dockerfile"
+        must_contain: ["FROM", "AS builder", "COPY --from=builder", "USER"]
+        description: "Multi-stage Dockerfile with non-root user"
+
+      - path: ".dockerignore"
+        must_contain: [".git", "node_modules", "__pycache__", "tests/"]
+        description: "Comprehensive .dockerignore excluding build artifacts and tests"
+
+      - path: "docker-compose.yml"
+        must_contain: ["services:", "build:", "ports:"]
+        description: "Local development environment with Docker Compose"
+
+    advanced:
+      - path: "Dockerfile"
+        must_contain: ["FROM", "AS builder", "--mount=type=cache", "USER nonroot"]
+        description: "Optimized multi-stage Dockerfile with BuildKit cache mounts and distroless base"
+
+      - path: "Dockerfile.dev"
+        must_contain: ["FROM", "COPY", "CMD"]
+        description: "Development Dockerfile with hot-reload and debugging tools"
+
+      - path: "docker-compose.yml"
+        must_contain: ["services:", "build:", "ports:", "volumes:"]
+        description: "Multi-service Docker Compose configuration"
+
+      - path: ".dockerignore"
+        must_contain: [".git", "node_modules", "__pycache__", "tests/", "coverage/"]
+        description: "Production-grade .dockerignore with comprehensive exclusions"
+
+      - path: "docker/Dockerfile.prod"
+        must_contain: ["FROM", "AS builder", "--mount=type=cache"]
+        description: "Production-optimized Dockerfile in dedicated directory"
+
+  backend_framework:
+    python:
+      - path: "Dockerfile"
+        must_contain: ["FROM python:", "pip install", "requirements.txt"]
+        description: "Python Dockerfile with pip dependency management"
+
+      - path: "requirements.txt"
+        must_contain: []
+        description: "Python dependencies for pip installation"
+
+      - path: ".dockerignore"
+        must_contain: ["__pycache__", "*.pyc", ".pytest_cache"]
+        description: "Python-specific .dockerignore excluding bytecode and caches"
+
+    node:
+      - path: "Dockerfile"
+        must_contain: ["FROM node:", "npm ci", "package*.json"]
+        description: "Node.js Dockerfile with npm dependency management"
+
+      - path: ".dockerignore"
+        must_contain: ["node_modules", "npm-debug.log", "dist"]
+        description: "Node.js-specific .dockerignore excluding modules and build artifacts"
+
+    go:
+      - path: "Dockerfile"
+        must_contain: ["FROM golang:", "go build", "CGO_ENABLED=0"]
+        description: "Go Dockerfile with static binary compilation"
+
+      - path: ".dockerignore"
+        must_contain: ["vendor/", "*.test", "coverage.out"]
+        description: "Go-specific .dockerignore excluding vendor and test artifacts"
+
+    rust:
+      - path: "Dockerfile"
+        must_contain: ["FROM rust:", "cargo build --release", "target"]
+        description: "Rust Dockerfile with cargo build"
+
+      - path: ".dockerignore"
+        must_contain: ["target/", "Cargo.lock"]
+        description: "Rust-specific .dockerignore excluding build artifacts"
+
+    java:
+      - path: "Dockerfile"
+        must_contain: ["FROM maven:", "mvn package", "FROM eclipse-temurin"]
+        description: "Java Dockerfile with Maven build and JRE runtime"
+
+      - path: ".dockerignore"
+        must_contain: ["target/", "*.class", ".mvn"]
+        description: "Java-specific .dockerignore excluding Maven artifacts"
+
+  frontend_framework:
+    react:
+      - path: "Dockerfile"
+        must_contain: ["FROM node:", "npm run build", "nginx"]
+        description: "React Dockerfile with build stage and nginx serving"
+
+      - path: "nginx.conf"
+        must_contain: ["server", "location", "root"]
+        description: "Nginx configuration for serving React static assets"
+
+    vue:
+      - path: "Dockerfile"
+        must_contain: ["FROM node:", "npm run build", "nginx"]
+        description: "Vue.js Dockerfile with build stage and nginx serving"
+
+      - path: "nginx.conf"
+        must_contain: ["server", "location", "root"]
+        description: "Nginx configuration for serving Vue static assets"
+
+    angular:
+      - path: "Dockerfile"
+        must_contain: ["FROM node:", "ng build", "nginx"]
+        description: "Angular Dockerfile with build stage and nginx serving"
+
+      - path: "nginx.conf"
+        must_contain: ["server", "location", "root"]
+        description: "Nginx configuration for serving Angular static assets"
+
+scaffolding:
+  - path: ".dockerignore"
+    reason: "Essential for reducing build context size and preventing secret leaks"
+
+  - path: "Dockerfile"
+    reason: "Core artifact for containerizing applications"
+
+  - path: "docker-compose.yml"
+    reason: "Local development environment setup (intermediate+)"
+
+  - path: ".env.example"
+    reason: "Template for environment variables (referenced but not committed)"
+
+metadata:
+  primary_blueprints: ["ci-cd", "api-first"]
+  contributes_to:
+    - "Container images for deployment"
+    - "Multi-stage build artifacts"
+    - "Optimized production images"
+    - "Development environment configuration"
+
+  typical_file_locations:
+    - "Dockerfile (project root)"
+    - "docker/Dockerfile.prod (production variant)"
+    - "docker/Dockerfile.dev (development variant)"
+    - ".dockerignore (project root)"
+    - "docker-compose.yml (local development)"
+
+  size_expectations:
+    python: "200-400MB (slim base)"
+    node: "150-300MB (alpine base)"
+    go: "10-30MB (distroless static)"
+    rust: "5-15MB (scratch base)"
+    java: "200-350MB (JRE alpine)"
+
+  validation_commands:
+    - "docker build -t test ."
+    - "trivy image test:latest"
+    - "docker scout cves test:latest"
+    - "python scripts/validate_dockerfile.py Dockerfile"

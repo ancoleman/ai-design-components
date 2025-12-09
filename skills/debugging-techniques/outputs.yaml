@@ -1,0 +1,104 @@
+skill: "debugging-techniques"
+version: "1.0"
+domain: "developer"
+
+base_outputs:
+  - path: ".vscode/launch.json"
+    must_contain: ["configurations", "type", "request"]
+  - path: "logging.conf"
+    must_contain: ["logger", "handler", "formatter"]
+  - path: "scripts/debug/correlation_id_middleware.py"
+    must_contain: ["correlation", "middleware", "request"]
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: ".vscode/launch.json"
+        must_contain: ["Python", "Node", "program"]
+      - path: "scripts/debug/simple_logger.py"
+        must_contain: ["logging", "basicConfig"]
+
+    intermediate:
+      - path: ".vscode/launch.json"
+        must_contain: ["Python", "Node", "Go", "debugpy", "delve"]
+      - path: ".vscode/tasks.json"
+        must_contain: ["label", "command", "debug"]
+      - path: "logging.conf"
+        must_contain: ["formatters", "handlers", "loggers"]
+      - path: "scripts/debug/structured_logger.py"
+        must_contain: ["json", "correlation_id", "timestamp"]
+      - path: "docker-compose.debug.yml"
+        must_contain: ["ports", "9229", "command"]
+
+    advanced:
+      - path: ".vscode/launch.json"
+        must_contain: ["Python", "Node", "Go", "Rust", "debugpy", "delve", "lldb"]
+      - path: ".vscode/tasks.json"
+        must_contain: ["label", "command", "preLaunchTask"]
+      - path: "logging.conf"
+        must_contain: ["formatters", "handlers", "loggers", "json"]
+      - path: "scripts/debug/structured_logger.py"
+        must_contain: ["json", "correlation_id", "timestamp", "service"]
+      - path: "scripts/debug/correlation_id_middleware.py"
+        must_contain: ["X-Correlation-ID", "uuid", "context"]
+      - path: "scripts/debug/tracing_config.py"
+        must_contain: ["opentelemetry", "tracer", "span"]
+      - path: "docker-compose.debug.yml"
+        must_contain: ["ports", "9229", "command", "volumes"]
+      - path: "k8s/debug-pod.yaml"
+        must_contain: ["kind: Pod", "ephemeralContainers", "shareProcessNamespace"]
+      - path: ".dlv/config.yml"
+        must_contain: ["max-string-len", "max-array-values"]
+      - path: "scripts/debug/profile_production.py"
+        must_contain: ["profiler", "sampling", "memory"]
+
+  backend_framework:
+    python:
+      - path: "scripts/debug/pdb_example.py"
+        must_contain: ["breakpoint()", "pdb"]
+      - path: "scripts/debug/debugpy_server.py"
+        must_contain: ["debugpy", "listen", "wait_for_client"]
+      - path: ".vscode/launch.json"
+        must_contain: ["python", "debugpy"]
+      - path: "pytest.ini"
+        must_contain: ["--pdb"]
+
+    go:
+      - path: "scripts/debug/delve_example.go"
+        must_contain: ["package main", "func main"]
+      - path: ".vscode/launch.json"
+        must_contain: ["go", "dlv"]
+      - path: ".dlv/config.yml"
+        must_contain: ["max-string-len", "max-array-values"]
+
+    rust:
+      - path: ".vscode/launch.json"
+        must_contain: ["lldb", "cargo", "target/debug"]
+      - path: ".cargo/config.toml"
+        must_contain: ["[target", "runner"]
+      - path: "scripts/debug/rust_lldb_commands.txt"
+        must_contain: ["breakpoint set", "run"]
+
+    node:
+      - path: ".vscode/launch.json"
+        must_contain: ["node", "inspect"]
+      - path: "docker-compose.debug.yml"
+        must_contain: ["9229", "node", "--inspect"]
+      - path: "scripts/debug/node_debug_example.js"
+        must_contain: ["debugger;", "console.log"]
+
+scaffolding:
+  - ".vscode/"
+  - "scripts/debug/"
+  - "k8s/"
+
+metadata:
+  primary_blueprints: []
+  contributes_to:
+    - "Local debugging setup"
+    - "Remote debugging configuration"
+    - "Container debugging tools"
+    - "Production observability"
+    - "Structured logging infrastructure"
+    - "Distributed tracing setup"
+    - "Error tracking integration"

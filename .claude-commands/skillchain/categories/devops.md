@@ -251,6 +251,120 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 ---
 
+## Step 5.5: Validate Chain Outputs
+
+After all skills have executed, validate the combined output:
+
+### Load Validation Logic
+
+```
+Read {SKILLCHAIN_DATA}/shared/validation.md
+```
+
+### Per-Skill Output Validation
+
+For each skill that was invoked:
+```
+skill_outputs = Read {SKILLS_DIR}/{skill_name}/outputs.yaml
+For each output in skill_outputs.base_outputs:
+  If NOT exists {project_path}/{output.path}:
+    Mark as missing, log for user
+  Else if output.must_contain exists:
+    Check file contains expected patterns
+```
+
+### Run Chain Validation
+
+```
+If chain_context.blueprint exists:
+  # Option 1: Use completeness checker script
+  Run: python scripts/runtime/completeness_checker.py {project_path} --blueprint {blueprint} --maturity {maturity}
+
+  # Option 2: Manual validation (if script not available)
+  # Load blueprint deliverables
+  Read {SKILLCHAIN_CMD}/blueprints/{chain_context.blueprint}.md
+  Parse "## Deliverables Specification" section
+
+  # Apply maturity adjustments
+  For each deliverable in deliverables:
+    If deliverable.maturity_required exists:
+      If chain_context.maturity NOT in deliverable.maturity_required:
+        Mark deliverable as "skipped"
+
+  # Validate each required deliverable
+  For each deliverable NOT skipped:
+    result = validate_deliverable(deliverable, chain_context.project_path)
+    chain_context.deliverables_status[deliverable.name] = result
+
+  # Calculate completeness
+  required_count = count(deliverables where status != "skipped")
+  fulfilled_count = count(deliverables where status == "fulfilled")
+  completeness = fulfilled_count / required_count
+
+Else:
+  # No blueprint - run basic completeness check
+  Run run_basic_completeness_check(chain_context.project_path)
+```
+
+### Generate Validation Report
+
+```
+┌────────────────────────────────────────┐
+│ DEVOPS SKILLCHAIN VALIDATION           │
+├────────────────────────────────────────┤
+│ Blueprint: {chain_context.blueprint}   │
+│ Maturity: {chain_context.maturity}     │
+├────────────────────────────────────────┤
+For each deliverable in chain_context.deliverables_status:
+  If status == "fulfilled": │ ✓ {name}
+  If status == "missing":   │ ✗ {name} - MISSING
+  If status == "skipped":   │ ○ {name} (skipped - {maturity})
+├────────────────────────────────────────┤
+│ Required: {required_count}             │
+│ Fulfilled: {fulfilled_count}           │
+│ Completeness: {completeness}%          │
+└────────────────────────────────────────┘
+```
+
+### Handle Missing Deliverables
+
+```
+If completeness < 80%:
+  "⚠️ Some DevOps components weren't fully generated:
+
+   Missing:
+   [list deliverables where status == "missing"]
+
+   Common issues:
+   • CI/CD workflows (.github/workflows/*.yml, .gitlab-ci.yml, Jenkinsfile)
+   • Dockerfiles (Dockerfile, docker-compose.yml)
+   • K8s manifests (gitops/base/*.yaml, gitops/overlays/*/*.yaml)
+   • Test configs (coverage.config.js, pytest.ini, jest.config.js)
+   • Platform catalog (backstage/catalog-info.yaml, port.yaml)
+   • Runbooks (runbooks/*.md)
+
+   Would you like me to:
+   A) Generate the missing components
+   B) Continue without them
+   C) See detailed validation report"
+
+  If user chooses A:
+    For each missing deliverable:
+      Invoke primary_skill for that deliverable
+    Re-run validation (go back to "Run Chain Validation")
+```
+
+**DevOps-Specific Validation Notes:**
+
+- **CI/CD pipelines:** Check for workflow files in `.github/workflows/`, `.gitlab-ci.yml`, `Jenkinsfile`, `.circleci/config.yml`
+- **Containers:** Validate Dockerfile, docker-compose.yml, .dockerignore
+- **GitOps:** Check for ArgoCD/Flux manifests, base/overlays structure
+- **Platform:** Verify catalog-info.yaml for Backstage/Port integration
+- **Tests:** Ensure test framework configs exist (pytest.ini, jest.config.js, etc.)
+- **Runbooks:** Confirm incident response documentation
+
+---
+
 ## Error Handling
 
 ### Skill Invocation Failure

@@ -1,0 +1,266 @@
+skill: "ingesting-data"
+version: "1.0"
+domain: "backend"
+
+base_outputs:
+  # Core ETL pipeline structure
+  - path: "src/ingestion/"
+    must_contain:
+      - "Pipeline configuration or orchestration"
+      - "Data source connectors"
+      - "Error handling and logging"
+
+  # Configuration files
+  - path: "config/ingestion.yaml"
+    must_contain:
+      - "Source configurations"
+      - "Destination settings"
+      - "Scheduling or trigger rules"
+
+  # Testing infrastructure
+  - path: "tests/ingestion/"
+    must_contain:
+      - "Schema validation tests"
+      - "Connection tests"
+      - "Data quality checks"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Simple file-based ingestion
+      - path: "src/ingestion/loaders/"
+        must_contain:
+          - "CSV/JSON file loader"
+          - "Basic validation"
+          - "Single-threaded processing"
+
+      - path: "src/ingestion/schema.py"
+        must_contain:
+          - "Expected data schema definition"
+          - "Type validation"
+
+      - path: "requirements.txt"
+        must_contain:
+          - "polars or pandas"
+          - "Database client library"
+
+    intermediate:
+      # Cloud storage + API ingestion
+      - path: "src/ingestion/connectors/"
+        must_contain:
+          - "S3/GCS storage connector"
+          - "API client with pagination"
+          - "Retry logic and backoff"
+
+      - path: "src/ingestion/pipelines/"
+        must_contain:
+          - "ETL pipeline orchestration"
+          - "Incremental loading logic"
+          - "State management (cursors/checkpoints)"
+
+      - path: "src/ingestion/transforms/"
+        must_contain:
+          - "Data cleaning functions"
+          - "Schema mapping"
+          - "Deduplication logic"
+
+      - path: "docker-compose.yml"
+        must_contain:
+          - "Local development setup"
+          - "Test data sources"
+
+    advanced:
+      # Production-grade streaming + CDC
+      - path: "src/ingestion/streaming/"
+        must_contain:
+          - "Kafka/Kinesis consumer"
+          - "Backpressure handling"
+          - "Dead letter queue"
+          - "Exactly-once semantics"
+
+      - path: "src/ingestion/cdc/"
+        must_contain:
+          - "Change Data Capture setup"
+          - "Schema evolution handling"
+          - "Conflict resolution"
+
+      - path: "src/ingestion/monitoring/"
+        must_contain:
+          - "Ingestion metrics (records/sec, lag)"
+          - "Data quality metrics"
+          - "Alerting rules"
+
+      - path: "infrastructure/orchestration/"
+        must_contain:
+          - "Airflow/Dagster DAGs"
+          - "Dependency management"
+          - "Failure recovery"
+
+      - path: "infrastructure/terraform/"
+        must_contain:
+          - "Cloud storage buckets"
+          - "IAM roles and policies"
+          - "Streaming infrastructure (Kafka/Kinesis)"
+
+  database:
+    postgres:
+      - path: "src/ingestion/destinations/postgres.py"
+        must_contain:
+          - "PostgreSQL connection pool"
+          - "COPY or batch insert"
+          - "Transaction management"
+
+    mysql:
+      - path: "src/ingestion/destinations/mysql.py"
+        must_contain:
+          - "MySQL connection pool"
+          - "Batch insert with ON DUPLICATE KEY"
+
+    mongodb:
+      - path: "src/ingestion/destinations/mongodb.py"
+        must_contain:
+          - "MongoDB bulk operations"
+          - "Upsert logic"
+
+    clickhouse:
+      - path: "src/ingestion/destinations/clickhouse.py"
+        must_contain:
+          - "ClickHouse async inserts"
+          - "Optimized batch size"
+
+    bigquery:
+      - path: "src/ingestion/destinations/bigquery.py"
+        must_contain:
+          - "BigQuery streaming insert or load job"
+          - "Schema auto-detect or explicit schema"
+
+    snowflake:
+      - path: "src/ingestion/destinations/snowflake.py"
+        must_contain:
+          - "Snowflake COPY INTO from stage"
+          - "Stage file management"
+
+scaffolding:
+  - template: "python-etl-pipeline"
+    generates:
+      - "src/ingestion/pipeline.py"
+      - "src/ingestion/connectors/s3.py"
+      - "src/ingestion/connectors/api.py"
+      - "config/sources.yaml"
+      - "requirements.txt"
+    conditions:
+      - language: "python"
+
+  - template: "dlt-pipeline"
+    generates:
+      - "pipelines/github_pipeline.py"
+      - ".dlt/config.toml"
+      - ".dlt/secrets.toml"
+      - "requirements.txt"
+    conditions:
+      - language: "python"
+      - framework: "dlt"
+
+  - template: "typescript-ingestion"
+    generates:
+      - "src/ingestion/s3-loader.ts"
+      - "src/ingestion/webhook-receiver.ts"
+      - "src/types/events.ts"
+      - "package.json"
+    conditions:
+      - language: "typescript"
+
+  - template: "airflow-dag"
+    generates:
+      - "dags/data_ingestion_dag.py"
+      - "dags/config/connections.yaml"
+      - "docker-compose.yml"
+    conditions:
+      - orchestrator: "airflow"
+
+  - template: "streaming-consumer"
+    generates:
+      - "src/consumers/kafka_consumer.py"
+      - "src/processors/event_processor.py"
+      - "config/kafka.yaml"
+      - "docker-compose.yml"
+    conditions:
+      - source_type: "streaming"
+      - language: "python"
+
+metadata:
+  primary_blueprints:
+    - "data-pipeline"
+
+  contributes_to:
+    - "Data ingestion layer"
+    - "ETL/ELT pipelines"
+    - "Batch and streaming data loading"
+    - "API and file-based data collection"
+    - "Database migration and CDC"
+
+  common_patterns:
+    - "Batch file ingestion from S3/GCS"
+    - "REST API polling with cursor-based pagination"
+    - "Webhook receivers for real-time events"
+    - "Kafka/Kinesis streaming consumers"
+    - "Change Data Capture from source databases"
+    - "CSV/JSON/Parquet parsing and validation"
+
+  chaining:
+    before:
+      - "api-first (for webhook endpoints)"
+      - "authenticating-users (for API authentication)"
+
+    after:
+      - "databases-relational (for SQL destinations)"
+      - "databases-document (for NoSQL destinations)"
+      - "databases-vector (via ai-data-engineering for embeddings)"
+      - "databases-timeseries (for time-series data)"
+      - "transforming-data (for post-ingestion transformations)"
+
+  key_libraries:
+    python:
+      - "dlt (data load tool)"
+      - "polars (fast dataframes)"
+      - "boto3 (AWS S3)"
+      - "google-cloud-storage (GCS)"
+      - "confluent-kafka (Kafka)"
+      - "debezium (CDC)"
+
+    typescript:
+      - "@aws-sdk/client-s3"
+      - "papaparse (CSV)"
+      - "kafkajs"
+      - "hono (webhooks)"
+
+    rust:
+      - "polars-rs"
+      - "aws-sdk-s3"
+      - "rdkafka"
+
+    go:
+      - "aws-sdk-go-v2"
+      - "encoding/csv"
+      - "franz-go (Kafka)"
+
+  validation_requirements:
+    - "Schema validation before insert"
+    - "Idempotency checks (checksums, deduplication)"
+    - "Data quality metrics tracking"
+    - "Connection and permission testing"
+    - "Error handling and retry logic"
+
+  performance_considerations:
+    - "Chunked reading for large files (>100MB)"
+    - "Parallel processing where possible"
+    - "Batch inserts (1000-10000 records)"
+    - "Connection pooling for databases"
+    - "Backpressure handling for streaming"
+
+  security_checklist:
+    - "IAM roles for cloud storage access"
+    - "API key rotation and secrets management"
+    - "Network policies for database access"
+    - "Data encryption in transit and at rest"
+    - "Audit logging of ingestion operations"

@@ -1,0 +1,151 @@
+skill: "administering-linux"
+version: "1.0"
+domain: "infrastructure"
+
+base_outputs:
+  # Systemd service units are commonly created
+  - path: "*.service"
+    must_contain: ["\\[Unit\\]", "\\[Service\\]", "\\[Install\\]"]
+    description: "Systemd service unit files for managing applications"
+
+  # Configuration files for system services
+  - path: "*config*"
+    description: "System configuration files (sshd, sysctl, networking, etc.)"
+
+  # Shell scripts for automation
+  - path: "*.sh"
+    must_contain: ["^#!/bin/(bash|sh)"]
+    description: "Shell scripts for automation, backups, monitoring, or maintenance"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "systemd/*.service"
+        description: "Basic systemd service unit for single application"
+      - path: "scripts/backup.sh"
+        description: "Simple backup script"
+      - path: "configs/sshd_config"
+        description: "Basic SSH hardening configuration"
+
+    intermediate:
+      - path: "systemd/*.service"
+        description: "Systemd services with health checks and security hardening"
+      - path: "systemd/*.timer"
+        description: "Systemd timer units for scheduled tasks"
+      - path: "scripts/monitoring/*.sh"
+        description: "System monitoring and alerting scripts"
+      - path: "configs/sysctl.d/*.conf"
+        description: "Kernel parameter tuning for performance"
+      - path: "configs/security/*.conf"
+        description: "Security hardening configurations"
+
+    advanced:
+      - path: "systemd/units/*.service"
+        description: "Production-grade systemd units with dependencies and resource limits"
+      - path: "systemd/units/*.timer"
+        description: "Systemd timers with persistent scheduling"
+      - path: "systemd/units/*.target"
+        description: "Custom systemd targets for complex service orchestration"
+      - path: "scripts/deployment/*.sh"
+        description: "Deployment automation scripts"
+      - path: "scripts/troubleshooting/*.sh"
+        description: "Diagnostic and troubleshooting scripts"
+      - path: "configs/performance/*.conf"
+        description: "Advanced performance tuning (sysctl, ulimits, I/O schedulers)"
+      - path: "configs/network/*.conf"
+        description: "Network configuration (netplan, NetworkManager, firewall)"
+      - path: "docs/runbooks/*.md"
+        description: "Operational runbooks for common tasks"
+
+  infrastructure:
+    kubernetes:
+      - path: "systemd/kubelet.service"
+        description: "Kubelet service configuration for Kubernetes nodes"
+      - path: "configs/sysctl.d/99-kubernetes.conf"
+        description: "Kernel parameters for Kubernetes (bridge-nf-call-iptables, ip_forward)"
+      - path: "scripts/node-maintenance.sh"
+        description: "Node drain and maintenance scripts"
+
+    docker_compose:
+      - path: "systemd/docker.service.d/*.conf"
+        description: "Docker daemon systemd service overrides"
+      - path: "configs/docker/daemon.json"
+        description: "Docker daemon configuration"
+      - path: "scripts/container-health.sh"
+        description: "Container health check scripts"
+
+    bare_metal:
+      - path: "systemd/services/*.service"
+        description: "Application systemd services for bare metal servers"
+      - path: "configs/network/*.yaml"
+        description: "Network configuration files (netplan)"
+      - path: "scripts/server-hardening.sh"
+        description: "Server hardening and CIS benchmark scripts"
+
+    cloud:
+      - path: "cloud-init/*.yaml"
+        description: "Cloud-init configuration for automated server setup"
+      - path: "scripts/cloud-monitoring.sh"
+        description: "Cloud provider monitoring integration scripts"
+
+scaffolding:
+  - path: "systemd/"
+    reason: "Directory for systemd unit files (.service, .timer, .target)"
+  - path: "scripts/"
+    reason: "Directory for operational scripts (backup, monitoring, deployment)"
+  - path: "configs/"
+    reason: "Directory for system configuration files"
+  - path: "logs/"
+    reason: "Directory for log files (typically empty, managed by journald)"
+
+metadata:
+  primary_blueprints: ["infrastructure", "security"]
+  contributes_to:
+    - "Linux server configuration and hardening"
+    - "Systemd service management and deployment"
+    - "System administration scripts and automation"
+    - "Performance tuning and troubleshooting"
+    - "SSH hardening and firewall configuration"
+    - "Scheduled task management (systemd timers, cron)"
+    - "User and permission management"
+    - "Container host configuration (Docker, Kubernetes)"
+    - "Security compliance (CIS benchmarks)"
+    - "Operational runbooks and documentation"
+
+  typical_file_types:
+    - ".service (systemd service units)"
+    - ".timer (systemd timer units)"
+    - ".target (systemd targets)"
+    - ".sh (shell scripts)"
+    - ".conf (configuration files)"
+    - ".yaml/.yml (netplan, cloud-init)"
+    - ".md (documentation, runbooks)"
+
+  common_patterns:
+    systemd_service:
+      - "ExecStart= executable path"
+      - "Restart= restart policy"
+      - "User= and Group= for service user"
+      - "WorkingDirectory= application directory"
+      - "Environment= or EnvironmentFile= for config"
+      - "Security hardening directives (PrivateTmp, NoNewPrivileges, etc.)"
+
+    shell_script:
+      - "#!/bin/bash shebang"
+      - "set -euo pipefail for safety"
+      - "Logging functions"
+      - "Error handling"
+      - "Environment variable validation"
+
+    configuration:
+      - "Commented sections explaining settings"
+      - "Security-focused defaults"
+      - "Distribution-specific paths"
+
+  integration_points:
+    - "kubernetes-operations: Node configuration and kubelet management"
+    - "managing-containers: Docker daemon and systemd integration"
+    - "building-ci-pipelines: Deployment automation scripts"
+    - "hardening-security: SSH, firewall, and security configurations"
+    - "implementing-observability: Log configuration and monitoring setup"
+    - "configuring-networking: Network configuration and firewall rules"

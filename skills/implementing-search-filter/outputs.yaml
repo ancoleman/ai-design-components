@@ -1,0 +1,368 @@
+skill: "implementing-search-filter"
+version: "1.0"
+domain: "frontend"
+
+base_outputs:
+  - path: "src/components/Search*.{tsx,jsx,ts,js}"
+    must_contain:
+      - "search"
+      - "debounce"
+      - "onChange"
+    description: "Search input component with debouncing and clear functionality"
+
+  - path: "src/components/*Filter*.{tsx,jsx,ts,js}"
+    must_contain:
+      - "filter"
+      - "onChange"
+    description: "Filter components (checkbox, range, dropdown, etc.)"
+
+  - path: "src/hooks/useDebounce.{ts,tsx,js}"
+    must_contain:
+      - "useEffect"
+      - "setTimeout"
+      - "debounce"
+    description: "Custom debounce hook for search input optimization"
+
+  - path: "src/hooks/useSearch*.{ts,tsx,js}"
+    must_contain:
+      - "search"
+      - "filter"
+      - "useState"
+    description: "Search and filter state management hook"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "src/components/SimpleSearch.{tsx,jsx}"
+        must_contain:
+          - "input"
+          - "search"
+          - "onChange"
+        description: "Basic search input with minimal features"
+
+      - path: "src/components/BasicFilters.{tsx,jsx}"
+        must_contain:
+          - "checkbox"
+          - "filter"
+        description: "Simple checkbox or dropdown filters"
+
+    intermediate:
+      - path: "src/components/SearchBar.{tsx,jsx}"
+        must_contain:
+          - "debounce"
+          - "loading"
+          - "clear"
+        description: "Search bar with debouncing, loading states, and clear button"
+
+      - path: "src/components/FilterPanel.{tsx,jsx}"
+        must_contain:
+          - "filter"
+          - "facet"
+          - "count"
+        description: "Filter panel with facet counts and multiple filter types"
+
+      - path: "src/components/ActiveFilters.{tsx,jsx}"
+        must_contain:
+          - "chip"
+          - "badge"
+          - "remove"
+        description: "Active filter chips/badges with remove functionality"
+
+    advanced:
+      - path: "src/components/AdvancedSearch.{tsx,jsx}"
+        must_contain:
+          - "autocomplete"
+          - "suggestion"
+          - "downshift"
+        description: "Advanced search with autocomplete/typeahead suggestions"
+
+      - path: "src/components/FacetedSearch.{tsx,jsx}"
+        must_contain:
+          - "facet"
+          - "aggregation"
+          - "count"
+        description: "Faceted search with dynamic counts and aggregations"
+
+      - path: "src/components/SearchResults.{tsx,jsx}"
+        must_contain:
+          - "result"
+          - "highlight"
+          - "pagination"
+        description: "Search results with highlighting and pagination"
+
+      - path: "src/utils/searchParams.{ts,js}"
+        must_contain:
+          - "URLSearchParams"
+          - "serialize"
+          - "deserialize"
+        description: "URL parameter management for shareable search state"
+
+  frontend_framework:
+    react:
+      - path: "src/components/*Search*.{tsx,jsx}"
+        must_contain:
+          - "useState"
+          - "useEffect"
+        description: "React-based search components"
+
+      - path: "src/hooks/useSearch.{ts,tsx}"
+        must_contain:
+          - "useState"
+          - "useCallback"
+          - "useMemo"
+        description: "React hooks for search state management"
+
+    vue:
+      - path: "src/components/*Search*.vue"
+        must_contain:
+          - "ref"
+          - "computed"
+          - "watch"
+        description: "Vue-based search components"
+
+      - path: "src/composables/useSearch.{ts,js}"
+        must_contain:
+          - "ref"
+          - "computed"
+        description: "Vue composables for search functionality"
+
+    angular:
+      - path: "src/app/components/*-search/*.component.ts"
+        must_contain:
+          - "Component"
+          - "OnInit"
+          - "FormControl"
+        description: "Angular search components"
+
+      - path: "src/app/services/search.service.ts"
+        must_contain:
+          - "Injectable"
+          - "Observable"
+          - "HttpClient"
+        description: "Angular search service"
+
+  state_management:
+    redux:
+      - path: "src/store/search/searchSlice.{ts,js}"
+        must_contain:
+          - "createSlice"
+          - "reducer"
+          - "actions"
+        description: "Redux slice for search state"
+
+      - path: "src/store/search/searchThunks.{ts,js}"
+        must_contain:
+          - "createAsyncThunk"
+          - "async"
+        description: "Redux thunks for async search operations"
+
+    zustand:
+      - path: "src/stores/searchStore.{ts,js}"
+        must_contain:
+          - "create"
+          - "set"
+          - "get"
+        description: "Zustand store for search state"
+
+    context:
+      - path: "src/contexts/SearchContext.{tsx,jsx}"
+        must_contain:
+          - "createContext"
+          - "Provider"
+          - "useContext"
+        description: "React Context for search state management"
+
+  styling:
+    tailwind:
+      - path: "src/components/*Search*.{tsx,jsx}"
+        must_contain:
+          - "className"
+          - "flex"
+        description: "Components styled with Tailwind CSS utility classes"
+
+    css_modules:
+      - path: "src/components/*Search*.module.css"
+        must_contain:
+          - ".search"
+          - ".filter"
+        description: "CSS modules for search component styling"
+
+    styled_components:
+      - path: "src/components/*Search*.styled.{ts,tsx}"
+        must_contain:
+          - "styled"
+          - "css"
+        description: "Styled-components for search UI"
+
+  backend_integration:
+    rest_api:
+      - path: "src/api/search.{ts,js}"
+        must_contain:
+          - "fetch"
+          - "api/search"
+          - "params"
+        description: "REST API client for search endpoints"
+
+      - path: "backend/api/search.{py,js,ts}"
+        must_contain:
+          - "search"
+          - "filter"
+          - "query"
+        description: "Backend search API endpoint"
+
+    graphql:
+      - path: "src/graphql/queries/search.{ts,js}"
+        must_contain:
+          - "query"
+          - "search"
+          - "filter"
+        description: "GraphQL queries for search"
+
+    elasticsearch:
+      - path: "backend/search/elasticsearch.{py,js}"
+        must_contain:
+          - "elasticsearch"
+          - "query"
+          - "index"
+        description: "Elasticsearch integration for full-text search"
+
+  database:
+    sqlalchemy:
+      - path: "backend/queries/search_queries.py"
+        must_contain:
+          - "select"
+          - "filter"
+          - "query"
+        description: "SQLAlchemy search query builders"
+
+    django_orm:
+      - path: "backend/views/search_views.py"
+        must_contain:
+          - "filter"
+          - "Q"
+          - "queryset"
+        description: "Django ORM search views with filters"
+
+    prisma:
+      - path: "backend/services/search.{ts,js}"
+        must_contain:
+          - "prisma"
+          - "findMany"
+          - "where"
+        description: "Prisma-based search service"
+
+scaffolding:
+  - path: "src/types/search.{ts,d.ts}"
+    reason: "TypeScript type definitions for search interfaces, filters, and API responses"
+
+  - path: "src/config/searchConfig.{ts,js,json}"
+    reason: "Search configuration including debounce timing, pagination defaults, API endpoints"
+
+  - path: "src/utils/queryBuilder.{ts,js}"
+    reason: "Query string builder for converting filters to URL parameters"
+
+  - path: "src/utils/filterHelpers.{ts,js}"
+    reason: "Helper functions for filter validation, transformation, and sanitization"
+
+  - path: "tests/search.test.{ts,tsx,js,jsx}"
+    reason: "Test suite for search functionality, debouncing, and filter logic"
+
+  - path: "tests/filters.test.{ts,tsx,js,jsx}"
+    reason: "Test suite for filter components and state management"
+
+metadata:
+  primary_blueprints:
+    - "dashboard"
+    - "crud-api"
+    - "frontend"
+    - "data-pipeline"
+
+  secondary_blueprints:
+    - "api-first"
+    - "observability"
+
+  contributes_to:
+    - "Search input components with debouncing"
+    - "Autocomplete/typeahead interfaces"
+    - "Filter panels (checkbox, range, dropdown)"
+    - "Faceted search with dynamic counts"
+    - "Active filter chips/badges"
+    - "URL-based filter state management"
+    - "Backend search APIs (REST/GraphQL)"
+    - "Database query optimization"
+    - "Elasticsearch integration"
+    - "Search result highlighting"
+    - "Pagination and sorting"
+    - "Mobile-responsive filter drawers"
+    - "Accessible search experiences (ARIA, keyboard navigation)"
+
+  common_patterns:
+    - "Debounced search input (300ms default)"
+    - "Search state in URL parameters"
+    - "Client-side filtering for <1000 items"
+    - "Server-side search for >1000 items"
+    - "Hybrid approach with optimistic updates"
+    - "Request cancellation for pending searches"
+    - "Loading states and skeleton loaders"
+    - "Empty state handling"
+    - "Error handling with retry logic"
+    - "Result caching (300s TTL default)"
+
+  key_libraries:
+    frontend:
+      - name: "downshift"
+        purpose: "Accessible autocomplete primitives"
+        install: "npm install downshift"
+      - name: "react-select"
+        purpose: "Full-featured select/filter component"
+        install: "npm install react-select"
+      - name: "lodash.debounce"
+        purpose: "Debounce utility"
+        install: "npm install lodash.debounce"
+
+    backend_python:
+      - name: "elasticsearch"
+        purpose: "Elasticsearch client"
+        install: "pip install elasticsearch"
+      - name: "django-filter"
+        purpose: "Django REST Framework filters"
+        install: "pip install django-filter"
+      - name: "sqlalchemy"
+        purpose: "SQL query builder"
+        install: "pip install sqlalchemy"
+
+    backend_nodejs:
+      - name: "@elastic/elasticsearch"
+        purpose: "Elasticsearch client for Node.js"
+        install: "npm install @elastic/elasticsearch"
+      - name: "express-validator"
+        purpose: "Request validation middleware"
+        install: "npm install express-validator"
+
+  accessibility_requirements:
+    - "role=\"search\" for search regions"
+    - "aria-live regions for result updates"
+    - "aria-label on filter controls"
+    - "Keyboard navigation (Tab, Arrow keys, Enter, Escape)"
+    - "Focus management in autocomplete"
+    - "Screen reader announcements for filter changes"
+
+  performance_considerations:
+    - "Debounce search input (300ms recommended)"
+    - "Cancel pending requests on new input"
+    - "Index optimization for search columns"
+    - "Query result caching (5-minute TTL)"
+    - "Pagination for large result sets"
+    - "Virtual scrolling for >1000 items"
+    - "Lazy loading of images"
+    - "Compression for complex URL state"
+
+  example_use_cases:
+    - "E-commerce product search with category/price filters"
+    - "Data table search and column filtering"
+    - "Document search with full-text indexing"
+    - "User directory with multi-criteria filters"
+    - "Job board with location/salary/skills filters"
+    - "Real estate search with map integration"
+    - "Content management system search"
+    - "Log viewer with advanced query syntax"

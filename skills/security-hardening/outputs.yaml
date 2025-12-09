@@ -1,0 +1,263 @@
+skill: "security-hardening"
+version: "1.0"
+domain: "security"
+
+base_outputs:
+  # CIS benchmark scan reports
+  - path: "security/cis-reports/"
+    must_contain: ["cis-benchmark", "compliance"]
+
+  # Security baseline configurations
+  - path: "security/baseline/"
+    must_contain: ["hardening", "configuration"]
+
+  # Security policies (network, pod security, IAM)
+  - path: "security/policies/"
+    must_contain: ["policy", "security"]
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Basic OS and container hardening
+      - path: "security/baseline/ssh-hardening.conf"
+        must_contain: ["PermitRootLogin", "PasswordAuthentication"]
+
+      - path: "security/baseline/sysctl-hardening.conf"
+        must_contain: ["kernel", "net.ipv4"]
+
+      # Basic container security
+      - path: "security/baseline/Dockerfile.secure"
+        must_contain: ["USER", "nonroot"]
+
+      # Basic network policies
+      - path: "security/policies/network-policy-default-deny.yaml"
+        must_contain: ["NetworkPolicy", "Ingress"]
+
+    intermediate:
+      # Comprehensive hardening scripts
+      - path: "scripts/harden-linux.py"
+        must_contain: ["hardening", "automation"]
+
+      # Pod security standards
+      - path: "security/policies/pod-security-hardened.yaml"
+        must_contain: ["securityContext", "runAsNonRoot"]
+
+      # Cloud resource hardening
+      - path: "security/baseline/aws-s3-hardening.tf"
+        must_contain: ["aws_s3_bucket_public_access_block", "encryption"]
+
+      # Database hardening scripts
+      - path: "security/baseline/postgres-hardening.sql"
+        must_contain: ["REVOKE", "GRANT", "ssl"]
+
+      # Security scanning pipeline
+      - path: ".github/workflows/security-scan.yml"
+        must_contain: ["trivy", "checkov"]
+
+    advanced:
+      # Runtime security monitoring
+      - path: "security/monitoring/falco-rules.yaml"
+        must_contain: ["Falco", "rules"]
+
+      # OPA/Gatekeeper policies
+      - path: "security/policies/opa-policies/"
+        must_contain: ["ConstraintTemplate", "constraint"]
+
+      # Compliance automation
+      - path: "scripts/generate-compliance-report.py"
+        must_contain: ["compliance", "report", "CIS"]
+
+      # Infrastructure scanning automation
+      - path: "scripts/scan-infrastructure.sh"
+        must_contain: ["trivy", "prowler", "kube-bench"]
+
+      # Security audit dashboard
+      - path: "security/reports/compliance-dashboard.html"
+        must_contain: ["compliance", "dashboard"]
+
+  infrastructure:
+    kubernetes:
+      # Pod Security Standards
+      - path: "security/policies/pod-security-standards.yaml"
+        must_contain: ["PodSecurityPolicy", "securityContext"]
+
+      # Network policies (default deny + selective allow)
+      - path: "security/policies/network-policies/"
+        must_contain: ["NetworkPolicy", "ingress", "egress"]
+
+      # Kubernetes CIS benchmark reports
+      - path: "security/cis-reports/kube-bench-results.json"
+        must_contain: ["kube-bench", "CIS"]
+
+      # RBAC hardening
+      - path: "security/baseline/rbac-hardened.yaml"
+        must_contain: ["Role", "RoleBinding", "least-privilege"]
+
+    docker:
+      # Docker CIS benchmark reports
+      - path: "security/cis-reports/docker-bench-results.json"
+        must_contain: ["docker-bench-security", "CIS"]
+
+      # Container host hardening
+      - path: "scripts/harden-container-host.sh"
+        must_contain: ["docker", "hardening", "sysctl"]
+
+      # Secure Dockerfile templates
+      - path: "security/baseline/Dockerfile.chainguard"
+        must_contain: ["cgr.dev/chainguard", "nonroot"]
+
+  cloud_provider:
+    aws:
+      # AWS CIS benchmark reports
+      - path: "security/cis-reports/prowler-aws-results.json"
+        must_contain: ["prowler", "AWS", "CIS"]
+
+      # IAM hardening
+      - path: "security/baseline/iam-least-privilege.tf"
+        must_contain: ["aws_iam", "policy", "least-privilege"]
+
+      # S3 bucket hardening
+      - path: "security/baseline/s3-hardening.tf"
+        must_contain: ["aws_s3_bucket_public_access_block", "encryption"]
+
+      # VPC and network hardening
+      - path: "security/baseline/vpc-hardening.tf"
+        must_contain: ["aws_security_group", "aws_network_acl"]
+
+      # CloudTrail and logging
+      - path: "security/baseline/cloudtrail-logging.tf"
+        must_contain: ["aws_cloudtrail", "logging"]
+
+    gcp:
+      # GCP CIS benchmark reports
+      - path: "security/cis-reports/scout-gcp-results.json"
+        must_contain: ["ScoutSuite", "GCP", "CIS"]
+
+      # IAM hardening
+      - path: "security/baseline/iam-least-privilege.tf"
+        must_contain: ["google_project_iam", "policy"]
+
+      # GCS bucket hardening
+      - path: "security/baseline/gcs-hardening.tf"
+        must_contain: ["google_storage_bucket", "encryption"]
+
+      # VPC and firewall hardening
+      - path: "security/baseline/vpc-hardening.tf"
+        must_contain: ["google_compute_firewall", "ingress"]
+
+    azure:
+      # Azure CIS benchmark reports
+      - path: "security/cis-reports/scout-azure-results.json"
+        must_contain: ["ScoutSuite", "Azure", "CIS"]
+
+      # RBAC hardening
+      - path: "security/baseline/rbac-hardening.tf"
+        must_contain: ["azurerm_role_assignment", "least-privilege"]
+
+      # Storage account hardening
+      - path: "security/baseline/storage-hardening.tf"
+        must_contain: ["azurerm_storage_account", "encryption"]
+
+      # Network security groups
+      - path: "security/baseline/nsg-hardening.tf"
+        must_contain: ["azurerm_network_security_group", "rules"]
+
+  compliance:
+    soc2:
+      # SOC 2 compliance mapping
+      - path: "security/compliance/soc2-controls-mapping.md"
+        must_contain: ["SOC 2", "controls", "hardening"]
+
+      # Audit logs configuration
+      - path: "security/baseline/audit-logging.yaml"
+        must_contain: ["audit", "logging", "compliance"]
+
+    pci-dss:
+      # PCI-DSS compliance mapping
+      - path: "security/compliance/pci-dss-controls-mapping.md"
+        must_contain: ["PCI-DSS", "controls", "hardening"]
+
+      # Encryption at rest/transit
+      - path: "security/baseline/encryption-hardening.tf"
+        must_contain: ["encryption", "TLS", "KMS"]
+
+    hipaa:
+      # HIPAA compliance mapping
+      - path: "security/compliance/hipaa-controls-mapping.md"
+        must_contain: ["HIPAA", "controls", "hardening"]
+
+      # Access controls and audit
+      - path: "security/baseline/access-control-hardening.yaml"
+        must_contain: ["access-control", "RBAC", "audit"]
+
+    fedramp:
+      # FedRAMP compliance mapping
+      - path: "security/compliance/fedramp-controls-mapping.md"
+        must_contain: ["FedRAMP", "NIST", "controls"]
+
+      # FIPS 140-2 encryption
+      - path: "security/baseline/fips-encryption.tf"
+        must_contain: ["FIPS", "encryption", "KMS"]
+
+scaffolding:
+  # Base security directories
+  - "security/"
+  - "security/baseline/"
+  - "security/policies/"
+  - "security/monitoring/"
+  - "security/cis-reports/"
+  - "security/compliance/"
+
+  # Hardening scripts
+  - "scripts/hardening/"
+
+  # Layer-specific hardening
+  - "security/baseline/linux/"
+  - "security/baseline/container/"
+  - "security/baseline/cloud/"
+  - "security/baseline/network/"
+  - "security/baseline/database/"
+
+metadata:
+  primary_blueprints: ["security"]
+  contributes_to:
+    - "Security hardening across infrastructure layers"
+    - "CIS benchmark compliance"
+    - "Zero-trust architecture implementation"
+    - "Defense-in-depth security controls"
+    - "Automated security posture verification"
+
+  generates:
+    - "CIS benchmark scan reports (docker-bench-security, kube-bench, Lynis)"
+    - "Hardening configuration files (SSH, sysctl, container security)"
+    - "Security policies (NetworkPolicy, PodSecurityPolicy, IAM policies)"
+    - "Hardening automation scripts (Python, Bash)"
+    - "Security scanning pipelines (Trivy, Checkov, Prowler)"
+    - "Compliance reports (SOC 2, PCI-DSS, HIPAA, FedRAMP)"
+    - "Runtime security monitoring (Falco rules)"
+    - "Infrastructure-as-Code hardening (Terraform, Kubernetes manifests)"
+
+  verification_tools:
+    - "docker-bench-security (Docker CIS benchmark)"
+    - "kube-bench (Kubernetes CIS benchmark)"
+    - "Lynis (Linux security audit)"
+    - "OpenSCAP (Linux CIS benchmark)"
+    - "Trivy (vulnerability and misconfiguration scanning)"
+    - "Checkov (IaC security scanning)"
+    - "Prowler (AWS security assessment)"
+    - "ScoutSuite (multi-cloud security audit)"
+    - "Falco (runtime threat detection)"
+    - "Kubesec (K8s security risk analysis)"
+    - "Polaris (K8s configuration validation)"
+
+  hardening_layers:
+    - "Operating System (Linux)"
+    - "Container (Docker, containerd)"
+    - "Cloud Configuration (AWS, GCP, Azure)"
+    - "Network (firewalls, policies, segmentation)"
+    - "Database (PostgreSQL, MySQL, MongoDB)"
+
+  priority_framework:
+    critical: "Internet-facing systems (containers, network, TLS, auth)"
+    high: "Systems with sensitive data (encryption, access controls, audit)"
+    standard: "Internal systems (OS hardening, patch management, monitoring)"

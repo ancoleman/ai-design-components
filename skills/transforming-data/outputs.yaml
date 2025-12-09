@@ -1,0 +1,298 @@
+skill: "transforming-data"
+version: "1.0"
+domain: "data"
+
+# Base outputs required for all data transformation projects
+base_outputs:
+  - path: "dbt/models/"
+    must_contain: ["staging/", "intermediate/", "marts/"]
+    reason: "dbt three-layer architecture (staging → intermediate → marts)"
+
+  - path: "dbt/dbt_project.yml"
+    must_contain: ["name:", "models:", "version:"]
+    reason: "dbt project configuration file"
+
+  - path: "transformations/"
+    must_contain: []
+    reason: "Python transformation scripts (pandas/polars/PySpark)"
+
+  - path: "tests/"
+    must_contain: []
+    reason: "Data quality tests and validation scripts"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "dbt/models/staging/stg_*.sql"
+        must_contain: ["config(", "source("]
+        reason: "Basic staging models with 1:1 source mapping"
+
+      - path: "dbt/models/marts/fct_*.sql"
+        must_contain: ["config(", "ref("]
+        reason: "Simple fact tables for analytics"
+
+      - path: "transformations/basic_transforms.py"
+        must_contain: ["pandas", "read_csv"]
+        reason: "Basic pandas transformations for small datasets"
+
+    intermediate:
+      - path: "dbt/models/staging/"
+        must_contain: ["stg_*.sql"]
+        reason: "Full staging layer with comprehensive source coverage"
+
+      - path: "dbt/models/intermediate/"
+        must_contain: ["int_*.sql"]
+        reason: "Intermediate models with business logic"
+
+      - path: "dbt/models/marts/"
+        must_contain: ["fct_*.sql", "dim_*.sql"]
+        reason: "Both fact and dimension tables"
+
+      - path: "dbt/models/schema.yml"
+        must_contain: ["tests:", "columns:"]
+        reason: "dbt tests and documentation"
+
+      - path: "transformations/polars_transforms.py"
+        must_contain: ["polars", "scan_csv", "collect"]
+        reason: "polars for improved performance (500MB+ datasets)"
+
+      - path: "airflow/dags/"
+        must_contain: ["*.py"]
+        reason: "Airflow orchestration DAGs"
+
+    advanced:
+      - path: "dbt/models/staging/"
+        must_contain: ["stg_*.sql"]
+        reason: "Comprehensive staging layer"
+
+      - path: "dbt/models/intermediate/"
+        must_contain: ["int_*.sql"]
+        reason: "Complex business logic models"
+
+      - path: "dbt/models/marts/"
+        must_contain: ["fct_*.sql", "dim_*.sql"]
+        reason: "Star schema with fact and dimension tables"
+
+      - path: "dbt/tests/"
+        must_contain: ["*.sql"]
+        reason: "Custom singular dbt tests"
+
+      - path: "dbt/macros/"
+        must_contain: ["*.sql"]
+        reason: "Reusable dbt macros for complex logic"
+
+      - path: "transformations/pyspark_transforms.py"
+        must_contain: ["SparkSession", "spark.read"]
+        reason: "PySpark for distributed processing (100GB+ datasets)"
+
+      - path: "airflow/dags/"
+        must_contain: ["*.py"]
+        reason: "Production Airflow DAGs with monitoring"
+
+      - path: "data_quality/great_expectations/"
+        must_contain: ["expectations/"]
+        reason: "Great Expectations test suites"
+
+      - path: "monitoring/data_freshness_checks.sql"
+        must_contain: ["max(", "current_timestamp"]
+        reason: "Data freshness SLA monitoring"
+
+  database:
+    postgres:
+      - path: "dbt/profiles.yml"
+        must_contain: ["type: postgres"]
+        reason: "dbt Postgres connection profile"
+
+      - path: "dbt/models/"
+        must_contain: ["{{", "config("]
+        reason: "dbt models optimized for Postgres"
+
+    snowflake:
+      - path: "dbt/profiles.yml"
+        must_contain: ["type: snowflake"]
+        reason: "dbt Snowflake connection profile"
+
+      - path: "dbt/models/"
+        must_contain: ["{{", "config(", "cluster_by"]
+        reason: "dbt models with Snowflake clustering"
+
+      - path: "transformations/snowflake_tasks.sql"
+        must_contain: ["CREATE TASK", "SCHEDULE"]
+        reason: "Snowflake native tasks for ELT"
+
+    bigquery:
+      - path: "dbt/profiles.yml"
+        must_contain: ["type: bigquery"]
+        reason: "dbt BigQuery connection profile"
+
+      - path: "dbt/models/"
+        must_contain: ["{{", "config(", "partition_by"]
+        reason: "dbt models with BigQuery partitioning"
+
+      - path: "transformations/bigquery_scheduled_queries.sql"
+        must_contain: ["CREATE OR REPLACE"]
+        reason: "BigQuery scheduled queries"
+
+    databricks:
+      - path: "transformations/databricks_notebooks/"
+        must_contain: ["*.py"]
+        reason: "Databricks notebooks for transformation"
+
+      - path: "transformations/pyspark_transforms.py"
+        must_contain: ["SparkSession"]
+        reason: "PySpark transformations for Databricks"
+
+  orchestration:
+    airflow:
+      - path: "airflow/dags/"
+        must_contain: ["*.py"]
+        reason: "Airflow DAG definitions"
+
+      - path: "airflow/dags/"
+        must_contain: ["DAG(", "schedule_interval", "default_args"]
+        reason: "Valid Airflow DAG structure"
+
+      - path: "requirements.txt"
+        must_contain: ["apache-airflow"]
+        reason: "Airflow dependencies"
+
+    dagster:
+      - path: "dagster/assets/"
+        must_contain: ["@asset"]
+        reason: "Dagster asset definitions"
+
+      - path: "dagster/jobs.py"
+        must_contain: ["@job"]
+        reason: "Dagster job orchestration"
+
+      - path: "requirements.txt"
+        must_contain: ["dagster"]
+        reason: "Dagster dependencies"
+
+    prefect:
+      - path: "prefect/flows/"
+        must_contain: ["@flow", "@task"]
+        reason: "Prefect flow and task definitions"
+
+      - path: "requirements.txt"
+        must_contain: ["prefect"]
+        reason: "Prefect dependencies"
+
+  transformation_tool:
+    dbt:
+      - path: "dbt/models/staging/"
+        must_contain: ["stg_*.sql"]
+        reason: "dbt staging models"
+
+      - path: "dbt/models/marts/"
+        must_contain: ["*.sql"]
+        reason: "dbt marts models"
+
+      - path: "dbt/dbt_project.yml"
+        must_contain: ["name:", "models:"]
+        reason: "dbt project configuration"
+
+    pandas:
+      - path: "transformations/"
+        must_contain: ["pandas", "read_csv"]
+        reason: "pandas transformation scripts"
+
+      - path: "requirements.txt"
+        must_contain: ["pandas"]
+        reason: "pandas dependency"
+
+    polars:
+      - path: "transformations/"
+        must_contain: ["polars", "scan_csv", "collect"]
+        reason: "polars transformation scripts with lazy evaluation"
+
+      - path: "requirements.txt"
+        must_contain: ["polars"]
+        reason: "polars dependency"
+
+    pyspark:
+      - path: "transformations/"
+        must_contain: ["SparkSession", "spark.read"]
+        reason: "PySpark transformation scripts"
+
+      - path: "requirements.txt"
+        must_contain: ["pyspark"]
+        reason: "PySpark dependency"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "dbt/dbt_project.yml"
+    reason: "dbt project initialization file"
+
+  - path: "dbt/profiles.yml"
+    reason: "dbt database connection configuration"
+
+  - path: "dbt/models/staging/.gitkeep"
+    reason: "Initialize staging directory"
+
+  - path: "dbt/models/intermediate/.gitkeep"
+    reason: "Initialize intermediate directory"
+
+  - path: "dbt/models/marts/.gitkeep"
+    reason: "Initialize marts directory"
+
+  - path: "transformations/README.md"
+    reason: "Document transformation approach and structure"
+
+  - path: "tests/README.md"
+    reason: "Document testing strategy"
+
+  - path: "airflow/dags/.gitkeep"
+    reason: "Initialize Airflow DAGs directory"
+
+  - path: "requirements.txt"
+    reason: "Python dependencies for transformation tools"
+
+  - path: ".gitignore"
+    reason: "Ignore dbt artifacts, Python cache, and credentials"
+
+# Metadata
+metadata:
+  primary_blueprints: ["data-pipeline"]
+  contributes_to:
+    - "ETL/ELT data pipelines"
+    - "Data warehouse transformations"
+    - "Analytics engineering workflows"
+    - "Data quality and testing"
+
+  common_patterns:
+    - "dbt three-layer architecture (staging → intermediate → marts)"
+    - "Incremental models for large fact tables"
+    - "DataFrame transformations (pandas → polars → PySpark progression)"
+    - "Airflow orchestration with dependencies and retries"
+    - "Data quality tests (dbt tests, Great Expectations)"
+    - "Window functions for analytics (moving averages, cumulative sums)"
+
+  integration_points:
+    ingestion: "Receives data from data ingestion pipelines"
+    visualization: "Provides transformed data for visualization tools"
+    databases: "Writes to data warehouses (Snowflake, BigQuery, Databricks)"
+    orchestration: "Scheduled and orchestrated by Airflow/Dagster/Prefect"
+    monitoring: "Monitored for data freshness, quality, and pipeline health"
+
+  typical_directory_structure: |
+    project/
+    ├── dbt/
+    │   ├── models/
+    │   │   ├── staging/        # 1:1 with sources
+    │   │   ├── intermediate/   # Business logic
+    │   │   └── marts/          # Fact/dimension tables
+    │   ├── tests/              # Custom SQL tests
+    │   ├── macros/             # Reusable SQL
+    │   └── dbt_project.yml
+    ├── transformations/
+    │   ├── pandas_transforms.py
+    │   ├── polars_transforms.py
+    │   └── pyspark_transforms.py
+    ├── airflow/
+    │   └── dags/
+    │       └── data_pipeline.py
+    ├── tests/
+    │   └── test_data_quality.py
+    └── requirements.txt

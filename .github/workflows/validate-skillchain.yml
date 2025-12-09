@@ -8,6 +8,8 @@ on:
       - '.claude-commands/skillchain-data/**'
       - '.github/workflows/validate-skillchain.yml'
       - 'evaluation/**'
+      - 'scripts/validation/**'
+      - 'scripts/runtime/**'
   pull_request:
     branches: [main]
     paths:
@@ -15,6 +17,8 @@ on:
       - '.claude-commands/skillchain-data/**'
       - '.github/workflows/validate-skillchain.yml'
       - 'evaluation/**'
+      - 'scripts/validation/**'
+      - 'scripts/runtime/**'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -107,9 +111,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate blueprint files
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
         run: |
-          echo "Validating skillchain blueprints..."
+          pip install pyyaml
+
+      - name: Install skillchain commands
+        run: |
+          # Install skillchain to ~/.claude/commands for validation
+          if [[ -f "commands/install-skillchain.sh" ]]; then
+            bash commands/install-skillchain.sh
+          elif [[ -f "install.sh" ]]; then
+            bash install.sh
+          else
+            # Manual copy if no install script
+            mkdir -p ~/.claude/commands/skillchain
+            cp -r .claude-commands/skillchain/* ~/.claude/commands/skillchain/ 2>/dev/null || true
+          fi
+
+      - name: Validate blueprint structure (basic checks)
+        run: |
+          echo "Running basic blueprint structure checks..."
 
           blueprints_dir=".claude-commands/skillchain/blueprints"
           errors=0
@@ -147,11 +173,16 @@ jobs:
           echo "Total blueprints: $blueprint_count"
 
           if [[ $errors -gt 0 ]]; then
-            echo "Found $errors validation errors"
+            echo "Found $errors basic validation errors"
             exit 1
           fi
 
-          echo "All blueprints validated successfully!"
+          echo "Basic structure validation passed!"
+
+      - name: Validate blueprint deliverables (YAML validation)
+        run: |
+          echo "Running deliverables YAML validation..."
+          python -m scripts.validation blueprints --verbose
 
   run-evaluation:
     name: Run Skillchain Evaluation

@@ -1,0 +1,462 @@
+skill: "building-ai-chat"
+version: "1.0"
+domain: "frontend"
+
+# Base outputs required for all AI chat implementations
+base_outputs:
+  - path: "components/"
+    must_contain: ["ChatContainer", "MessageList", "InputArea"]
+    reason: "Core chat UI components directory"
+
+  - path: "components/ChatContainer.tsx"
+    must_contain: ["useChat", "messages", "input", "handleSubmit"]
+    reason: "Main chat interface container with streaming support"
+
+  - path: "components/MessageList.tsx"
+    must_contain: ["message.role", "message.content", "Streamdown"]
+    reason: "Message display with streaming markdown rendering"
+
+  - path: "components/InputArea.tsx"
+    must_contain: ["textarea", "onKeyDown", "Enter", "disabled"]
+    reason: "User input with keyboard shortcuts and state management"
+
+  - path: "lib/"
+    must_contain: ["chat-utils", "streaming"]
+    reason: "Utility functions for chat operations and streaming"
+
+  - path: "package.json"
+    must_contain: ["ai", "@ai-sdk/react", "@vercel/streamdown"]
+    reason: "Required AI chat dependencies"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "components/BasicChat.tsx"
+        must_contain: ["useChat", "messages.map", "handleSubmit", "isLoading"]
+        reason: "Minimal ChatGPT-style interface (under 100 lines)"
+
+      - path: "components/Message.tsx"
+        must_contain: ["message.role", "Streamdown", "message.content"]
+        reason: "Basic message bubble with streaming support"
+
+      - path: "app/api/chat/route.ts"
+        must_contain: ["streamText", "openai", "messages"]
+        reason: "Server-side streaming endpoint"
+
+      - path: "styles/chat.css"
+        must_contain: [".message", ".user", ".assistant", ".input-form"]
+        reason: "Basic chat UI styling with message bubbles"
+
+    intermediate:
+      - path: "components/MessageList.tsx"
+        must_contain: ["useRef", "scrollIntoView", "messagesEndRef"]
+        reason: "Message list with auto-scroll behavior"
+
+      - path: "components/MessageActions.tsx"
+        must_contain: ["ThumbsUpIcon", "ThumbsDownIcon", "CopyIcon", "feedback"]
+        reason: "Message feedback controls (thumbs, copy, share)"
+
+      - path: "components/ResponseControls.tsx"
+        must_contain: ["stop", "regenerate", "continueGeneration", "editMessage"]
+        reason: "AI response controls (stop, regenerate, continue, edit)"
+
+      - path: "components/TokenIndicator.tsx"
+        must_contain: ["used", "total", "percentage", "progress-bar"]
+        reason: "Visual token usage and context limit display"
+
+      - path: "lib/auto-scroll.ts"
+        must_contain: ["shouldAutoScroll", "threshold", "scrollHeight"]
+        reason: "Smart auto-scroll logic (user activity-aware)"
+
+      - path: "lib/sanitize.ts"
+        must_contain: ["DOMPurify", "sanitize", "ALLOWED_TAGS"]
+        reason: "XSS protection for AI-generated content"
+
+      - path: "hooks/useChat.ts"
+        must_contain: ["useState", "useEffect", "messages", "isStreaming"]
+        reason: "Custom chat state management hook"
+
+    advanced:
+      - path: "components/MultiModalInput.tsx"
+        must_contain: ["FileInput", "ImagePreview", "VoiceInput", "attachments"]
+        reason: "Multi-modal input (text, images, files, voice)"
+
+      - path: "components/ToolUsageDisplay.tsx"
+        must_contain: ["tool.name", "tool.status", "tool.result", "Spinner"]
+        reason: "Visualization of AI tool/function calling"
+
+      - path: "components/ConversationBranching.tsx"
+        must_contain: ["branches", "activeThread", "switchBranch"]
+        reason: "Non-linear conversation tree navigation"
+
+      - path: "components/ErrorDisplay.tsx"
+        must_contain: ["error.code", "RATE_LIMIT", "refusal", "retryAfter"]
+        reason: "AI-specific error handling (refusals, rate limits, hallucinations)"
+
+      - path: "lib/context-management.ts"
+        must_contain: ["calculateTokens", "summarize", "pruneContext"]
+        reason: "Token counting and context window management"
+
+      - path: "lib/streaming-optimizations.ts"
+        must_contain: ["memo", "debounce", "useMemo", "updateMessage"]
+        reason: "Performance optimizations for streaming (memoization, debouncing)"
+
+      - path: "lib/voice-integration.ts"
+        must_contain: ["SpeechRecognition", "startRecording", "stopRecording"]
+        reason: "Web Speech API integration for voice input"
+
+      - path: "hooks/useVirtualScroll.ts"
+        must_contain: ["VariableSizeList", "react-window"]
+        reason: "Virtual scrolling for long conversation histories"
+
+      - path: "components/ChatAccessibility.tsx"
+        must_contain: ["role=\"log\"", "aria-live", "aria-relevant", "sr-only"]
+        reason: "Screen reader support and ARIA live regions"
+
+      - path: "tests/chat.test.tsx"
+        must_contain: ["render", "fireEvent", "waitFor", "mockUseChat"]
+        reason: "Unit tests for chat components and hooks"
+
+  frontend_framework:
+    react:
+      - path: "components/ChatContainer.tsx"
+        must_contain: ["import React", "useChat", "export function"]
+        reason: "React-based chat container"
+
+      - path: "hooks/useChat.ts"
+        must_contain: ["useState", "useEffect", "useCallback"]
+        reason: "React hooks for chat state management"
+
+      - path: "components/ThemeProvider.tsx"
+        must_contain: ["createContext", "useContext", "ChatThemeProvider"]
+        reason: "React context for chat theme/styling"
+
+    vue:
+      - path: "components/ChatContainer.vue"
+        must_contain: ["<template>", "<script setup>", "ref", "computed"]
+        reason: "Vue 3 Composition API chat container"
+
+      - path: "composables/useChat.ts"
+        must_contain: ["ref", "computed", "watch"]
+        reason: "Vue composable for chat state"
+
+    svelte:
+      - path: "components/ChatContainer.svelte"
+        must_contain: ["<script>", "let messages", "$:"]
+        reason: "Svelte chat container with reactive state"
+
+      - path: "stores/chatStore.ts"
+        must_contain: ["writable", "subscribe", "update"]
+        reason: "Svelte store for chat state management"
+
+    vanilla:
+      - path: "chat.js"
+        must_contain: ["EventSource", "addEventListener", "innerHTML"]
+        reason: "Vanilla JavaScript chat implementation"
+
+      - path: "index.html"
+        must_contain: ["<div id=\"chat\"", "<script src=\"chat.js\""]
+        reason: "HTML structure for vanilla implementation"
+
+  styling:
+    tailwind:
+      - path: "components/Message.tsx"
+        must_contain: ["className", "bg-blue-500", "dark:bg-blue-700"]
+        reason: "Tailwind classes for message styling"
+
+      - path: "tailwind.config.js"
+        must_contain: ["theme", "extend", "colors", "chat"]
+        reason: "Tailwind configuration with chat-specific utilities"
+
+    css_modules:
+      - path: "components/Message.module.css"
+        must_contain: [".message", ".user", ".assistant", "composes:"]
+        reason: "CSS Modules for scoped message styling"
+
+      - path: "components/ChatContainer.module.css"
+        must_contain: [".container", ".messages", ".input"]
+        reason: "CSS Modules for chat layout"
+
+    styled_components:
+      - path: "components/StyledMessage.tsx"
+        must_contain: ["styled.", "props.role", "${props =>"]
+        reason: "Styled-components with dynamic role-based styling"
+
+      - path: "styles/theme.ts"
+        must_contain: ["export const chatTheme", "colors", "message"]
+        reason: "Theme object for styled-components"
+
+    scss:
+      - path: "styles/chat.scss"
+        must_contain: [".chat-container", ".message", "&.user", "&.assistant"]
+        reason: "SCSS with nested selectors for chat UI"
+
+  state_management:
+    context:
+      - path: "context/ChatContext.tsx"
+        must_contain: ["createContext", "ChatProvider", "useChatContext"]
+        reason: "React Context for global chat state"
+
+    zustand:
+      - path: "stores/useChatStore.ts"
+        must_contain: ["create", "persist", "messages", "sendMessage"]
+        reason: "Zustand store with persistence for chat history"
+
+    redux:
+      - path: "store/chatSlice.ts"
+        must_contain: ["createSlice", "addMessage", "setStreaming"]
+        reason: "Redux Toolkit slice for chat state"
+
+      - path: "store/chatThunks.ts"
+        must_contain: ["createAsyncThunk", "streamMessage"]
+        reason: "Redux async actions for streaming"
+
+    pinia:
+      - path: "stores/chatStore.ts"
+        must_contain: ["defineStore", "pinia", "messages", "sendMessage"]
+        reason: "Pinia store for Vue chat state"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "components/ChatContainer.tsx"
+    reason: "Initialize main chat interface container"
+
+  - path: "components/Message.tsx"
+    reason: "Initialize message display component with role-based styling"
+
+  - path: "components/InputArea.tsx"
+    reason: "Initialize user input component with keyboard shortcuts"
+
+  - path: "components/MessageList.tsx"
+    reason: "Initialize scrollable message list container"
+
+  - path: "app/api/chat/route.ts"
+    reason: "Initialize server-side streaming endpoint"
+
+  - path: "lib/chat-utils.ts"
+    reason: "Initialize utility functions (formatTime, sanitize, etc.)"
+
+  - path: "styles/chat.css"
+    reason: "Initialize basic chat UI styles with design tokens"
+
+  - path: "package.json"
+    reason: "Initialize with required AI chat dependencies"
+
+  - path: "tsconfig.json"
+    reason: "TypeScript configuration for type safety"
+
+  - path: ".env.local"
+    reason: "Environment variables for API keys (OPENAI_API_KEY, etc.)"
+
+  - path: ".gitignore"
+    reason: "Ignore node_modules, .env.local, build artifacts"
+
+  - path: "README.md"
+    reason: "Document AI chat implementation, features, and usage"
+
+# Metadata
+metadata:
+  primary_blueprints: ["rag-pipeline", "ai-ml", "dashboard"]
+  contributes_to:
+    - "AI chat interface (ChatGPT-style conversational UI)"
+    - "Streaming responses (token-by-token rendering with markdown)"
+    - "Message components (user, AI, system bubbles)"
+    - "Context management (token limits, conversation summarization)"
+    - "Multi-modal input (text, images, files, voice)"
+    - "Feedback mechanisms (thumbs up/down, regenerate, copy)"
+    - "Tool usage visualization (function calling display)"
+    - "AI-specific error handling (refusals, rate limits, hallucinations)"
+    - "Accessibility (screen readers, keyboard navigation)"
+    - "Performance optimization (memoization, virtual scrolling)"
+
+  common_patterns:
+    - "Vercel AI SDK (useChat hook for streaming)"
+    - "@vercel/streamdown (incomplete markdown rendering)"
+    - "Server-Sent Events (SSE) for real-time streaming"
+    - "Auto-scroll with user activity detection"
+    - "DOMPurify for XSS protection on AI outputs"
+    - "Token indicator with user-friendly metaphors"
+    - "Stop generation button during streaming"
+    - "Regenerate/continue controls after completion"
+    - "Message feedback (thumbs up/down for RLHF)"
+    - "Copy to clipboard for message sharing"
+    - "Multi-modal file upload with preview"
+    - "Voice input via Web Speech API"
+    - "ARIA live regions for screen reader support"
+    - "Memoized message rendering for performance"
+    - "Debounced streaming updates (50ms)"
+    - "Virtual scrolling for long conversations"
+
+  integration_points:
+    design_tokens: "Uses design tokens for theming (message colors, spacing, shadows)"
+    forms: "Input area uses form validation patterns"
+    feedback: "Error displays use feedback component patterns"
+    data_viz: "Tool usage can visualize data with charts"
+    dashboards: "Can be embedded as dashboard widget"
+    navigation: "Conversation history navigation patterns"
+
+  typical_directory_structure: |
+    project/
+    ├── components/                 # React chat components
+    │   ├── ChatContainer.tsx       # Main chat interface
+    │   ├── MessageList.tsx         # Scrollable message container
+    │   ├── Message.tsx             # Individual message bubble
+    │   ├── InputArea.tsx           # User input with attachments
+    │   ├── MessageActions.tsx      # Feedback controls (thumbs, copy)
+    │   ├── ResponseControls.tsx    # Stop, regenerate, continue, edit
+    │   ├── TokenIndicator.tsx      # Context limit visualization
+    │   ├── MultiModalInput.tsx     # Image/file/voice input
+    │   ├── ToolUsageDisplay.tsx    # Function calling visualization
+    │   ├── ErrorDisplay.tsx        # AI-specific error handling
+    │   ├── ConversationBranching.tsx  # Thread navigation
+    │   └── ChatAccessibility.tsx   # ARIA live regions
+    ├── hooks/                      # Custom React hooks
+    │   ├── useChat.ts              # Chat state management
+    │   ├── useAutoScroll.ts        # Smart scroll behavior
+    │   ├── useVirtualScroll.ts     # Long conversation optimization
+    │   └── useVoiceInput.ts        # Web Speech API integration
+    ├── lib/                        # Utility functions
+    │   ├── chat-utils.ts           # Formatting, sanitization
+    │   ├── streaming-optimizations.ts  # Memoization, debouncing
+    │   ├── context-management.ts   # Token counting, summarization
+    │   ├── auto-scroll.ts          # Scroll heuristics
+    │   ├── sanitize.ts             # DOMPurify configuration
+    │   └── voice-integration.ts    # Voice input/output
+    ├── app/api/chat/               # API routes
+    │   ├── route.ts                # Streaming endpoint
+    │   └── feedback/route.ts       # Feedback collection
+    ├── styles/                     # CSS/styling
+    │   ├── chat.css                # Chat UI styles
+    │   ├── chat.module.css         # CSS Modules
+    │   └── chat.scss               # SCSS styles
+    ├── scripts/                    # Token-free utilities
+    │   ├── parse_stream.js         # Parse incomplete markdown
+    │   ├── calculate_tokens.py     # Token estimation
+    │   └── format_messages.js      # Export conversation history
+    ├── examples/                   # Usage examples
+    │   ├── basic-chat.tsx          # Minimal ChatGPT-style interface
+    │   ├── streaming-chat.tsx      # Advanced streaming with memoization
+    │   ├── multimodal-chat.tsx     # Image and file uploads
+    │   ├── code-assistant.tsx      # IDE-style code copilot
+    │   └── tool-calling-chat.tsx   # Function calling visualization
+    ├── assets/                     # Static resources
+    │   ├── system-prompts.json     # Curated prompts for different use cases
+    │   ├── message-templates.json  # Pre-built message components
+    │   ├── error-messages.json     # User-friendly error messages
+    │   └── themes.json             # Light, dark, high-contrast themes
+    ├── references/                 # Documentation
+    │   ├── streaming-ux.md         # Streaming patterns and auto-scroll
+    │   ├── context-management.md   # Token limits and strategies
+    │   ├── multi-modal.md          # Image, file, voice handling
+    │   ├── feedback-loops.md       # RLHF patterns
+    │   ├── error-handling.md       # AI-specific error scenarios
+    │   ├── tool-usage.md           # Function calling visualization
+    │   ├── accessibility.md        # Screen reader and keyboard support
+    │   ├── library-guide.md        # Detailed library documentation
+    │   └── performance-optimization.md  # Streaming performance
+    ├── tests/                      # Unit tests
+    │   ├── chat.test.tsx           # Component tests
+    │   ├── hooks.test.ts           # Hook tests
+    │   └── utils.test.ts           # Utility function tests
+    ├── package.json                # Dependencies (ai, streamdown, etc.)
+    ├── tsconfig.json               # TypeScript configuration
+    ├── .env.local                  # API keys
+    └── README.md                   # Documentation
+
+  tools_required:
+    - name: "Vercel AI SDK"
+      version: "^3.0.0"
+      purpose: "Streaming AI chat with useChat hook"
+      install: "npm install ai @ai-sdk/react @ai-sdk/openai"
+
+    - name: "@vercel/streamdown"
+      version: "^1.0.0"
+      purpose: "Render incomplete markdown during streaming"
+      install: "npm install @vercel/streamdown"
+
+    - name: "react-syntax-highlighter"
+      version: "^15.0.0"
+      purpose: "Syntax highlighting for code blocks in messages"
+      install: "npm install react-syntax-highlighter @types/react-syntax-highlighter"
+
+    - name: "dompurify"
+      version: "^3.0.0"
+      purpose: "XSS protection for AI-generated HTML"
+      install: "npm install dompurify @types/dompurify"
+
+    - name: "react-window"
+      version: "^1.8.0"
+      purpose: "Virtual scrolling for long conversations"
+      install: "npm install react-window @types/react-window"
+
+    - name: "tiktoken"
+      version: "^1.0.0"
+      purpose: "Token counting for context management"
+      install: "npm install tiktoken"
+
+  validation_checks:
+    - "useChat hook from ai/react imported and used"
+    - "@vercel/streamdown used for AI message rendering"
+    - "DOMPurify sanitizes AI-generated content"
+    - "Auto-scroll respects user scrolling (not always scrolling)"
+    - "Stop button visible during streaming"
+    - "Regenerate/continue controls visible after completion"
+    - "Token indicator shows user-friendly context status"
+    - "Message feedback (thumbs) sends data to backend"
+    - "Copy to clipboard works on all messages"
+    - "Keyboard shortcuts (Enter to send, Shift+Enter for newline)"
+    - "ARIA live regions announce new messages to screen readers"
+    - "Messages memoized to prevent re-renders during streaming"
+    - "Multi-modal input validates file types and sizes"
+    - "Error handling differentiates AI-specific errors (refusals, rate limits)"
+    - "Voice input has visual feedback (recording indicator)"
+
+  anti_patterns:
+    - name: "No streaming support"
+      avoid: "Waiting for full response before displaying"
+      use: "Token-by-token streaming with SSE or useChat hook"
+
+    - name: "Always auto-scrolling"
+      avoid: "Forcing scroll even when user reading previous messages"
+      use: "Smart auto-scroll that detects user activity"
+
+    - name: "Unsanitized AI output"
+      avoid: "Directly rendering AI-generated HTML/markdown"
+      use: "DOMPurify.sanitize() before rendering"
+
+    - name: "No stop generation button"
+      avoid: "User cannot interrupt long/unwanted responses"
+      use: "Stop button visible during streaming with immediate effect"
+
+    - name: "Technical token counts"
+      avoid: "Showing raw numbers like '3,847 / 8,000 tokens'"
+      use: "User-friendly metaphors like '~15 messages remaining'"
+
+    - name: "No feedback mechanism"
+      avoid: "No way for users to rate responses"
+      use: "Thumbs up/down, regenerate, and copy controls"
+
+    - name: "Missing error context"
+      avoid: "Generic 'Error occurred' messages"
+      use: "Specific handling for refusals, rate limits, context overflows"
+
+    - name: "Blocking message rendering"
+      avoid: "Re-rendering all messages on every token"
+      use: "React.memo() for messages, only update streaming message"
+
+    - name: "No keyboard shortcuts"
+      avoid: "Only mouse/touch interaction"
+      use: "Enter to send, Shift+Enter for newline, Escape to cancel"
+
+    - name: "No accessibility support"
+      avoid: "Screen readers unaware of new messages"
+      use: "ARIA live regions (role='log', aria-live='polite')"
+
+    - name: "Ignoring multi-modal capabilities"
+      avoid: "Text-only interface when AI supports images"
+      use: "File/image upload with preview and voice input"
+
+    - name: "No context management"
+      avoid: "Letting conversation exceed token limits unexpectedly"
+      use: "Token indicator with summarization or pruning strategy"

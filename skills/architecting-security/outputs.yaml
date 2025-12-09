@@ -1,0 +1,455 @@
+skill: "architecting-security"
+version: "1.0"
+domain: "security"
+
+base_outputs:
+  - path: "docs/security/architecture-overview.md"
+    must_contain:
+      - "Defense in Depth"
+      - "Zero Trust"
+      - "security architecture"
+
+  - path: "docs/security/threat-model.md"
+    must_contain:
+      - "STRIDE"
+      - "threat categories"
+      - "mitigation"
+
+  - path: "security/policies/security-baseline.md"
+    must_contain:
+      - "security controls"
+      - "baseline requirements"
+
+  - path: "docs/security/incident-response-plan.md"
+    must_contain:
+      - "incident response"
+      - "escalation"
+      - "recovery"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "security/policies/access-control-policy.md"
+        must_contain:
+          - "authentication"
+          - "MFA"
+          - "password policy"
+
+      - path: "security/policies/data-protection-policy.md"
+        must_contain:
+          - "encryption"
+          - "data classification"
+
+      - path: "docs/security/cis-controls-ig1.md"
+        must_contain:
+          - "CIS Controls"
+          - "Implementation Group 1"
+          - "asset inventory"
+
+    intermediate:
+      - path: "security/architecture/zero-trust-architecture.md"
+        must_contain:
+          - "Zero Trust"
+          - "continuous verification"
+          - "micro-segmentation"
+
+      - path: "security/policies/privileged-access-management.md"
+        must_contain:
+          - "PAM"
+          - "just-in-time access"
+          - "credential vaulting"
+
+      - path: "docs/security/nist-csf-mapping.md"
+        must_contain:
+          - "NIST CSF"
+          - "GOVERN"
+          - "IDENTIFY"
+          - "PROTECT"
+          - "DETECT"
+          - "RESPOND"
+          - "RECOVER"
+
+      - path: "security/sbom/sbom-policy.md"
+        must_contain:
+          - "SBOM"
+          - "Software Bill of Materials"
+          - "dependency management"
+
+      - path: "docs/security/cis-controls-ig2.md"
+        must_contain:
+          - "CIS Controls"
+          - "Implementation Group 2"
+
+    advanced:
+      - path: "security/architecture/defense-in-depth-layers.md"
+        must_contain:
+          - "defense in depth"
+          - "9 layers"
+          - "physical security"
+          - "network perimeter"
+          - "endpoint protection"
+
+      - path: "security/threat-models/stride-analysis.md"
+        must_contain:
+          - "STRIDE"
+          - "Spoofing"
+          - "Tampering"
+          - "Repudiation"
+          - "Information Disclosure"
+          - "Denial of Service"
+          - "Elevation of Privilege"
+
+      - path: "security/threat-models/attack-trees.md"
+        must_contain:
+          - "attack tree"
+          - "attack paths"
+
+      - path: "security/slsa/slsa-implementation.md"
+        must_contain:
+          - "SLSA"
+          - "supply chain"
+          - "provenance"
+          - "build security"
+
+      - path: "security/monitoring/siem-architecture.md"
+        must_contain:
+          - "SIEM"
+          - "log aggregation"
+          - "security events"
+          - "correlation"
+
+      - path: "security/monitoring/soar-playbooks.md"
+        must_contain:
+          - "SOAR"
+          - "automated response"
+          - "playbooks"
+
+      - path: "security/architecture/cspm-strategy.md"
+        must_contain:
+          - "CSPM"
+          - "Cloud Security Posture Management"
+          - "compliance monitoring"
+
+      - path: "docs/security/cis-controls-ig3.md"
+        must_contain:
+          - "CIS Controls"
+          - "Implementation Group 3"
+
+  cloud_provider:
+    aws:
+      - path: "security/aws/security-architecture.md"
+        must_contain:
+          - "AWS"
+          - "Well-Architected Framework"
+          - "Security Pillar"
+
+      - path: "security/aws/multi-account-strategy.md"
+        must_contain:
+          - "AWS Organizations"
+          - "Security OU"
+          - "Service Control Policies"
+
+      - path: "security/aws/iam-strategy.md"
+        must_contain:
+          - "AWS IAM"
+          - "IAM Identity Center"
+          - "least privilege"
+
+      - path: "security/aws/network-security.md"
+        must_contain:
+          - "VPC"
+          - "Security Groups"
+          - "AWS WAF"
+          - "Shield"
+
+      - path: "security/aws/monitoring.md"
+        must_contain:
+          - "GuardDuty"
+          - "Security Hub"
+          - "CloudTrail"
+
+      - path: "security/aws/kms-key-management.md"
+        must_contain:
+          - "AWS KMS"
+          - "encryption"
+          - "key rotation"
+
+    gcp:
+      - path: "security/gcp/security-architecture.md"
+        must_contain:
+          - "GCP"
+          - "Security Command Center"
+          - "security best practices"
+
+      - path: "security/gcp/organization-hierarchy.md"
+        must_contain:
+          - "GCP Organization"
+          - "Folders"
+          - "Projects"
+          - "IAM inheritance"
+
+      - path: "security/gcp/iam-strategy.md"
+        must_contain:
+          - "Cloud IAM"
+          - "service accounts"
+          - "least privilege"
+
+      - path: "security/gcp/network-security.md"
+        must_contain:
+          - "VPC"
+          - "Cloud Armor"
+          - "VPC Service Controls"
+
+      - path: "security/gcp/monitoring.md"
+        must_contain:
+          - "Security Command Center"
+          - "Chronicle"
+          - "Event Threat Detection"
+
+      - path: "security/gcp/kms-key-management.md"
+        must_contain:
+          - "Cloud KMS"
+          - "encryption"
+          - "key rotation"
+
+    azure:
+      - path: "security/azure/security-architecture.md"
+        must_contain:
+          - "Azure"
+          - "Azure Security Benchmark"
+          - "Defender for Cloud"
+
+      - path: "security/azure/landing-zone.md"
+        must_contain:
+          - "Azure Landing Zone"
+          - "hub-spoke"
+          - "Management Groups"
+
+      - path: "security/azure/iam-strategy.md"
+        must_contain:
+          - "Azure AD"
+          - "Entra ID"
+          - "Conditional Access"
+          - "Privileged Identity Management"
+
+      - path: "security/azure/network-security.md"
+        must_contain:
+          - "VNet"
+          - "Azure Firewall"
+          - "Network Security Groups"
+          - "DDoS Protection"
+
+      - path: "security/azure/monitoring.md"
+        must_contain:
+          - "Defender for Cloud"
+          - "Sentinel"
+          - "Azure Monitor"
+
+      - path: "security/azure/key-vault.md"
+        must_contain:
+          - "Azure Key Vault"
+          - "secrets management"
+          - "encryption"
+
+  infrastructure:
+    kubernetes:
+      - path: "security/kubernetes/k8s-security-architecture.md"
+        must_contain:
+          - "Kubernetes"
+          - "RBAC"
+          - "Pod Security"
+          - "Network Policies"
+
+      - path: "security/kubernetes/pod-security-standards.md"
+        must_contain:
+          - "Pod Security Standards"
+          - "Privileged"
+          - "Baseline"
+          - "Restricted"
+
+      - path: "security/kubernetes/network-policies.md"
+        must_contain:
+          - "NetworkPolicy"
+          - "ingress rules"
+          - "egress rules"
+
+      - path: "security/kubernetes/secrets-management.md"
+        must_contain:
+          - "Kubernetes Secrets"
+          - "encryption at rest"
+          - "external secrets"
+
+    docker:
+      - path: "security/docker/container-security.md"
+        must_contain:
+          - "container security"
+          - "image scanning"
+          - "runtime security"
+
+      - path: "security/docker/image-hardening.md"
+        must_contain:
+          - "Docker image"
+          - "minimal base images"
+          - "vulnerability scanning"
+
+    terraform:
+      - path: "security/terraform/secure-iac.md"
+        must_contain:
+          - "Infrastructure as Code"
+          - "Terraform"
+          - "security best practices"
+
+      - path: "security/terraform/state-security.md"
+        must_contain:
+          - "Terraform state"
+          - "encryption"
+          - "remote backend"
+
+  compliance:
+    soc2:
+      - path: "security/compliance/soc2-controls.md"
+        must_contain:
+          - "SOC 2"
+          - "Trust Services Criteria"
+          - "security controls"
+
+      - path: "security/compliance/soc2-evidence.md"
+        must_contain:
+          - "SOC 2"
+          - "evidence collection"
+          - "audit"
+
+    hipaa:
+      - path: "security/compliance/hipaa-security-rule.md"
+        must_contain:
+          - "HIPAA"
+          - "Security Rule"
+          - "PHI protection"
+
+      - path: "security/compliance/hipaa-risk-assessment.md"
+        must_contain:
+          - "HIPAA"
+          - "risk assessment"
+          - "security controls"
+
+    pci_dss:
+      - path: "security/compliance/pci-dss-requirements.md"
+        must_contain:
+          - "PCI DSS"
+          - "cardholder data"
+          - "12 requirements"
+
+      - path: "security/compliance/pci-dss-network-segmentation.md"
+        must_contain:
+          - "PCI DSS"
+          - "network segmentation"
+          - "cardholder data environment"
+
+    iso27001:
+      - path: "security/compliance/iso27001-isms.md"
+        must_contain:
+          - "ISO 27001"
+          - "ISMS"
+          - "Information Security Management System"
+
+      - path: "security/compliance/iso27001-controls.md"
+        must_contain:
+          - "ISO 27001"
+          - "Annex A"
+          - "114 controls"
+
+    gdpr:
+      - path: "security/compliance/gdpr-privacy-architecture.md"
+        must_contain:
+          - "GDPR"
+          - "privacy by design"
+          - "personal data"
+
+      - path: "security/compliance/gdpr-data-protection.md"
+        must_contain:
+          - "GDPR"
+          - "data protection"
+          - "consent management"
+
+scaffolding:
+  - path: "security/"
+    type: "directory"
+
+  - path: "security/policies/"
+    type: "directory"
+
+  - path: "security/architecture/"
+    type: "directory"
+
+  - path: "security/threat-models/"
+    type: "directory"
+
+  - path: "security/monitoring/"
+    type: "directory"
+
+  - path: "security/compliance/"
+    type: "directory"
+
+  - path: "docs/security/"
+    type: "directory"
+
+  - path: "security/README.md"
+    must_contain:
+      - "Security Architecture"
+      - "documentation"
+
+  - path: "security/.gitignore"
+    must_contain:
+      - "*.key"
+      - "*.pem"
+      - "*.p12"
+      - "secrets/"
+
+metadata:
+  primary_blueprints: ["security"]
+  contributes_to:
+    - "Security architecture design"
+    - "Defense-in-depth implementation"
+    - "Zero trust architecture"
+    - "Threat modeling and risk assessment"
+    - "Security control framework mapping"
+    - "Compliance and governance"
+    - "Cloud security architecture"
+    - "Supply chain security"
+    - "Identity and access management"
+    - "Security monitoring and operations"
+
+  output_examples:
+    - "Security architecture diagrams with defense-in-depth layers"
+    - "Zero trust implementation roadmap and architecture"
+    - "STRIDE threat models for applications and APIs"
+    - "NIST CSF, CIS Controls, ISO 27001 control mappings"
+    - "Cloud security architecture (AWS, GCP, Azure)"
+    - "SLSA and SBOM supply chain security documentation"
+    - "IAM strategy with RBAC/ABAC/PAM patterns"
+    - "SIEM and SOAR architecture for security operations"
+    - "Compliance documentation for SOC 2, HIPAA, PCI DSS"
+    - "Security policies and incident response plans"
+
+  related_skills:
+    - "infrastructure-as-code"
+    - "kubernetes-operations"
+    - "secret-management"
+    - "building-ci-pipelines"
+    - "configuring-firewalls"
+    - "vulnerability-management"
+    - "auth-security"
+    - "siem-logging"
+    - "compliance-frameworks"
+
+  tags:
+    - "security"
+    - "architecture"
+    - "zero-trust"
+    - "defense-in-depth"
+    - "threat-modeling"
+    - "compliance"
+    - "nist"
+    - "cis-controls"
+    - "cloud-security"
+    - "iam"

@@ -1,0 +1,211 @@
+skill: "managing-incidents"
+version: "1.0"
+domain: "devops"
+
+base_outputs:
+  - path: "incidents/"
+    must_contain:
+      - "postmortem-*.md"
+      - "incident-*.md"
+    description: "Core incident documentation including post-mortems and incident reports"
+
+  - path: "runbooks/"
+    must_contain:
+      - "*.md"
+    description: "Executable runbooks for common failure scenarios with numbered steps, verification, and rollback procedures"
+
+  - path: "on-call/"
+    must_contain:
+      - "schedule.yaml"
+      - "escalation-policy.yaml"
+    description: "On-call rotation schedules, escalation policies, and handoff documentation"
+
+  - path: ".github/ISSUE_TEMPLATE/incident.md"
+    must_contain:
+      - "Severity:"
+      - "Incident Commander:"
+      - "Timeline:"
+    description: "GitHub issue template for declaring and tracking incidents"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "incidents/severity-levels.md"
+        description: "Severity classification definitions (SEV0-SEV3) with response times and examples"
+
+      - path: "incidents/postmortem-template.md"
+        description: "Blameless post-mortem template with sections for timeline, root cause, action items"
+
+      - path: "on-call/rotation.md"
+        description: "Basic on-call rotation schedule with primary and secondary responders"
+
+      - path: "runbooks/incident-response-checklist.md"
+        description: "Generic incident response checklist covering detection through closure"
+
+      - path: ".slack/"
+        must_contain:
+          - "incident-channel-template.md"
+        description: "Slack incident channel template with pinned information structure"
+
+    intermediate:
+      - path: "incidents/communication-protocols.md"
+        description: "Internal and external communication protocols with update cadences and templates"
+
+      - path: "on-call/escalation-matrix.yaml"
+        description: "Multi-tier escalation policies with timeout rules and notification routing"
+
+      - path: "runbooks/"
+        must_contain:
+          - "database-failover.md"
+          - "cache-invalidation.md"
+          - "api-degradation.md"
+        description: "Service-specific runbooks for common failure scenarios (5+ runbooks minimum)"
+
+      - path: "statuspage/"
+        must_contain:
+          - "config.yaml"
+          - "update-templates.md"
+        description: "Status page configuration and customer communication templates"
+
+      - path: "incidents/metrics-dashboard.yaml"
+        description: "MTTA, MTTR, MTBF tracking dashboard configuration"
+
+      - path: "scripts/incident-declare.sh"
+        description: "Automated incident declaration script that creates channels, assigns roles, and notifies on-call"
+
+    advanced:
+      - path: "incidents/postmortems/"
+        must_contain:
+          - "*.md"
+        description: "Archive of completed post-mortems (searchable knowledge base)"
+
+      - path: "on-call/follow-the-sun.yaml"
+        description: "24/7 follow-the-sun rotation across multiple global teams"
+
+      - path: "runbooks/automated/"
+        must_contain:
+          - "*.py"
+          - "*.sh"
+        description: "Automated runbook scripts that execute mitigation steps programmatically"
+
+      - path: "chaos-engineering/"
+        must_contain:
+          - "gameday-scenarios.md"
+          - "disaster-recovery-drills.md"
+        description: "Chaos engineering scenarios and monthly disaster recovery drill procedures"
+
+      - path: "incidents/trend-analysis.yaml"
+        description: "Quarterly incident trend analysis dashboard with pattern detection"
+
+      - path: "integrations/"
+        must_contain:
+          - "pagerduty-*.py"
+          - "statuspage-*.py"
+          - "slack-bot.py"
+        description: "Tool integrations for automated incident workflows (PagerDuty, Statuspage, Slack)"
+
+      - path: "slo-breach-runbooks/"
+        description: "SLO breach detection and automated incident declaration from observability"
+
+  observability:
+    basic:
+      - path: "alerts/incident-triggers.yaml"
+        description: "Alert rules configured to trigger incidents with severity classification and runbook links"
+
+    standard:
+      - path: "alerts/routing-rules.yaml"
+        description: "Alert routing rules that page on-call teams based on service ownership"
+
+      - path: "runbooks/alert-investigation.md"
+        description: "Runbook template for investigating alerts with graphs, recent changes, and common causes"
+
+    advanced:
+      - path: "slo-incident-bridge/"
+        must_contain:
+          - "slo-breach-to-incident.yaml"
+          - "auto-severity-classification.py"
+        description: "Automated SLO breach detection that creates incidents with AI-powered severity classification"
+
+scaffolding:
+  - path: "incidents/"
+    reason: "Central directory for all incident documentation and post-mortems"
+
+  - path: "runbooks/"
+    reason: "Repository for all operational runbooks and playbooks"
+
+  - path: "on-call/"
+    reason: "On-call rotation schedules, escalation policies, and handoff documentation"
+
+  - path: "incidents/postmortems/"
+    reason: "Archived post-mortems for organizational learning and pattern analysis"
+
+  - path: "statuspage/"
+    reason: "Status page configuration and customer communication templates"
+
+  - path: "scripts/"
+    reason: "Automation scripts for incident declaration, metrics tracking, and integrations"
+
+  - path: ".slack/"
+    reason: "Slack-specific templates and configurations for incident channels"
+
+metadata:
+  primary_blueprints:
+    - "observability"
+
+  contributes_to:
+    - "Incident management lifecycle (detection, response, resolution, post-mortem)"
+    - "On-call rotation management and escalation policies"
+    - "Blameless post-mortem culture and organizational learning"
+    - "MTTA, MTTR, MTBF metrics tracking and improvement"
+    - "Runbook creation and automated mitigation"
+    - "Status page management and customer communication"
+    - "Alert routing and actionable alert design"
+    - "Disaster recovery preparedness through chaos engineering"
+
+  related_skills:
+    - "monitoring-observability: Provides alert triggers that initiate incident response"
+    - "implementing-disaster-recovery: Provides recovery procedures used during incidents"
+    - "securing-cloud-infrastructure: Security incidents require adapted incident response process"
+    - "implementing-cicd: CI/CD rollback capabilities enable fast mitigation"
+
+  key_deliverables:
+    - "Severity classification framework (SEV0-SEV3)"
+    - "On-call rotation schedules with primary/secondary coverage"
+    - "Service-specific runbooks (5+ for intermediate, 15+ for advanced)"
+    - "Blameless post-mortem templates and archived learnings"
+    - "Incident communication protocols (internal Slack, external status page)"
+    - "MTTA/MTTR/MTBF metrics dashboards"
+    - "Automated incident declaration and notification workflows"
+
+  typical_file_structure: |
+    incidents/
+      severity-levels.md
+      communication-protocols.md
+      metrics-dashboard.yaml
+      postmortems/
+        2025-01-15-database-outage.md
+        2025-02-03-api-degradation.md
+    runbooks/
+      database-failover.md
+      cache-invalidation.md
+      ddos-mitigation.md
+      api-degradation.md
+    on-call/
+      rotation.md
+      schedule.yaml
+      escalation-policy.yaml
+      handoff-template.md
+    statuspage/
+      config.yaml
+      update-templates.md
+    scripts/
+      incident-declare.sh
+      classify-severity.py
+    integrations/
+      pagerduty-slack.py
+      statuspage-auto-update.py
+      postmortem-generator.py
+    .github/ISSUE_TEMPLATE/
+      incident.md
+    .slack/
+      incident-channel-template.md

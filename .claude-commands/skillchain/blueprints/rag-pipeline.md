@@ -623,3 +623,469 @@ tenacity = "^8.2.0"  # Retry logic
 **Estimated Time:** 8-12 minutes
 **Complexity:** Medium-High
 **Token Estimate:** ~1800 tokens (backend only), ~2500 tokens (with UI)
+
+---
+
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "Document loading and ingestion":
+    primary_skill: ingesting-data
+    required_files:
+      - src/ingestion/loaders.py
+      - src/ingestion/processors.py
+    content_checks:
+      - pattern: "class.*Loader|def.*load_|PyPDF|markdown"
+        in: src/ingestion/loaders.py
+      - pattern: "clean_text|extract_metadata"
+        in: src/ingestion/processors.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Chunking strategies implementation":
+    primary_skill: ai-data-engineering
+    required_files:
+      - src/chunking/strategies.py
+      - src/chunking/splitters.py
+    content_checks:
+      - pattern: "chunk_size|chunk_overlap|RecursiveCharacterTextSplitter"
+        in: src/chunking/
+      - pattern: "512|split_documents"
+        in: src/chunking/strategies.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Embedding generation pipeline":
+    primary_skill: ai-data-engineering
+    required_files:
+      - src/embeddings/generator.py
+      - src/embeddings/models.py
+    content_checks:
+      - pattern: "VoyageAI|OpenAI.*Embeddings|embed_documents"
+        in: src/embeddings/
+      - pattern: "voyage-3|text-embedding-3-small"
+        in: src/embeddings/models.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Vector database setup (Qdrant)":
+    primary_skill: using-vector-databases
+    required_files:
+      - src/vector_store/client.py
+      - src/vector_store/indexing.py
+    content_checks:
+      - pattern: "QdrantClient|create_collection"
+        in: src/vector_store/client.py
+      - pattern: "VectorParams|Distance\\.COSINE|upsert"
+        in: src/vector_store/indexing.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Hybrid search (vector + keyword)":
+    primary_skill: using-vector-databases
+    required_files:
+      - src/vector_store/search.py
+    content_checks:
+      - pattern: "hybrid.*search|BM25|vector.*keyword"
+        in: src/vector_store/search.py
+      - pattern: "search.*query_vector|ReciprocalRankFusion"
+        in: src/vector_store/search.py
+    maturity_required: [intermediate, advanced]
+
+  "Retrieval orchestration":
+    primary_skill: ai-data-engineering
+    required_files:
+      - src/retrieval/retriever.py
+      - src/retrieval/context_builder.py
+    content_checks:
+      - pattern: "retrieve|get_relevant|as_retriever"
+        in: src/retrieval/retriever.py
+      - pattern: "build_context|format_context"
+        in: src/retrieval/context_builder.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Reranking implementation":
+    primary_skill: using-vector-databases
+    required_files:
+      - src/vector_store/reranking.py
+    content_checks:
+      - pattern: "rerank|cross.encoder|Cohere.*rerank"
+        in: src/vector_store/reranking.py
+    maturity_required: [intermediate, advanced]
+
+  "Streaming API endpoints":
+    primary_skill: api-patterns
+    required_files:
+      - src/api/main.py
+      - src/api/routes/chat.py
+      - src/api/streaming.py
+    content_checks:
+      - pattern: "FastAPI|@app\\.(post|get)"
+        in: src/api/main.py
+      - pattern: "StreamingResponse|Server.Sent.Events|SSE"
+        in: src/api/streaming.py
+      - pattern: "POST /chat|stream.*response"
+        in: src/api/routes/chat.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "RAG chain implementation":
+    primary_skill: ai-data-engineering
+    required_files:
+      - src/api/routes/chat.py
+    content_checks:
+      - pattern: "retriever|vector.*store|llm"
+        in: src/api/routes/chat.py
+      - pattern: "context.*query|RetrievalQA|chain"
+        in: src/api/routes/chat.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "RAGAS evaluation":
+    primary_skill: ai-data-engineering
+    required_files:
+      - scripts/evaluate_rag.py
+    content_checks:
+      - pattern: "import ragas|from ragas"
+        in: scripts/evaluate_rag.py
+      - pattern: "faithfulness|answer_relevancy|context_precision|context_recall"
+        in: scripts/evaluate_rag.py
+    maturity_required: [intermediate, advanced]
+
+  "LLM serving configuration (if self-hosted)":
+    primary_skill: model-serving
+    required_files:
+      - src/config/settings.py
+    content_checks:
+      - pattern: "vllm|ollama|LLM_MODEL|base_url"
+        in: src/config/settings.py
+    maturity_required: [intermediate, advanced]
+    conditional: "Answer to Q4 = 'C - Self-hosted'"
+
+  "Chat UI components (if UI included)":
+    primary_skill: building-ai-chat
+    required_files:
+      - frontend/components/ChatInterface.tsx
+      - frontend/components/ChatMessage.tsx
+    content_checks:
+      - pattern: "useState|useEffect|StreamingResponse"
+        in: frontend/components/ChatInterface.tsx
+      - pattern: "message|role|content"
+        in: frontend/components/ChatMessage.tsx
+    maturity_required: [starter, intermediate, advanced]
+    conditional: "Answer to Q3 = 'A - Yes'"
+
+  "Source citation display (if UI included)":
+    primary_skill: building-ai-chat
+    required_files:
+      - frontend/components/SourceCitation.tsx
+    content_checks:
+      - pattern: "source|citation|document|metadata"
+        in: frontend/components/SourceCitation.tsx
+    maturity_required: [intermediate, advanced]
+    conditional: "Answer to Q3 = 'A - Yes'"
+
+  "Docker Compose for services":
+    primary_skill: assembling-components
+    required_files:
+      - docker-compose.yml
+    content_checks:
+      - pattern: "qdrant:|services:"
+        in: docker-compose.yml
+      - pattern: "image:.*qdrant|ports:.*6333"
+        in: docker-compose.yml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Document ingestion script":
+    primary_skill: ingesting-data
+    required_files:
+      - scripts/ingest_documents.py
+    content_checks:
+      - pattern: "def.*ingest|load.*documents"
+        in: scripts/ingest_documents.py
+      - pattern: "chunk|embed|vector.*store"
+        in: scripts/ingest_documents.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Qdrant collection setup script":
+    primary_skill: using-vector-databases
+    required_files:
+      - scripts/create_collection.py
+    content_checks:
+      - pattern: "create_collection|QdrantClient"
+        in: scripts/create_collection.py
+      - pattern: "VectorParams|dimension|distance"
+        in: scripts/create_collection.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Environment configuration":
+    primary_skill: assembling-components
+    required_files:
+      - .env.example
+    content_checks:
+      - pattern: "OPENAI_API_KEY|VOYAGE_API_KEY"
+        in: .env.example
+      - pattern: "QDRANT_URL|EMBEDDING_MODEL"
+        in: .env.example
+    maturity_required: [starter, intermediate, advanced]
+
+  "API request/response models":
+    primary_skill: api-patterns
+    required_files:
+      - src/api/models.py
+    content_checks:
+      - pattern: "BaseModel|Pydantic|class.*Request|class.*Response"
+        in: src/api/models.py
+      - pattern: "query|message|context"
+        in: src/api/models.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "RAG system prompts":
+    primary_skill: ai-data-engineering
+    required_files:
+      - src/config/prompts.py
+    content_checks:
+      - pattern: "system.*prompt|Answer based on|context"
+        in: src/config/prompts.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Unit tests for chunking":
+    primary_skill: assembling-components
+    required_files:
+      - tests/test_chunking.py
+    content_checks:
+      - pattern: "def test_|pytest|assert"
+        in: tests/test_chunking.py
+      - pattern: "chunk_size|overlap"
+        in: tests/test_chunking.py
+    maturity_required: [intermediate, advanced]
+
+  "Unit tests for embeddings":
+    primary_skill: assembling-components
+    required_files:
+      - tests/test_embeddings.py
+    content_checks:
+      - pattern: "def test_|pytest|assert"
+        in: tests/test_embeddings.py
+      - pattern: "embed|vector|dimension"
+        in: tests/test_embeddings.py
+    maturity_required: [intermediate, advanced]
+
+  "Unit tests for retrieval":
+    primary_skill: assembling-components
+    required_files:
+      - tests/test_retrieval.py
+    content_checks:
+      - pattern: "def test_|pytest|assert"
+        in: tests/test_retrieval.py
+      - pattern: "retrieve|search|relevance"
+        in: tests/test_retrieval.py
+    maturity_required: [intermediate, advanced]
+
+  "API integration tests":
+    primary_skill: assembling-components
+    required_files:
+      - tests/test_api.py
+    content_checks:
+      - pattern: "def test_|pytest|TestClient"
+        in: tests/test_api.py
+      - pattern: "post.*chat|response.*status_code"
+        in: tests/test_api.py
+    maturity_required: [advanced]
+
+  "README with setup instructions":
+    primary_skill: assembling-components
+    required_files:
+      - README.md
+    content_checks:
+      - pattern: "## Setup|## Installation|## Quick Start"
+        in: README.md
+      - pattern: "docker-compose|pip install|environment"
+        in: README.md
+    maturity_required: [starter, intermediate, advanced]
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Learning-focused RAG system with working examples, extensive documentation, and simple deployment"
+
+    require_additionally:
+      - "Document loading and ingestion"
+      - "Chunking strategies implementation"
+      - "Embedding generation pipeline"
+      - "Vector database setup (Qdrant)"
+      - "Retrieval orchestration"
+      - "Streaming API endpoints"
+      - "RAG chain implementation"
+      - "Docker Compose for services"
+      - "Document ingestion script"
+      - "Qdrant collection setup script"
+      - "Environment configuration"
+      - "API request/response models"
+      - "RAG system prompts"
+      - "README with setup instructions"
+
+    skip_deliverables:
+      - "Hybrid search (vector + keyword)"
+      - "Reranking implementation"
+      - "RAGAS evaluation"
+      - "LLM serving configuration (if self-hosted)"
+      - "Unit tests for chunking"
+      - "Unit tests for embeddings"
+      - "Unit tests for retrieval"
+      - "API integration tests"
+
+    empty_dirs_allowed:
+      - data/documents/
+      - data/chunks/
+      - tests/
+      - models/
+
+    generation_adjustments:
+      - Use OpenAI embeddings (simpler setup than Voyage AI)
+      - Include extensive inline comments and docstrings
+      - Provide sample documents for testing
+      - Use basic vector search (not hybrid)
+      - Skip RAGAS evaluation (focus on getting it working)
+      - Docker Compose instead of Kubernetes
+      - Include Jupyter notebook for exploration
+
+  intermediate:
+    description: "Production-ready RAG with hybrid search, reranking, evaluation metrics, and comprehensive testing"
+
+    require_additionally:
+      - "Hybrid search (vector + keyword)"
+      - "Reranking implementation"
+      - "RAGAS evaluation"
+      - "Unit tests for chunking"
+      - "Unit tests for embeddings"
+      - "Unit tests for retrieval"
+      - "Source citation display (if UI included)"
+
+    skip_deliverables:
+      - "API integration tests"
+
+    empty_dirs_allowed:
+      - data/documents/
+      - data/chunks/
+      - models/
+
+    generation_adjustments:
+      - Enable hybrid search (vector + BM25)
+      - Add reranking with cross-encoder or Cohere
+      - Implement RAGAS evaluation pipeline
+      - Add comprehensive unit tests
+      - Include performance monitoring
+      - Support both OpenAI and Voyage AI embeddings
+      - Add metadata filtering capabilities
+      - Include source citation tracking
+
+  advanced:
+    description: "Enterprise-scale RAG with full testing, advanced retrieval, self-hosted LLM support, and production deployment"
+
+    require_additionally:
+      - "Hybrid search (vector + keyword)"
+      - "Reranking implementation"
+      - "RAGAS evaluation"
+      - "LLM serving configuration (if self-hosted)"
+      - "Unit tests for chunking"
+      - "Unit tests for embeddings"
+      - "Unit tests for retrieval"
+      - "API integration tests"
+      - "Source citation display (if UI included)"
+
+    skip_deliverables: []
+
+    empty_dirs_allowed:
+      - data/documents/
+      - data/chunks/
+
+    generation_adjustments:
+      - Full hybrid search with weighted scoring
+      - Multi-stage reranking (cross-encoder + LLM)
+      - Comprehensive RAGAS evaluation with tracking
+      - Complete test suite (unit + integration)
+      - vLLM integration for self-hosted LLMs
+      - Advanced metadata filtering and faceting
+      - Multi-modal support (text + images)
+      - Semantic caching for performance
+      - Kubernetes deployment manifests
+      - Prometheus metrics and Grafana dashboards
+      - CI/CD pipeline for embeddings updates
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **File Existence Check:**
+   - Verify all required files exist based on maturity profile
+   - Allow empty directories specified in `empty_dirs_allowed`
+
+2. **Content Pattern Matching:**
+   - Search each file for expected patterns using regex
+   - Ensure RAG-specific implementations (chunking, embedding, retrieval)
+
+3. **Conditional Deliverable Handling:**
+   - Skip deliverables marked as conditional if prerequisites not met
+   - Example: Skip "Chat UI components" if Q3 answer is "B - API only"
+
+4. **Maturity Profile Application:**
+   - Apply generation adjustments based on selected maturity level
+   - Starter: Simple setup, extensive docs, basic features
+   - Intermediate: Production patterns, testing, advanced retrieval
+   - Advanced: Full testing, self-hosted LLM, enterprise features
+
+5. **Report Generation:**
+   - List missing required files
+   - List failed content checks
+   - Provide remediation suggestions
+   - Flag critical gaps (e.g., missing vector store setup)
+
+### Example Validation Output
+
+```
+✓ RAG Pipeline Validation Results
+
+PASSED (18/23):
+  ✓ Document loading and ingestion
+  ✓ Chunking strategies implementation (512 tokens, 50 overlap)
+  ✓ Embedding generation pipeline (Voyage AI voyage-3)
+  ✓ Vector database setup (Qdrant with HNSW)
+  ✓ Hybrid search implementation
+  ✓ Retrieval orchestration
+  ✓ Streaming API endpoints (SSE)
+  ✓ RAG chain implementation
+  ✓ Docker Compose for services
+  ✓ Document ingestion script
+  ✓ Qdrant collection setup script
+  ✓ Environment configuration
+  ✓ API request/response models
+  ✓ RAG system prompts
+  ✓ Unit tests for chunking
+  ✓ Unit tests for embeddings
+  ✓ Unit tests for retrieval
+  ✓ README with setup instructions
+
+FAILED (2/23):
+  ✗ Reranking implementation
+    - Missing file: src/vector_store/reranking.py
+    - Remediation: Implement cross-encoder reranking or Cohere rerank API
+
+  ✗ RAGAS evaluation
+    - File exists: scripts/evaluate_rag.py
+    - Missing pattern: "faithfulness|answer_relevancy"
+    - Remediation: Import and use RAGAS metrics for evaluation
+
+SKIPPED (3/23) - Not required for intermediate maturity:
+  - API integration tests
+  - LLM serving configuration (API-only mode selected)
+  - Source citation display (API-only mode)
+
+RECOMMENDATIONS:
+  1. Add reranking to improve retrieval quality (10-20% accuracy gain)
+  2. Implement RAGAS evaluation for production monitoring
+  3. Consider adding integration tests for advanced maturity
+```

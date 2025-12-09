@@ -1,0 +1,245 @@
+skill: "designing-apis"
+version: "1.0"
+domain: "developer"
+
+base_outputs:
+  # Core API design artifacts
+  - path: "api/openapi.yaml"
+    must_contain: ["openapi:", "info:", "paths:"]
+    description: "OpenAPI 3.1 specification defining REST API endpoints, schemas, and responses"
+
+  - path: "docs/api/design-principles.md"
+    must_contain: ["resource design", "versioning", "error handling"]
+    description: "API design principles and standards document covering resource patterns, versioning strategy, and error formats"
+
+  - path: "docs/api/authentication.md"
+    must_contain: ["OAuth|API Key", "authorization", "scope"]
+    description: "API authentication and authorization design covering OAuth2, API keys, and scope-based permissions"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Starter: Simple REST API with basic OpenAPI spec
+      - path: "api/openapi.yaml"
+        must_contain: ["openapi: 3", "paths:", "components:", "schemas:"]
+        description: "Basic OpenAPI spec with core endpoints and schemas"
+
+      - path: "docs/api/endpoints.md"
+        must_contain: ["GET", "POST", "endpoint", "response"]
+        description: "Simple endpoint documentation with request/response examples"
+
+      - path: "api/schemas/"
+        must_contain: []
+        description: "JSON Schema definitions for request/response validation"
+
+    intermediate:
+      # Intermediate: Versioned API with comprehensive specs
+      - path: "api/v1/openapi.yaml"
+        must_contain: ["openapi:", "paths:", "components:", "security:"]
+        description: "Versioned OpenAPI spec with security schemes and error responses"
+
+      - path: "api/v2/openapi.yaml"
+        must_contain: ["openapi:", "paths:", "x-deprecated"]
+        description: "Version 2 OpenAPI spec with migration guidance for breaking changes"
+
+      - path: "docs/api/versioning-strategy.md"
+        must_contain: ["deprecation", "migration", "breaking change"]
+        description: "API versioning strategy with deprecation timelines and migration paths"
+
+      - path: "docs/api/rate-limiting.md"
+        must_contain: ["token bucket|leaky bucket", "X-RateLimit", "429"]
+        description: "Rate limiting design with headers, algorithms, and quota management"
+
+      - path: "docs/api/pagination.md"
+        must_contain: ["offset|cursor", "limit", "next"]
+        description: "Pagination patterns (offset-based, cursor-based, keyset) with use-case guidance"
+
+      - path: "api/schemas/errors/"
+        must_contain: []
+        description: "RFC 7807 Problem Details error schemas"
+
+      - path: "postman/collections/*.json"
+        must_contain: ["info", "item", "request"]
+        description: "Postman collections for API testing and documentation"
+
+    advanced:
+      # Advanced: Multi-protocol API with AsyncAPI, GraphQL, comprehensive governance
+      - path: "api/rest/v1/openapi.yaml"
+        must_contain: ["openapi:", "components:", "security:"]
+        description: "REST API OpenAPI spec with comprehensive schemas and security"
+
+      - path: "api/graphql/schema.graphql"
+        must_contain: ["type Query", "type Mutation", "schema"]
+        description: "GraphQL schema definition with queries, mutations, and types"
+
+      - path: "api/asyncapi/events.yaml"
+        must_contain: ["asyncapi:", "channels:", "messages:"]
+        description: "AsyncAPI specification for event-driven and WebSocket APIs"
+
+      - path: "docs/api/protocol-selection.md"
+        must_contain: ["REST", "GraphQL", "WebSocket", "decision matrix"]
+        description: "Protocol selection guide comparing REST, GraphQL, WebSocket, and message queues"
+
+      - path: "docs/api/governance.md"
+        must_contain: ["standards", "review process", "breaking change policy"]
+        description: "API governance framework with design reviews, standards, and change management"
+
+      - path: "docs/api/security-design.md"
+        must_contain: ["OAuth2", "scope", "RBAC", "threat model"]
+        description: "Comprehensive API security design with OAuth2 flows, RBAC, and threat modeling"
+
+      - path: "api/contracts/"
+        must_contain: []
+        description: "API contracts for contract testing (Pact, Spring Cloud Contract)"
+
+      - path: "scripts/validate-openapi.sh"
+        must_contain: ["spectral|openapi-validator"]
+        description: "OpenAPI validation script using Spectral or other linting tools"
+
+      - path: "api/mock-servers/"
+        must_contain: []
+        description: "Mock server configurations for API testing (Prism, MSW)"
+
+      - path: "docs/api/changelog.md"
+        must_contain: ["version", "added", "changed", "deprecated"]
+        description: "API changelog tracking additions, changes, deprecations, and removals"
+
+  backend_framework:
+    express:
+      - path: "api/openapi.yaml"
+        must_contain: ["openapi:", "paths:", "x-express"]
+        description: "OpenAPI spec with Express-specific extensions and middleware documentation"
+
+      - path: "docs/api/express-implementation.md"
+        must_contain: ["route", "middleware", "validation"]
+        description: "Express implementation guide mapping OpenAPI spec to routes"
+
+    fastapi:
+      - path: "api/openapi.yaml"
+        must_contain: ["openapi:", "paths:", "components:"]
+        description: "OpenAPI spec (auto-generated from FastAPI Pydantic models)"
+
+      - path: "docs/api/fastapi-implementation.md"
+        must_contain: ["pydantic", "dependency injection", "router"]
+        description: "FastAPI implementation guide with Pydantic schemas and routers"
+
+    go:
+      - path: "api/openapi.yaml"
+        must_contain: ["openapi:", "paths:", "components:"]
+        description: "OpenAPI spec for Go Gin/Echo/Fiber API"
+
+      - path: "docs/api/go-implementation.md"
+        must_contain: ["handler", "struct", "gin|echo|fiber"]
+        description: "Go implementation guide with handler patterns and struct definitions"
+
+    django:
+      - path: "api/openapi.yaml"
+        must_contain: ["openapi:", "paths:", "components:"]
+        description: "OpenAPI spec for Django REST Framework API"
+
+      - path: "docs/api/drf-implementation.md"
+        must_contain: ["serializer", "viewset", "permission"]
+        description: "Django REST Framework implementation guide with serializers and viewsets"
+
+    spring_boot:
+      - path: "api/openapi.yaml"
+        must_contain: ["openapi:", "paths:", "components:"]
+        description: "OpenAPI spec for Spring Boot REST API"
+
+      - path: "docs/api/spring-implementation.md"
+        must_contain: ["controller", "service", "DTO"]
+        description: "Spring Boot implementation guide with controllers and DTOs"
+
+scaffolding:
+  # Essential API design scaffolding
+  - path: "api/"
+    reason: "Root directory for API specifications (OpenAPI, GraphQL, AsyncAPI)"
+
+  - path: "api/schemas/"
+    reason: "JSON Schema definitions for request/response validation"
+
+  - path: "api/v1/"
+    reason: "Version 1 API specifications (supports versioning strategy)"
+
+  - path: "docs/api/"
+    reason: "API design documentation (principles, patterns, authentication, governance)"
+
+  - path: "docs/api/examples/"
+    reason: "Example request/response payloads for common use cases"
+
+  - path: "docs/decisions/"
+    reason: "Architecture Decision Records (ADRs) for API design choices"
+
+  - path: "postman/"
+    reason: "Postman collections and environments for API testing"
+
+  - path: "postman/collections/"
+    reason: "Postman collection files organized by API version or domain"
+
+  - path: "postman/environments/"
+    reason: "Postman environment files (dev, staging, production)"
+
+  - path: "scripts/"
+    reason: "Validation and tooling scripts (OpenAPI linting, contract testing)"
+
+  - path: "api/mock-servers/"
+    reason: "Mock server configurations for local development and testing"
+
+  - path: ".spectral.yaml"
+    reason: "Spectral linting rules for OpenAPI spec validation"
+
+metadata:
+  primary_blueprints: ["api-first"]
+  contributes_to:
+    - "API design and architecture"
+    - "OpenAPI/Swagger specifications"
+    - "GraphQL schema design"
+    - "AsyncAPI event specifications"
+    - "REST API patterns and standards"
+    - "API versioning and evolution"
+    - "API security (OAuth2, API keys)"
+    - "Rate limiting and pagination"
+    - "Error handling standards (RFC 7807)"
+    - "API documentation and contracts"
+    - "API governance and review processes"
+    - "Protocol selection (REST vs GraphQL vs WebSocket)"
+
+  api_styles_covered:
+    - "RESTful APIs (resource-oriented design)"
+    - "GraphQL APIs (flexible queries, schema design)"
+    - "WebSocket APIs (real-time bidirectional communication)"
+    - "Event-driven APIs (message queues, pub/sub)"
+    - "gRPC APIs (high-performance RPC)"
+
+  key_patterns:
+    - "Resource-oriented URL design (nouns, not verbs)"
+    - "HTTP method semantics (GET, POST, PUT, PATCH, DELETE)"
+    - "Status code usage (2xx, 4xx, 5xx)"
+    - "URL path versioning (/v1/, /v2/)"
+    - "RFC 7807 Problem Details error format"
+    - "Offset-based and cursor-based pagination"
+    - "Token bucket rate limiting with X-RateLimit headers"
+    - "OAuth2 flows (Authorization Code, Client Credentials)"
+    - "Scope-based authorization (read:users, write:users)"
+    - "API key prefixing (sk_live_*, sk_test_*)"
+    - "Deprecation headers (Deprecation, Sunset, Link)"
+    - "OpenAPI 3.1 specifications"
+    - "AsyncAPI 3.0 specifications"
+    - "GraphQL schema design and N+1 problem mitigation"
+
+  integration_points:
+    - "API implementation (api-patterns skill for Express, FastAPI, Go)"
+    - "Authentication implementation (auth-security skill for JWT, OAuth2)"
+    - "Database design (database-design skill for resource schemas)"
+    - "API testing (testing-strategies skill for integration, contract testing)"
+    - "API deployment (deploying-applications skill for API gateways)"
+    - "API monitoring (observability skill for performance, errors)"
+    - "CI/CD pipelines (building-ci-pipelines skill for spec validation)"
+
+  validation_tools:
+    - "Spectral (OpenAPI/AsyncAPI linting)"
+    - "Swagger Editor (OpenAPI validation)"
+    - "Postman (API testing and documentation)"
+    - "Prism (OpenAPI mock servers)"
+    - "GraphQL Code Generator (schema validation)"
+    - "AsyncAPI Studio (AsyncAPI editing)"

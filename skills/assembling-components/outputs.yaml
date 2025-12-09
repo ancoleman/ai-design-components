@@ -1,0 +1,289 @@
+skill: "assembling-components"
+version: "1.0"
+domain: "frontend"
+
+base_outputs:
+  - path: "src/main.tsx"
+    must_contain: ["ThemeProvider", "import './styles/tokens.css'", "createRoot"]
+    description: "React application entry point with theme provider and token imports"
+
+  - path: "src/App.tsx"
+    must_contain: ["export default", "function App"]
+    description: "Main application component orchestrating page routing and layout"
+
+  - path: "src/styles/tokens.css"
+    must_contain: ["--color-primary", "--spacing-", "--font-size-"]
+    description: "Design token definitions (colors, spacing, typography, shadows, borders, motion, z-index)"
+
+  - path: "src/styles/globals.css"
+    must_contain: ["*, *::before, *::after", "box-sizing: border-box"]
+    description: "Global CSS resets and base styles"
+
+  - path: "src/context/theme-provider.tsx"
+    must_contain: ["createContext", "data-theme", "localStorage"]
+    description: "Theme context provider for light/dark/system mode switching"
+
+  - path: "package.json"
+    must_contain: ["react", "typescript", "vite"]
+    description: "Project dependencies and build scripts"
+
+  - path: "vite.config.ts"
+    must_contain: ["@vitejs/plugin-react", "resolve", "alias"]
+    description: "Vite build configuration with path aliases"
+
+  - path: "tsconfig.json"
+    must_contain: ["@/*", "baseUrl", "paths"]
+    description: "TypeScript configuration with path mapping"
+
+  - path: "index.html"
+    must_contain: ["<div id=\"root\">", "<script type=\"module\" src=\"/src/main.tsx\">"]
+    description: "HTML entry point for Vite application"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "src/components/ui/button.tsx"
+        must_contain: ["export", "React.ComponentPropsWithoutRef"]
+        description: "Basic button component with design tokens"
+
+      - path: "src/components/ui/card.tsx"
+        must_contain: ["export", "var(--"]
+        description: "Card component using design tokens"
+
+      - path: "README.md"
+        must_contain: ["npm install", "npm run dev", "Quick Start"]
+        description: "Project setup and usage documentation"
+
+    intermediate:
+      - path: "src/components/ui/index.ts"
+        must_contain: ["export {", "} from"]
+        description: "Barrel exports for UI components"
+
+      - path: "src/components/features/dashboard/index.ts"
+        must_contain: ["export"]
+        description: "Barrel exports for dashboard feature components"
+
+      - path: "src/lib/utils.ts"
+        must_contain: ["export", "function"]
+        description: "Utility functions (cn helper, formatters)"
+
+      - path: ".env.example"
+        must_contain: ["VITE_"]
+        description: "Environment variable template"
+
+    advanced:
+      - path: "src/hooks/useTheme.ts"
+        must_contain: ["useContext", "ThemeContext"]
+        description: "Custom hook for theme access"
+
+      - path: "src/services/api.ts"
+        must_contain: ["fetch", "async"]
+        description: "API client with error handling and interceptors"
+
+      - path: ".github/workflows/validate.yml"
+        must_contain: ["validate_tokens.py", "python"]
+        description: "CI/CD workflow for token validation"
+
+      - path: "vitest.config.ts"
+        must_contain: ["vitest", "test"]
+        description: "Vitest configuration for component testing"
+
+  frontend_framework:
+    react:
+      - path: "src/main.tsx"
+        must_contain: ["react-dom/client", "createRoot"]
+        description: "React 18 entry point with concurrent features"
+
+      - path: "vite.config.ts"
+        must_contain: ["@vitejs/plugin-react"]
+        description: "Vite + React plugin configuration"
+
+      - path: "src/components/layout/Layout.tsx"
+        must_contain: ["children: React.ReactNode"]
+        description: "Layout component wrapper"
+
+    nextjs:
+      - path: "app/layout.tsx"
+        must_contain: ["export default function RootLayout", "children"]
+        description: "Next.js App Router root layout"
+
+      - path: "app/page.tsx"
+        must_contain: ["export default"]
+        description: "Next.js home page"
+
+      - path: "next.config.js"
+        must_contain: ["module.exports"]
+        description: "Next.js configuration"
+
+      - path: "app/api/stream/route.ts"
+        must_contain: ["NextResponse", "ReadableStream"]
+        description: "Server-Sent Events endpoint for real-time updates"
+
+    vue:
+      - path: "src/main.ts"
+        must_contain: ["createApp", "mount"]
+        description: "Vue 3 application entry point"
+
+      - path: "vite.config.ts"
+        must_contain: ["@vitejs/plugin-vue"]
+        description: "Vite + Vue plugin configuration"
+
+  styling:
+    tailwind:
+      - path: "tailwind.config.js"
+        must_contain: ["content:", "./src/**/*.{ts,tsx}"]
+        description: "Tailwind CSS configuration with content paths"
+
+      - path: "postcss.config.js"
+        must_contain: ["tailwindcss", "autoprefixer"]
+        description: "PostCSS configuration for Tailwind"
+
+    css-modules:
+      - path: "src/components/ui/button.module.css"
+        must_contain: [".button", "var(--"]
+        description: "CSS Module with design token usage"
+
+    styled-components:
+      - path: "src/styles/theme.ts"
+        must_contain: ["export", "const theme"]
+        description: "Styled-components theme configuration"
+
+  state_management:
+    zustand:
+      - path: "src/stores/authStore.ts"
+        must_contain: ["create", "zustand"]
+        description: "Zustand store for authentication state"
+
+    tanstack-query:
+      - path: "src/hooks/useMetrics.ts"
+        must_contain: ["useQuery", "@tanstack/react-query"]
+        description: "TanStack Query hook for data fetching"
+
+      - path: "src/lib/queryClient.ts"
+        must_contain: ["QueryClient", "new QueryClient"]
+        description: "TanStack Query client configuration"
+
+    redux:
+      - path: "src/store/index.ts"
+        must_contain: ["configureStore", "@reduxjs/toolkit"]
+        description: "Redux Toolkit store configuration"
+
+scaffolding:
+  - path: "src/components/ui/"
+    reason: "Base component library directory (buttons, cards, inputs from theming-components skill)"
+
+  - path: "src/components/features/"
+    reason: "Feature-specific components directory (dashboard, charts, tables from domain skills)"
+
+  - path: "src/components/layout/"
+    reason: "Layout components directory (Header, Sidebar, Layout from designing-layouts skill)"
+
+  - path: "src/pages/"
+    reason: "Page components directory for routing (React Router or Next.js pages)"
+
+  - path: "src/hooks/"
+    reason: "Custom React hooks directory (useTheme, useMetrics, useAuth)"
+
+  - path: "src/lib/"
+    reason: "Utility functions and shared libraries (utils.ts, cn helper)"
+
+  - path: "src/services/"
+    reason: "API clients and external service integrations"
+
+  - path: "src/styles/"
+    reason: "Global styles, tokens, and CSS files (tokens.css, globals.css)"
+
+  - path: "src/stores/"
+    reason: "State management stores (Zustand/Redux if applicable)"
+
+  - path: "src/context/"
+    reason: "React context providers (ThemeProvider, ToastProvider)"
+
+  - path: "src/types/"
+    reason: "TypeScript type definitions and interfaces"
+
+  - path: "public/"
+    reason: "Static assets (images, fonts, icons)"
+
+metadata:
+  primary_blueprints: ["dashboard", "frontend", "crud-api"]
+
+  contributes_to:
+    - "Component composition and integration"
+    - "Design token validation and enforcement"
+    - "Project scaffolding and build configuration"
+    - "Theme provider setup and light/dark mode"
+    - "Import chain wiring and barrel exports"
+    - "Cross-skill component assembly"
+    - "Production-ready application structure"
+    - "Framework-specific entry points"
+    - "Type-safe component integration"
+
+  integrates_with:
+    - skill: "theming-components"
+      outputs: ["tokens.css", "theme-provider.tsx"]
+      relationship: "Consumes design tokens as foundation"
+
+    - skill: "designing-layouts"
+      outputs: ["Layout.tsx", "Header.tsx", "Sidebar.tsx"]
+      relationship: "Imports and wires layout components"
+
+    - skill: "creating-dashboards"
+      outputs: ["Dashboard.tsx", "KPICard.tsx"]
+      relationship: "Composes dashboard features"
+
+    - skill: "visualizing-data"
+      outputs: ["Chart components", "legends"]
+      relationship: "Integrates data visualization"
+
+    - skill: "building-forms"
+      outputs: ["Form inputs", "validation"]
+      relationship: "Includes form components"
+
+    - skill: "building-tables"
+      outputs: ["Table", "pagination"]
+      relationship: "Includes data grid components"
+
+    - skill: "providing-feedback"
+      outputs: ["Toast", "Spinner", "EmptyState"]
+      relationship: "Wires feedback components"
+
+  validation:
+    scripts:
+      - "scripts/validate_tokens.py"
+      - "scripts/check_imports.py"
+      - "scripts/generate_exports.py"
+
+    checks:
+      - "All CSS uses design tokens (no hardcoded values)"
+      - "Token import order correct (tokens.css → globals.css → components)"
+      - "Theme toggle functionality works"
+      - "All imports resolve without errors"
+      - "TypeScript compiles successfully"
+      - "Build completes without errors"
+      - "Barrel exports exist for component directories"
+
+  examples:
+    - name: "react-dashboard"
+      path: "examples/react-dashboard/"
+      description: "Complete React SPA with Vite, TanStack Query/Table, Recharts"
+
+    - name: "nextjs-dashboard"
+      path: "examples/nextjs-dashboard/"
+      description: "Next.js 14 App Router with Server Components, SSE, Prisma"
+
+    - name: "fastapi-dashboard"
+      path: "examples/fastapi-dashboard/"
+      description: "FastAPI backend with JWT auth, PostgreSQL, SSE streaming"
+
+    - name: "rust-axum-dashboard"
+      path: "examples/rust-axum-dashboard/"
+      description: "Rust Axum backend with PostgreSQL, authentication"
+
+  references:
+    - "references/library-context.md - AI Design Components library awareness"
+    - "references/react-vite-template.md - Complete Vite + React setup patterns"
+    - "references/nextjs-template.md - Next.js 14/15 App Router patterns"
+    - "references/python-fastapi-template.md - FastAPI project structure"
+    - "references/rust-axum-template.md - Rust/Axum project structure"
+    - "references/token-validation-rules.md - Complete validation rules and CI/CD integration"

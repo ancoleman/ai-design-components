@@ -1012,3 +1012,563 @@ Potential additions for v2.1:
 **Blueprint Version:** 1.0.0
 **Last Updated:** 2024-12-02
 **Skillchain Version:** 2.0.0
+
+---
+
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "REST API endpoints":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - src/api/routes.py
+      - src/api/v1/
+    content_checks:
+      - pattern: "@app\\.(get|post|put|delete)|router\\.(get|post|put|delete)"
+        in: src/api/
+      - pattern: "FastAPI|Hono|express\\.Router"
+        in: src/
+    maturity_required: [starter, intermediate, advanced]
+
+  "CRUD endpoint implementation":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - src/api/v1/users.py
+      - src/api/v1/items.py
+    content_checks:
+      - pattern: "POST|GET|PUT|DELETE"
+        in: src/api/v1/
+      - pattern: "create|read|update|delete|list"
+        in: src/api/v1/
+    maturity_required: [starter, intermediate, advanced]
+
+  "Request/response models":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - src/schemas/
+      - src/models.py
+    content_checks:
+      - pattern: "BaseModel|Pydantic|zod|Joi"
+        in: src/schemas/
+      - pattern: "Field|validator|z\\.|Joi\\."
+        in: src/schemas/
+    maturity_required: [starter, intermediate, advanced]
+
+  "Database schema":
+    primary_skill: using-relational-databases
+    required_files:
+      - db/migrations/001_initial_schema.sql
+      - src/db/models/
+    content_checks:
+      - pattern: "CREATE TABLE"
+        in: db/migrations/
+      - pattern: "id|created_at|updated_at"
+        in: db/migrations/001_initial_schema.sql
+    maturity_required: [starter, intermediate, advanced]
+
+  "Database models (ORM)":
+    primary_skill: using-relational-databases
+    required_files:
+      - src/db/models/user.py
+      - src/db/models/item.py
+    content_checks:
+      - pattern: "Base|Model|Table|class.*\\(Base\\)"
+        in: src/db/models/
+      - pattern: "Column|Mapped|mapped_column|pgTable"
+        in: src/db/models/
+    maturity_required: [starter, intermediate, advanced]
+
+  "Database connection setup":
+    primary_skill: using-relational-databases
+    required_files:
+      - src/db/session.py
+      - src/db/connection.py
+    content_checks:
+      - pattern: "pool|Session|engine|create_engine"
+        in: src/db/
+      - pattern: "DATABASE_URL|get_db"
+        in: src/db/
+    maturity_required: [starter, intermediate, advanced]
+
+  "Migration tool configuration":
+    primary_skill: using-relational-databases
+    required_files:
+      - alembic.ini
+      - drizzle.config.ts
+    content_checks:
+      - pattern: "script_location|sqlalchemy\\.url"
+        in: alembic.ini
+      - pattern: "defineConfig|schema|out"
+        in: drizzle.config.ts
+    maturity_required: [starter, intermediate, advanced]
+
+  "Authentication endpoints":
+    primary_skill: securing-authentication
+    required_files:
+      - src/api/v1/auth.py
+      - src/auth/handlers/
+    content_checks:
+      - pattern: "/login|/register|/refresh"
+        in: src/api/v1/auth.py
+      - pattern: "JWT|token|password"
+        in: src/auth/
+    maturity_required: [starter, intermediate, advanced]
+    condition: "auth_enabled == true"
+
+  "JWT authentication utilities":
+    primary_skill: securing-authentication
+    required_files:
+      - src/auth/security.py
+      - src/utils/jwt.py
+    content_checks:
+      - pattern: "jwt|token_generation|verify"
+        in: src/auth/
+      - pattern: "Argon2|bcrypt|hash_password"
+        in: src/auth/security.py
+    maturity_required: [starter, intermediate, advanced]
+    condition: "auth_enabled == true"
+
+  "Authentication middleware":
+    primary_skill: securing-authentication
+    required_files:
+      - src/middleware/auth.py
+      - src/auth/deps.py
+    content_checks:
+      - pattern: "get_current_user|verify_token|Bearer"
+        in: src/middleware/auth.py
+      - pattern: "Depends|HTTPBearer|Authorization"
+        in: src/auth/deps.py
+    maturity_required: [starter, intermediate, advanced]
+    condition: "auth_enabled == true"
+
+  "RBAC permissions":
+    primary_skill: securing-authentication
+    required_files:
+      - src/auth/permissions.py
+      - src/auth/rbac/
+    content_checks:
+      - pattern: "role|permission|require_role"
+        in: src/auth/permissions.py
+      - pattern: "admin|user|check_permission"
+        in: src/auth/
+    maturity_required: [intermediate, advanced]
+    condition: "auth_enabled == true"
+
+  "API pagination":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - src/api/pagination.py
+    content_checks:
+      - pattern: "offset|limit|page|cursor"
+        in: src/api/pagination.py
+      - pattern: "next_cursor|has_more|total"
+        in: src/api/pagination.py
+    maturity_required: [intermediate, advanced]
+
+  "Error handling middleware":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - src/middleware/error_handler.py
+    content_checks:
+      - pattern: "HTTPException|status_code|detail"
+        in: src/middleware/error_handler.py
+      - pattern: "try|except|Error"
+        in: src/middleware/
+    maturity_required: [starter, intermediate, advanced]
+
+  "CORS configuration":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - src/main.py
+      - config/cors.py
+    content_checks:
+      - pattern: "CORS|allow_origins|credentials"
+        in: src/
+      - pattern: "CORSMiddleware|cors"
+        in: src/main.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Rate limiting":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - src/middleware/rate_limit.py
+    content_checks:
+      - pattern: "rate_limit|redis|sliding_window"
+        in: src/middleware/rate_limit.py
+      - pattern: "per_minute|per_user|throttle"
+        in: src/middleware/
+    maturity_required: [intermediate, advanced]
+
+  "OpenAPI documentation":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - src/main.py
+    content_checks:
+      - pattern: "/docs|/openapi\\.json|swagger"
+        in: src/main.py
+      - pattern: "title|description|version"
+        in: src/main.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Environment configuration":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - .env.example
+      - src/config.py
+    content_checks:
+      - pattern: "DATABASE_URL|JWT_SECRET|API_PORT"
+        in: .env.example
+      - pattern: "Settings|BaseSettings|config"
+        in: src/config.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Docker configuration":
+    primary_skill: deploying-applications
+    required_files:
+      - Dockerfile
+      - .dockerignore
+    content_checks:
+      - pattern: "FROM|WORKDIR|COPY|CMD"
+        in: Dockerfile
+      - pattern: "node_modules|\\.git|\\.env"
+        in: .dockerignore
+    maturity_required: [starter, intermediate, advanced]
+    condition: "deployment_enabled == true"
+
+  "Docker Compose setup":
+    primary_skill: deploying-applications
+    required_files:
+      - docker-compose.yml
+    content_checks:
+      - pattern: "version:|services:|api:|db:"
+        in: docker-compose.yml
+      - pattern: "ports:|environment:|depends_on:"
+        in: docker-compose.yml
+    maturity_required: [starter, intermediate, advanced]
+    condition: "deployment_enabled == true"
+
+  "Kubernetes manifests":
+    primary_skill: deploying-applications
+    required_files:
+      - k8s/deployment.yaml
+      - k8s/service.yaml
+    content_checks:
+      - pattern: "kind: Deployment|apiVersion: apps/v1"
+        in: k8s/deployment.yaml
+      - pattern: "kind: Service|apiVersion: v1"
+        in: k8s/service.yaml
+    maturity_required: [advanced]
+    condition: "deployment_enabled == true"
+
+  "Health check endpoint":
+    primary_skill: deploying-applications
+    required_files:
+      - src/api/health.py
+    content_checks:
+      - pattern: "/health|healthcheck|status"
+        in: src/api/health.py
+      - pattern: "database|redis|dependencies"
+        in: src/api/health.py
+    maturity_required: [starter, intermediate, advanced]
+    condition: "deployment_enabled == true"
+
+  "OpenTelemetry instrumentation":
+    primary_skill: implementing-observability
+    required_files:
+      - src/observability/otel.py
+    content_checks:
+      - pattern: "OpenTelemetry|tracer|meter"
+        in: src/observability/otel.py
+      - pattern: "trace|instrument|TracerProvider"
+        in: src/observability/
+    maturity_required: [intermediate, advanced]
+    condition: "monitoring_enabled == true"
+
+  "Structured logging":
+    primary_skill: implementing-observability
+    required_files:
+      - src/observability/logging.py
+    content_checks:
+      - pattern: "structlog|logger|log_level"
+        in: src/observability/logging.py
+      - pattern: "json|timestamp|correlation_id"
+        in: src/observability/
+    maturity_required: [intermediate, advanced]
+    condition: "monitoring_enabled == true"
+
+  "Prometheus metrics":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/prometheus.yml
+      - src/api/metrics.py
+    content_checks:
+      - pattern: "scrape_configs:|job_name:"
+        in: observability/prometheus.yml
+      - pattern: "counter|histogram|gauge|/metrics"
+        in: src/api/metrics.py
+    maturity_required: [intermediate, advanced]
+    condition: "monitoring_enabled == true"
+
+  "Grafana dashboards":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/grafana/dashboards/api-overview.json
+    content_checks:
+      - pattern: '"type":\\s*"graph"|"type":\\s*"gauge"'
+        in: observability/grafana/dashboards/
+      - pattern: '"title".*API|"title".*Database'
+        in: observability/grafana/dashboards/
+    maturity_required: [intermediate, advanced]
+    condition: "monitoring_enabled == true"
+
+  "Unit tests":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - tests/test_users.py
+      - tests/test_items.py
+    content_checks:
+      - pattern: "def test_|@pytest|describe|it\\("
+        in: tests/
+      - pattern: "assert|expect"
+        in: tests/
+    maturity_required: [intermediate, advanced]
+
+  "Integration tests":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - tests/integration/test_api.py
+    content_checks:
+      - pattern: "test_client|TestClient|client\\."
+        in: tests/integration/
+      - pattern: "status_code|json|response"
+        in: tests/integration/
+    maturity_required: [intermediate, advanced]
+
+  "README documentation":
+    primary_skill: implementing-api-patterns
+    required_files:
+      - README.md
+    content_checks:
+      - pattern: "Installation|Setup|Running|API"
+        in: README.md
+      - pattern: "Prerequisites|Environment|Endpoints"
+        in: README.md
+    maturity_required: [starter, intermediate, advanced]
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Learning-focused with working examples, basic CRUD operations, minimal deployment"
+
+    require_additionally:
+      - "REST API endpoints"
+      - "CRUD endpoint implementation"
+      - "Request/response models"
+      - "Database schema"
+      - "Database models (ORM)"
+      - "Database connection setup"
+      - "Migration tool configuration"
+      - "Error handling middleware"
+      - "CORS configuration"
+      - "OpenAPI documentation"
+      - "Environment configuration"
+      - "Docker configuration"
+      - "Docker Compose setup"
+      - "README documentation"
+
+    skip_deliverables:
+      - "API pagination"
+      - "Rate limiting"
+      - "RBAC permissions"
+      - "Kubernetes manifests"
+      - "OpenTelemetry instrumentation"
+      - "Structured logging"
+      - "Prometheus metrics"
+      - "Grafana dashboards"
+      - "Unit tests"
+      - "Integration tests"
+
+    empty_dirs_allowed:
+      - tests/
+      - k8s/
+      - observability/
+      - src/auth/rbac/
+      - data/
+
+    generation_adjustments:
+      - Add extensive inline comments
+      - Include step-by-step setup guide in README
+      - Provide sample .env with working defaults
+      - Use Docker Compose for local database
+      - Include sample data seeds
+      - Basic auth (if enabled) without MFA/passkeys
+
+  intermediate:
+    description: "Production-ready patterns with pagination, rate limiting, testing, and monitoring"
+
+    require_additionally:
+      - "Authentication endpoints"
+      - "JWT authentication utilities"
+      - "Authentication middleware"
+      - "RBAC permissions"
+      - "API pagination"
+      - "Rate limiting"
+      - "Health check endpoint"
+      - "OpenTelemetry instrumentation"
+      - "Structured logging"
+      - "Prometheus metrics"
+      - "Grafana dashboards"
+      - "Unit tests"
+      - "Integration tests"
+
+    skip_deliverables:
+      - "Kubernetes manifests"
+
+    empty_dirs_allowed:
+      - k8s/
+      - data/
+
+    generation_adjustments:
+      - Include production-grade error handling
+      - Add comprehensive request validation
+      - Implement database connection pooling
+      - Configure rate limiting per endpoint
+      - Set up OpenTelemetry tracing
+      - Add Prometheus metrics endpoints
+      - Include Grafana dashboard for API metrics
+      - Write unit and integration tests
+
+  advanced:
+    description: "Enterprise-scale with Kubernetes, advanced auth, comprehensive monitoring, full testing suite"
+
+    require_additionally:
+      - "Authentication endpoints"
+      - "JWT authentication utilities"
+      - "Authentication middleware"
+      - "RBAC permissions"
+      - "API pagination"
+      - "Rate limiting"
+      - "Kubernetes manifests"
+      - "Health check endpoint"
+      - "OpenTelemetry instrumentation"
+      - "Structured logging"
+      - "Prometheus metrics"
+      - "Grafana dashboards"
+      - "Unit tests"
+      - "Integration tests"
+
+    skip_deliverables: []
+
+    empty_dirs_allowed:
+      - data/
+
+    generation_adjustments:
+      - Enable all features and integrations
+      - Add Kubernetes manifests with HPA
+      - Include advanced auth (MFA, passkeys support)
+      - Implement distributed rate limiting (Redis)
+      - Set up complete observability stack (LGTM)
+      - Add comprehensive testing suite
+      - Include API versioning strategy
+      - Configure multi-environment deployment
+      - Add security headers and hardening
+
+  # Conditional profiles based on user choices
+
+  with_auth:
+    description: "Authentication-enabled profile (applies when Question 3 = Yes)"
+    additional_deliverables:
+      - "Authentication endpoints"
+      - "JWT authentication utilities"
+      - "Authentication middleware"
+      - "RBAC permissions (intermediate/advanced only)"
+
+  with_monitoring:
+    description: "Monitoring-enabled profile (applies when Question 4 includes 'm')"
+    additional_deliverables:
+      - "OpenTelemetry instrumentation"
+      - "Structured logging"
+      - "Prometheus metrics"
+      - "Grafana dashboards"
+
+  with_deployment:
+    description: "Deployment-enabled profile (applies when Question 4 includes 'd')"
+    additional_deliverables:
+      - "Docker configuration"
+      - "Docker Compose setup"
+      - "Health check endpoint"
+      - "Kubernetes manifests (advanced only)"
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **Check required files exist:**
+   ```bash
+   # Example: Validate REST API endpoints exist
+   ls src/api/routes.py src/api/v1/
+   ```
+
+2. **Verify content patterns:**
+   ```bash
+   # Example: Confirm FastAPI or Hono is used
+   grep -r "FastAPI\|Hono\|express.Router" src/
+   ```
+
+3. **Validate by maturity level:**
+   - Starter: Core CRUD, basic auth, Docker Compose
+   - Intermediate: + pagination, rate limiting, monitoring, tests
+   - Advanced: + Kubernetes, advanced auth, full observability
+
+4. **Apply conditional checks:**
+   - If `auth_enabled == true`: Validate auth endpoints, JWT utilities, middleware
+   - If `monitoring_enabled == true`: Validate OpenTelemetry, Prometheus, Grafana
+   - If `deployment_enabled == true`: Validate Docker, K8s (advanced only)
+
+5. **Report missing deliverables:**
+   ```
+   ✓ REST API endpoints (found: src/api/v1/users.py, src/api/v1/items.py)
+   ✓ Database models (found: src/db/models/user.py, src/db/models/item.py)
+   ✗ Rate limiting (expected: src/middleware/rate_limit.py) [intermediate/advanced only]
+   ✓ OpenAPI documentation (found: /docs endpoint in src/main.py)
+   ```
+
+6. **Generate validation report:**
+   ```markdown
+   ## CRUD API Blueprint Validation Report
+
+   **Maturity Level:** intermediate
+   **Auth Enabled:** true
+   **Monitoring Enabled:** true
+   **Deployment Enabled:** true
+
+   ### Core Deliverables (18/18)
+   ✓ REST API endpoints
+   ✓ CRUD endpoint implementation
+   ✓ Request/response models
+   ... (all passing)
+
+   ### Optional Deliverables (10/12)
+   ✓ API pagination
+   ✓ Rate limiting
+   ✗ Kubernetes manifests (skipped for intermediate)
+   ✗ Integration tests (missing - recommended)
+
+   ### Recommendations
+   - Add integration tests for CRUD operations
+   - Consider adding unit tests for business logic
+   ```
+
+---
+
+**Deliverables Specification Version:** 1.0.0
+**Last Updated:** 2024-12-09

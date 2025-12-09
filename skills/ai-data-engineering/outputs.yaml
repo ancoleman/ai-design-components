@@ -1,0 +1,382 @@
+skill: "ai-data-engineering"
+version: "1.0"
+domain: "backend"
+
+# Base outputs required for all AI data engineering projects
+base_outputs:
+  - path: "pipelines/"
+    must_contain: []
+    reason: "Data pipeline code for RAG, embeddings, and feature engineering"
+
+  - path: "data/"
+    must_contain: ["documents/", "chunks/"]
+    reason: "Data storage for source documents and processed chunks"
+
+  - path: "config/"
+    must_contain: []
+    reason: "Configuration files for embedding models, vector databases, and pipelines"
+
+  - path: "tests/"
+    must_contain: []
+    reason: "RAGAS evaluation tests and data quality checks"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "pipelines/basic_rag.py"
+        must_contain: ["VectorStore", "Retriever", "ChatPromptTemplate"]
+        reason: "Basic RAG pipeline with retrieval and generation"
+
+      - path: "data/chunks/"
+        must_contain: []
+        reason: "Chunked documents (512 tokens, 50-token overlap)"
+
+      - path: "config/embeddings.yaml"
+        must_contain: ["model:", "dimension:"]
+        reason: "Embedding model configuration (OpenAI text-embedding-3-small for starter)"
+
+      - path: "tests/eval_qa.json"
+        must_contain: ["question", "answer", "contexts"]
+        reason: "Basic RAGAS evaluation dataset (10-20 Q&A pairs)"
+
+      - path: "requirements.txt"
+        must_contain: ["langchain", "qdrant-client"]
+        reason: "Core dependencies for RAG pipeline"
+
+    intermediate:
+      - path: "pipelines/streaming_rag.py"
+        must_contain: ["stream", "StreamingResponse", "async"]
+        reason: "Streaming RAG responses for real-time UX"
+
+      - path: "pipelines/hybrid_search.py"
+        must_contain: ["BM25", "vector_search", "rerank"]
+        reason: "Hybrid search combining vector and keyword retrieval"
+
+      - path: "feature_repo/"
+        must_contain: ["feature_store.yaml", "features/"]
+        reason: "Feast feature store for ML feature serving"
+
+      - path: "data/embeddings/"
+        must_contain: []
+        reason: "Cached embeddings for performance"
+
+      - path: "tests/ragas_evaluation.py"
+        must_contain: ["faithfulness", "answer_relevancy", "context_precision"]
+        reason: "Complete RAGAS metrics evaluation script"
+
+      - path: "orchestration/dagster/"
+        must_contain: ["@asset"]
+        reason: "Dagster pipeline orchestration for embedding generation"
+
+      - path: "config/vector_db.yaml"
+        must_contain: ["collection_name:", "dimension:", "distance:"]
+        reason: "Vector database configuration (Qdrant)"
+
+    advanced:
+      - path: "pipelines/multi_modal_rag.py"
+        must_contain: ["ImageEmbeddings", "MultiVectorRetriever"]
+        reason: "Multi-modal RAG for images, text, and tables"
+
+      - path: "pipelines/agent_rag.py"
+        must_contain: ["Agent", "Tool", "ReAct"]
+        reason: "Agentic RAG with tool calling and reasoning"
+
+      - path: "feature_repo/"
+        must_contain: ["feature_store.yaml", "features/", "data_sources/"]
+        reason: "Complete Feast setup with online/offline stores"
+
+      - path: "orchestration/dagster/"
+        must_contain: ["@asset", "@job", "@sensor", "@schedule"]
+        reason: "Production Dagster pipelines with scheduling and monitoring"
+
+      - path: "data_versioning/lakefs/"
+        must_contain: ["lakectl.yaml"]
+        reason: "LakeFS data versioning for experiment tracking"
+
+      - path: "tests/benchmark_retrieval.py"
+        must_contain: ["NDCG", "MRR", "Recall@K"]
+        reason: "Advanced retrieval quality benchmarks"
+
+      - path: "monitoring/ragas_metrics.py"
+        must_contain: ["faithfulness", "answer_relevancy", "context_precision", "context_recall"]
+        reason: "Production RAGAS monitoring with alerting"
+
+      - path: "pipelines/reranking.py"
+        must_contain: ["Cohere", "rerank", "cross-encoder"]
+        reason: "Re-ranking pipeline for improved retrieval precision"
+
+  model_type:
+    rag:
+      - path: "pipelines/rag_chain.py"
+        must_contain: ["Retriever", "ChatPromptTemplate", "StrOutputParser"]
+        reason: "RAG chain with retrieval and generation"
+
+      - path: "data/chunks/"
+        must_contain: []
+        reason: "Document chunks (512 tokens default)"
+
+      - path: "config/chunking.yaml"
+        must_contain: ["chunk_size:", "overlap:", "strategy:"]
+        reason: "Chunking strategy configuration"
+
+      - path: "tests/ragas_eval.json"
+        must_contain: ["question", "answer", "contexts", "ground_truth"]
+        reason: "RAGAS evaluation dataset"
+
+    embeddings:
+      - path: "pipelines/embedding_generation.py"
+        must_contain: ["VoyageAIEmbeddings", "embed_documents", "embed_query"]
+        reason: "Embedding generation pipeline (Voyage AI voyage-3)"
+
+      - path: "data/embeddings/"
+        must_contain: []
+        reason: "Generated embeddings cache"
+
+      - path: "config/embeddings.yaml"
+        must_contain: ["model:", "dimension:", "batch_size:"]
+        reason: "Embedding model configuration"
+
+      - path: "tests/embedding_quality.py"
+        must_contain: ["cosine_similarity", "MTEB"]
+        reason: "Embedding quality tests"
+
+    feature_engineering:
+      - path: "feature_repo/features/"
+        must_contain: ["*.py"]
+        reason: "Feast feature definitions"
+
+      - path: "feature_repo/feature_store.yaml"
+        must_contain: ["project:", "provider:", "online_store:"]
+        reason: "Feast feature store configuration"
+
+      - path: "pipelines/feature_pipeline.py"
+        must_contain: ["FeatureStore", "get_online_features", "materialize"]
+        reason: "Feature materialization pipeline"
+
+      - path: "tests/feature_validation.py"
+        must_contain: ["assert", "feature_values"]
+        reason: "Feature value validation tests"
+
+    semantic_search:
+      - path: "pipelines/semantic_search.py"
+        must_contain: ["embed_query", "search", "query_vector"]
+        reason: "Semantic search pipeline with vector similarity"
+
+      - path: "pipelines/hybrid_search.py"
+        must_contain: ["BM25", "vector_search", "fusion"]
+        reason: "Hybrid search combining semantic and keyword"
+
+      - path: "config/search.yaml"
+        must_contain: ["top_k:", "filters:", "score_threshold:"]
+        reason: "Search configuration and tuning"
+
+  vector_database:
+    qdrant:
+      - path: "config/qdrant.yaml"
+        must_contain: ["collection_name:", "dimension:", "distance:"]
+        reason: "Qdrant vector database configuration"
+
+      - path: "pipelines/qdrant_setup.py"
+        must_contain: ["QdrantClient", "create_collection", "VectorParams"]
+        reason: "Qdrant collection setup script"
+
+      - path: "requirements.txt"
+        must_contain: ["qdrant-client"]
+        reason: "Qdrant client dependency"
+
+    pinecone:
+      - path: "config/pinecone.yaml"
+        must_contain: ["index_name:", "dimension:", "metric:"]
+        reason: "Pinecone vector database configuration"
+
+      - path: "pipelines/pinecone_setup.py"
+        must_contain: ["Pinecone", "create_index"]
+        reason: "Pinecone index setup script"
+
+      - path: "requirements.txt"
+        must_contain: ["pinecone-client"]
+        reason: "Pinecone client dependency"
+
+    weaviate:
+      - path: "config/weaviate.yaml"
+        must_contain: ["class_name:", "vectorizer:"]
+        reason: "Weaviate schema configuration"
+
+      - path: "pipelines/weaviate_setup.py"
+        must_contain: ["Client", "schema.create"]
+        reason: "Weaviate schema setup script"
+
+      - path: "requirements.txt"
+        must_contain: ["weaviate-client"]
+        reason: "Weaviate client dependency"
+
+  orchestration:
+    dagster:
+      - path: "orchestration/dagster/assets/"
+        must_contain: ["@asset"]
+        reason: "Dagster asset definitions for data lineage"
+
+      - path: "orchestration/dagster/jobs.py"
+        must_contain: ["@job", "@schedule"]
+        reason: "Dagster job scheduling and orchestration"
+
+      - path: "orchestration/dagster/sensors.py"
+        must_contain: ["@sensor"]
+        reason: "Dagster sensors for event-driven pipelines"
+
+      - path: "requirements.txt"
+        must_contain: ["dagster", "dagster-webserver"]
+        reason: "Dagster dependencies"
+
+    prefect:
+      - path: "orchestration/prefect/flows/"
+        must_contain: ["@flow", "@task"]
+        reason: "Prefect flow and task definitions"
+
+      - path: "orchestration/prefect/deployments.yaml"
+        must_contain: ["name:", "schedule:"]
+        reason: "Prefect deployment configuration"
+
+      - path: "requirements.txt"
+        must_contain: ["prefect"]
+        reason: "Prefect dependency"
+
+    airflow:
+      - path: "orchestration/airflow/dags/"
+        must_contain: ["DAG(", "schedule_interval"]
+        reason: "Airflow DAG definitions"
+
+      - path: "orchestration/airflow/dags/"
+        must_contain: ["*.py"]
+        reason: "Airflow pipeline orchestration"
+
+      - path: "requirements.txt"
+        must_contain: ["apache-airflow"]
+        reason: "Airflow dependency"
+
+  framework:
+    langchain:
+      - path: "pipelines/"
+        must_contain: ["langchain", "ChatPromptTemplate", "Retriever"]
+        reason: "LangChain orchestration framework"
+
+      - path: "requirements.txt"
+        must_contain: ["langchain", "langchain-core"]
+        reason: "LangChain dependencies"
+
+    llamaindex:
+      - path: "pipelines/"
+        must_contain: ["llama_index", "VectorStoreIndex", "QueryEngine"]
+        reason: "LlamaIndex orchestration framework"
+
+      - path: "requirements.txt"
+        must_contain: ["llama-index"]
+        reason: "LlamaIndex dependency"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "pipelines/basic_rag.py"
+    reason: "Starter RAG pipeline template"
+
+  - path: "data/documents/.gitkeep"
+    reason: "Initialize source documents directory"
+
+  - path: "data/chunks/.gitkeep"
+    reason: "Initialize chunks directory"
+
+  - path: "data/embeddings/.gitkeep"
+    reason: "Initialize embeddings cache directory"
+
+  - path: "config/embeddings.yaml"
+    reason: "Embedding model configuration template"
+
+  - path: "config/vector_db.yaml"
+    reason: "Vector database configuration template"
+
+  - path: "config/chunking.yaml"
+    reason: "Chunking strategy configuration template"
+
+  - path: "tests/eval_qa.json"
+    reason: "RAGAS evaluation dataset template"
+
+  - path: "tests/README.md"
+    reason: "Document evaluation strategy and metrics"
+
+  - path: "orchestration/README.md"
+    reason: "Document orchestration approach (Dagster/Prefect/Airflow)"
+
+  - path: "requirements.txt"
+    reason: "Python dependencies for AI data pipelines"
+
+  - path: ".env.example"
+    reason: "Environment variables template (API keys, database URLs)"
+
+  - path: ".gitignore"
+    reason: "Ignore embeddings cache, API keys, and temporary files"
+
+  - path: "README.md"
+    reason: "Document RAG architecture, setup, and evaluation approach"
+
+# Metadata
+metadata:
+  primary_blueprints: ["rag-pipeline", "ml-pipeline"]
+  contributes_to:
+    - "RAG (Retrieval-Augmented Generation) pipelines"
+    - "Embedding generation and semantic search"
+    - "ML feature stores and serving"
+    - "AI/ML data orchestration"
+    - "Vector database integration"
+    - "Data versioning for ML experiments"
+
+  common_patterns:
+    - "RAG 5-stage pipeline (Ingestion → Indexing → Retrieval → Generation → Evaluation)"
+    - "512-token chunks with 50-token overlap (default chunking strategy)"
+    - "Voyage AI voyage-3 embeddings for production (MTEB 69.0)"
+    - "RAGAS evaluation metrics (faithfulness, answer_relevancy, context_precision, context_recall)"
+    - "Hybrid search (vector + BM25 keyword search)"
+    - "Feast feature store for online/offline ML features"
+    - "Dagster asset-centric orchestration for data lineage"
+    - "LakeFS data versioning for experiment tracking"
+
+  integration_points:
+    frontend: "Integrates with ai-chat skill for streaming RAG responses"
+    search: "Provides semantic search backend for search-filter skill"
+    databases: "Connects to vector databases (Qdrant, Pinecone, Weaviate)"
+    orchestration: "Scheduled by Dagster/Prefect/Airflow"
+    monitoring: "RAGAS metrics tracking and alerting"
+    versioning: "LakeFS for data/model versioning"
+
+  typical_directory_structure: |
+    project/
+    ├── pipelines/
+    │   ├── basic_rag.py          # Simple RAG chain
+    │   ├── streaming_rag.py       # Streaming responses
+    │   ├── hybrid_search.py       # Vector + BM25
+    │   ├── embedding_generation.py
+    │   └── reranking.py           # Cohere re-ranking
+    ├── data/
+    │   ├── documents/             # Source PDFs, DOCX, Markdown
+    │   ├── chunks/                # Chunked documents
+    │   └── embeddings/            # Cached embeddings
+    ├── config/
+    │   ├── embeddings.yaml        # Model: voyage-3, dimension: 1024
+    │   ├── vector_db.yaml         # Qdrant configuration
+    │   └── chunking.yaml          # chunk_size: 512, overlap: 50
+    ├── tests/
+    │   ├── eval_qa.json           # RAGAS evaluation dataset
+    │   ├── ragas_evaluation.py    # Metrics runner
+    │   └── benchmark_retrieval.py # NDCG, MRR, Recall@K
+    ├── orchestration/
+    │   ├── dagster/
+    │   │   ├── assets/            # @asset definitions
+    │   │   ├── jobs.py            # @job, @schedule
+    │   │   └── sensors.py         # @sensor
+    │   └── prefect/
+    │       └── flows/             # @flow, @task
+    ├── feature_repo/              # Feast feature store
+    │   ├── features/
+    │   └── feature_store.yaml
+    ├── monitoring/
+    │   └── ragas_metrics.py       # Production metrics tracking
+    └── requirements.txt

@@ -1,0 +1,258 @@
+skill: "performance-engineering"
+version: "1.0"
+domain: "data"
+
+base_outputs:
+  # Load testing scripts
+  - path: "performance/tests/load/api-test.js"
+    must_contain: ["k6", "export const options", "stages", "thresholds"]
+
+  - path: "performance/tests/load/locustfile.py"
+    must_contain: ["HttpUser", "task", "wait_time"]
+
+  # Performance test configurations
+  - path: "performance/tests/config/thresholds.json"
+    must_contain: ["http_req_duration", "http_req_failed"]
+
+  # SLO definitions
+  - path: "performance/slos/service-slos.yaml"
+    must_contain: ["latency", "availability", "p95", "p99"]
+
+  # CI/CD integration
+  - path: ".github/workflows/performance-tests.yml"
+    must_contain: ["k6", "load-test", "thresholds"]
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Basic load testing
+      - path: "performance/tests/load/basic-load-test.js"
+        must_contain: ["k6", "http.get", "check"]
+
+      # Simple profiling setup
+      - path: "performance/profiling/README.md"
+        must_contain: ["py-spy", "pprof", "DevTools"]
+
+      # Basic SLOs
+      - path: "performance/slos/initial-targets.yaml"
+        must_contain: ["p95", "p99", "availability"]
+
+    intermediate:
+      # Advanced test types
+      - path: "performance/tests/stress/capacity-test.js"
+        must_contain: ["stress", "ramping", "breaking point"]
+
+      - path: "performance/tests/soak/endurance-test.js"
+        must_contain: ["soak", "memory leak", "long duration"]
+
+      - path: "performance/tests/spike/traffic-spike-test.js"
+        must_contain: ["spike", "sudden", "auto-scaling"]
+
+      # Profiling configurations
+      - path: "performance/profiling/cpu-profile.sh"
+        must_contain: ["py-spy", "pprof", "flamegraph"]
+
+      - path: "performance/profiling/memory-profile.sh"
+        must_contain: ["memory_profiler", "heap", "leak detection"]
+
+      # Optimization patterns
+      - path: "performance/optimization/caching-strategy.md"
+        must_contain: ["redis", "TTL", "cache invalidation"]
+
+      - path: "performance/optimization/database-indexes.sql"
+        must_contain: ["CREATE INDEX", "query optimization"]
+
+      # Performance budgets
+      - path: "performance/budgets/api-budgets.json"
+        must_contain: ["latency", "throughput", "error_rate"]
+
+    advanced:
+      # Distributed load testing
+      - path: "performance/tests/distributed/multi-region-test.js"
+        must_contain: ["distributed", "multiple regions", "k6 cloud"]
+
+      # Advanced profiling
+      - path: "performance/profiling/production-profiling.md"
+        must_contain: ["sampling", "low overhead", "continuous profiling"]
+
+      - path: "performance/profiling/flame-graph-analysis.sh"
+        must_contain: ["flamegraph", "hot path", "bottleneck"]
+
+      # Comprehensive optimization
+      - path: "performance/optimization/query-optimization-guide.md"
+        must_contain: ["N+1", "eager loading", "indexing strategy"]
+
+      - path: "performance/optimization/api-performance.md"
+        must_contain: ["pagination", "caching", "rate limiting"]
+
+      - path: "performance/optimization/frontend-web-vitals.md"
+        must_contain: ["LCP", "INP", "CLS", "Core Web Vitals"]
+
+      # SLO framework
+      - path: "performance/slos/slo-framework.yaml"
+        must_contain: ["error budget", "burn rate", "alerting"]
+
+      # Benchmarking suite
+      - path: "performance/benchmarks/baseline-benchmarks.js"
+        must_contain: ["benchmark", "regression detection", "comparison"]
+
+      # Monitoring integration
+      - path: "performance/monitoring/grafana-dashboard.json"
+        must_contain: ["latency", "throughput", "error rate"]
+
+  infrastructure:
+    cloud:
+      # Cloud-specific load testing
+      - path: "performance/tests/cloud/auto-scaling-test.js"
+        must_contain: ["auto-scaling", "scale-up", "scale-down"]
+
+      - path: "performance/tests/cloud/cost-optimization-test.js"
+        must_contain: ["cost", "resource utilization", "right-sizing"]
+
+    kubernetes:
+      # K8s performance testing
+      - path: "performance/tests/k8s/pod-autoscaling-test.js"
+        must_contain: ["HPA", "CPU", "memory", "scaling"]
+
+      - path: "performance/tests/k8s/resource-limits-test.yaml"
+        must_contain: ["resources", "limits", "requests"]
+
+    serverless:
+      # Serverless performance
+      - path: "performance/tests/serverless/cold-start-test.js"
+        must_contain: ["cold start", "warm start", "initialization"]
+
+      - path: "performance/tests/serverless/concurrency-test.js"
+        must_contain: ["concurrency", "throttling", "burst"]
+
+scaffolding:
+  # Core directory structure
+  - path: "performance/"
+    type: "directory"
+
+  - path: "performance/tests/"
+    type: "directory"
+
+  - path: "performance/tests/load/"
+    type: "directory"
+
+  - path: "performance/tests/stress/"
+    type: "directory"
+
+  - path: "performance/tests/soak/"
+    type: "directory"
+
+  - path: "performance/tests/spike/"
+    type: "directory"
+
+  - path: "performance/profiling/"
+    type: "directory"
+
+  - path: "performance/benchmarks/"
+    type: "directory"
+
+  - path: "performance/optimization/"
+    type: "directory"
+
+  - path: "performance/slos/"
+    type: "directory"
+
+  - path: "performance/budgets/"
+    type: "directory"
+
+  - path: "performance/monitoring/"
+    type: "directory"
+
+  # Configuration files
+  - path: "performance/README.md"
+    type: "file"
+    template: |
+      # Performance Engineering
+
+      This directory contains load tests, profiling configurations, optimization strategies, and performance SLOs.
+
+      ## Structure
+      - `tests/` - Load, stress, soak, and spike tests
+      - `profiling/` - CPU, memory, and I/O profiling configurations
+      - `benchmarks/` - Baseline benchmarks for regression detection
+      - `optimization/` - Caching, database, and API optimization strategies
+      - `slos/` - Service-level objectives and performance budgets
+      - `monitoring/` - Grafana dashboards and alerting configurations
+
+      ## Quick Start
+
+      ### Run Load Tests
+      ```bash
+      k6 run tests/load/api-test.js
+      ```
+
+      ### Profile Application
+      ```bash
+      py-spy record -o profile.svg --pid <PID>
+      ```
+
+      ### Check SLO Compliance
+      See `slos/service-slos.yaml` for targets.
+
+  - path: "performance/tests/README.md"
+    type: "file"
+    template: |
+      # Performance Tests
+
+      ## Test Types
+      - **Load:** Validate expected traffic levels
+      - **Stress:** Find maximum capacity
+      - **Soak:** Detect memory leaks over time
+      - **Spike:** Validate sudden traffic spikes
+
+      ## Running Tests
+      ```bash
+      # k6
+      k6 run load/api-test.js
+
+      # Locust
+      locust -f load/locustfile.py --headless -u 100 -r 10 --run-time 10m
+      ```
+
+metadata:
+  primary_blueprints: ["observability"]
+  contributes_to:
+    - "Performance optimization"
+    - "Capacity planning"
+    - "Load testing"
+    - "Profiling and bottleneck identification"
+    - "SLO definition and monitoring"
+    - "Regression detection"
+
+  common_artifacts:
+    - "k6 load test scripts"
+    - "Locust load test scripts"
+    - "Profiling configurations (py-spy, pprof, DevTools)"
+    - "Performance SLO definitions"
+    - "CI/CD performance test workflows"
+    - "Optimization guides (caching, query, API)"
+    - "Performance budgets and thresholds"
+    - "Grafana dashboards for performance monitoring"
+
+  testing_patterns:
+    - "Load testing (validate expected traffic)"
+    - "Stress testing (find capacity limits)"
+    - "Soak testing (detect memory leaks)"
+    - "Spike testing (validate auto-scaling)"
+    - "CPU profiling (identify hot paths)"
+    - "Memory profiling (detect leaks)"
+    - "I/O profiling (database/API bottlenecks)"
+
+  optimization_strategies:
+    - "Caching (Redis, in-memory)"
+    - "Database query optimization (N+1, indexing)"
+    - "API performance (pagination, rate limiting)"
+    - "Frontend optimization (Core Web Vitals)"
+    - "Resource right-sizing"
+
+  related_skills:
+    - "testing-strategies"
+    - "building-ci-pipelines"
+    - "infrastructure-as-code"
+    - "kubernetes-operations"
+    - "monitoring-logging"

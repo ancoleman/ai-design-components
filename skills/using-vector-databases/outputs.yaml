@@ -1,0 +1,312 @@
+skill: "using-vector-databases"
+version: "1.0"
+domain: "backend"
+
+base_outputs:
+  # Vector database configuration
+  - path: "vector_db/config.py"
+    must_contain: ["collection_name", "vector_size", "distance_metric"]
+
+  # Embedding service
+  - path: "src/embeddings/service.py"
+    must_contain: ["generate_embeddings", "batch_process", "cache_embeddings"]
+
+  # RAG pipeline core
+  - path: "src/rag/pipeline.py"
+    must_contain: ["chunk_documents", "retrieve", "generate_response"]
+
+  # Chunking strategy
+  - path: "src/rag/chunking.py"
+    must_contain: ["chunk_size", "overlap", "semantic_splitter"]
+
+conditional_outputs:
+  # Database selection determines client setup
+  database:
+    qdrant:
+      - path: "vector_db/qdrant_client.py"
+        must_contain: ["QdrantClient", "create_collection", "upsert", "search"]
+      - path: "docker-compose.yml"
+        must_contain: ["qdrant/qdrant", "6333:6333"]
+
+    pgvector:
+      - path: "vector_db/pgvector_client.py"
+        must_contain: ["pgvector", "vector", "cosine_distance"]
+      - path: "prisma/schema.prisma"
+        must_contain: ["model Document", "embedding Unsupported(\"vector\")"]
+
+    pinecone:
+      - path: "vector_db/pinecone_client.py"
+        must_contain: ["pinecone.init", "index.upsert", "index.query"]
+      - path: ".env.example"
+        must_contain: ["PINECONE_API_KEY", "PINECONE_ENVIRONMENT"]
+
+    milvus:
+      - path: "vector_db/milvus_client.py"
+        must_contain: ["connections.connect", "Collection", "search"]
+
+  # Embedding provider determines API integration
+  embeddings:
+    openai:
+      - path: "src/embeddings/openai.py"
+        must_contain: ["text-embedding-3", "openai.embeddings.create"]
+      - path: ".env.example"
+        must_contain: ["OPENAI_API_KEY"]
+
+    voyage:
+      - path: "src/embeddings/voyage.py"
+        must_contain: ["voyage-3", "voyageai.Client"]
+      - path: ".env.example"
+        must_contain: ["VOYAGE_API_KEY"]
+
+    cohere:
+      - path: "src/embeddings/cohere.py"
+        must_contain: ["embed-v3", "cohere.Client"]
+      - path: ".env.example"
+        must_contain: ["COHERE_API_KEY"]
+
+    self_hosted:
+      - path: "src/embeddings/local.py"
+        must_contain: ["sentence_transformers", "SentenceTransformer", "encode"]
+      - path: "models/download.sh"
+        must_contain: ["nomic-embed-text", "bge-m3"]
+
+  # Search type determines implementation complexity
+  search:
+    vector_only:
+      - path: "src/rag/search.py"
+        must_contain: ["vector_search", "cosine_similarity"]
+
+    hybrid:
+      - path: "src/rag/hybrid_search.py"
+        must_contain: ["vector_search", "bm25_search", "reciprocal_rank_fusion"]
+      - path: "vector_db/keyword_index.py"
+        must_contain: ["BM25", "keyword_index"]
+
+    with_reranking:
+      - path: "src/rag/reranker.py"
+        must_contain: ["cross_encoder", "rerank_results"]
+      - path: "requirements.txt"
+        must_contain: ["sentence-transformers"]
+
+  # Maturity level determines feature completeness
+  maturity:
+    starter:
+      - path: "src/rag/simple_pipeline.py"
+        must_contain: ["basic_chunking", "simple_search", "generate"]
+      - path: "README.md"
+        must_contain: ["Getting Started", "Basic Usage"]
+
+    intermediate:
+      - path: "src/rag/metadata.py"
+        must_contain: ["extract_metadata", "filter_by_metadata"]
+      - path: "src/rag/caching.py"
+        must_contain: ["semantic_cache", "cache_query"]
+      - path: "config/chunking.yaml"
+        must_contain: ["chunk_size", "overlap", "strategy"]
+
+    advanced:
+      - path: "src/evaluation/ragas_eval.py"
+        must_contain: ["faithfulness", "context_recall", "evaluate"]
+      - path: "src/rag/query_expansion.py"
+        must_contain: ["expand_query", "multi_query"]
+      - path: "src/rag/mmr.py"
+        must_contain: ["maximal_marginal_relevance", "diversity"]
+      - path: "monitoring/metrics.py"
+        must_contain: ["track_retrieval", "latency", "quality_score"]
+      - path: "tests/integration/test_rag_pipeline.py"
+        must_contain: ["test_end_to_end", "pytest"]
+
+  # Infrastructure determines deployment setup
+  infrastructure:
+    docker:
+      - path: "docker-compose.yml"
+        must_contain: ["qdrant", "app", "volumes"]
+      - path: "Dockerfile"
+        must_contain: ["python", "requirements.txt"]
+
+    kubernetes:
+      - path: "k8s/qdrant-deployment.yaml"
+        must_contain: ["Deployment", "qdrant/qdrant", "PersistentVolumeClaim"]
+      - path: "k8s/app-deployment.yaml"
+        must_contain: ["Deployment", "ConfigMap", "env"]
+      - path: "k8s/ingress.yaml"
+        must_contain: ["Ingress", "paths"]
+
+    serverless:
+      - path: "vercel.json"
+        must_contain: ["routes", "functions"]
+      - path: "api/search.py"
+        must_contain: ["handler", "vercel"]
+
+  # Language determines client implementation
+  language:
+    python:
+      - path: "requirements.txt"
+        must_contain: ["qdrant-client", "openai"]
+      - path: "src/vector_client.py"
+        must_contain: ["QdrantClient", "async def"]
+
+    typescript:
+      - path: "package.json"
+        must_contain: ["@qdrant/js-client-rest", "openai"]
+      - path: "src/vector-client.ts"
+        must_contain: ["QdrantClient", "async", "interface"]
+
+    rust:
+      - path: "Cargo.toml"
+        must_contain: ["qdrant-client", "tokio"]
+      - path: "src/vector_client.rs"
+        must_contain: ["QdrantClient", "async fn"]
+
+    go:
+      - path: "go.mod"
+        must_contain: ["qdrant-go"]
+      - path: "pkg/vector/client.go"
+        must_contain: ["qdrant", "func"]
+
+scaffolding:
+  # Directory structure for RAG projects
+  - type: "directory"
+    path: "vector_db/"
+    description: "Vector database clients and configurations"
+
+  - type: "directory"
+    path: "src/embeddings/"
+    description: "Embedding generation and caching"
+
+  - type: "directory"
+    path: "src/rag/"
+    description: "RAG pipeline components (chunking, retrieval, generation)"
+
+  - type: "directory"
+    path: "src/evaluation/"
+    description: "RAGAS evaluation and metrics"
+
+  - type: "directory"
+    path: "config/"
+    description: "Configuration files for chunking, search, models"
+
+  - type: "directory"
+    path: "data/"
+    description: "Source documents for ingestion"
+
+  - type: "directory"
+    path: "data/processed/"
+    description: "Chunked and embedded documents"
+
+  - type: "directory"
+    path: "tests/integration/"
+    description: "End-to-end RAG pipeline tests"
+
+  # Core configuration files
+  - type: "file"
+    path: ".env.example"
+    description: "Environment variables template (API keys, database URLs)"
+
+  - type: "file"
+    path: "config/database.yaml"
+    description: "Vector database configuration (collection, index, distance)"
+
+  - type: "file"
+    path: "config/embeddings.yaml"
+    description: "Embedding model configuration (provider, model, dimensions)"
+
+  - type: "file"
+    path: "config/chunking.yaml"
+    description: "Chunking strategy configuration (size, overlap, method)"
+
+  - type: "file"
+    path: "README.md"
+    description: "Project setup and usage instructions"
+
+metadata:
+  primary_blueprints: ["rag-pipeline"]
+  contributes_to:
+    - "Vector storage and similarity search"
+    - "Semantic retrieval for AI applications"
+    - "RAG (Retrieval-Augmented Generation) systems"
+    - "Document search and question answering"
+
+  key_decisions:
+    - decision: "Vector database selection"
+      options: ["qdrant", "pgvector", "pinecone", "milvus"]
+      default: "qdrant"
+      rationale: "Best metadata filtering, built-in hybrid search, self-hostable"
+
+    - decision: "Embedding provider"
+      options: ["openai", "voyage", "cohere", "self_hosted"]
+      default: "openai"
+      rationale: "Industry standard, reliable, good quality/cost balance"
+
+    - decision: "Search strategy"
+      options: ["vector_only", "hybrid", "with_reranking"]
+      default: "hybrid"
+      rationale: "Best retrieval quality combining semantic and keyword matching"
+
+    - decision: "Chunking strategy"
+      options: ["fixed", "semantic", "recursive", "code_aware"]
+      default: "recursive"
+      rationale: "Balanced approach respecting document structure"
+
+  integration_points:
+    - skill: "api-patterns"
+      integration: "Expose semantic search via REST/GraphQL endpoints"
+
+    - skill: "ai-chat"
+      integration: "Vector DB powers RAG pipeline for chatbot context retrieval"
+
+    - skill: "databases-relational"
+      integration: "Hybrid approach using pgvector PostgreSQL extension"
+
+    - skill: "observability"
+      integration: "Monitor embedding quality, retrieval metrics, latency"
+
+    - skill: "search-filter"
+      integration: "Replace keyword search with semantic vector search"
+
+  performance_targets:
+    - metric: "Embedding generation"
+      target: "100-500 chunks per batch with caching"
+
+    - metric: "Search latency (p95)"
+      target: "<100ms for collections under 10M vectors"
+
+    - metric: "Retrieval quality (RAGAS)"
+      target: "Faithfulness >0.90, Context Recall >0.80"
+
+    - metric: "Cost per 1M tokens"
+      target: "<$0.15 (embedding + storage + compute)"
+
+  common_patterns:
+    - pattern: "Document ingestion pipeline"
+      files: ["src/rag/ingestion.py", "src/rag/chunking.py", "src/embeddings/service.py"]
+      description: "Load documents, chunk, generate embeddings, store in vector DB"
+
+    - pattern: "Hybrid search with filtering"
+      files: ["src/rag/hybrid_search.py", "vector_db/qdrant_client.py"]
+      description: "Combine vector similarity and keyword matching with metadata filters"
+
+    - pattern: "RAG pipeline with evaluation"
+      files: ["src/rag/pipeline.py", "src/evaluation/ragas_eval.py"]
+      description: "Query → Retrieve → Generate with automated quality metrics"
+
+    - pattern: "Semantic caching"
+      files: ["src/rag/caching.py", "src/embeddings/service.py"]
+      description: "Cache embeddings by content hash, cache responses by query similarity"
+
+  dependencies:
+    python:
+      required: ["qdrant-client>=1.7.0", "openai>=1.0.0"]
+      optional: ["langchain", "llama-index", "ragas", "sentence-transformers"]
+
+    typescript:
+      required: ["@qdrant/js-client-rest", "openai"]
+      optional: ["langchain", "@langchain/community"]
+
+    rust:
+      required: ["qdrant-client", "tokio"]
+      optional: ["serde", "reqwest"]
+
+    infrastructure:
+      required: ["docker", "docker-compose"]
+      optional: ["kubernetes", "helm"]

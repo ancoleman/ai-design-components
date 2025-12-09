@@ -1,0 +1,288 @@
+skill: "testing-strategies"
+version: "1.0"
+domain: "devops"
+
+base_outputs:
+  # Core test directories following standard conventions
+  - path: "tests/"
+    must_contain: []
+    description: "Root test directory containing all test files"
+
+  # Test configuration files (language-agnostic)
+  - path: ".github/workflows/test.yml"
+    must_contain: ["on:", "jobs:", "test"]
+    description: "CI workflow for running tests (GitHub Actions)"
+
+  # Coverage reporting configuration
+  - path: ".coveragerc"
+    must_contain: []
+    description: "Coverage configuration (Python projects)"
+
+conditional_outputs:
+  # Maturity-based test structure
+  maturity:
+    starter:
+      # Starter: Basic unit tests only
+      - path: "tests/unit/"
+        must_contain: []
+        description: "Unit test directory (60-70% of tests)"
+
+      - path: "tests/unit/test_*.py"
+        must_contain: ["def test_", "assert"]
+        description: "Python unit test files (pytest)"
+
+      - path: "tests/unit/*.test.ts"
+        must_contain: ["describe", "test", "expect"]
+        description: "TypeScript unit test files (Vitest)"
+
+    intermediate:
+      # Intermediate: Unit + Integration tests
+      - path: "tests/unit/"
+        must_contain: []
+        description: "Unit test directory"
+
+      - path: "tests/integration/"
+        must_contain: []
+        description: "Integration test directory (20-30% of tests)"
+
+      - path: "tests/integration/test_api_*.py"
+        must_contain: ["def test_", "assert", "client"]
+        description: "API integration tests (Python)"
+
+      - path: "tests/integration/*.test.ts"
+        must_contain: ["describe", "test", "expect"]
+        description: "Integration tests (TypeScript)"
+
+      # Test data management
+      - path: "tests/fixtures/"
+        must_contain: []
+        description: "Test fixtures and test data"
+
+      - path: "tests/factories/"
+        must_contain: []
+        description: "Test data factories for generating test data"
+
+    advanced:
+      # Advanced: Full test pyramid (unit + integration + e2e + contract)
+      - path: "tests/unit/"
+        must_contain: []
+        description: "Unit test directory"
+
+      - path: "tests/integration/"
+        must_contain: []
+        description: "Integration test directory"
+
+      - path: "tests/e2e/"
+        must_contain: []
+        description: "End-to-end test directory (10% of tests)"
+
+      - path: "tests/contract/"
+        must_contain: []
+        description: "Contract tests for microservices (Pact)"
+
+      - path: "tests/e2e/*.spec.ts"
+        must_contain: ["test", "page", "expect"]
+        description: "Playwright E2E tests"
+
+      - path: "playwright.config.ts"
+        must_contain: ["defineConfig", "testDir"]
+        description: "Playwright configuration for E2E tests"
+
+      # Property-based testing
+      - path: "tests/property/"
+        must_contain: []
+        description: "Property-based tests (hypothesis, fast-check)"
+
+      # Performance and load testing
+      - path: "tests/performance/"
+        must_contain: []
+        description: "Performance and load tests"
+
+      # Test utilities
+      - path: "tests/utils/"
+        must_contain: []
+        description: "Shared test utilities and helpers"
+
+  # CI/CD platform-specific test workflows
+  ci_cd:
+    github_actions:
+      - path: ".github/workflows/test.yml"
+        must_contain: ["on: [push, pull_request]", "jobs:", "test", "runs-on"]
+        description: "GitHub Actions test workflow"
+
+      - path: ".github/workflows/coverage.yml"
+        must_contain: ["coverage", "upload"]
+        description: "Coverage reporting workflow"
+
+    gitlab_ci:
+      - path: ".gitlab-ci.yml"
+        must_contain: ["test:", "script:", "coverage:"]
+        description: "GitLab CI test pipeline"
+
+    jenkins:
+      - path: "Jenkinsfile"
+        must_contain: ["pipeline", "stage", "test"]
+        description: "Jenkins pipeline with test stages"
+
+    circleci:
+      - path: ".circleci/config.yml"
+        must_contain: ["version:", "jobs:", "test"]
+        description: "CircleCI test configuration"
+
+  # Language/framework-specific test configurations
+  frontend_framework:
+    react:
+      - path: "vitest.config.ts"
+        must_contain: ["defineConfig", "test"]
+        description: "Vitest configuration for React testing"
+
+      - path: "tests/unit/components/"
+        must_contain: []
+        description: "React component unit tests"
+
+      - path: "tests/unit/components/*.test.tsx"
+        must_contain: ["render", "screen", "expect"]
+        description: "React Testing Library component tests"
+
+    vue:
+      - path: "vitest.config.ts"
+        must_contain: ["defineConfig", "test"]
+        description: "Vitest configuration for Vue testing"
+
+      - path: "tests/unit/components/"
+        must_contain: []
+        description: "Vue component unit tests"
+
+    angular:
+      - path: "karma.conf.js"
+        must_contain: ["module.exports", "config"]
+        description: "Karma test runner configuration"
+
+      - path: "src/app/**/*.spec.ts"
+        must_contain: ["describe", "it", "expect"]
+        description: "Angular component specs"
+
+    svelte:
+      - path: "vitest.config.ts"
+        must_contain: ["defineConfig", "test"]
+        description: "Vitest configuration for Svelte testing"
+
+  backend_framework:
+    express:
+      - path: "tests/integration/api/"
+        must_contain: []
+        description: "Express API integration tests"
+
+      - path: "tests/integration/api/*.test.ts"
+        must_contain: ["supertest", "request", "expect"]
+        description: "Express endpoint tests with Supertest"
+
+    fastapi:
+      - path: "tests/integration/test_api.py"
+        must_contain: ["TestClient", "def test_", "assert"]
+        description: "FastAPI integration tests with TestClient"
+
+      - path: "pytest.ini"
+        must_contain: ["[pytest]", "testpaths"]
+        description: "pytest configuration for FastAPI tests"
+
+    django:
+      - path: "tests/unit/test_models.py"
+        must_contain: ["TestCase", "def test_"]
+        description: "Django model unit tests"
+
+      - path: "tests/integration/test_views.py"
+        must_contain: ["Client", "def test_"]
+        description: "Django view integration tests"
+
+      - path: "pytest.ini"
+        must_contain: ["[pytest]", "DJANGO_SETTINGS_MODULE"]
+        description: "pytest configuration for Django"
+
+    go_gin:
+      - path: "tests/integration_test.go"
+        must_contain: ["func Test", "gin.Engine"]
+        description: "Go Gin API integration tests"
+
+      - path: "tests/unit_test.go"
+        must_contain: ["func Test", "testing.T"]
+        description: "Go unit tests with standard library"
+
+    rust_axum:
+      - path: "tests/integration_test.rs"
+        must_contain: ["#[tokio::test]", "async fn"]
+        description: "Rust Axum integration tests"
+
+      - path: "tests/unit_test.rs"
+        must_contain: ["#[test]", "fn test_"]
+        description: "Rust unit tests"
+
+scaffolding:
+  # Essential test scaffolding files
+  - path: "tests/__init__.py"
+    reason: "Python package marker for tests directory"
+
+  - path: "tests/conftest.py"
+    reason: "pytest shared fixtures and configuration"
+
+  - path: "tests/setup.ts"
+    reason: "Global test setup for TypeScript/JavaScript tests"
+
+  - path: "tests/.gitkeep"
+    reason: "Ensures empty test directories are tracked in git"
+
+  # Test data directories
+  - path: "tests/fixtures/.gitkeep"
+    reason: "Track fixtures directory even when empty"
+
+  - path: "tests/mocks/"
+    reason: "Directory for mock data and API responses"
+
+  # Coverage configuration
+  - path: ".coveragerc"
+    reason: "Coverage.py configuration (Python)"
+
+  - path: "coverage/"
+    reason: "Coverage reports output directory (gitignored)"
+
+  # Test environment configuration
+  - path: "tests/.env.test"
+    reason: "Test environment variables"
+
+  - path: "tests/docker-compose.test.yml"
+    reason: "Docker Compose for test dependencies (databases, services)"
+
+metadata:
+  primary_blueprints: ["ci-cd"]
+  contributes_to:
+    - "Test automation and coverage"
+    - "CI/CD pipeline quality gates"
+    - "Continuous integration workflows"
+    - "Code quality and reliability"
+
+  test_types_covered:
+    - "Unit testing (60-70% of tests)"
+    - "Integration testing (20-30% of tests)"
+    - "End-to-end testing (10% of tests)"
+    - "Contract testing (microservices)"
+    - "Property-based testing (edge cases)"
+
+  supported_languages:
+    - "TypeScript/JavaScript (Vitest, Jest, Playwright)"
+    - "Python (pytest, hypothesis)"
+    - "Go (testing package, testify)"
+    - "Rust (cargo test, proptest)"
+
+  key_patterns:
+    - "Test pyramid balancing (more unit, fewer E2E)"
+    - "Fast feedback loops (unit tests < 30s, integration < 2min)"
+    - "Parallel test execution for speed"
+    - "Ephemeral test databases (Docker, testcontainers)"
+    - "API mocking (MSW, pytest-httpserver)"
+    - "Coverage reporting and thresholds"
+
+  integration_points:
+    - "CI/CD pipelines (GitHub Actions, GitLab CI, Jenkins)"
+    - "Coverage platforms (Codecov, Coveralls)"
+    - "Test reporting (JUnit XML, TAP)"
+    - "Container orchestration (Docker, testcontainers)"

@@ -1,0 +1,199 @@
+skill: "resource-tagging"
+version: "1.0"
+domain: "finops"
+
+base_outputs:
+  # Core tagging documentation always produced
+  - path: "docs/tagging-standards.md"
+    must_contain: ["Big Six required tags", "naming convention", "enforcement"]
+    description: "Organization-wide tagging standards document with required tags, naming conventions, and enforcement policies"
+
+  - path: "policies/required-tags.yaml"
+    must_contain: ["Name", "Environment", "Owner", "CostCenter", "Project", "ManagedBy"]
+    description: "YAML specification of required tags with allowed values and validation rules"
+
+  - path: "policies/tag-naming-convention.yaml"
+    must_contain: ["case_format", "allowed_keys", "value_constraints"]
+    description: "Tag naming convention specification (PascalCase/lowercase/kebab-case) with validation rules"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "terraform/default-tags.tf"
+        must_contain: ["default_tags", "Big Six"]
+        description: "Basic Terraform provider-level default tags for the Big Six required tags"
+
+      - path: "docs/manual-tagging-guide.md"
+        must_contain: ["console", "CLI", "required tags"]
+        description: "Manual tagging guide for console/CLI resource creation with required tag checklist"
+
+    intermediate:
+      - path: "terraform/tag-enforcement.tf"
+        must_contain: ["aws_config_rule", "required_tags"]
+        description: "AWS Config rules or Azure Policy for tag enforcement with soft alerts"
+
+      - path: "scripts/audit-tags.py"
+        must_contain: ["compliance check", "missing tags", "report"]
+        description: "Automated tag compliance audit script that reports missing/incorrect tags"
+
+      - path: "reports/tag-compliance-dashboard.md"
+        must_contain: ["compliance rate", "untagged resources", "remediation"]
+        description: "Tag compliance dashboard specification with metrics and remediation actions"
+
+    advanced:
+      - path: "terraform/tag-policies-org.tf"
+        must_contain: ["aws_organizations_policy", "tag_policy", "inheritance"]
+        description: "Organization-level tag policies with inheritance and hard enforcement (deny untagged resources)"
+
+      - path: "scripts/auto-remediate-tags.py"
+        must_contain: ["auto-fix", "tag propagation", "owner lookup"]
+        description: "Automated tag remediation script that fixes missing tags using heuristics"
+
+      - path: "ci-cd/tag-validation.yaml"
+        must_contain: ["pre-commit", "checkov", "tflint"]
+        description: "CI/CD pipeline integration for pre-deployment tag validation (Checkov, tflint, terraform-compliance)"
+
+      - path: "policies/tag-lifecycle.yaml"
+        must_contain: ["audit schedule", "update triggers", "ownership sync"]
+        description: "Tag lifecycle management policy with automated updates and ownership synchronization"
+
+  cloud_provider:
+    aws:
+      - path: "terraform/aws-config-rules.tf"
+        must_contain: ["aws_config_rule", "required-tags"]
+        description: "AWS Config rules for tag compliance monitoring and enforcement"
+
+      - path: "terraform/aws-cost-allocation-tags.tf"
+        must_contain: ["aws_ce_cost_allocation_tag", "Active"]
+        description: "AWS Cost Explorer cost allocation tag activation"
+
+      - path: "terraform/aws-tag-policies.json"
+        must_contain: ["tag_policy", "enforced_for"]
+        description: "AWS Organizations tag policies for account-level enforcement"
+
+      - path: "queries/aws-untagged-resources.sql"
+        must_contain: ["AWS Config", "SELECT", "tags IS NULL"]
+        description: "AWS Config SQL query to find untagged resources"
+
+    azure:
+      - path: "terraform/azure-policy-tags.tf"
+        must_contain: ["azurerm_policy_definition", "inherit", "enforce"]
+        description: "Azure Policy for tag inheritance from resource groups and enforcement"
+
+      - path: "terraform/azure-tag-inheritance.tf"
+        must_contain: ["azurerm_policy_assignment", "inherit_from_resource_group"]
+        description: "Azure Policy assignment for automatic tag inheritance"
+
+      - path: "queries/azure-resource-graph.kql"
+        must_contain: ["Resources", "where isnull(tags.Environment)"]
+        description: "Azure Resource Graph KQL query to find untagged resources"
+
+      - path: "scripts/azure-cost-by-tag.sh"
+        must_contain: ["az consumption usage list", "tags"]
+        description: "Azure CLI script to export cost data grouped by tags"
+
+    gcp:
+      - path: "terraform/gcp-org-policies.tf"
+        must_contain: ["google_organization_policy", "gcp.resourceLabels"]
+        description: "GCP Organization Policies for label restrictions and inheritance"
+
+      - path: "terraform/gcp-label-constraints.yaml"
+        must_contain: ["constraints/gcp.resourceLabels", "allowed_values"]
+        description: "GCP label constraints with allowed values and enforcement"
+
+      - path: "queries/gcp-asset-inventory.sh"
+        must_contain: ["gcloud asset search-all-resources", "NOT labels:"]
+        description: "GCP Cloud Asset Inventory query to find unlabeled resources"
+
+      - path: "bigquery/cost-by-label.sql"
+        must_contain: ["gcp_billing_export", "UNNEST(labels)", "SUM(cost)"]
+        description: "BigQuery SQL query for cost allocation by labels"
+
+    kubernetes:
+      - path: "kubernetes/kyverno-policies.yaml"
+        must_contain: ["ClusterPolicy", "add-default-labels", "mutate"]
+        description: "Kyverno policies for auto-generating labels from namespaces"
+
+      - path: "kubernetes/gatekeeper-constraints.yaml"
+        must_contain: ["ConstraintTemplate", "K8sRequiredLabels", "violation"]
+        description: "OPA Gatekeeper constraint templates for label validation"
+
+      - path: "kubernetes/namespace-labels.yaml"
+        must_contain: ["namespace", "labels", "environment", "owner"]
+        description: "Namespace label standards with required labels for propagation"
+
+scaffolding:
+  - path: "policies/"
+    reason: "Directory for tagging policy specifications (YAML/JSON)"
+
+  - path: "terraform/"
+    reason: "Directory for Infrastructure as Code with tag enforcement"
+
+  - path: "scripts/"
+    reason: "Directory for tag audit and remediation scripts"
+
+  - path: "queries/"
+    reason: "Directory for cloud provider query files (SQL, KQL, shell scripts)"
+
+  - path: "docs/"
+    reason: "Directory for tagging documentation and standards"
+
+  - path: "reports/"
+    reason: "Directory for compliance reports and dashboards"
+
+  - path: "ci-cd/"
+    reason: "Directory for CI/CD pipeline integration files"
+
+  - path: "kubernetes/"
+    reason: "Directory for Kubernetes label policy manifests (if K8s is in scope)"
+
+  - path: "bigquery/"
+    reason: "Directory for BigQuery cost allocation queries (GCP only)"
+
+metadata:
+  primary_blueprints: ["cost"]
+  contributes_to:
+    - "Resource tagging standards and policies"
+    - "Tag compliance enforcement and monitoring"
+    - "Cost allocation by tags for showback/chargeback"
+    - "Automated tag remediation and lifecycle management"
+    - "Multi-cloud tag governance (AWS/Azure/GCP/K8s)"
+    - "Tag-based resource organization and ownership tracking"
+
+  output_patterns:
+    documentation:
+      - "Tagging standards with Big Six required tags"
+      - "Tag naming convention guides"
+      - "Manual tagging checklists for console/CLI users"
+
+    policies:
+      - "Required tag specifications (YAML/JSON)"
+      - "Tag enforcement policies per cloud provider"
+      - "Tag lifecycle management policies"
+
+    infrastructure_as_code:
+      - "Terraform provider default_tags configuration"
+      - "Cloud provider policy resources (Config rules, Azure Policy, GCP org policies)"
+      - "Tag inheritance configurations"
+
+    automation:
+      - "Tag compliance audit scripts (Python)"
+      - "Automated remediation scripts"
+      - "Cost allocation query scripts"
+
+    validation:
+      - "Pre-commit hooks for tag validation (Checkov, tflint)"
+      - "CI/CD pipeline integration for IaC validation"
+      - "Cloud provider queries to find untagged resources"
+
+    reporting:
+      - "Tag compliance dashboards and metrics"
+      - "Cost allocation reports by tag dimensions"
+      - "Untagged resource reports with remediation steps"
+
+  integration_points:
+    - "infrastructure-as-code: Tags applied via Terraform/Pulumi default_tags"
+    - "cost-optimization: Cost allocation and budget alerts by tags"
+    - "compliance-frameworks: Tag-based compliance scoping for PCI/HIPAA/SOC2"
+    - "security-hardening: Security policies enforced via tags"
+    - "disaster-recovery: Backup policies triggered by tags"

@@ -1,0 +1,238 @@
+skill: "implementing-drag-drop"
+version: "1.0"
+domain: "frontend"
+
+base_outputs:
+  - path: "src/components/**/*{Sortable,Draggable,Droppable,DragDrop,Kanban}*.{tsx,ts,jsx,js}"
+    must_contain:
+      - "@dnd-kit/core"
+      - "DndContext"
+      - "useSensor"
+    description: "Drag-and-drop components using dnd-kit library with proper sensor configuration"
+
+  - path: "src/hooks/**/*{Drag,Drop,Sortable}*.{ts,tsx}"
+    must_contain:
+      - "useSortable"
+      - "setNodeRef"
+    description: "Custom hooks for drag-and-drop functionality with proper refs and transforms"
+
+  - path: "src/**/*.{tsx,ts,jsx,js}"
+    must_contain:
+      - "aria-label"
+      - "role="
+    description: "Accessibility attributes for drag-and-drop interactions (ARIA labels and roles)"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "src/components/**/Sortable*.{tsx,jsx}"
+        must_contain:
+          - "verticalListSortingStrategy"
+          - "arrayMove"
+          - "onDragEnd"
+        description: "Basic sortable list component with vertical sorting"
+
+      - path: "src/**/*.{tsx,ts,jsx,js}"
+        must_contain:
+          - "PointerSensor"
+          - "KeyboardSensor"
+        description: "Basic pointer and keyboard sensor configuration for accessibility"
+
+    intermediate:
+      - path: "src/components/**/{Kanban,Board}*.{tsx,jsx}"
+        must_contain:
+          - "DragOverlay"
+          - "onDragOver"
+          - "onDragStart"
+        description: "Multi-container drag-drop with kanban board pattern and drag overlay"
+
+      - path: "src/components/**/{Dropzone,FileUpload}*.{tsx,jsx}"
+        must_contain:
+          - "accept"
+          - "FileWithMeta"
+          - "progress"
+        description: "File dropzone component with upload progress and file validation"
+
+      - path: "src/**/*.{tsx,ts,jsx,js}"
+        must_contain:
+          - "aria-live"
+          - "aria-describedby"
+        description: "Advanced accessibility with live regions for screen reader announcements"
+
+    advanced:
+      - path: "src/components/**/Grid*.{tsx,jsx}"
+        must_contain:
+          - "rectSortingStrategy"
+          - "grid"
+        description: "2D grid layout with rect sorting strategy for dashboard widgets"
+
+      - path: "src/hooks/**/use{DragDrop,Sortable}*.{ts,tsx}"
+        must_contain:
+          - "useMemo"
+          - "useCallback"
+        description: "Optimized custom hooks with memoization for performance"
+
+      - path: "src/**/*.{tsx,ts,jsx,js}"
+        must_contain:
+          - "virtualScroll"
+          - "throttle"
+        description: "Performance optimizations with virtualization and throttling for large lists"
+
+      - path: "src/utils/**/drag*.{ts,js}"
+        must_contain:
+          - "calculateDropPosition"
+          - "collision"
+        description: "Custom collision detection and drop position calculation utilities"
+
+  frontend_framework:
+    react:
+      - path: "src/**/*.{tsx,jsx}"
+        must_contain:
+          - "useState"
+          - "useEffect"
+          - "@dnd-kit"
+        description: "React components with dnd-kit hooks and state management"
+
+      - path: "src/**/*.{tsx,jsx}"
+        must_contain:
+          - "useSortable"
+          - "CSS.Transform.toString"
+        description: "dnd-kit sortable hooks with CSS transform utilities"
+
+    vue:
+      - path: "src/**/*.vue"
+        must_contain:
+          - "ref"
+          - "computed"
+        description: "Vue components with reactive drag-drop state (if Vue-compatible library used)"
+
+  styling:
+    css:
+      - path: "src/**/*.css"
+        must_contain:
+          - ".drag-handle"
+          - "cursor: grab"
+          - "opacity"
+        description: "CSS for drag handles, cursor states, and dragging visual feedback"
+
+      - path: "src/**/*.css"
+        must_contain:
+          - "transform"
+          - "transition"
+        description: "CSS transforms and transitions for smooth drag animations"
+
+    styled_components:
+      - path: "src/**/*.{tsx,jsx,ts,js}"
+        must_contain:
+          - "styled"
+          - "css`"
+          - "isDragging"
+        description: "Styled-components with dynamic styling based on drag state"
+
+    tailwind:
+      - path: "src/**/*.{tsx,jsx}"
+        must_contain:
+          - "className="
+          - "cursor-grab"
+          - "opacity-50"
+        description: "Tailwind classes for drag states (grab cursor, opacity, hover effects)"
+
+    design_tokens:
+      - path: "src/**/*.{css,tsx,jsx}"
+        must_contain:
+          - "var(--color-"
+          - "var(--shadow-"
+          - "var(--radius-"
+        description: "Design token variables for consistent theming (colors, shadows, borders)"
+
+scaffolding:
+  - path: "src/types/drag-drop.ts"
+    reason: "TypeScript type definitions for drag state, events, and configuration"
+
+  - path: "src/utils/drag-calculations.ts"
+    reason: "Utility functions for drop position calculation and collision detection"
+
+  - path: "src/hooks/useDragDrop.ts"
+    reason: "Custom hook abstracting common drag-and-drop logic and state management"
+
+  - path: "src/components/DragHandle/index.tsx"
+    reason: "Reusable drag handle component with proper accessibility and visual affordance"
+
+  - path: "src/config/dnd-config.ts"
+    reason: "Centralized dnd-kit configuration (sensors, modifiers, animations)"
+
+metadata:
+  primary_blueprints: ["dashboard", "frontend"]
+  contributes_to:
+    - "Drag-and-drop interactions"
+    - "Sortable lists and tables"
+    - "Kanban boards"
+    - "File upload zones"
+    - "Reorderable grids"
+    - "Dashboard widget management"
+    - "Interactive spatial organization"
+    - "Touch-friendly UI manipulation"
+
+  validation_notes:
+    - "All drag-drop components MUST include keyboard navigation support"
+    - "Screen reader announcements required via aria-live regions"
+    - "Touch support required for mobile (long press activation)"
+    - "Drag handles should use ⋮⋮ or similar visual indicator"
+    - "Alternative non-drag UI must be provided for accessibility"
+    - "CSS transforms preferred over position changes for performance"
+    - "Virtualization required for lists with >100 items"
+    - "All sensor configurations must include both pointer and keyboard"
+
+  key_patterns:
+    sortable_list:
+      files: ["SortableList.tsx", "useSortable.ts"]
+      must_include: ["verticalListSortingStrategy", "arrayMove", "drag-handle"]
+
+    kanban_board:
+      files: ["KanbanBoard.tsx", "TaskCard.tsx", "BoardColumn.tsx"]
+      must_include: ["DragOverlay", "onDragOver", "closestCorners", "wipLimit"]
+
+    file_dropzone:
+      files: ["FileDropzone.tsx", "useFileUpload.ts"]
+      must_include: ["accept", "maxSize", "FileWithMeta", "progress"]
+
+    grid_reorder:
+      files: ["GridLayout.tsx", "GridItem.tsx"]
+      must_include: ["rectSortingStrategy", "display: grid", "responsive"]
+
+  dependencies:
+    required:
+      - "@dnd-kit/core"
+      - "@dnd-kit/sortable"
+      - "@dnd-kit/utilities"
+
+    optional:
+      - "@dnd-kit/modifiers"
+      - "react-virtual"
+      - "framer-motion"
+
+  accessibility_requirements:
+    critical:
+      - "Keyboard navigation (Space/Enter to grab, Arrow keys to move)"
+      - "Screen reader announcements for all drag events"
+      - "Focus management during drag operations"
+      - "Alternative UI (move up/down buttons) for non-drag interaction"
+      - "ARIA attributes (aria-grabbed, aria-dropeffect, role)"
+
+    recommended:
+      - "Visual focus indicators with high contrast"
+      - "Drag instructions in sr-only element"
+      - "Live region with aria-live='assertive'"
+      - "Clear visual feedback for valid/invalid drop zones"
+
+  performance_thresholds:
+    small_list: "<50 items - standard implementation"
+    medium_list: "50-100 items - add memoization and throttling"
+    large_list: ">100 items - implement virtual scrolling"
+
+  mobile_considerations:
+    - "Long press (250-300ms) to initiate drag"
+    - "Touch target minimum 44px for handles"
+    - "Prevent scroll during drag operation"
+    - "Handle gesture conflicts with native scrolling"
+    - "Test on actual mobile devices, not just browser emulation"

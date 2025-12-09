@@ -1,0 +1,324 @@
+skill: "designing-sdks"
+version: "1.0"
+domain: "developer"
+
+base_outputs:
+  - path: "sdk/README.md"
+    must_contain:
+      - "Installation"
+      - "Authentication"
+      - "Usage Examples"
+      - "Error Handling"
+
+  - path: "sdk/CHANGELOG.md"
+    must_contain:
+      - "Semantic Versioning"
+      - "Breaking Changes"
+      - "version"
+
+  - path: "sdk/package.json"
+    must_contain:
+      - "name"
+      - "version"
+      - "main"
+      - "types"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "sdk/client.ts"
+        must_contain:
+          - "export class"
+          - "constructor"
+          - "async"
+
+      - path: "sdk/types.ts"
+        must_contain:
+          - "export interface"
+          - "export type"
+
+      - path: "sdk/errors.ts"
+        must_contain:
+          - "extends Error"
+          - "APIError"
+
+    intermediate:
+      - path: "sdk/resources/"
+        must_contain:
+          - "class"
+          - "Resource"
+
+      - path: "sdk/retry.ts"
+        must_contain:
+          - "exponential backoff"
+          - "maxRetries"
+          - "isRetryable"
+
+      - path: "sdk/pagination.ts"
+        must_contain:
+          - "AsyncGenerator"
+          - "cursor"
+          - "has_more"
+
+      - path: "sdk/auth.ts"
+        must_contain:
+          - "authentication"
+          - "apiKey"
+
+      - path: "tests/client.test.ts"
+        must_contain:
+          - "describe"
+          - "it"
+          - "expect"
+
+    advanced:
+      - path: "sdk/streaming.ts"
+        must_contain:
+          - "AsyncGenerator"
+          - "text/event-stream"
+          - "SSE"
+
+      - path: "sdk/middleware.ts"
+        must_contain:
+          - "middleware"
+          - "request"
+          - "response"
+
+      - path: "sdk/idempotency.ts"
+        must_contain:
+          - "Idempotency-Key"
+          - "UUID"
+
+      - path: "sdk/circuit-breaker.ts"
+        must_contain:
+          - "circuit breaker"
+          - "failure threshold"
+
+      - path: "tests/integration/"
+        must_contain:
+          - "test"
+          - "integration"
+
+  backend_framework:
+    python:
+      - path: "sdk/python/client.py"
+        must_contain:
+          - "class"
+          - "def __init__"
+          - "import"
+
+      - path: "sdk/python/async_client.py"
+        must_contain:
+          - "async def"
+          - "AsyncClient"
+          - "aiohttp"
+
+      - path: "sdk/python/resources/"
+        must_contain:
+          - "class"
+          - "Resource"
+
+      - path: "sdk/python/errors.py"
+        must_contain:
+          - "class"
+          - "Exception"
+          - "APIError"
+
+      - path: "sdk/python/pagination.py"
+        must_contain:
+          - "AsyncGenerator"
+          - "yield"
+
+      - path: "sdk/python/setup.py"
+        must_contain:
+          - "setuptools"
+          - "install_requires"
+
+      - path: "sdk/python/pyproject.toml"
+        must_contain:
+          - "[project]"
+          - "name"
+          - "version"
+
+      - path: "sdk/python/README.md"
+        must_contain:
+          - "pip install"
+          - "import"
+          - "Example"
+
+    typescript:
+      - path: "sdk/typescript/client.ts"
+        must_contain:
+          - "export class"
+          - "constructor"
+          - "async"
+
+      - path: "sdk/typescript/resources/"
+        must_contain:
+          - "export class"
+          - "Resource"
+
+      - path: "sdk/typescript/types.ts"
+        must_contain:
+          - "export interface"
+          - "export type"
+
+      - path: "sdk/typescript/errors.ts"
+        must_contain:
+          - "export class"
+          - "extends Error"
+
+      - path: "sdk/typescript/pagination.ts"
+        must_contain:
+          - "AsyncGenerator"
+          - "yield"
+
+      - path: "sdk/typescript/package.json"
+        must_contain:
+          - "name"
+          - "version"
+          - "main"
+          - "types"
+
+      - path: "sdk/typescript/tsconfig.json"
+        must_contain:
+          - "compilerOptions"
+          - "target"
+
+      - path: "sdk/typescript/README.md"
+        must_contain:
+          - "npm install"
+          - "import"
+          - "Example"
+
+    go:
+      - path: "sdk/go/client.go"
+        must_contain:
+          - "package"
+          - "type Client struct"
+          - "func New"
+
+      - path: "sdk/go/resources.go"
+        must_contain:
+          - "type"
+          - "Resource"
+
+      - path: "sdk/go/errors.go"
+        must_contain:
+          - "type"
+          - "Error"
+          - "error"
+
+      - path: "sdk/go/pagination.go"
+        must_contain:
+          - "chan"
+          - "cursor"
+
+      - path: "sdk/go/retry.go"
+        must_contain:
+          - "retry"
+          - "backoff"
+
+      - path: "sdk/go/go.mod"
+        must_contain:
+          - "module"
+          - "go"
+
+      - path: "sdk/go/README.md"
+        must_contain:
+          - "go get"
+          - "import"
+          - "Example"
+
+scaffolding:
+  - path: "sdk/"
+    description: "Root directory for SDK implementation"
+
+  - path: "sdk/resources/"
+    description: "Resource-based API organization (users, payments, etc.)"
+
+  - path: "sdk/types/"
+    description: "Type definitions and interfaces"
+
+  - path: "sdk/errors/"
+    description: "Error hierarchy and custom exceptions"
+
+  - path: "sdk/utils/"
+    description: "Utility functions (retry, backoff, jitter)"
+
+  - path: "sdk/auth/"
+    description: "Authentication patterns (API key, OAuth, Bearer)"
+
+  - path: "sdk/streaming/"
+    description: "Server-Sent Events (SSE) and streaming support"
+
+  - path: "tests/"
+    description: "Unit and integration tests"
+
+  - path: "tests/unit/"
+    description: "Unit tests for SDK components"
+
+  - path: "tests/integration/"
+    description: "Integration tests against live/mock API"
+
+  - path: "tests/fixtures/"
+    description: "Test data and mock responses"
+
+  - path: "examples/"
+    description: "Example usage and code samples"
+
+  - path: "docs/"
+    description: "API documentation and guides"
+
+metadata:
+  primary_blueprints:
+    - "api-first"
+
+  contributes_to:
+    - "SDK development"
+    - "Client library creation"
+    - "API wrapper implementation"
+    - "Developer experience (DX)"
+    - "Multi-language SDK generation"
+
+  integrates_with:
+    - "api-design-principles"
+    - "building-clis"
+    - "testing-strategies"
+
+  key_patterns:
+    - "Resource-based organization"
+    - "Command-based organization"
+    - "Exponential backoff with jitter"
+    - "Async iterators for pagination"
+    - "Typed error hierarchies"
+    - "OAuth token refresh"
+    - "Idempotency keys"
+    - "Server-Sent Events (SSE)"
+    - "Circuit breakers"
+    - "Middleware patterns"
+
+  language_support:
+    - "TypeScript/JavaScript (async-only)"
+    - "Python (dual sync/async)"
+    - "Go (sync with context)"
+
+  authentication_methods:
+    - "API Key"
+    - "OAuth with token refresh"
+    - "Bearer token per-request"
+    - "Credential providers"
+
+  testing_requirements:
+    - "Unit tests with mocked HTTP"
+    - "Integration tests"
+    - "Retry scenario testing"
+    - "Error handling testing"
+    - "Pagination testing"
+    - "Streaming testing"
+
+  versioning_strategy:
+    - "Semantic Versioning (SemVer)"
+    - "API version pinning"
+    - "Deprecation warnings"
+    - "Migration guides"

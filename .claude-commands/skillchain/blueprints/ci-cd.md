@@ -1127,3 +1127,521 @@ All additions will integrate with existing pipeline structure.
 ---
 
 **Blueprint Complete**
+
+---
+
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "CI workflow with multi-stage pipeline":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/workflows/ci.yml
+    content_checks:
+      - pattern: "on:\\s*(push|pull_request)"
+        in: .github/workflows/ci.yml
+      - pattern: "jobs:"
+        in: .github/workflows/ci.yml
+      - pattern: "lint|test|build"
+        in: .github/workflows/ci.yml
+    maturity_required: [starter, intermediate, advanced]
+
+  "CD workflow with deployment stages":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/workflows/cd.yml
+    content_checks:
+      - pattern: "deploy"
+        in: .github/workflows/cd.yml
+      - pattern: "on:\\s*(release|push)"
+        in: .github/workflows/cd.yml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Dependency management automation":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/dependabot.yml
+    content_checks:
+      - pattern: "version:\\s*2"
+        in: .github/dependabot.yml
+      - pattern: "updates:"
+        in: .github/dependabot.yml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Test suite with coverage reporting":
+    primary_skill: testing-strategies
+    required_files:
+      - tests/
+    content_checks:
+      - pattern: "def test_|describe\\(|it\\(|@test"
+        in: tests/
+      - pattern: "assert|expect"
+        in: tests/
+    maturity_required: [starter, intermediate, advanced]
+
+  "Test workflow configuration":
+    primary_skill: testing-strategies
+    required_files:
+      - .github/workflows/test.yml
+    content_checks:
+      - pattern: "test"
+        in: .github/workflows/test.yml
+      - pattern: "coverage"
+        in: .github/workflows/test.yml
+    maturity_required: [intermediate, advanced]
+
+  "Container image build configuration":
+    primary_skill: writing-dockerfiles
+    required_files:
+      - Dockerfile
+      - .dockerignore
+    content_checks:
+      - pattern: "FROM"
+        in: Dockerfile
+      - pattern: "COPY|ADD"
+        in: Dockerfile
+      - pattern: "\\.git|node_modules|__pycache__"
+        in: .dockerignore
+    maturity_required: [starter, intermediate, advanced]
+
+  "Multi-stage Docker build":
+    primary_skill: writing-dockerfiles
+    required_files:
+      - Dockerfile
+    content_checks:
+      - pattern: "AS builder|AS build"
+        in: Dockerfile
+      - pattern: "COPY --from="
+        in: Dockerfile
+    maturity_required: [intermediate, advanced]
+
+  "Docker image build workflow":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/workflows/ci.yml
+    content_checks:
+      - pattern: "docker/build-push-action|docker build"
+        in: .github/workflows/
+      - pattern: "docker/login-action|docker login"
+        in: .github/workflows/
+    maturity_required: [intermediate, advanced]
+
+  "Kubernetes deployment manifests":
+    primary_skill: implementing-gitops
+    required_files:
+      - k8s/base/deployment.yaml
+      - k8s/base/service.yaml
+      - k8s/base/kustomization.yaml
+    content_checks:
+      - pattern: "kind: Deployment"
+        in: k8s/base/deployment.yaml
+      - pattern: "kind: Service"
+        in: k8s/base/service.yaml
+      - pattern: "apiVersion: kustomize.config.k8s.io"
+        in: k8s/base/kustomization.yaml
+    maturity_required: [intermediate, advanced]
+
+  "Environment-specific Kustomize overlays":
+    primary_skill: implementing-gitops
+    required_files:
+      - k8s/overlays/dev/kustomization.yaml
+      - k8s/overlays/prod/kustomization.yaml
+    content_checks:
+      - pattern: "bases:|resources:"
+        in: k8s/overlays/
+      - pattern: "namespace:"
+        in: k8s/overlays/
+    maturity_required: [starter, intermediate, advanced]
+
+  "GitOps deployment documentation":
+    primary_skill: implementing-gitops
+    required_files:
+      - gitops/README.md
+    content_checks:
+      - pattern: "GitOps"
+        in: gitops/README.md
+      - pattern: "deployment"
+        in: gitops/README.md
+    maturity_required: [intermediate, advanced]
+
+  "Security scanning workflow":
+    primary_skill: security-hardening
+    required_files:
+      - .github/workflows/security.yml
+    content_checks:
+      - pattern: "trivy|snyk|gitleaks|checkov"
+        in: .github/workflows/security.yml
+      - pattern: "security|scan"
+        in: .github/workflows/security.yml
+    maturity_required: [intermediate, advanced]
+
+  "Container vulnerability scanning":
+    primary_skill: security-hardening
+    required_files:
+      - .github/workflows/ci.yml
+    content_checks:
+      - pattern: "trivy|aquasecurity/trivy-action"
+        in: .github/workflows/
+      - pattern: "image|container"
+        in: .github/workflows/
+    maturity_required: [intermediate, advanced]
+
+  "Secret scanning configuration":
+    primary_skill: security-hardening
+    required_files:
+      - .github/workflows/security.yml
+    content_checks:
+      - pattern: "gitleaks|truffleHog|secret"
+        in: .github/workflows/
+    maturity_required: [intermediate, advanced]
+
+  "Prometheus metrics configuration":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/prometheus.yml
+    content_checks:
+      - pattern: "scrape_configs:"
+        in: observability/prometheus.yml
+      - pattern: "job_name:"
+        in: observability/prometheus.yml
+    maturity_required: [intermediate, advanced]
+
+  "Pipeline monitoring alerts":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/alerts/
+    content_checks:
+      - pattern: "alert:|expr:"
+        in: observability/alerts/
+      - pattern: "pipeline|build|deploy"
+        in: observability/alerts/
+    maturity_required: [advanced]
+
+  "Grafana dashboards for CI/CD metrics":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/grafana/dashboards/
+    content_checks:
+      - pattern: '"type":\\s*"graph"|"type":\\s*"gauge"'
+        in: observability/grafana/dashboards/
+      - pattern: "pipeline|build|deployment"
+        in: observability/grafana/dashboards/
+    maturity_required: [advanced]
+
+  "Matrix testing workflow":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/workflows/ci.yml
+    content_checks:
+      - pattern: "strategy:"
+        in: .github/workflows/ci.yml
+      - pattern: "matrix:"
+        in: .github/workflows/ci.yml
+    maturity_required: [intermediate, advanced]
+
+  "Caching strategy implementation":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/workflows/ci.yml
+    content_checks:
+      - pattern: "actions/cache|cache:"
+        in: .github/workflows/ci.yml
+      - pattern: "key:|restore-keys:"
+        in: .github/workflows/ci.yml
+    maturity_required: [intermediate, advanced]
+
+  "Deployment scripts":
+    primary_skill: implementing-gitops
+    required_files:
+      - scripts/deploy.sh
+    content_checks:
+      - pattern: "#!/bin/bash|#!/usr/bin/env bash"
+        in: scripts/deploy.sh
+      - pattern: "deploy|kubectl|helm"
+        in: scripts/deploy.sh
+    maturity_required: [starter, intermediate, advanced]
+
+  "Rollback scripts":
+    primary_skill: implementing-gitops
+    required_files:
+      - scripts/rollback.sh
+    content_checks:
+      - pattern: "#!/bin/bash|#!/usr/bin/env bash"
+        in: scripts/rollback.sh
+      - pattern: "rollback|previous|revert"
+        in: scripts/rollback.sh
+    maturity_required: [intermediate, advanced]
+
+  "Docker Compose for local development":
+    primary_skill: writing-dockerfiles
+    required_files:
+      - docker-compose.yml
+    content_checks:
+      - pattern: "version:|services:"
+        in: docker-compose.yml
+      - pattern: "build:|image:"
+        in: docker-compose.yml
+    maturity_required: [intermediate, advanced]
+
+  "Integration test suite":
+    primary_skill: testing-strategies
+    required_files:
+      - tests/integration/
+    content_checks:
+      - pattern: "def test_|describe\\(|it\\("
+        in: tests/integration/
+      - pattern: "api|endpoint|database|client"
+        in: tests/integration/
+    maturity_required: [intermediate, advanced]
+
+  "E2E test suite":
+    primary_skill: testing-strategies
+    required_files:
+      - tests/e2e/
+      - playwright.config.ts
+    content_checks:
+      - pattern: "test\\(|page\\."
+        in: tests/e2e/
+      - pattern: "defineConfig"
+        in: playwright.config.ts
+    maturity_required: [advanced]
+
+  "SLSA provenance generation":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/workflows/slsa-provenance.yml
+    content_checks:
+      - pattern: "slsa-framework/slsa-github-generator"
+        in: .github/workflows/slsa-provenance.yml
+      - pattern: "provenance"
+        in: .github/workflows/slsa-provenance.yml
+    maturity_required: [advanced]
+
+  "Canary deployment workflow":
+    primary_skill: implementing-gitops
+    required_files:
+      - gitops/rollouts/canary.yaml
+    content_checks:
+      - pattern: "kind: Rollout"
+        in: gitops/rollouts/canary.yaml
+      - pattern: "strategy:"
+        in: gitops/rollouts/canary.yaml
+      - pattern: "canary:"
+        in: gitops/rollouts/canary.yaml
+    maturity_required: [advanced]
+
+  "Build and test scripts":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - scripts/build.sh
+      - scripts/test.sh
+    content_checks:
+      - pattern: "#!/bin/bash|#!/usr/bin/env bash"
+        in: scripts/
+      - pattern: "build|compile|package"
+        in: scripts/build.sh
+      - pattern: "test|coverage"
+        in: scripts/test.sh
+    maturity_required: [starter, intermediate, advanced]
+
+  "Project documentation with CI/CD badges":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - README.md
+    content_checks:
+      - pattern: "CI/CD|Build Status|badge"
+        in: README.md
+      - pattern: "shields.io|github.com.*badge|status"
+        in: README.md
+    maturity_required: [starter, intermediate, advanced]
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Single environment (dev/staging), basic CI/CD with Docker, GitHub Actions, simple sequential pipeline"
+
+    require_additionally:
+      - "CI workflow with multi-stage pipeline"
+      - "CD workflow with deployment stages"
+      - "Dependency management automation"
+      - "Test suite with coverage reporting"
+      - "Container image build configuration"
+      - "Environment-specific Kustomize overlays"
+      - "Deployment scripts"
+      - "Build and test scripts"
+      - "Project documentation with CI/CD badges"
+
+    skip_deliverables:
+      - "Test workflow configuration"
+      - "Multi-stage Docker build"
+      - "Docker image build workflow"
+      - "Kubernetes deployment manifests"
+      - "GitOps deployment documentation"
+      - "Security scanning workflow"
+      - "Container vulnerability scanning"
+      - "Secret scanning configuration"
+      - "Prometheus metrics configuration"
+      - "Pipeline monitoring alerts"
+      - "Grafana dashboards for CI/CD metrics"
+      - "Matrix testing workflow"
+      - "Caching strategy implementation"
+      - "Rollback scripts"
+      - "Docker Compose for local development"
+      - "Integration test suite"
+      - "E2E test suite"
+      - "SLSA provenance generation"
+      - "Canary deployment workflow"
+
+    empty_dirs_allowed:
+      - .github/workflows/
+      - k8s/overlays/staging/
+      - tests/integration/
+      - tests/e2e/
+      - observability/
+      - gitops/
+
+    generation_adjustments:
+      - Use single-stage Dockerfile for simplicity
+      - Sequential pipeline (no parallel jobs)
+      - Basic unit tests only
+      - Docker Compose instead of Kubernetes
+      - Manual deployment approval
+      - Extensive inline comments and documentation
+      - Include setup instructions in README
+
+  intermediate:
+    description: "Multi-environment (dev/staging/prod), GitOps with Kubernetes, security scanning, caching, parallel execution"
+
+    require_additionally:
+      - "Test workflow configuration"
+      - "Multi-stage Docker build"
+      - "Docker image build workflow"
+      - "Kubernetes deployment manifests"
+      - "GitOps deployment documentation"
+      - "Security scanning workflow"
+      - "Container vulnerability scanning"
+      - "Secret scanning configuration"
+      - "Prometheus metrics configuration"
+      - "Matrix testing workflow"
+      - "Caching strategy implementation"
+      - "Rollback scripts"
+      - "Docker Compose for local development"
+      - "Integration test suite"
+
+    skip_deliverables:
+      - "Pipeline monitoring alerts"
+      - "Grafana dashboards for CI/CD metrics"
+      - "E2E test suite"
+      - "SLSA provenance generation"
+      - "Canary deployment workflow"
+
+    empty_dirs_allowed:
+      - tests/e2e/
+      - gitops/rollouts/
+      - observability/grafana/dashboards/
+
+    generation_adjustments:
+      - Multi-stage Docker builds for optimization
+      - Parallel test execution with matrix strategy
+      - Kubernetes deployment with Kustomize
+      - GitOps with ArgoCD or Flux
+      - Automated security scanning in CI
+      - Dependency caching for faster builds
+      - Basic monitoring with Prometheus
+      - Environment-specific deployments (dev/staging/prod)
+
+  advanced:
+    description: "Enterprise-scale with progressive delivery, SLSA provenance, comprehensive observability, E2E testing"
+
+    require_additionally:
+      - "Pipeline monitoring alerts"
+      - "Grafana dashboards for CI/CD metrics"
+      - "E2E test suite"
+      - "SLSA provenance generation"
+      - "Canary deployment workflow"
+
+    skip_deliverables: []
+
+    empty_dirs_allowed: []
+
+    generation_adjustments:
+      - SLSA Level 3 provenance for supply chain security
+      - Progressive delivery with canary deployments
+      - Comprehensive E2E testing with Playwright
+      - Advanced monitoring with LGTM stack
+      - Custom Grafana dashboards for DORA metrics
+      - Multi-cluster GitOps deployments
+      - Reusable workflow components
+      - Advanced caching strategies (BuildKit, layer caching)
+      - Automated rollback on deployment failure
+      - Performance analysis and optimization
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **File Existence Checks**
+   - Verify all `required_files` exist at specified paths
+   - Check that maturity-level deliverables are present
+   - Allow `empty_dirs_allowed` to be missing for lower maturity levels
+
+2. **Content Pattern Matching**
+   - Use regex `pattern` to verify file contents
+   - Ensure functional code/config exists (not just scaffolding)
+   - Validate CI/CD workflows are properly configured
+
+3. **Maturity-Specific Validation**
+   - Starter: Basic CI/CD with single-stage builds, unit tests only
+   - Intermediate: Multi-stage builds, security scanning, K8s deployment
+   - Advanced: SLSA provenance, progressive delivery, comprehensive observability
+
+4. **Integration Validation**
+   - CI workflow references Docker build steps
+   - CD workflow references deployment scripts
+   - Test workflows exist for each test type (unit/integration/e2e)
+   - Security workflows scan both code and containers
+   - Monitoring configured for pipeline metrics
+
+5. **Blueprint Promise Verification**
+   - Multi-stage pipeline: Verify lint → test → build → deploy stages
+   - 80% coverage: Check test configuration includes coverage thresholds
+   - Container scanning: Verify Trivy or equivalent in CI
+   - GitOps deployment: Verify Kustomize/Helm + K8s manifests
+   - Rollback support: Verify rollback scripts and deployment strategies
+   - Monitoring: Verify Prometheus + alerts exist
+
+### Error Reporting
+
+When validation fails, report:
+```yaml
+validation_errors:
+  - deliverable: "Container vulnerability scanning"
+    missing_files: [".github/workflows/security.yml"]
+    missing_patterns: ["trivy"]
+    severity: "high"
+    fix: "Add Trivy scanning step to CI workflow"
+
+  - deliverable: "E2E test suite"
+    missing_files: ["tests/e2e/", "playwright.config.ts"]
+    severity: "medium"
+    fix: "Install Playwright and add E2E tests (required for advanced maturity)"
+```
+
+### Success Metrics
+
+Blueprint considered successful when:
+- All maturity-required deliverables present
+- All content checks pass
+- CI/CD pipeline can execute end-to-end
+- Deployments succeed to target environment
+- Security scans complete without critical issues
+- Monitoring captures pipeline metrics

@@ -1364,4 +1364,611 @@ Debug:
 
 ---
 
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "OpenTelemetry collector configuration":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/otel-collector-config.yml
+    content_checks:
+      - pattern: "receivers:|otlp:"
+        in: observability/otel-collector-config.yml
+      - pattern: "processors:|batch:|sampling:"
+        in: observability/otel-collector-config.yml
+      - pattern: "exporters:|jaeger:|prometheus:"
+        in: observability/otel-collector-config.yml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Prometheus configuration":
+    primary_skill: implementing-observability
+    required_files:
+      - prometheus/prometheus.yml
+    content_checks:
+      - pattern: "global:|scrape_interval:"
+        in: prometheus/prometheus.yml
+      - pattern: "scrape_configs:|job_name:"
+        in: prometheus/prometheus.yml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Prometheus alert rules":
+    primary_skill: implementing-observability
+    required_files:
+      - prometheus/alerts/application.rules.yml
+      - prometheus/alerts/infrastructure.rules.yml
+    content_checks:
+      - pattern: "groups:|alert:|expr:"
+        in: prometheus/alerts/
+      - pattern: "HighErrorRate|HighLatency|ServiceDown"
+        in: prometheus/alerts/application.rules.yml
+      - pattern: "HighCPU|HighMemory|DiskSpaceLow"
+        in: prometheus/alerts/infrastructure.rules.yml
+    maturity_required: [intermediate, advanced]
+
+  "SLO alert rules":
+    primary_skill: implementing-observability
+    required_files:
+      - prometheus/alerts/slo.rules.yml
+    content_checks:
+      - pattern: "record:|expr:|labels:"
+        in: prometheus/alerts/slo.rules.yml
+      - pattern: "ErrorBudgetBurn|slo:|sli:"
+        in: prometheus/alerts/slo.rules.yml
+    maturity_required: [intermediate, advanced]
+
+  "Grafana data source configuration":
+    primary_skill: creating-dashboards
+    required_files:
+      - grafana/provisioning/datasources/prometheus.yml
+      - grafana/provisioning/datasources/loki.yml
+      - grafana/provisioning/datasources/jaeger.yml
+    content_checks:
+      - pattern: "apiVersion:|datasources:|type: prometheus"
+        in: grafana/provisioning/datasources/prometheus.yml
+      - pattern: "type: loki"
+        in: grafana/provisioning/datasources/loki.yml
+      - pattern: "type: jaeger"
+        in: grafana/provisioning/datasources/jaeger.yml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Golden Signals dashboard":
+    primary_skill: creating-dashboards
+    required_files:
+      - grafana/provisioning/dashboards/dashboards/golden-signals.json
+    content_checks:
+      - pattern: '"title".*Latency|"title".*Traffic|"title".*Errors|"title".*Saturation'
+        in: grafana/provisioning/dashboards/dashboards/golden-signals.json
+      - pattern: '"type":\\s*"graph"|"type":\\s*"gauge"'
+        in: grafana/provisioning/dashboards/dashboards/golden-signals.json
+    maturity_required: [starter, intermediate, advanced]
+
+  "RED method dashboard":
+    primary_skill: creating-dashboards
+    required_files:
+      - grafana/provisioning/dashboards/dashboards/red-method.json
+    content_checks:
+      - pattern: '"title".*Rate|"title".*Errors|"title".*Duration'
+        in: grafana/provisioning/dashboards/dashboards/red-method.json
+      - pattern: 'histogram_quantile|rate\\(http_requests'
+        in: grafana/provisioning/dashboards/dashboards/red-method.json
+    maturity_required: [intermediate, advanced]
+
+  "USE method dashboard":
+    primary_skill: creating-dashboards
+    required_files:
+      - grafana/provisioning/dashboards/dashboards/use-method.json
+    content_checks:
+      - pattern: '"title".*Utilization|"title".*Saturation|"title".*Errors'
+        in: grafana/provisioning/dashboards/dashboards/use-method.json
+      - pattern: 'node_cpu|node_memory|node_load'
+        in: grafana/provisioning/dashboards/dashboards/use-method.json
+    maturity_required: [intermediate, advanced]
+
+  "SLO tracking dashboard":
+    primary_skill: creating-dashboards
+    required_files:
+      - grafana/provisioning/dashboards/dashboards/slo-tracking.json
+    content_checks:
+      - pattern: '"title".*SLI|"title".*Error Budget|"title".*Burn Rate'
+        in: grafana/provisioning/dashboards/dashboards/slo-tracking.json
+      - pattern: 'slo:|error_budget|burn_rate'
+        in: grafana/provisioning/dashboards/dashboards/slo-tracking.json
+    maturity_required: [intermediate, advanced]
+
+  "Loki configuration":
+    primary_skill: implementing-siem
+    required_files:
+      - loki/loki-config.yml
+    content_checks:
+      - pattern: "auth_enabled:|server:|ingester:"
+        in: loki/loki-config.yml
+      - pattern: "schema_config:|storage_config:"
+        in: loki/loki-config.yml
+    maturity_required: [intermediate, advanced]
+
+  "Promtail configuration":
+    primary_skill: implementing-siem
+    required_files:
+      - loki/promtail/promtail-config.yml
+    content_checks:
+      - pattern: "server:|positions:|clients:"
+        in: loki/promtail/promtail-config.yml
+      - pattern: "scrape_configs:|job_name:"
+        in: loki/promtail/promtail-config.yml
+    maturity_required: [intermediate, advanced]
+
+  "Log parsing rules":
+    primary_skill: implementing-siem
+    required_files:
+      - loki/promtail/promtail-config.yml
+    content_checks:
+      - pattern: "pipeline_stages:|json:|regex:|labels:"
+        in: loki/promtail/promtail-config.yml
+    maturity_required: [intermediate, advanced]
+
+  "Jaeger configuration":
+    primary_skill: implementing-observability
+    required_files:
+      - jaeger/jaeger-config.yml
+    content_checks:
+      - pattern: "span-storage-type:|collector:|query:"
+        in: jaeger/jaeger-config.yml
+    maturity_required: [starter, intermediate, advanced]
+
+  "OpenTelemetry instrumentation (Node.js)":
+    primary_skill: implementing-observability
+    required_files:
+      - opentelemetry/instrumentation/javascript/tracing.js
+    content_checks:
+      - pattern: "@opentelemetry/sdk-node|NodeSDK"
+        in: opentelemetry/instrumentation/javascript/tracing.js
+      - pattern: "auto-instrumentations|trace|metrics"
+        in: opentelemetry/instrumentation/javascript/tracing.js
+    maturity_required: [starter, intermediate, advanced]
+
+  "OpenTelemetry instrumentation (Python)":
+    primary_skill: implementing-observability
+    required_files:
+      - opentelemetry/instrumentation/python/tracing.py
+    content_checks:
+      - pattern: "from opentelemetry|import.*opentelemetry"
+        in: opentelemetry/instrumentation/python/tracing.py
+      - pattern: "TracerProvider|MeterProvider|OTLPSpanExporter"
+        in: opentelemetry/instrumentation/python/tracing.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Alertmanager configuration":
+    primary_skill: implementing-observability
+    required_files:
+      - alertmanager/alertmanager.yml
+    content_checks:
+      - pattern: "route:|receivers:|inhibit_rules:"
+        in: alertmanager/alertmanager.yml
+      - pattern: "slack_configs|pagerduty_configs|email_configs"
+        in: alertmanager/alertmanager.yml
+    maturity_required: [intermediate, advanced]
+
+  "Alert notification templates":
+    primary_skill: implementing-observability
+    required_files:
+      - alertmanager/templates/slack.tmpl
+    content_checks:
+      - pattern: "{{.*}}|{{\\s*range|{{\\s*if"
+        in: alertmanager/templates/slack.tmpl
+      - pattern: "Status:|Alert:|Description:"
+        in: alertmanager/templates/slack.tmpl
+    maturity_required: [intermediate, advanced]
+
+  "Docker Compose deployment":
+    primary_skill: implementing-observability
+    required_files:
+      - docker-compose.yml
+    content_checks:
+      - pattern: "services:|prometheus:|grafana:|loki:"
+        in: docker-compose.yml
+      - pattern: "image:|ports:|volumes:"
+        in: docker-compose.yml
+    maturity_required: [starter]
+
+  "Kubernetes namespace":
+    primary_skill: configuring-kubernetes
+    required_files:
+      - kubernetes/namespace.yml
+    content_checks:
+      - pattern: "kind: Namespace"
+        in: kubernetes/namespace.yml
+      - pattern: "name: observability"
+        in: kubernetes/namespace.yml
+    maturity_required: [intermediate, advanced]
+
+  "Prometheus Operator":
+    primary_skill: configuring-kubernetes
+    required_files:
+      - kubernetes/prometheus/prometheus-operator.yml
+      - kubernetes/prometheus/prometheus.yml
+    content_checks:
+      - pattern: "kind: Prometheus"
+        in: kubernetes/prometheus/prometheus.yml
+      - pattern: "serviceMonitorSelector:|ruleSelector:"
+        in: kubernetes/prometheus/prometheus.yml
+    maturity_required: [intermediate, advanced]
+
+  "ServiceMonitor CRDs":
+    primary_skill: configuring-kubernetes
+    required_files:
+      - kubernetes/prometheus/servicemonitor.yml
+    content_checks:
+      - pattern: "kind: ServiceMonitor"
+        in: kubernetes/prometheus/servicemonitor.yml
+      - pattern: "endpoints:|port:|path:"
+        in: kubernetes/prometheus/servicemonitor.yml
+    maturity_required: [intermediate, advanced]
+
+  "Grafana Kubernetes deployment":
+    primary_skill: configuring-kubernetes
+    required_files:
+      - kubernetes/grafana/deployment.yml
+      - kubernetes/grafana/service.yml
+    content_checks:
+      - pattern: "kind: Deployment"
+        in: kubernetes/grafana/deployment.yml
+      - pattern: "kind: Service"
+        in: kubernetes/grafana/service.yml
+      - pattern: "grafana/grafana"
+        in: kubernetes/grafana/deployment.yml
+    maturity_required: [intermediate, advanced]
+
+  "Loki StatefulSet":
+    primary_skill: configuring-kubernetes
+    required_files:
+      - kubernetes/loki/statefulset.yml
+    content_checks:
+      - pattern: "kind: StatefulSet"
+        in: kubernetes/loki/statefulset.yml
+      - pattern: "grafana/loki"
+        in: kubernetes/loki/statefulset.yml
+    maturity_required: [advanced]
+
+  "Fluent Bit DaemonSet":
+    primary_skill: configuring-kubernetes
+    required_files:
+      - kubernetes/loki/fluent-bit-daemonset.yml
+    content_checks:
+      - pattern: "kind: DaemonSet"
+        in: kubernetes/loki/fluent-bit-daemonset.yml
+      - pattern: "fluent/fluent-bit"
+        in: kubernetes/loki/fluent-bit-daemonset.yml
+    maturity_required: [advanced]
+
+  "OpenTelemetry Collector deployment":
+    primary_skill: configuring-kubernetes
+    required_files:
+      - kubernetes/opentelemetry/collector-deployment.yml
+      - kubernetes/opentelemetry/collector-configmap.yml
+    content_checks:
+      - pattern: "kind: Deployment|kind: ConfigMap"
+        in: kubernetes/opentelemetry/
+      - pattern: "otel/opentelemetry-collector"
+        in: kubernetes/opentelemetry/collector-deployment.yml
+    maturity_required: [intermediate, advanced]
+
+  "CI/CD observability checks":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - ci-cd/github-actions/observability-checks.yml
+    content_checks:
+      - pattern: "on:|push:|pull_request:"
+        in: ci-cd/github-actions/observability-checks.yml
+      - pattern: "curl.*metrics|curl.*health"
+        in: ci-cd/github-actions/observability-checks.yml
+    maturity_required: [intermediate, advanced]
+
+  "Metrics validation script":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - scripts/validate-metrics.sh
+    content_checks:
+      - pattern: "#!/bin/bash|curl.*prometheus"
+        in: scripts/validate-metrics.sh
+      - pattern: "activeTargets|up==1"
+        in: scripts/validate-metrics.sh
+    maturity_required: [intermediate, advanced]
+
+  "Logs validation script":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - scripts/validate-logs.sh
+    content_checks:
+      - pattern: "#!/bin/bash|curl.*loki"
+        in: scripts/validate-logs.sh
+      - pattern: "ready|/metrics"
+        in: scripts/validate-logs.sh
+    maturity_required: [intermediate, advanced]
+
+  "Traces validation script":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - scripts/validate-traces.sh
+    content_checks:
+      - pattern: "#!/bin/bash|curl.*jaeger"
+        in: scripts/validate-traces.sh
+      - pattern: "16686|/api/services"
+        in: scripts/validate-traces.sh
+    maturity_required: [intermediate, advanced]
+
+  "Sample instrumented application":
+    primary_skill: implementing-observability
+    required_files:
+      - examples/sample-app/app.py
+    content_checks:
+      - pattern: "import.*opentelemetry|from opentelemetry"
+        in: examples/sample-app/app.py
+      - pattern: "/metrics|prometheus|@app"
+        in: examples/sample-app/app.py
+    maturity_required: [starter]
+
+  "PromQL query examples":
+    primary_skill: implementing-observability
+    required_files:
+      - examples/queries/promql-examples.md
+    content_checks:
+      - pattern: "rate\\(|histogram_quantile|sum by"
+        in: examples/queries/promql-examples.md
+      - pattern: "http_requests_total|http_request_duration"
+        in: examples/queries/promql-examples.md
+    maturity_required: [starter, intermediate, advanced]
+
+  "LogQL query examples":
+    primary_skill: implementing-siem
+    required_files:
+      - examples/queries/logql-examples.md
+    content_checks:
+      - pattern: "\\{service=|\\|=|\\| json"
+        in: examples/queries/logql-examples.md
+      - pattern: "level=|rate\\(\\{|sum by"
+        in: examples/queries/logql-examples.md
+    maturity_required: [intermediate, advanced]
+
+  "Setup documentation":
+    primary_skill: implementing-observability
+    required_files:
+      - docs/SETUP.md
+    content_checks:
+      - pattern: "##|###|Step|Prerequisites"
+        in: docs/SETUP.md
+      - pattern: "docker-compose up|kubectl apply|helm install"
+        in: docs/SETUP.md
+    maturity_required: [starter, intermediate, advanced]
+
+  "Architecture documentation":
+    primary_skill: implementing-observability
+    required_files:
+      - docs/ARCHITECTURE.md
+    content_checks:
+      - pattern: "##|###|Component|Architecture"
+        in: docs/ARCHITECTURE.md
+      - pattern: "Prometheus|Grafana|Loki|OpenTelemetry"
+        in: docs/ARCHITECTURE.md
+    maturity_required: [intermediate, advanced]
+
+  "Runbook documentation":
+    primary_skill: implementing-observability
+    required_files:
+      - docs/RUNBOOK.md
+    content_checks:
+      - pattern: "##|###|Alert:|Incident|Runbook"
+        in: docs/RUNBOOK.md
+      - pattern: "HighErrorRate|HighLatency|Acknowledge|Mitigate"
+        in: docs/RUNBOOK.md
+    maturity_required: [intermediate, advanced]
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Learning-focused observability with Docker Compose, basic dashboards, and getting started guides"
+
+    require_additionally:
+      - "OpenTelemetry collector configuration"
+      - "Prometheus configuration"
+      - "Grafana data source configuration"
+      - "Golden Signals dashboard"
+      - "Jaeger configuration"
+      - "OpenTelemetry instrumentation (Node.js)"
+      - "OpenTelemetry instrumentation (Python)"
+      - "Docker Compose deployment"
+      - "Sample instrumented application"
+      - "PromQL query examples"
+      - "Setup documentation"
+
+    skip_deliverables:
+      - "Prometheus alert rules"
+      - "SLO alert rules"
+      - "RED method dashboard"
+      - "USE method dashboard"
+      - "SLO tracking dashboard"
+      - "Loki configuration"
+      - "Promtail configuration"
+      - "Log parsing rules"
+      - "Alertmanager configuration"
+      - "Alert notification templates"
+      - "Kubernetes namespace"
+      - "Prometheus Operator"
+      - "ServiceMonitor CRDs"
+      - "Grafana Kubernetes deployment"
+      - "Loki StatefulSet"
+      - "Fluent Bit DaemonSet"
+      - "OpenTelemetry Collector deployment"
+      - "CI/CD observability checks"
+      - "Metrics validation script"
+      - "Logs validation script"
+      - "Traces validation script"
+      - "LogQL query examples"
+      - "Architecture documentation"
+      - "Runbook documentation"
+
+    empty_dirs_allowed:
+      - kubernetes/
+      - prometheus/alerts/
+      - loki/
+      - alertmanager/
+      - ci-cd/
+      - monitoring/grafana/dashboards/advanced/
+
+    generation_adjustments:
+      - Use Docker Compose for all components (not Kubernetes)
+      - Include comprehensive inline comments
+      - Provide pre-configured docker-compose.yml with all services
+      - Include working sample application with instrumentation
+      - Add step-by-step setup guide in README
+      - Focus on single-host deployment
+      - Use all-in-one Jaeger (not distributed)
+      - Skip advanced alerting and SLO tracking
+
+  intermediate:
+    description: "Production-ready observability with LGTM stack, alerting, SLO tracking, and Kubernetes support"
+
+    require_additionally:
+      - "OpenTelemetry collector configuration"
+      - "Prometheus configuration"
+      - "Prometheus alert rules"
+      - "SLO alert rules"
+      - "Grafana data source configuration"
+      - "Golden Signals dashboard"
+      - "RED method dashboard"
+      - "USE method dashboard"
+      - "SLO tracking dashboard"
+      - "Loki configuration"
+      - "Promtail configuration"
+      - "Log parsing rules"
+      - "Jaeger configuration"
+      - "OpenTelemetry instrumentation (Node.js)"
+      - "OpenTelemetry instrumentation (Python)"
+      - "Alertmanager configuration"
+      - "Alert notification templates"
+      - "Kubernetes namespace"
+      - "Prometheus Operator"
+      - "ServiceMonitor CRDs"
+      - "Grafana Kubernetes deployment"
+      - "OpenTelemetry Collector deployment"
+      - "CI/CD observability checks"
+      - "Metrics validation script"
+      - "Logs validation script"
+      - "Traces validation script"
+      - "PromQL query examples"
+      - "LogQL query examples"
+      - "Setup documentation"
+      - "Architecture documentation"
+      - "Runbook documentation"
+
+    skip_deliverables:
+      - "Docker Compose deployment"
+      - "Sample instrumented application"
+      - "Loki StatefulSet"
+      - "Fluent Bit DaemonSet"
+
+    empty_dirs_allowed:
+      - examples/sample-app/
+
+    generation_adjustments:
+      - Use Kubernetes for orchestration
+      - Include Prometheus Operator for dynamic discovery
+      - Configure LGTM stack (Loki, Grafana, Tempo, Mimir)
+      - Add comprehensive alert rules and SLO tracking
+      - Include Alertmanager with Slack/PagerDuty integration
+      - Provide CI/CD pipeline integration
+      - Add validation scripts for smoke testing
+      - Include runbooks for common incidents
+      - Use distributed Jaeger (not all-in-one)
+
+  advanced:
+    description: "Enterprise-scale observability with distributed LGTM stack, advanced SLOs, comprehensive testing, and multi-cluster support"
+
+    require_additionally:
+      - "OpenTelemetry collector configuration"
+      - "Prometheus configuration"
+      - "Prometheus alert rules"
+      - "SLO alert rules"
+      - "Grafana data source configuration"
+      - "Golden Signals dashboard"
+      - "RED method dashboard"
+      - "USE method dashboard"
+      - "SLO tracking dashboard"
+      - "Loki configuration"
+      - "Promtail configuration"
+      - "Log parsing rules"
+      - "Jaeger configuration"
+      - "OpenTelemetry instrumentation (Node.js)"
+      - "OpenTelemetry instrumentation (Python)"
+      - "Alertmanager configuration"
+      - "Alert notification templates"
+      - "Kubernetes namespace"
+      - "Prometheus Operator"
+      - "ServiceMonitor CRDs"
+      - "Grafana Kubernetes deployment"
+      - "Loki StatefulSet"
+      - "Fluent Bit DaemonSet"
+      - "OpenTelemetry Collector deployment"
+      - "CI/CD observability checks"
+      - "Metrics validation script"
+      - "Logs validation script"
+      - "Traces validation script"
+      - "PromQL query examples"
+      - "LogQL query examples"
+      - "Setup documentation"
+      - "Architecture documentation"
+      - "Runbook documentation"
+
+    skip_deliverables:
+      - "Docker Compose deployment"
+      - "Sample instrumented application"
+
+    empty_dirs_allowed: []
+
+    generation_adjustments:
+      - Use distributed LGTM stack (Loki, Grafana, Tempo, Mimir)
+      - Deploy Loki as StatefulSet with S3/GCS backend
+      - Configure Tempo for distributed tracing at scale
+      - Use Mimir for long-term metrics storage
+      - Add multi-burn rate SLO alerts
+      - Include advanced dashboards with anomaly detection
+      - Configure high availability for all components
+      - Add Fluent Bit DaemonSet for log collection
+      - Include federation for multi-cluster monitoring
+      - Add comprehensive integration tests
+      - Configure retention policies and downsampling
+      - Include cost optimization strategies
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **File existence checks**: Verify all required_files exist for the selected maturity level
+2. **Content validation**: Run regex pattern checks against file contents
+3. **Structural checks**: Ensure proper YAML/JSON syntax for configuration files
+4. **Integration validation**: Verify service connectivity (Prometheus can reach exporters, Grafana can query Prometheus/Loki/Tempo)
+5. **Smoke tests**: Run validation scripts (validate-metrics.sh, validate-logs.sh, validate-traces.sh)
+
+**Success criteria:**
+- All required deliverables present
+- All content_checks pass
+- No errors in configuration file syntax
+- Services can communicate (for intermediate/advanced)
+
+**Failure handling:**
+- Report missing deliverables with skill attribution
+- Show which content_checks failed and in which files
+- Provide remediation suggestions
+- Optionally re-run failed skill with corrected parameters
+
+---
+
 **Blueprint Complete**

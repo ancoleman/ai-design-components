@@ -1,0 +1,326 @@
+skill: "deploying-on-azure"
+version: "1.0"
+domain: "cloud"
+
+base_outputs:
+  # Core Azure infrastructure files - ALWAYS produced
+  - path: "infrastructure/azure/main.bicep"
+    must_contain: ["targetScope", "resource", "module"]
+    description: "Main Bicep template with resource definitions"
+
+  - path: "infrastructure/azure/parameters.json"
+    must_contain: ["parameters", "$schema"]
+    description: "Parameter file for environment-specific values"
+
+  - path: "infrastructure/azure/main.parameters.json"
+    must_contain: ["parameters", "value"]
+    description: "Default parameter values for Bicep deployment"
+
+  - path: "infrastructure/azure/variables.bicep"
+    must_contain: ["var", "@description"]
+    description: "Bicep variables for computed values and naming conventions"
+
+  - path: "infrastructure/azure/outputs.bicep"
+    must_contain: ["output"]
+    description: "Bicep outputs for deployed resource endpoints and identifiers"
+
+  - path: "infrastructure/azure/networking.bicep"
+    must_contain: ["Microsoft.Network/virtualNetworks", "subnets"]
+    description: "VNet configuration with subnets and NSG definitions"
+
+  - path: "infrastructure/azure/identity.bicep"
+    must_contain: ["Microsoft.ManagedIdentity/userAssignedIdentities", "roleAssignments"]
+    description: "Managed identities and RBAC role assignments"
+
+  - path: ".github/workflows/deploy-azure.yml"
+    must_contain: ["azure/login", "azure/arm-deploy"]
+    description: "GitHub Actions workflow for Azure deployment automation"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "infrastructure/azure/README.md"
+        must_contain: ["Prerequisites", "az login", "Deployment Steps"]
+        description: "Deployment guide with Azure CLI setup and step-by-step instructions"
+
+      - path: "infrastructure/azure/deploy.sh"
+        must_contain: ["az deployment group create", "bicep"]
+        description: "Simple deployment script using Azure CLI"
+
+      - path: "infrastructure/azure/parameters.example.json"
+        must_contain: ["# Example configuration", "value"]
+        description: "Example parameter values with comments explaining each setting"
+
+      - path: ".azureconfig"
+        must_contain: ["[defaults]", "location", "group"]
+        description: "Azure CLI default configuration for simplified commands"
+
+    intermediate:
+      - path: "infrastructure/azure/environments/dev.parameters.json"
+        must_contain: ["parameters", "environment", "dev"]
+        description: "Development environment parameter file"
+
+      - path: "infrastructure/azure/environments/staging.parameters.json"
+        must_contain: ["parameters", "environment", "staging"]
+        description: "Staging environment parameter file"
+
+      - path: "infrastructure/azure/environments/prod.parameters.json"
+        must_contain: ["parameters", "environment", "prod"]
+        description: "Production environment parameter file"
+
+      - path: "infrastructure/azure/monitoring.bicep"
+        must_contain: ["Microsoft.Insights/", "diagnosticSettings"]
+        description: "Azure Monitor, Application Insights, and diagnostic settings"
+
+      - path: "infrastructure/azure/private-endpoints.bicep"
+        must_contain: ["Microsoft.Network/privateEndpoints", "privateDnsZoneGroups"]
+        description: "Private Endpoints configuration for PaaS services"
+
+      - path: "infrastructure/azure/keyvault.bicep"
+        must_contain: ["Microsoft.KeyVault/vaults", "accessPolicies"]
+        description: "Key Vault for secrets, keys, and certificates management"
+
+      - path: "scripts/deploy-environment.sh"
+        must_contain: ["az deployment", "environment", "bicep"]
+        description: "Environment-aware deployment script with validation"
+
+    advanced:
+      - path: "infrastructure/azure/modules/README.md"
+        must_contain: ["Reusable Bicep modules"]
+        description: "Documentation for custom reusable Bicep modules"
+
+      - path: "infrastructure/azure/hub-spoke.bicep"
+        must_contain: ["virtualNetworkPeerings", "hub", "spoke"]
+        description: "Hub-and-spoke network topology with VNet peering"
+
+      - path: "infrastructure/azure/policy.bicep"
+        must_contain: ["Microsoft.Authorization/policyDefinitions", "policyAssignments"]
+        description: "Azure Policy definitions and assignments for governance"
+
+      - path: "infrastructure/azure/waf.bicep"
+        must_contain: ["Microsoft.Network/FrontDoorWebApplicationFirewallPolicies"]
+        description: "Web Application Firewall rules for application protection"
+
+      - path: "infrastructure/azure/backup.bicep"
+        must_contain: ["Microsoft.RecoveryServices/vaults", "backupPolicies"]
+        description: "Azure Backup configuration for automated backups"
+
+      - path: "infrastructure/azure/disaster-recovery.bicep"
+        must_contain: ["Microsoft.RecoveryServices/", "replicationPolicies"]
+        description: "Azure Site Recovery for disaster recovery and failover"
+
+      - path: "infrastructure/azure/cost-management.bicep"
+        must_contain: ["Microsoft.CostManagement/", "budgets"]
+        description: "Cost Management budgets, alerts, and optimization rules"
+
+      - path: "infrastructure/azure/compliance.bicep"
+        must_contain: ["Microsoft.Security/", "assessments"]
+        description: "Microsoft Defender and compliance monitoring"
+
+      - path: "infrastructure/azure/landing-zone.bicep"
+        must_contain: ["managementGroups", "subscriptions", "resourceGroups"]
+        description: "Azure Landing Zone architecture with management groups"
+
+  infrastructure:
+    kubernetes:  # AKS
+      - path: "infrastructure/azure/aks-cluster.bicep"
+        must_contain: ["Microsoft.ContainerService/managedClusters", "agentPoolProfiles"]
+        description: "AKS cluster with system and user node pools"
+
+      - path: "infrastructure/azure/aks-addons.bicep"
+        must_contain: ["addonProfiles", "omsagent", "azureKeyvaultSecretsProvider"]
+        description: "AKS add-ons (monitoring, Key Vault CSI, ingress controller)"
+
+      - path: "infrastructure/azure/aks-workload-identity.bicep"
+        must_contain: ["Microsoft.ManagedIdentity/", "federatedIdentityCredentials"]
+        description: "Workload Identity for AKS service accounts to access Azure resources"
+
+      - path: "infrastructure/azure/acr.bicep"
+        must_contain: ["Microsoft.ContainerRegistry/registries"]
+        description: "Azure Container Registry for container images"
+
+      - path: "infrastructure/azure/database.bicep"
+        must_contain: ["Microsoft.DBforPostgreSQL/flexibleServers", "privateEndpoint"]
+        description: "PostgreSQL Flexible Server or Azure SQL Database"
+
+      - path: "infrastructure/azure/storage.bicep"
+        must_contain: ["Microsoft.Storage/storageAccounts", "blobServices"]
+        description: "Azure Storage Account with blob containers and lifecycle policies"
+
+      - path: "infrastructure/azure/redis.bicep"
+        must_contain: ["Microsoft.Cache/redis", "privateEndpoint"]
+        description: "Azure Cache for Redis with Private Endpoint"
+
+      - path: "k8s/manifests/namespace.yaml"
+        must_contain: ["kind: Namespace", "apiVersion"]
+        description: "Kubernetes namespace definitions"
+
+      - path: "k8s/manifests/deployment.yaml"
+        must_contain: ["kind: Deployment", "spec", "containers"]
+        description: "Kubernetes deployment manifests"
+
+      - path: "k8s/manifests/service.yaml"
+        must_contain: ["kind: Service", "spec", "ports"]
+        description: "Kubernetes service manifests"
+
+      - path: "k8s/manifests/ingress.yaml"
+        must_contain: ["kind: Ingress", "nginx"]
+        description: "Kubernetes ingress with nginx or Application Gateway"
+
+    managed_platform:  # Container Apps / App Service
+      - path: "infrastructure/azure/container-apps.bicep"
+        must_contain: ["Microsoft.App/containerApps", "managedEnvironments"]
+        description: "Azure Container Apps with managed environment"
+
+      - path: "infrastructure/azure/container-apps-environment.bicep"
+        must_contain: ["Microsoft.App/managedEnvironments", "vnetConfiguration"]
+        description: "Container Apps environment with VNet integration"
+
+      - path: "infrastructure/azure/container-apps-dapr.bicep"
+        must_contain: ["dapr", "componentType"]
+        description: "Dapr components for Container Apps (state, pub/sub, bindings)"
+
+      - path: "infrastructure/azure/app-service.bicep"
+        must_contain: ["Microsoft.Web/serverfarms", "Microsoft.Web/sites"]
+        description: "App Service Plan and Web App configuration"
+
+      - path: "infrastructure/azure/app-service-vnet.bicep"
+        must_contain: ["virtualNetworkSubnetId", "vnetRouteAllEnabled"]
+        description: "App Service VNet integration for outbound traffic"
+
+      - path: "infrastructure/azure/functions.bicep"
+        must_contain: ["Microsoft.Web/sites", "kind: functionapp"]
+        description: "Azure Functions app with consumption or premium plan"
+
+      - path: "infrastructure/azure/acr.bicep"
+        must_contain: ["Microsoft.ContainerRegistry/registries"]
+        description: "Azure Container Registry for container images"
+
+      - path: "infrastructure/azure/database.bicep"
+        must_contain: ["Microsoft.DBforPostgreSQL/flexibleServers", "Microsoft.Sql/servers"]
+        description: "Azure SQL Database or PostgreSQL Flexible Server"
+
+      - path: "infrastructure/azure/cosmos-db.bicep"
+        must_contain: ["Microsoft.DocumentDB/databaseAccounts", "locations"]
+        description: "Cosmos DB account with consistency level and replication"
+
+      - path: "infrastructure/azure/service-bus.bicep"
+        must_contain: ["Microsoft.ServiceBus/namespaces", "queues", "topics"]
+        description: "Service Bus namespace with queues and topics for messaging"
+
+      - path: "infrastructure/azure/storage.bicep"
+        must_contain: ["Microsoft.Storage/storageAccounts", "privateEndpoint"]
+        description: "Azure Storage Account with Private Endpoint"
+
+      - path: "Dockerfile"
+        must_contain: ["FROM", "EXPOSE", "CMD"]
+        description: "Container image for Container Apps or App Service deployment"
+
+      - path: ".dockerignore"
+        must_contain: ["node_modules", ".git", "*.md"]
+        description: "Files to exclude from Docker build context"
+
+    docker_compose:  # VM-based
+      - path: "infrastructure/azure/vm.bicep"
+        must_contain: ["Microsoft.Compute/virtualMachines", "osProfile"]
+        description: "Virtual Machine configuration with OS profile"
+
+      - path: "infrastructure/azure/vmss.bicep"
+        must_contain: ["Microsoft.Compute/virtualMachineScaleSets"]
+        description: "Virtual Machine Scale Set with auto-scaling rules"
+
+      - path: "infrastructure/azure/load-balancer.bicep"
+        must_contain: ["Microsoft.Network/loadBalancers", "backendAddressPools"]
+        description: "Azure Load Balancer for VM traffic distribution"
+
+      - path: "infrastructure/azure/vm-extensions.bicep"
+        must_contain: ["Microsoft.Compute/virtualMachines/extensions", "commandToExecute"]
+        description: "VM extensions for Docker installation and configuration"
+
+      - path: "infrastructure/azure/disks.bicep"
+        must_contain: ["Microsoft.Compute/disks", "diskSizeGB"]
+        description: "Managed disks for persistent storage"
+
+      - path: "docker-compose.yml"
+        must_contain: ["version:", "services:"]
+        description: "Docker Compose configuration for multi-container setup"
+
+      - path: "scripts/vm-init.sh"
+        must_contain: ["#!/bin/bash", "docker", "docker-compose"]
+        description: "VM initialization script for Docker and app setup"
+
+      - path: ".env.example"
+        must_contain: ["AZURE_SUBSCRIPTION_ID", "RESOURCE_GROUP"]
+        description: "Environment variable template for Docker Compose"
+
+scaffolding:
+  - path: "infrastructure/azure/bicepconfig.json"
+    reason: "Bicep configuration for linting rules and module aliases"
+
+  - path: "infrastructure/azure/.bicep/modules/"
+    reason: "Cached Bicep modules (auto-generated)"
+
+  - path: "infrastructure/azure/terraform.tfstate"
+    reason: "Terraform state file if using Terraform instead of Bicep"
+
+  - path: "infrastructure/azure/.terraform/"
+    reason: "Terraform plugins directory if using Terraform"
+
+  - path: "scripts/validate-deployment.sh"
+    reason: "Post-deployment validation and health checks"
+
+  - path: "docs/architecture.md"
+    reason: "Architecture diagram and design decisions"
+
+  - path: "docs/runbook.md"
+    reason: "Operational procedures and troubleshooting guide"
+
+  - path: ".github/workflows/bicep-validate.yml"
+    reason: "CI pipeline for Bicep validation and linting"
+
+  - path: ".github/workflows/terraform-plan.yml"
+    reason: "CI pipeline for Terraform validation (if using Terraform)"
+
+metadata:
+  primary_blueprints: ["cloud"]
+  contributes_to:
+    - "Azure infrastructure provisioning"
+    - "VNet and networking with Private Endpoints"
+    - "Managed Identity and RBAC configuration"
+    - "Compute deployment (Container Apps, AKS, Functions, App Service, VMs)"
+    - "Database setup (Azure SQL, Cosmos DB, PostgreSQL, MySQL)"
+    - "Storage configuration (Blob Storage, Files, Disks)"
+    - "AI integration (Azure OpenAI, Cognitive Services)"
+    - "Messaging patterns (Service Bus, Event Grid, Event Hubs)"
+    - "Monitoring and observability (Azure Monitor, Application Insights)"
+    - "Security and compliance (Key Vault, Policy, Defender)"
+    - "CI/CD automation (GitHub Actions, Azure DevOps)"
+    - "Cost optimization and governance"
+
+  common_combinations:
+    - skill: "infrastructure-as-code"
+      reason: "Bicep and Terraform best practices for Azure"
+
+    - skill: "kubernetes-operations"
+      reason: "AKS cluster management and workload deployment"
+
+    - skill: "building-ci-pipelines"
+      reason: "Azure DevOps and GitHub Actions integration"
+
+    - skill: "secret-management"
+      reason: "Azure Key Vault and Managed Identity patterns"
+
+    - skill: "observability"
+      reason: "Azure Monitor, Application Insights, and Log Analytics"
+
+    - skill: "auth-security"
+      reason: "Entra ID authentication and Conditional Access"
+
+    - skill: "ai-chat"
+      reason: "Azure OpenAI Service integration"
+
+    - skill: "databases-nosql"
+      reason: "Cosmos DB deployment and optimization"
+
+    - skill: "implementing-mlops"
+      reason: "Azure Machine Learning and AI infrastructure"

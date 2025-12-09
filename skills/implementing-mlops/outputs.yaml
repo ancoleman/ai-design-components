@@ -1,0 +1,241 @@
+skill: "implementing-mlops"
+version: "1.0"
+domain: "ai-ml"
+
+base_outputs:
+  # Core MLOps infrastructure files ALWAYS produced
+  - path: "mlops/config/mlflow_config.yaml"
+    must_contain: ["tracking_uri", "experiment_name", "artifact_location"]
+    description: "MLflow configuration for experiment tracking and model registry"
+
+  - path: "mlops/training/train.py"
+    must_contain: ["mlflow\\.start_run", "mlflow\\.log_param", "mlflow\\.log_metric"]
+    description: "Training script with MLflow experiment tracking integration"
+
+  - path: "mlops/model_registry/model_metadata.yaml"
+    must_contain: ["model_name", "version", "stage", "metrics"]
+    description: "Model registry metadata including versioning and stage management"
+
+  - path: "mlops/monitoring/drift_detection.py"
+    must_contain: ["detect_drift", "KolmogorovSmirnov|PSI|chi_square"]
+    description: "Data and model drift detection implementation"
+
+  - path: "requirements.txt"
+    must_contain: ["mlflow"]
+    description: "Python dependencies for MLOps infrastructure"
+
+conditional_outputs:
+
+  maturity:
+    starter:
+      - path: "mlops/serving/simple_api.py"
+        must_contain: ["FastAPI|Flask", "predict"]
+        description: "Basic REST API for model serving"
+
+      - path: "mlops/pipelines/basic_pipeline.py"
+        must_contain: ["def train", "def evaluate", "def deploy"]
+        description: "Simple training pipeline without orchestration"
+
+      - path: "docker-compose.yml"
+        must_contain: ["mlflow", "postgres"]
+        description: "Docker Compose setup for local MLflow server"
+
+    intermediate:
+      - path: "mlops/features/feature_definitions.py"
+        must_contain: ["FeatureView|Feature", "online_store|offline_store"]
+        description: "Feature store definitions for training/serving consistency"
+
+      - path: "mlops/serving/deployment_config.yaml"
+        must_contain: ["resources", "replicas", "autoscaling"]
+        description: "Deployment configuration with resource management"
+
+      - path: "mlops/pipelines/orchestrated_pipeline.py"
+        must_contain: ["@task|@op|@component", "pipeline|workflow"]
+        description: "Orchestrated ML pipeline with dependencies"
+
+      - path: "mlops/validation/model_validation.py"
+        must_contain: ["accuracy|precision|recall", "threshold", "validation"]
+        description: "Automated model validation suite"
+
+      - path: ".github/workflows/ml_ci_cd.yml"
+        must_contain: ["train", "test", "deploy"]
+        description: "CI/CD pipeline for model deployment automation"
+
+    advanced:
+      - path: "mlops/features/feast_feature_store.py"
+        must_contain: ["FeatureStore", "get_online_features", "get_historical_features"]
+        description: "Production-grade feature store with online/offline serving"
+
+      - path: "mlops/serving/canary_deployment.yaml"
+        must_contain: ["canary|traffic_split", "stable", "candidate"]
+        description: "Canary deployment strategy configuration"
+
+      - path: "mlops/pipelines/kubeflow_pipeline.py"
+        must_contain: ["@dsl\\.component|@dsl\\.pipeline", "ContainerOp|create_component_from_func"]
+        description: "Kubeflow Pipelines for ML orchestration"
+
+      - path: "mlops/monitoring/observability_dashboard.py"
+        must_contain: ["prometheus|grafana", "metrics", "drift"]
+        description: "Comprehensive monitoring dashboard with drift detection"
+
+      - path: "mlops/governance/model_card.md"
+        must_contain: ["Model Details", "Intended Use", "Limitations", "Fairness"]
+        description: "Model card for governance and compliance"
+
+      - path: "mlops/optimization/model_quantization.py"
+        must_contain: ["quantize|quantization", "int8|float16"]
+        description: "Model optimization for inference performance"
+
+  infrastructure:
+    kubernetes:
+      - path: "k8s/mlflow-deployment.yaml"
+        must_contain: ["kind: Deployment", "mlflow", "containerPort"]
+        description: "Kubernetes deployment for MLflow server"
+
+      - path: "k8s/model-serving-deployment.yaml"
+        must_contain: ["kind: Deployment", "image:", "resources:"]
+        description: "Kubernetes deployment for model serving"
+
+      - path: "k8s/seldon-inference-graph.yaml"
+        must_contain: ["SeldonDeployment|InferenceService", "predictor"]
+        description: "Seldon Core or KServe inference service configuration"
+
+      - path: "k8s/gpu-node-pool.yaml"
+        must_contain: ["gpu|accelerator", "nodeSelector|tolerations"]
+        description: "GPU node pool configuration for training workloads"
+
+    docker_compose:
+      - path: "docker-compose.yml"
+        must_contain: ["mlflow", "postgres", "minio|s3"]
+        description: "Docker Compose with MLflow, database, and artifact storage"
+
+      - path: "mlops/serving/Dockerfile"
+        must_contain: ["FROM", "COPY", "CMD|ENTRYPOINT"]
+        description: "Dockerfile for model serving container"
+
+    managed_platform:
+      - path: "mlops/cloud/sagemaker_pipeline.py"
+        must_contain: ["sagemaker|SageMaker", "Pipeline|TrainingStep"]
+        description: "AWS SageMaker pipeline configuration"
+
+      - path: "mlops/cloud/vertex_pipeline.py"
+        must_contain: ["vertex_ai|aiplatform", "pipeline"]
+        description: "GCP Vertex AI pipeline configuration"
+
+      - path: "terraform/mlops_infrastructure.tf"
+        must_contain: ["resource", "provider", "aws|google|azurerm"]
+        description: "Terraform infrastructure as code for managed ML platform"
+
+  model_type:
+    deep_learning:
+      - path: "mlops/training/pytorch_train.py"
+        must_contain: ["torch\\.nn|nn\\.Module", "optimizer", "loss"]
+        description: "PyTorch deep learning training script"
+
+      - path: "mlops/serving/torchserve_config.yaml"
+        must_contain: ["model_store", "inference_address", "management_address"]
+        description: "TorchServe configuration for PyTorch model serving"
+
+      - path: "mlops/optimization/onnx_conversion.py"
+        must_contain: ["onnx", "export|convert"]
+        description: "ONNX model conversion for optimized inference"
+
+    classical_ml:
+      - path: "mlops/training/sklearn_train.py"
+        must_contain: ["sklearn|scikit-learn", "fit", "predict"]
+        description: "Scikit-learn classical ML training script"
+
+      - path: "mlops/features/feature_engineering.py"
+        must_contain: ["transform|fit_transform", "StandardScaler|OneHotEncoder"]
+        description: "Feature engineering pipeline for classical ML"
+
+  ml_framework:
+    pytorch:
+      - path: "mlops/models/pytorch_model.py"
+        must_contain: ["torch\\.nn\\.Module", "forward"]
+        description: "PyTorch model architecture definition"
+
+      - path: "mlops/training/pytorch_lightning_train.py"
+        must_contain: ["LightningModule|pl\\.LightningModule", "training_step"]
+        description: "PyTorch Lightning training with best practices"
+
+    tensorflow:
+      - path: "mlops/models/tensorflow_model.py"
+        must_contain: ["tf\\.keras|tensorflow\\.keras", "Model|Sequential"]
+        description: "TensorFlow/Keras model architecture"
+
+      - path: "mlops/serving/tfserving_config.yaml"
+        must_contain: ["model_config_list", "base_path"]
+        description: "TensorFlow Serving configuration"
+
+    sklearn:
+      - path: "mlops/models/sklearn_pipeline.py"
+        must_contain: ["Pipeline", "fit", "predict"]
+        description: "Scikit-learn pipeline with preprocessing and model"
+
+    xgboost:
+      - path: "mlops/training/xgboost_train.py"
+        must_contain: ["xgboost|xgb", "DMatrix", "train"]
+        description: "XGBoost training with hyperparameter tuning"
+
+  experiment_tracking:
+    mlflow:
+      - path: "mlops/tracking/mlflow_setup.py"
+        must_contain: ["mlflow\\.set_tracking_uri", "mlflow\\.create_experiment"]
+        description: "MLflow tracking server setup and initialization"
+
+      - path: "mlops/training/mlflow_autolog.py"
+        must_contain: ["mlflow\\.autolog|mlflow\\.sklearn\\.autolog|mlflow\\.pytorch\\.autolog"]
+        description: "MLflow autologging for automatic experiment tracking"
+
+      - path: "scripts/setup_mlflow_server.sh"
+        must_contain: ["mlflow server", "backend-store-uri", "default-artifact-root"]
+        description: "Script to start MLflow server with PostgreSQL and S3"
+
+    wandb:
+      - path: "mlops/tracking/wandb_setup.py"
+        must_contain: ["wandb\\.init", "wandb\\.log", "wandb\\.finish"]
+        description: "Weights & Biases experiment tracking integration"
+
+      - path: "mlops/training/wandb_sweep.yaml"
+        must_contain: ["program:", "method:", "parameters:"]
+        description: "W&B Sweeps configuration for hyperparameter optimization"
+
+    neptune:
+      - path: "mlops/tracking/neptune_setup.py"
+        must_contain: ["neptune\\.init", "run\\[.*\\]\\s*="]
+        description: "Neptune.ai tracking for enterprise ML workflows"
+
+scaffolding:
+  - path: "data/raw/"
+    reason: "Placeholder for raw training data - populated by data pipelines"
+
+  - path: "data/processed/"
+    reason: "Placeholder for processed features - generated during training"
+
+  - path: "models/staging/"
+    reason: "Staging area for models under validation before production"
+
+  - path: "models/production/"
+    reason: "Production models directory - populated by deployment pipeline"
+
+  - path: "artifacts/plots/"
+    reason: "Directory for training plots and visualizations"
+
+  - path: "artifacts/reports/"
+    reason: "Directory for model evaluation reports and metrics"
+
+  - path: "logs/"
+    reason: "Application and training logs directory"
+
+metadata:
+  primary_blueprints: ["ml-pipeline"]
+  contributes_to:
+    - "ML Model Training Pipeline"
+    - "Model Serving Infrastructure"
+    - "Experiment Tracking System"
+    - "Feature Store Implementation"
+    - "Model Monitoring and Drift Detection"
+    - "ML Workflow Orchestration"
+    - "Model Registry and Versioning"
+    - "Production Model Deployment"

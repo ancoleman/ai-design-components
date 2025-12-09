@@ -1171,4 +1171,335 @@ All additions will integrate with existing MLflow tracking and monitoring.
 
 ---
 
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "MLflow experiment tracking":
+    primary_skill: implementing-mlops
+    required_files:
+      - src/models/train.py
+    content_checks:
+      - pattern: "import mlflow"
+        in: src/models/train.py
+      - pattern: "mlflow\\.log|mlflow\\.start_run"
+        in: src/models/train.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Training pipeline orchestration":
+    primary_skill: implementing-mlops
+    required_files:
+      - pipelines/training_pipeline.py
+    content_checks:
+      - pattern: "@flow|@task|def.*pipeline"
+        in: pipelines/training_pipeline.py
+      - pattern: "import prefect|from prefect"
+        in: pipelines/training_pipeline.py
+    maturity_required: [intermediate, advanced]
+
+  "Feature engineering code":
+    primary_skill: engineering-ai-data
+    required_files:
+      - src/features/feature_engineering.py
+    content_checks:
+      - pattern: "class.*Feature|def.*feature|transform"
+        in: src/features/feature_engineering.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Feature store (Feast)":
+    primary_skill: engineering-ai-data
+    required_files:
+      - src/features/feature_store.py
+      - src/features/feature_definitions.py
+    content_checks:
+      - pattern: "feast|FeatureStore|FeatureView"
+        in: src/features/
+    maturity_required: [intermediate, advanced]
+
+  "Data validation (Great Expectations)":
+    primary_skill: engineering-ai-data
+    required_files:
+      - src/data/validation.py
+    content_checks:
+      - pattern: "great_expectations|ExpectationSuite"
+        in: src/data/validation.py
+    maturity_required: [intermediate, advanced]
+
+  "Model serving API":
+    primary_skill: serving-models
+    required_files:
+      - src/serving/api.py
+      - src/serving/schemas.py
+    content_checks:
+      - pattern: "FastAPI|@app\\.(get|post)"
+        in: src/serving/api.py
+      - pattern: "BaseModel|Schema"
+        in: src/serving/schemas.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Model deployment infrastructure":
+    primary_skill: serving-models
+    required_files:
+      - infrastructure/docker/Dockerfile.serving
+    content_checks:
+      - pattern: "FROM|CMD|ENTRYPOINT"
+        in: infrastructure/docker/Dockerfile.serving
+    maturity_required: [starter, intermediate, advanced]
+
+  "Kubernetes deployment manifests":
+    primary_skill: designing-databases-vector
+    required_files:
+      - infrastructure/kubernetes/deployment.yaml
+      - infrastructure/kubernetes/service.yaml
+    content_checks:
+      - pattern: "kind: Deployment"
+        in: infrastructure/kubernetes/deployment.yaml
+      - pattern: "kind: Service"
+        in: infrastructure/kubernetes/service.yaml
+    maturity_required: [intermediate, advanced]
+
+  "Prometheus monitoring configuration":
+    primary_skill: implementing-observability
+    required_files:
+      - monitoring/prometheus/prometheus.yml
+      - monitoring/prometheus/alert_rules.yml
+    content_checks:
+      - pattern: "scrape_configs|job_name"
+        in: monitoring/prometheus/prometheus.yml
+      - pattern: "alert:|expr:"
+        in: monitoring/prometheus/alert_rules.yml
+    maturity_required: [intermediate, advanced]
+
+  "Grafana dashboards":
+    primary_skill: implementing-observability
+    required_files:
+      - monitoring/grafana/dashboards/training_metrics.json
+      - monitoring/grafana/dashboards/serving_metrics.json
+    content_checks:
+      - pattern: '"type":\\s*"graph"|"type":\\s*"gauge"'
+        in: monitoring/grafana/dashboards/
+      - pattern: '"title".*Training|"title".*Serving'
+        in: monitoring/grafana/dashboards/
+    maturity_required: [intermediate, advanced]
+
+  "Sample data generation script":
+    primary_skill: engineering-ai-data
+    required_files:
+      - scripts/generate_sample_data.py
+    content_checks:
+      - pattern: "def generate|def create"
+        in: scripts/generate_sample_data.py
+      - pattern: "to_csv|to_parquet|save"
+        in: scripts/generate_sample_data.py
+    maturity_required: [starter]
+
+  "Quick start notebook":
+    primary_skill: implementing-mlops
+    required_files:
+      - notebooks/01_quickstart.ipynb
+    content_checks:
+      - pattern: '"cell_type":\\s*"code"'
+        in: notebooks/01_quickstart.ipynb
+      - pattern: "train|mlflow|predict"
+        in: notebooks/01_quickstart.ipynb
+    maturity_required: [starter]
+
+  "CI/CD pipeline configuration":
+    primary_skill: assembling-components
+    required_files:
+      - .github/workflows/ci.yml
+      - .github/workflows/train.yml
+    content_checks:
+      - pattern: "on:\\s*(push|pull_request)"
+        in: .github/workflows/
+      - pattern: "pytest|test"
+        in: .github/workflows/ci.yml
+    maturity_required: [intermediate, advanced]
+
+  "Unit tests":
+    primary_skill: assembling-components
+    required_files:
+      - tests/unit/test_preprocessing.py
+      - tests/unit/test_model_training.py
+    content_checks:
+      - pattern: "def test_|@pytest"
+        in: tests/unit/
+      - pattern: "assert"
+        in: tests/unit/
+    maturity_required: [intermediate, advanced]
+
+  "Integration tests":
+    primary_skill: assembling-components
+    required_files:
+      - tests/integration/test_training_pipeline.py
+    content_checks:
+      - pattern: "def test_|@pytest"
+        in: tests/integration/
+      - pattern: "pipeline|end.to.end"
+        in: tests/integration/
+    maturity_required: [advanced]
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Learning-focused with working examples, extensive documentation, minimal infrastructure"
+
+    require_additionally:
+      - "Sample data generation script"
+      - "Quick start notebook"
+      - "Model serving API"
+      - "MLflow experiment tracking"
+      - "Feature engineering code"
+
+    skip_deliverables:
+      - "Feature store (Feast)"
+      - "Data validation (Great Expectations)"
+      - "Kubernetes deployment manifests"
+      - "Prometheus monitoring configuration"
+      - "Grafana dashboards"
+      - "CI/CD pipeline configuration"
+      - "Unit tests"
+      - "Integration tests"
+
+    empty_dirs_allowed:
+      - infrastructure/kubernetes/
+      - monitoring/grafana/dashboards/
+      - monitoring/prometheus/
+      - tests/integration/
+      - data/raw/
+      - data/processed/
+      - models/trained/
+
+    generation_adjustments:
+      - Add extensive inline comments
+      - Include README with step-by-step setup
+      - Provide sample data out of the box
+      - Use Docker Compose instead of Kubernetes
+      - Include notebooks for exploration
+
+  intermediate:
+    description: "Production-ready patterns with automation, monitoring, and testing"
+
+    require_additionally:
+      - "CI/CD pipeline configuration"
+      - "Unit tests"
+      - "Prometheus monitoring configuration"
+      - "Grafana dashboards"
+      - "Feature store (Feast)"
+      - "Data validation (Great Expectations)"
+      - "Training pipeline orchestration"
+
+    skip_deliverables:
+      - "Integration tests"
+      - "Sample data generation script"
+      - "Quick start notebook"
+
+    empty_dirs_allowed:
+      - data/raw/
+      - data/processed/
+      - models/trained/
+      - tests/fixtures/
+
+    generation_adjustments:
+      - Include production-grade error handling
+      - Add monitoring and alerting
+      - Set up CI/CD pipeline
+      - Configure feature store
+      - Enable data validation
+
+  advanced:
+    description: "Enterprise-scale with full automation, advanced monitoring, comprehensive testing"
+
+    require_additionally:
+      - "Kubernetes deployment manifests"
+      - "Integration tests"
+      - "Feature store (Feast)"
+      - "Data validation (Great Expectations)"
+      - "Prometheus monitoring configuration"
+      - "Grafana dashboards"
+      - "CI/CD pipeline configuration"
+      - "Training pipeline orchestration"
+
+    skip_deliverables: []
+
+    empty_dirs_allowed:
+      - data/raw/
+      - data/processed/
+      - models/trained/
+
+    generation_adjustments:
+      - Enable all features and integrations
+      - Add comprehensive testing suite
+      - Include performance optimization
+      - Set up distributed training support
+      - Configure multi-environment deployment
+      - Enable advanced monitoring and observability
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **Load maturity profile** - Determine which deliverables are required based on user's selected maturity level
+
+2. **Check required files exist** - Verify each deliverable's required files are present in the generated project
+
+3. **Run content checks** - Use grep/pattern matching to verify files contain expected code (not just scaffolding)
+
+4. **Calculate completeness score**:
+   ```
+   completeness = (fulfilled_deliverables / required_deliverables) * 100
+   ```
+
+5. **Report results**:
+   - If completeness >= 90%: Success, ready to use
+   - If completeness 70-89%: Warning, some optional features missing
+   - If completeness < 70%: Failure, critical features missing
+
+6. **Offer remediation** if completeness < 90%:
+   ```
+   Missing deliverables detected:
+   - Grafana dashboards: monitoring/grafana/dashboards/ is empty
+   - Feature store: src/features/feature_store.py missing
+
+   Would you like me to:
+   a) Generate missing components now
+   b) Continue with current implementation
+   c) See detailed gap report
+   ```
+
+### Integration with Skills
+
+Skills receive expectations context to know what to generate:
+
+```python
+expectations_context = {
+    "blueprint": "ml-pipeline",
+    "maturity": "starter",
+    "required_deliverables": [
+        "MLflow experiment tracking",
+        "Model serving API",
+        "Sample data generation script",
+        "Quick start notebook",
+        "Feature engineering code"
+    ],
+    "skipped_deliverables": [
+        "Feature store (Feast)",
+        "Kubernetes deployment manifests",
+        "Grafana dashboards"
+    ]
+}
+```
+
+This ensures skills know exactly what's expected and can validate their own outputs before completing.
+
+---
+
 **Blueprint Complete**

@@ -1,0 +1,274 @@
+skill: "writing-github-actions"
+version: "1.0"
+domain: "developer"
+
+base_outputs:
+  # Core workflow files (always generated)
+  - path: ".github/workflows/ci.yml"
+    must_contain:
+      - "name:"
+      - "on:"
+      - "jobs:"
+      - "runs-on:"
+      - "steps:"
+      - "uses: actions/checkout@"
+
+  # Dependabot configuration for action updates
+  - path: ".github/dependabot.yml"
+    must_contain:
+      - "version: 2"
+      - "package-ecosystem: \"github-actions\""
+      - "directory: \"/\""
+      - "schedule:"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Basic CI workflow with standard triggers
+      - path: ".github/workflows/ci.yml"
+        must_contain:
+          - "on: [push, pull_request]"
+          - "npm ci"
+          - "npm test"
+          - "actions/setup-node@"
+          - "cache: 'npm'"
+
+      # Basic dependabot setup
+      - path: ".github/dependabot.yml"
+        must_contain:
+          - "interval: \"weekly\""
+
+    intermediate:
+      # Multiple workflows with job dependencies
+      - path: ".github/workflows/ci.yml"
+        must_contain:
+          - "needs:"
+          - "actions/upload-artifact@"
+          - "actions/download-artifact@"
+          - "if:"
+
+      # Deployment workflow with environment
+      - path: ".github/workflows/deploy.yml"
+        must_contain:
+          - "environment:"
+          - "secrets."
+          - "workflow_dispatch:"
+
+      # Composite action for common setup
+      - path: ".github/actions/setup-project/action.yml"
+        must_contain:
+          - "name:"
+          - "description:"
+          - "inputs:"
+          - "runs:"
+          - "using: \"composite\""
+          - "shell:"
+
+      # Path filters for monorepo
+      - path: ".github/workflows/ci.yml"
+        must_contain:
+          - "paths:"
+          - "branches:"
+
+    advanced:
+      # Reusable workflow definition
+      - path: ".github/workflows/reusable-build.yml"
+        must_contain:
+          - "workflow_call:"
+          - "inputs:"
+          - "outputs:"
+          - "secrets:"
+
+      # Caller workflow using reusable workflow
+      - path: ".github/workflows/ci.yml"
+        must_contain:
+          - "uses: ./.github/workflows/"
+          - "secrets: inherit"
+
+      # Matrix builds
+      - path: ".github/workflows/test-matrix.yml"
+        must_contain:
+          - "strategy:"
+          - "matrix:"
+          - "fail-fast:"
+          - "${{ matrix."
+
+      # Concurrency control
+      - path: ".github/workflows/deploy.yml"
+        must_contain:
+          - "concurrency:"
+          - "group:"
+          - "cancel-in-progress:"
+
+      # OIDC authentication (no long-lived credentials)
+      - path: ".github/workflows/deploy.yml"
+        must_contain:
+          - "permissions:"
+          - "id-token: write"
+          - "role-to-assume:"
+
+      # Composite action with outputs
+      - path: ".github/actions/build-cache/action.yml"
+        must_contain:
+          - "outputs:"
+          - "value: ${{ steps."
+          - "id:"
+
+      # Security scanning workflow
+      - path: ".github/workflows/security.yml"
+        must_contain:
+          - "permissions:"
+          - "contents: read"
+          - "security-events: write"
+
+  infrastructure:
+    docker:
+      # Docker build and push workflow
+      - path: ".github/workflows/docker.yml"
+        must_contain:
+          - "docker/build-push-action@"
+          - "docker/login-action@"
+          - "docker/setup-buildx-action@"
+
+    kubernetes:
+      # K8s deployment workflow
+      - path: ".github/workflows/deploy-k8s.yml"
+        must_contain:
+          - "kubectl"
+          - "kubeconfig"
+          - "namespace:"
+
+    terraform:
+      # Terraform CI workflow
+      - path: ".github/workflows/terraform.yml"
+        must_contain:
+          - "terraform init"
+          - "terraform plan"
+          - "terraform apply"
+          - "working-directory:"
+
+    cloud:
+      # Cloud-specific deployment
+      - path: ".github/workflows/deploy-cloud.yml"
+        must_contain:
+          - "environment:"
+          - "permissions:"
+          - "id-token: write"
+
+scaffolding:
+  # Workflow directories
+  - path: ".github/workflows/"
+    type: "directory"
+
+  - path: ".github/actions/"
+    type: "directory"
+
+  # Common composite actions
+  - path: ".github/actions/setup-project/action.yml"
+    template: "composite-setup"
+    description: "Reusable setup action for installing dependencies"
+
+  # Standard CI workflow
+  - path: ".github/workflows/ci.yml"
+    template: "basic-ci"
+    description: "Basic CI workflow with linting and testing"
+
+  # Deployment workflow template
+  - path: ".github/workflows/deploy.yml"
+    template: "deploy"
+    description: "Deployment workflow with environment protection"
+
+  # Dependabot configuration
+  - path: ".github/dependabot.yml"
+    template: "dependabot"
+    description: "Automated dependency updates for GitHub Actions"
+
+  # Workflow validation script
+  - path: "scripts/validate-workflow.sh"
+    template: "validate"
+    description: "Script to validate GitHub Actions workflow syntax"
+
+metadata:
+  primary_blueprints:
+    - "ci-cd"
+
+  contributes_to:
+    - "GitHub Actions workflows"
+    - "Reusable workflows"
+    - "Composite actions"
+    - "CI/CD pipelines"
+    - "Automated deployments"
+    - "Security scanning"
+    - "Matrix builds"
+    - "OIDC authentication"
+
+  typical_file_count:
+    starter: 2-3          # Basic CI + dependabot
+    intermediate: 4-6    # CI + deploy + composite action
+    advanced: 8-12       # Multiple workflows + reusable workflows + composite actions
+
+  validation:
+    # Files that should be validated
+    file_patterns:
+      - "*.yml"
+      - "*.yaml"
+    # Common validation errors to check
+    checks:
+      - "Valid YAML syntax"
+      - "Required keys present (name, on, jobs)"
+      - "Action versions pinned"
+      - "Permissions specified (security)"
+      - "Secrets referenced correctly"
+      - "Composite actions have shell specified"
+      - "Reusable workflows use workflow_call trigger"
+
+  optimization_hints:
+    # Caching
+    - "Use built-in cache in setup actions (cache: 'npm')"
+    - "Cache key should include lock file hash"
+    - "Use restore-keys for partial cache matches"
+
+    # Parallelization
+    - "Jobs run in parallel by default"
+    - "Use needs: to create dependencies only when required"
+    - "Matrix builds for multi-version testing"
+
+    # Concurrency
+    - "Add concurrency control to prevent redundant runs"
+    - "Use cancel-in-progress: true for feature branches"
+    - "Use cancel-in-progress: false for deployments"
+
+    # Security
+    - "Pin actions to commit SHA (not tags)"
+    - "Use OIDC for cloud authentication (no long-lived secrets)"
+    - "Specify minimal permissions at workflow or job level"
+    - "Use environment protection rules for production"
+
+    # Performance
+    - "Use fetch-depth: 1 for shallow clones"
+    - "Run independent jobs in parallel"
+    - "Use conditional execution (if:) to skip unnecessary jobs"
+    - "Upload artifacts only when needed (they consume storage)"
+
+  common_triggers:
+    - "push"                    # Code pushed to repository
+    - "pull_request"            # PR opened/updated
+    - "workflow_dispatch"       # Manual trigger
+    - "schedule"                # Cron-based scheduling
+    - "workflow_call"           # Reusable workflow
+    - "release"                 # Release created
+    - "workflow_run"            # Triggered by another workflow
+
+  recommended_actions:
+    checkout: "actions/checkout@v5"
+    setup_node: "actions/setup-node@v4"
+    setup_python: "actions/setup-python@v5"
+    cache: "actions/cache@v4"
+    upload_artifact: "actions/upload-artifact@v4"
+    download_artifact: "actions/download-artifact@v5"
+    docker_buildx: "docker/setup-buildx-action@v3"
+    docker_login: "docker/login-action@v3"
+    docker_build: "docker/build-push-action@v5"
+    aws_credentials: "aws-actions/configure-aws-credentials@v4"
+    azure_login: "azure/login@v2"
+    gcp_auth: "google-github-actions/auth@v2"

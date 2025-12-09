@@ -1,0 +1,596 @@
+skill: "designing-distributed-systems"
+version: "1.0"
+domain: "infrastructure"
+
+# Base outputs required for all distributed systems projects
+base_outputs:
+  - path: "docs/architecture.md"
+    must_contain: ["CAP", "consistency", "replication", "partitioning"]
+    reason: "Architecture documentation with distributed systems trade-offs"
+
+  - path: "docs/consistency-model.md"
+    must_contain: ["consistency model", "trade-off"]
+    reason: "Document chosen consistency model and rationale"
+
+  - path: "config/service-discovery.yaml"
+    must_contain: ["service", "discovery"]
+    reason: "Service discovery configuration"
+
+  - path: "docs/resilience-patterns.md"
+    must_contain: ["circuit breaker", "retry", "timeout"]
+    reason: "Document resilience patterns implemented"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "services/simple-replication.yaml"
+        must_contain: ["replicas:", "leader"]
+        reason: "Basic leader-follower replication setup"
+
+      - path: "config/cache-config.yaml"
+        must_contain: ["cache", "ttl"]
+        reason: "Simple cache-aside pattern configuration"
+
+      - path: "docs/cap-choice.md"
+        must_contain: ["CAP", "CP", "AP"]
+        reason: "Document CAP theorem choice (CP vs AP)"
+
+      - path: "services/circuit-breaker.py"
+        must_contain: ["CircuitBreaker", "CLOSED", "OPEN"]
+        reason: "Basic circuit breaker implementation"
+
+    intermediate:
+      - path: "services/replication/"
+        must_contain: ["leader", "follower", "synchronous"]
+        reason: "Leader-follower replication with sync/async options"
+
+      - path: "services/partitioning/"
+        must_contain: ["hash", "consistent_hashing", "partition"]
+        reason: "Hash-based partitioning implementation"
+
+      - path: "services/saga/"
+        must_contain: ["saga", "compensating", "transaction"]
+        reason: "Saga pattern for distributed transactions"
+
+      - path: "config/quorum-config.yaml"
+        must_contain: ["quorum", "W", "R", "N"]
+        reason: "Quorum configuration (W+R > N)"
+
+      - path: "services/circuit-breaker/"
+        must_contain: ["circuit_breaker", "failure_threshold", "timeout"]
+        reason: "Production circuit breaker with configurable thresholds"
+
+      - path: "services/service-discovery/"
+        must_contain: ["consul", "etcd", "registry"]
+        reason: "Service registry integration"
+
+      - path: "monitoring/replication-lag.yaml"
+        must_contain: ["lag", "replica", "alert"]
+        reason: "Monitor replication lag"
+
+    advanced:
+      - path: "services/multi-leader-replication/"
+        must_contain: ["multi-leader", "conflict", "resolution", "vector_clock"]
+        reason: "Multi-leader replication with conflict resolution"
+
+      - path: "services/leaderless-replication/"
+        must_contain: ["quorum", "read_repair", "anti_entropy"]
+        reason: "Leaderless (Dynamo-style) replication"
+
+      - path: "services/event-sourcing/"
+        must_contain: ["event", "store", "replay", "snapshot"]
+        reason: "Event sourcing implementation with snapshots"
+
+      - path: "services/cqrs/"
+        must_contain: ["command", "query", "read_model", "write_model"]
+        reason: "CQRS with separate read/write models"
+
+      - path: "services/saga-orchestrator/"
+        must_contain: ["orchestrator", "saga", "compensating", "rollback"]
+        reason: "Saga orchestration pattern with compensating transactions"
+
+      - path: "services/consensus/"
+        must_contain: ["raft", "paxos", "leader_election"]
+        reason: "Consensus algorithm implementation (Raft or Paxos)"
+
+      - path: "services/geographic-partitioning/"
+        must_contain: ["geo", "partition", "region", "locality"]
+        reason: "Geographic partitioning for data locality"
+
+      - path: "config/causal-consistency.yaml"
+        must_contain: ["causal", "causality", "vector_clock", "lamport"]
+        reason: "Causal consistency tracking configuration"
+
+      - path: "monitoring/distributed-tracing.yaml"
+        must_contain: ["trace", "correlation_id", "jaeger", "zipkin"]
+        reason: "Distributed tracing for request correlation"
+
+      - path: "monitoring/saga-monitoring.yaml"
+        must_contain: ["saga", "timeout", "compensation", "state"]
+        reason: "Monitor saga progress and failures"
+
+      - path: "chaos-testing/chaos-experiments.yaml"
+        must_contain: ["chaos", "partition", "latency", "failure"]
+        reason: "Chaos engineering experiments for resilience testing"
+
+  infrastructure:
+    kubernetes:
+      - path: "k8s/service-mesh.yaml"
+        must_contain: ["istio", "linkerd", "sidecar"]
+        reason: "Service mesh for resilience and observability"
+
+      - path: "k8s/pod-anti-affinity.yaml"
+        must_contain: ["podAntiAffinity", "topology"]
+        reason: "Pod anti-affinity for replica distribution"
+
+      - path: "k8s/network-policies.yaml"
+        must_contain: ["NetworkPolicy", "ingress", "egress"]
+        reason: "Network policies for service-to-service communication"
+
+      - path: "k8s/circuit-breaker-config.yaml"
+        must_contain: ["circuit_breaker", "outlier_detection"]
+        reason: "Service mesh circuit breaker configuration"
+
+    docker_compose:
+      - path: "docker-compose.yml"
+        must_contain: ["services:", "replicas:", "networks:"]
+        reason: "Multi-service Docker Compose setup"
+
+      - path: "docker-compose.override.yml"
+        must_contain: ["depends_on:", "healthcheck:"]
+        reason: "Service dependencies and health checks"
+
+      - path: "haproxy/haproxy.cfg"
+        must_contain: ["backend", "balance", "server"]
+        reason: "HAProxy for load balancing and service discovery"
+
+  cloud_provider:
+    aws:
+      - path: "aws/dynamodb-config.tf"
+        must_contain: ["aws_dynamodb_table", "hash_key", "global_secondary_index"]
+        reason: "DynamoDB for leaderless replication (AP system)"
+
+      - path: "aws/rds-multi-az.tf"
+        must_contain: ["multi_az", "replica"]
+        reason: "RDS Multi-AZ for leader-follower replication"
+
+      - path: "aws/elasticache-redis.tf"
+        must_contain: ["replication_group", "automatic_failover_enabled"]
+        reason: "ElastiCache Redis cluster for caching"
+
+      - path: "aws/route53-failover.tf"
+        must_contain: ["failover", "health_check"]
+        reason: "Route53 failover routing for multi-region"
+
+    gcp:
+      - path: "gcp/cloud-spanner.tf"
+        must_contain: ["google_spanner_database", "num_nodes"]
+        reason: "Cloud Spanner for globally distributed SQL (CP system)"
+
+      - path: "gcp/cloud-sql-ha.tf"
+        must_contain: ["availability_type", "REGIONAL"]
+        reason: "Cloud SQL with high availability (leader-follower)"
+
+      - path: "gcp/memorystore-redis.tf"
+        must_contain: ["tier", "HA"]
+        reason: "Memorystore Redis for caching with HA"
+
+    azure:
+      - path: "azure/cosmos-db.tf"
+        must_contain: ["azurerm_cosmosdb_account", "consistency_level", "geo_location"]
+        reason: "Cosmos DB with multi-region replication"
+
+      - path: "azure/sql-failover-group.tf"
+        must_contain: ["failover_group", "read_write_endpoint"]
+        reason: "Azure SQL failover groups for multi-region"
+
+      - path: "azure/redis-cache.tf"
+        must_contain: ["azurerm_redis_cache", "redis_configuration"]
+        reason: "Azure Cache for Redis"
+
+    multi-cloud:
+      - path: "multi-cloud/spanner-cockroachdb.tf"
+        must_contain: ["cockroach", "node", "region"]
+        reason: "CockroachDB for multi-cloud distributed SQL"
+
+      - path: "multi-cloud/consul-config.hcl"
+        must_contain: ["datacenter", "wan_join", "retry_join"]
+        reason: "Consul for multi-datacenter service mesh"
+
+      - path: "multi-cloud/replication-config.yaml"
+        must_contain: ["datacenter", "replication", "conflict_resolution"]
+        reason: "Multi-datacenter replication configuration"
+
+  service_mesh:
+    istio:
+      - path: "istio/circuit-breaker.yaml"
+        must_contain: ["DestinationRule", "trafficPolicy", "outlierDetection"]
+        reason: "Istio circuit breaker configuration"
+
+      - path: "istio/retry-policy.yaml"
+        must_contain: ["VirtualService", "retries", "perTryTimeout"]
+        reason: "Istio retry policy with exponential backoff"
+
+      - path: "istio/timeout.yaml"
+        must_contain: ["VirtualService", "timeout"]
+        reason: "Request timeout configuration"
+
+      - path: "istio/rate-limiting.yaml"
+        must_contain: ["EnvoyFilter", "ratelimit"]
+        reason: "Rate limiting to prevent overload"
+
+    linkerd:
+      - path: "linkerd/service-profile.yaml"
+        must_contain: ["ServiceProfile", "routes", "timeout"]
+        reason: "Linkerd service profile with timeouts and retries"
+
+      - path: "linkerd/traffic-split.yaml"
+        must_contain: ["TrafficSplit", "backend", "weight"]
+        reason: "Traffic splitting for multi-leader routing"
+
+    consul:
+      - path: "consul/service-mesh.hcl"
+        must_contain: ["service", "connect", "sidecar_service"]
+        reason: "Consul Connect service mesh configuration"
+
+      - path: "consul/intentions.hcl"
+        must_contain: ["intention", "source", "destination", "action"]
+        reason: "Service-to-service authorization"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "docs/"
+    type: "directory"
+    description: "Documentation for distributed system design decisions"
+
+  - path: "services/"
+    type: "directory"
+    description: "Service implementations (replication, partitioning, saga, etc.)"
+
+  - path: "config/"
+    type: "directory"
+    description: "Configuration files for consistency, partitioning, caching"
+
+  - path: "monitoring/"
+    type: "directory"
+    description: "Monitoring configurations for distributed system metrics"
+
+  - path: "examples/"
+    type: "directory"
+    description: "Working code examples for patterns (circuit breaker, saga, etc.)"
+
+  - path: "scripts/"
+    type: "directory"
+    description: "Utility scripts for testing, chaos engineering, failover"
+
+  - path: "docs/architecture.md"
+    type: "file"
+    template: |
+      # Distributed System Architecture
+
+      ## CAP Theorem Choice
+
+      **Selected:** [CP / AP]
+
+      **Rationale:**
+      - [Why this choice makes sense for the use case]
+      - [Trade-offs accepted]
+
+      ## PACELC Analysis
+
+      - **If Partition:** [Availability / Consistency]
+      - **Else (normal):** [Latency / Consistency]
+
+      **System classification:** [PC/EL, PA/EL, etc.]
+
+      ## Consistency Model
+
+      **Selected:** [Strong / Eventual / Causal / Bounded Staleness]
+
+      **Rationale:**
+      - [Business requirements]
+      - [Performance requirements]
+
+      ## Replication Pattern
+
+      **Selected:** [Leader-Follower / Multi-Leader / Leaderless]
+
+      **Configuration:**
+      - Replication type: [Synchronous / Asynchronous]
+      - Number of replicas: [N]
+      - Quorum (if applicable): W=[W], R=[R], N=[N]
+
+      ## Partitioning Strategy
+
+      **Selected:** [Hash / Range / Geographic]
+
+      **Rationale:**
+      - [Query patterns]
+      - [Data distribution]
+      - [Hot spot prevention]
+
+      ## Resilience Patterns
+
+      - Circuit Breaker: [Yes/No]
+      - Bulkhead: [Yes/No]
+      - Retry with backoff: [Yes/No]
+      - Timeout: [Yes/No]
+      - Rate limiting: [Yes/No]
+
+      ## Service Discovery
+
+      **Method:** [Client-side / Server-side / Service Mesh]
+      **Tool:** [Consul / etcd / Eureka / Istio / Linkerd]
+
+      ## Transaction Pattern
+
+      **Selected:** [ACID / Saga / Event Sourcing + CQRS / None]
+
+      **Saga type (if applicable):** [Choreography / Orchestration]
+
+  - path: "docs/consistency-model.md"
+    type: "file"
+    template: |
+      # Consistency Model
+
+      ## Chosen Model
+
+      **[Strong Consistency / Eventual Consistency / Causal Consistency / Bounded Staleness]**
+
+      ## Use Cases and Trade-offs
+
+      ### Use Cases Requiring This Model
+
+      - [Use case 1: e.g., bank transfers require strong consistency]
+      - [Use case 2: e.g., social feed can tolerate eventual consistency]
+
+      ### Trade-offs Accepted
+
+      **Performance:**
+      - Latency: [Impact on latency]
+      - Throughput: [Impact on throughput]
+
+      **Availability:**
+      - Availability during partition: [Impact]
+
+      ## Configuration
+
+      [Document specific configuration parameters, quorum settings, etc.]
+
+  - path: "docs/resilience-patterns.md"
+    type: "file"
+    template: |
+      # Resilience Patterns
+
+      ## Circuit Breaker
+
+      **Implemented:** [Yes/No]
+
+      **Configuration:**
+      - Failure threshold: [e.g., 5 failures]
+      - Timeout: [e.g., 60 seconds]
+      - Success threshold: [e.g., 2 successes in HALF-OPEN]
+
+      ## Retry Strategy
+
+      **Policy:** [Exponential backoff / Fixed interval / No retry]
+
+      **Configuration:**
+      - Max retries: [e.g., 3]
+      - Initial delay: [e.g., 100ms]
+      - Max delay: [e.g., 10s]
+      - Jitter: [Yes/No]
+
+      ## Timeout
+
+      **Request timeout:** [e.g., 30s]
+      **Connection timeout:** [e.g., 5s]
+
+      ## Bulkhead Isolation
+
+      **Thread pools:**
+      - Service A: [pool size]
+      - Service B: [pool size]
+
+      ## Rate Limiting
+
+      **Algorithm:** [Token bucket / Leaky bucket / Fixed window]
+      **Limits:** [e.g., 100 requests/minute per client]
+
+  - path: "README.md"
+    type: "file"
+    template: |
+      # Distributed System
+
+      This project implements a distributed system with the following characteristics:
+
+      ## Architecture
+
+      - **CAP Choice:** [CP / AP]
+      - **Consistency Model:** [Strong / Eventual / Causal]
+      - **Replication:** [Leader-Follower / Multi-Leader / Leaderless]
+      - **Partitioning:** [Hash / Range / Geographic]
+
+      ## Key Features
+
+      - Circuit breaker for fault tolerance
+      - [Saga pattern / Event sourcing] for distributed transactions
+      - Service discovery with [tool]
+      - Distributed tracing with [tool]
+
+      ## Quick Start
+
+      See `docs/architecture.md` for detailed design decisions.
+
+      ## Testing
+
+      - Unit tests: `make test`
+      - Integration tests: `make test-integration`
+      - Chaos tests: `make chaos-test`
+
+      ## Monitoring
+
+      - Replication lag: [dashboard link]
+      - Circuit breaker state: [dashboard link]
+      - Saga progress: [dashboard link]
+
+  - path: ".gitignore"
+    type: "file"
+    template: |
+      # Python
+      __pycache__/
+      *.py[cod]
+      venv/
+
+      # Secrets
+      .env
+      secrets/
+      *.key
+      *.pem
+
+      # Terraform
+      .terraform/
+      *.tfstate
+      *.tfstate.backup
+
+      # Logs
+      *.log
+      logs/
+
+      # OS
+      .DS_Store
+
+# Metadata
+metadata:
+  primary_blueprints: ["api-first", "k8s", "infrastructure"]
+  contributes_to:
+    - "Distributed system architecture"
+    - "Microservices patterns"
+    - "High availability and fault tolerance"
+    - "Multi-datacenter and multi-region deployments"
+    - "Scalability and consistency trade-offs"
+
+  common_patterns:
+    - "Leader-follower replication with async/sync options"
+    - "Circuit breaker for preventing cascading failures"
+    - "Saga pattern for distributed transactions (choreography/orchestration)"
+    - "Consistent hashing for partitioning"
+    - "Event sourcing + CQRS for audit and performance"
+    - "Quorum-based consistency (W+R > N)"
+    - "Service mesh for resilience (Istio/Linkerd)"
+
+  integration_points:
+    kubernetes: "Deploy with pod anti-affinity, network policies, service mesh"
+    databases: "Configure replication, partitioning, consistency levels"
+    messaging: "Use for saga orchestration, event-driven architectures"
+    observability: "Distributed tracing, replication lag monitoring, circuit breaker metrics"
+    security: "mTLS for service-to-service communication, network segmentation"
+
+  typical_directory_structure: |
+    project/
+    ├── docs/
+    │   ├── architecture.md           # CAP/PACELC, consistency, replication, partitioning
+    │   ├── consistency-model.md      # Detailed consistency model choice
+    │   ├── resilience-patterns.md    # Circuit breaker, retry, timeout, bulkhead
+    │   └── runbook.md                # Operational procedures
+    ├── services/
+    │   ├── replication/
+    │   │   ├── leader-follower.py    # Leader-follower implementation
+    │   │   ├── multi-leader.py       # Multi-leader with conflict resolution
+    │   │   └── leaderless.py         # Quorum-based replication
+    │   ├── partitioning/
+    │   │   ├── consistent-hash.py    # Consistent hashing
+    │   │   ├── range-partition.py    # Range partitioning
+    │   │   └── geo-partition.py      # Geographic partitioning
+    │   ├── saga/
+    │   │   ├── choreography.py       # Event-driven saga
+    │   │   └── orchestration.py      # Centralized saga orchestrator
+    │   ├── event-sourcing/
+    │   │   ├── event-store.py        # Event store implementation
+    │   │   └── projections.py        # Event replay and projections
+    │   ├── cqrs/
+    │   │   ├── write-model.py        # Command side
+    │   │   └── read-model.py         # Query side (denormalized)
+    │   ├── circuit-breaker/
+    │   │   └── circuit-breaker.py    # Circuit breaker implementation
+    │   └── service-discovery/
+    │       └── consul-client.py      # Service registry client
+    ├── config/
+    │   ├── consistency-config.yaml   # Consistency model settings
+    │   ├── quorum-config.yaml        # W, R, N values
+    │   ├── cache-config.yaml         # Caching strategy
+    │   └── service-discovery.yaml    # Registry configuration
+    ├── monitoring/
+    │   ├── replication-lag.yaml      # Alert on high lag
+    │   ├── circuit-breaker-metrics.yaml # CB state changes
+    │   ├── saga-monitoring.yaml      # Saga timeouts and failures
+    │   └── distributed-tracing.yaml  # Jaeger/Zipkin config
+    ├── k8s/                          # Kubernetes manifests
+    │   ├── service-mesh.yaml         # Istio/Linkerd
+    │   ├── pod-anti-affinity.yaml    # Replica distribution
+    │   └── network-policies.yaml     # Service-to-service communication
+    ├── scripts/
+    │   ├── failover-test.sh          # Test failover scenarios
+    │   └── chaos-test.sh             # Chaos engineering experiments
+    └── examples/                     # Working code examples
+        ├── circuit-breaker/
+        ├── saga-orchestration/
+        ├── event-sourcing/
+        └── consistent-hashing/
+
+  tools:
+    replication:
+      - name: "PostgreSQL"
+        use_when: "Strong consistency, ACID transactions, leader-follower"
+      - name: "MongoDB"
+        use_when: "Flexible schema, leader-follower or multi-leader"
+      - name: "Cassandra"
+        use_when: "Leaderless replication, multi-datacenter, AP system"
+      - name: "DynamoDB"
+        use_when: "AWS-native, leaderless, AP system"
+      - name: "Cloud Spanner"
+        use_when: "Global SQL, strong consistency, CP system"
+      - name: "CockroachDB"
+        use_when: "Multi-cloud, strong consistency, PostgreSQL-compatible"
+
+    service_mesh:
+      - name: "Istio"
+        use_when: "Full-featured mesh, circuit breakers, retries, observability"
+      - name: "Linkerd"
+        use_when: "Lightweight, simple, Kubernetes-native"
+      - name: "Consul Connect"
+        use_when: "Multi-cloud, VM + Kubernetes, service discovery + mesh"
+
+    service_discovery:
+      - name: "Consul"
+        use_when: "Multi-datacenter, health checks, KV store"
+      - name: "etcd"
+        use_when: "Kubernetes-native, strongly consistent"
+      - name: "Eureka"
+        use_when: "Spring ecosystem, AP system"
+
+    messaging:
+      - name: "Kafka"
+        use_when: "Event sourcing, saga choreography, high throughput"
+      - name: "RabbitMQ"
+        use_when: "Saga orchestration, task queues, complex routing"
+      - name: "NATS"
+        use_when: "Lightweight, low latency, pub/sub"
+
+  validation_checks:
+    - "CAP/PACELC choice documented with rationale"
+    - "Consistency model chosen and configured"
+    - "Replication pattern implemented (leader-follower/multi-leader/leaderless)"
+    - "Partitioning strategy documented (hash/range/geographic)"
+    - "Circuit breaker configured with thresholds"
+    - "Retry policy with exponential backoff and jitter"
+    - "Timeouts set for all service calls"
+    - "Service discovery configured and health checks enabled"
+    - "Idempotency implemented for all distributed transactions"
+    - "Distributed tracing configured with correlation IDs"
+    - "Replication lag monitored and alerted"
+    - "Chaos engineering tests created and run regularly"
+    - "Saga compensating transactions tested"
+    - "Conflict resolution strategy documented (for multi-leader)"
+    - "Backup and disaster recovery plan documented"

@@ -1,0 +1,435 @@
+skill: "planning-disaster-recovery"
+version: "1.0"
+domain: "infrastructure"
+
+# Base outputs required for all disaster recovery implementations
+base_outputs:
+  - path: "docs/disaster-recovery-plan.md"
+    must_contain: ["RTO", "RPO", "Recovery Objectives"]
+    reason: "Comprehensive DR plan documenting RTO/RPO targets and recovery procedures"
+
+  - path: "runbooks/"
+    must_contain: []
+    reason: "Step-by-step operational procedures for DR scenarios"
+
+  - path: "backups/"
+    must_contain: []
+    reason: "Backup configuration and retention policies"
+
+  - path: "monitoring/backup-alerts.yaml"
+    must_contain: ["alert:", "backup"]
+    reason: "Alerting rules for backup failures and violations"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "docs/rto-rpo-requirements.md"
+        must_contain: ["RTO >", "RPO >", "Tier"]
+        reason: "Basic RTO/RPO definitions with criticality tiers"
+
+      - path: "backups/backup-schedule.sh"
+        must_contain: ["cron", "backup"]
+        reason: "Simple cron-based backup scheduling"
+
+      - path: "runbooks/backup-restore-basic.md"
+        must_contain: ["restore", "steps"]
+        reason: "Basic backup and restore procedures"
+
+      - path: "scripts/validate-backup.sh"
+        must_contain: ["#!/bin/bash", "backup"]
+        reason: "Manual backup validation script"
+
+    intermediate:
+      - path: "docs/disaster-recovery-plan.md"
+        must_contain: ["RTO", "RPO", "failover", "testing"]
+        reason: "Full DR plan with failover procedures and testing schedule"
+
+      - path: "runbooks/database-failover.md"
+        must_contain: ["Phase", "promotion", "DNS", "validation"]
+        reason: "Detailed database failover runbook with phases"
+
+      - path: "runbooks/region-failover.md"
+        must_contain: ["cross-region", "replication", "DNS"]
+        reason: "Region-level failover procedures"
+
+      - path: "backups/retention-policy.yaml"
+        must_contain: ["daily:", "weekly:", "monthly:"]
+        reason: "Tiered retention policy configuration"
+
+      - path: "scripts/test-restore.sh"
+        must_contain: ["restore", "verify", "staging"]
+        reason: "Automated restore testing to staging environment"
+
+      - path: "scripts/dr-drill.sh"
+        must_contain: ["failover", "test", "environment"]
+        reason: "Automated DR drill execution script"
+
+      - path: "monitoring/backup-dashboard.json"
+        must_contain: ["backup", "metrics", "panel"]
+        reason: "Backup monitoring dashboard (Grafana/CloudWatch)"
+
+    advanced:
+      - path: "docs/disaster-recovery-plan.md"
+        must_contain: ["RTO", "RPO", "Active-Active", "chaos", "compliance"]
+        reason: "Enterprise DR plan with chaos testing and compliance mapping"
+
+      - path: "runbooks/database-failover.md"
+        must_contain: ["automated", "promotion", "rollback", "metrics"]
+        reason: "Production-grade failover runbook with automation hooks"
+
+      - path: "runbooks/region-failover.md"
+        must_contain: ["multi-region", "traffic", "DNS", "automated"]
+        reason: "Multi-region failover with traffic shifting automation"
+
+      - path: "chaos/db-failover-test.sh"
+        must_contain: ["#!/bin/bash", "fail", "primary", "measure"]
+        reason: "Chaos engineering test for database failover validation"
+
+      - path: "chaos/region-failure-test.sh"
+        must_contain: ["#!/bin/bash", "region", "network", "failover"]
+        reason: "Chaos test simulating full region failure"
+
+      - path: "scripts/automated-db-failover.sh"
+        must_contain: ["promote", "verify-replication", "update-dns"]
+        reason: "Fully automated database failover execution"
+
+      - path: "scripts/generate-dr-report.sh"
+        must_contain: ["compliance", "report", "metrics"]
+        reason: "Automated DR compliance reporting"
+
+      - path: "scripts/check-retention.sh"
+        must_contain: ["retention", "policy", "violations"]
+        reason: "Automated retention policy compliance checking"
+
+      - path: "monitoring/backup-alerts.yaml"
+        must_contain: ["VeleroBackupFailed", "BackupTooOld", "RPO"]
+        reason: "Comprehensive Prometheus alerting rules"
+
+      - path: "monitoring/dr-metrics-dashboard.json"
+        must_contain: ["RTO", "RPO", "failover_time", "backup_success_rate"]
+        reason: "Advanced DR metrics dashboard"
+
+      - path: "docs/chaos-engineering-plan.md"
+        must_contain: ["scenarios", "monthly", "gameday"]
+        reason: "Chaos engineering testing plan and schedule"
+
+      - path: "docs/compliance-mapping.md"
+        must_contain: ["GDPR", "SOC 2", "HIPAA", "retention"]
+        reason: "DR compliance requirements mapping"
+
+  cloud_provider:
+    aws:
+      - path: "backups/aws/rds-backup-config.tf"
+        must_contain: ["aws_db_instance", "backup_retention_period", "backup_window"]
+        reason: "RDS automated backup configuration"
+
+      - path: "backups/aws/s3-replication.tf"
+        must_contain: ["aws_s3_bucket_replication_configuration", "cross-region"]
+        reason: "S3 Cross-Region Replication for backup storage"
+
+      - path: "backups/aws/aurora-global-db.tf"
+        must_contain: ["aws_rds_global_cluster", "source_db_cluster_identifier"]
+        reason: "Aurora Global Database for active-passive replication"
+
+      - path: "runbooks/aws-rds-failover.md"
+        must_contain: ["aws rds failover", "Multi-AZ", "promotion"]
+        reason: "AWS RDS-specific failover procedures"
+
+      - path: "scripts/aws-backup-validation.sh"
+        must_contain: ["aws rds describe-db-snapshots", "BackupRetentionPeriod"]
+        reason: "AWS backup validation and compliance check"
+
+    gcp:
+      - path: "backups/gcp/cloud-sql-backup.tf"
+        must_contain: ["google_sql_database_instance", "backup_configuration", "point_in_time_recovery"]
+        reason: "Cloud SQL backup and PITR configuration"
+
+      - path: "backups/gcp/gcs-replication.tf"
+        must_contain: ["google_storage_bucket", "storage_class", "MULTI_REGIONAL"]
+        reason: "GCS multi-regional bucket for backup storage"
+
+      - path: "runbooks/gcp-cloud-sql-failover.md"
+        must_contain: ["gcloud sql instances failover", "replica", "HA"]
+        reason: "GCP Cloud SQL failover procedures"
+
+      - path: "scripts/gcp-backup-validation.sh"
+        must_contain: ["gcloud sql backups list", "PITR"]
+        reason: "GCP backup validation script"
+
+    azure:
+      - path: "backups/azure/sql-backup.tf"
+        must_contain: ["azurerm_mssql_database", "short_term_retention_policy", "long_term_retention_policy"]
+        reason: "Azure SQL backup retention configuration"
+
+      - path: "backups/azure/storage-replication.tf"
+        must_contain: ["azurerm_storage_account", "account_replication_type", "GRS"]
+        reason: "Geo-redundant storage for backup replication"
+
+      - path: "backups/azure/site-recovery.tf"
+        must_contain: ["azurerm_site_recovery", "recovery_vault", "replication_policy"]
+        reason: "Azure Site Recovery for VM replication"
+
+      - path: "runbooks/azure-sql-failover.md"
+        must_contain: ["az sql db replica create", "failover group", "geo-replication"]
+        reason: "Azure SQL Database failover procedures"
+
+    multi-cloud:
+      - path: "backups/multi-cloud/backup-strategy.md"
+        must_contain: ["AWS", "GCP", "Azure", "cross-cloud"]
+        reason: "Multi-cloud backup strategy and considerations"
+
+      - path: "backups/multi-cloud/restic-config.yaml"
+        must_contain: ["repository:", "aws", "gcs", "azure"]
+        reason: "Restic configuration for multi-cloud backups"
+
+      - path: "scripts/multi-cloud-dr-validation.sh"
+        must_contain: ["aws", "gcloud", "az", "backup"]
+        reason: "Cross-cloud DR validation script"
+
+  infrastructure:
+    kubernetes:
+      - path: "backups/kubernetes/velero-config.yaml"
+        must_contain: ["Velero", "BackupStorageLocation", "schedule"]
+        reason: "Velero backup configuration for K8s cluster backup"
+
+      - path: "backups/kubernetes/velero-schedules.yaml"
+        must_contain: ["Schedule", "daily", "production"]
+        reason: "Scheduled backup policies for namespaces and PVs"
+
+      - path: "backups/kubernetes/etcd-backup-cronjob.yaml"
+        must_contain: ["CronJob", "etcdctl", "snapshot"]
+        reason: "etcd control plane backup automation"
+
+      - path: "runbooks/kubernetes-restore.md"
+        must_contain: ["velero restore", "namespace", "PersistentVolume"]
+        reason: "Kubernetes cluster and namespace restore procedures"
+
+      - path: "scripts/velero-backup-validation.sh"
+        must_contain: ["velero backup describe", "Completed"]
+        reason: "Velero backup validation script"
+
+    docker:
+      - path: "backups/docker/volume-backup.sh"
+        must_contain: ["docker run", "volume", "tar"]
+        reason: "Docker volume backup script"
+
+      - path: "backups/docker/backup-schedule.sh"
+        must_contain: ["docker-compose", "backup"]
+        reason: "Docker Compose application backup automation"
+
+  database:
+    postgresql:
+      - path: "backups/postgresql/pgbackrest.conf"
+        must_contain: ["[global]", "repo1-path", "repo1-retention"]
+        reason: "pgBackRest configuration for PostgreSQL backups"
+
+      - path: "backups/postgresql/pgbackrest-schedule.sh"
+        must_contain: ["pgbackrest", "full", "diff", "incr"]
+        reason: "Scheduled full, differential, and incremental backups"
+
+      - path: "backups/postgresql/walg-config.sh"
+        must_contain: ["WAL_G", "WALG_S3_PREFIX", "WALG_DELTA_MAX_STEPS"]
+        reason: "WAL-G configuration for continuous WAL archiving"
+
+      - path: "runbooks/postgresql-pitr-restore.md"
+        must_contain: ["pgbackrest restore", "recovery_target_time", "PITR"]
+        reason: "PostgreSQL point-in-time recovery procedures"
+
+    mysql:
+      - path: "backups/mysql/xtrabackup-config.cnf"
+        must_contain: ["[xtrabackup]", "parallel", "compress"]
+        reason: "Percona XtraBackup configuration"
+
+      - path: "backups/mysql/xtrabackup-schedule.sh"
+        must_contain: ["xtrabackup --backup", "full", "incremental"]
+        reason: "Scheduled MySQL hot backups"
+
+      - path: "runbooks/mysql-restore.md"
+        must_contain: ["xtrabackup --prepare", "xtrabackup --copy-back", "binlog"]
+        reason: "MySQL backup restore and PITR procedures"
+
+    mongodb:
+      - path: "backups/mongodb/mongodump-schedule.sh"
+        must_contain: ["mongodump", "gzip", "oplog"]
+        reason: "MongoDB logical backup with oplog for PITR"
+
+      - path: "backups/mongodb/atlas-backup-config.json"
+        must_contain: ["clusterName", "retentionInDays", "continuousBackupEnabled"]
+        reason: "MongoDB Atlas continuous backup configuration"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "docs/"
+    reason: "Documentation directory for DR plans and procedures"
+
+  - path: "runbooks/"
+    reason: "Operational runbooks for various DR scenarios"
+
+  - path: "backups/"
+    reason: "Backup configuration and policies"
+
+  - path: "scripts/"
+    reason: "Automation scripts for backup, restore, and DR testing"
+
+  - path: "monitoring/"
+    reason: "Monitoring configurations, alerts, and dashboards"
+
+  - path: "chaos/"
+    reason: "Chaos engineering tests for DR validation"
+
+  - path: "docs/disaster-recovery-plan.md"
+    reason: "Main DR plan document template"
+
+  - path: "docs/rto-rpo-requirements.md"
+    reason: "Document defining recovery objectives by system tier"
+
+  - path: "backups/README.md"
+    reason: "Document backup strategy and configuration"
+
+  - path: "runbooks/README.md"
+    reason: "Index of available DR runbooks"
+
+  - path: "scripts/README.md"
+    reason: "Document automation scripts and usage"
+
+  - path: ".gitignore"
+    reason: "Exclude backup files, temporary restore data, and logs"
+
+# Metadata
+metadata:
+  primary_blueprints: ["cloud", "k8s", "data-pipeline"]
+  contributes_to:
+    - "Disaster recovery plan"
+    - "Backup and restore procedures"
+    - "Business continuity planning"
+    - "Compliance requirements (GDPR, SOC 2, HIPAA)"
+    - "High availability architecture"
+    - "Chaos engineering validation"
+
+  common_patterns:
+    - "3-2-1 backup rule (3 copies, 2 media types, 1 offsite)"
+    - "RTO/RPO tiering by criticality (Tier 0: <1hr, Tier 1: 1-4hr, Tier 2: 4-24hr)"
+    - "Continuous WAL/binlog archiving for database PITR"
+    - "Cross-region replication (Active-Active, Active-Passive, Warm Standby, Pilot Light)"
+    - "Automated failover with DNS updates"
+    - "Monthly DR drills and chaos testing"
+    - "Immutable backups for ransomware protection"
+    - "Compliance-driven retention policies"
+
+  integration_points:
+    infrastructure: "Provisions backup infrastructure (S3, GCS, storage accounts)"
+    databases: "Configures database-specific backup tools (pgBackRest, XtraBackup)"
+    kubernetes: "Velero for cluster/PV backups, etcd snapshots"
+    observability: "Monitors backup jobs, tracks RTO/RPO metrics, alerts on failures"
+    security: "Encrypts backups, manages backup credentials, immutable storage"
+    compliance: "Meets regulatory retention requirements (GDPR, SOC 2, HIPAA)"
+
+  typical_directory_structure: |
+    project/
+    ├── docs/
+    │   ├── disaster-recovery-plan.md        # Main DR plan
+    │   ├── rto-rpo-requirements.md          # Recovery objectives
+    │   ├── chaos-engineering-plan.md        # Testing strategy
+    │   └── compliance-mapping.md            # Regulatory requirements
+    ├── runbooks/
+    │   ├── database-failover.md             # DB failover procedures
+    │   ├── region-failover.md               # Multi-region failover
+    │   ├── kubernetes-restore.md            # K8s restore procedures
+    │   └── README.md                        # Runbook index
+    ├── backups/
+    │   ├── postgresql/
+    │   │   ├── pgbackrest.conf              # pgBackRest config
+    │   │   └── pgbackrest-schedule.sh       # Backup schedules
+    │   ├── kubernetes/
+    │   │   ├── velero-config.yaml           # Velero setup
+    │   │   └── velero-schedules.yaml        # Backup schedules
+    │   ├── aws/                             # AWS-specific backups
+    │   ├── gcp/                             # GCP-specific backups
+    │   ├── azure/                           # Azure-specific backups
+    │   └── retention-policy.yaml            # Retention rules
+    ├── scripts/
+    │   ├── validate-backup.sh               # Backup integrity check
+    │   ├── test-restore.sh                  # Automated restore test
+    │   ├── dr-drill.sh                      # Full DR drill automation
+    │   ├── check-retention.sh               # Retention compliance
+    │   ├── generate-dr-report.sh            # Compliance reporting
+    │   └── automated-db-failover.sh         # Automated failover
+    ├── chaos/
+    │   ├── db-failover-test.sh              # Database failover chaos test
+    │   └── region-failure-test.sh           # Region failure simulation
+    └── monitoring/
+        ├── backup-alerts.yaml               # Prometheus alerts
+        └── dr-metrics-dashboard.json        # Grafana dashboard
+
+  database_backup_tools:
+    postgresql:
+      primary: "pgBackRest"
+      alternative: "WAL-G"
+      features: "PITR, compression, multi-repo, S3/GCS/Azure"
+    mysql:
+      primary: "Percona XtraBackup"
+      alternative: "WAL-G"
+      features: "Hot backups, incremental, parallel processing"
+    mongodb:
+      primary: "MongoDB Atlas Backup"
+      alternative: "mongodump"
+      features: "Continuous backup, PITR, automated"
+
+  kubernetes_backup_tools:
+    cluster:
+      primary: "Velero"
+      features: "PV snapshots, namespace backup, scheduling, selective restore"
+    control_plane:
+      primary: "etcdctl snapshot"
+      features: "etcd backup for cluster state recovery"
+
+  cross_region_patterns:
+    active_active:
+      rto: "< 1 minute"
+      rpo: "< 1 minute"
+      cost: "High"
+      use_case: "Both regions serve production traffic"
+    active_passive:
+      rto: "15-60 minutes"
+      rpo: "5-15 minutes"
+      cost: "Medium"
+      use_case: "Standby region for failover"
+    pilot_light:
+      rto: "10-30 minutes"
+      rpo: "5-15 minutes"
+      cost: "Low"
+      use_case: "Minimal secondary infrastructure"
+    warm_standby:
+      rto: "5-15 minutes"
+      rpo: "5-15 minutes"
+      cost: "Medium-High"
+      use_case: "Scaled-down secondary ready to scale up"
+
+  compliance_retention:
+    gdpr:
+      retention: "1-7 years"
+      requirements: "EU data residency, right to erasure"
+    soc2:
+      retention: "1 year+"
+      requirements: "Secure deletion, access controls, audit logs"
+    hipaa:
+      retention: "6 years"
+      requirements: "Encryption, PHI protection, secure deletion"
+    pci_dss:
+      retention: "3 months - 1 year"
+      requirements: "Secure deletion, quarterly reviews"
+
+  validation_checks:
+    - "RTO/RPO defined for all critical systems"
+    - "Backup schedules match RPO requirements"
+    - "Restore tested monthly (critical systems)"
+    - "Backups encrypted at rest and in transit"
+    - "3-2-1 backup rule implemented"
+    - "Cross-region replication configured (production)"
+    - "Retention policies meet compliance requirements"
+    - "Immutable backups enabled (ransomware protection)"
+    - "DR runbooks documented and accessible"
+    - "Chaos tests scheduled and executed"
+    - "Monitoring alerts for backup failures"
+    - "Failover automation tested quarterly"

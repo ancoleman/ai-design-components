@@ -1,0 +1,375 @@
+skill: "theming-components"
+version: "1.0"
+domain: "frontend"
+
+# Base outputs required for all theming implementations
+base_outputs:
+  - path: "tokens/"
+    must_contain: ["global/", "themes/", "components/"]
+    reason: "Design token directory structure (global → themes → components)"
+
+  - path: "tokens/global/"
+    must_contain: ["colors.json", "spacing.json", "typography.json"]
+    reason: "Core primitive design tokens"
+
+  - path: "build/"
+    must_contain: []
+    reason: "Platform-specific token outputs (CSS, SCSS, JS, iOS, Android)"
+
+  - path: "config.js"
+    must_contain: ["StyleDictionary", "source:", "platforms:"]
+    reason: "Style Dictionary configuration for token transformation"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "tokens/global/colors.json"
+        must_contain: ["$value", "$type"]
+        reason: "W3C design token format for color primitives"
+
+      - path: "tokens/themes/light.json"
+        must_contain: ["color"]
+        reason: "Light theme token overrides"
+
+      - path: "build/css/variables.css"
+        must_contain: [":root", "--color-", "var(--"]
+        reason: "CSS custom properties output"
+
+      - path: "examples/theme-switcher.html"
+        must_contain: ["data-theme", "setTheme"]
+        reason: "Basic light/dark mode toggle"
+
+    intermediate:
+      - path: "tokens/global/"
+        must_contain: ["colors.json", "spacing.json", "typography.json", "borders.json", "shadows.json"]
+        reason: "Complete 5-category token taxonomy"
+
+      - path: "tokens/themes/"
+        must_contain: ["light.json", "dark.json"]
+        reason: "Light and dark theme configurations"
+
+      - path: "build/css/"
+        must_contain: ["variables.css", "variables-dark.css"]
+        reason: "Multi-theme CSS outputs with theme selectors"
+
+      - path: "examples/ThemeProvider.tsx"
+        must_contain: ["createContext", "localStorage", "prefers-color-scheme"]
+        reason: "React theme provider with persistence and system preference"
+
+      - path: "tokens/components/"
+        must_contain: ["button.json"]
+        reason: "Component-specific design tokens"
+
+      - path: "scripts/validate_tokens.py"
+        must_contain: ["json", "schema"]
+        reason: "Token structure validation script"
+
+    advanced:
+      - path: "tokens/global/"
+        must_contain: ["colors.json", "spacing.json", "typography.json", "borders.json", "shadows.json", "motion.json", "z-index.json"]
+        reason: "Complete 7-category token taxonomy"
+
+      - path: "tokens/themes/"
+        must_contain: ["light.json", "dark.json", "high-contrast.json"]
+        reason: "Full theme set including high-contrast accessibility"
+
+      - path: "tokens/languages/"
+        must_contain: ["ar.json"]
+        reason: "RTL language support configuration"
+
+      - path: "build/"
+        must_contain: ["css/", "scss/", "js/", "ios/", "android/"]
+        reason: "Multi-platform token exports (web, mobile)"
+
+      - path: "scripts/generate_color_scale.py"
+        must_contain: ["colorsys", "def generate_scale"]
+        reason: "Color scale generation from base colors"
+
+      - path: "scripts/validate_contrast.py"
+        must_contain: ["WCAG", "contrast_ratio", "4.5"]
+        reason: "WCAG 2.1 contrast ratio validation"
+
+      - path: "scripts/validate_logical_properties.py"
+        must_contain: ["margin-inline", "padding-inline", "text-align: start"]
+        reason: "CSS logical property validation for RTL support"
+
+      - path: "examples/TokenUsageExample.tsx"
+        must_contain: ["var(--", "semantic token", "component token"]
+        reason: "Comprehensive token usage patterns (primitive/semantic/component)"
+
+  frontend_framework:
+    react:
+      - path: "examples/ThemeProvider.tsx"
+        must_contain: ["createContext", "useContext", "useState"]
+        reason: "React Context-based theme provider"
+
+      - path: "examples/ThemeToggle.tsx"
+        must_contain: ["useTheme", "toggleTheme"]
+        reason: "React theme toggle component"
+
+      - path: "build/js/tokens.d.ts"
+        must_contain: ["export", "declare"]
+        reason: "TypeScript type definitions for tokens"
+
+    vue:
+      - path: "examples/ThemeProvider.vue"
+        must_contain: ["provide", "inject", "ref"]
+        reason: "Vue Composition API theme provider"
+
+      - path: "examples/ThemeToggle.vue"
+        must_contain: ["<template>", "useTheme"]
+        reason: "Vue theme toggle component"
+
+    svelte:
+      - path: "examples/themeStore.ts"
+        must_contain: ["writable", "subscribe"]
+        reason: "Svelte store for theme management"
+
+      - path: "examples/ThemeToggle.svelte"
+        must_contain: ["<script>", "$theme"]
+        reason: "Svelte theme toggle component"
+
+    vanilla:
+      - path: "examples/theme-switcher.html"
+        must_contain: ["data-theme", "localStorage", "setAttribute"]
+        reason: "Vanilla JS theme implementation"
+
+  styling:
+    tailwind:
+      - path: "tailwind.config.js"
+        must_contain: ["theme:", "extend:", "colors:"]
+        reason: "Tailwind configuration with token integration"
+
+      - path: "build/js/tokens.js"
+        must_contain: ["export", "const"]
+        reason: "JavaScript tokens for Tailwind config consumption"
+
+      - path: "examples/tailwind-theme-example.tsx"
+        must_contain: ["className", "dark:"]
+        reason: "Tailwind with design token integration"
+
+    css_modules:
+      - path: "examples/Button.module.css"
+        must_contain: [".button", "var(--button-"]
+        reason: "CSS Modules using design tokens"
+
+      - path: "build/css/variables.css"
+        must_contain: [":root", "--"]
+        reason: "CSS custom properties for CSS Modules"
+
+    styled_components:
+      - path: "examples/StyledButton.tsx"
+        must_contain: ["styled.", "props.theme"]
+        reason: "Styled-components with theme prop"
+
+      - path: "examples/theme.ts"
+        must_contain: ["export const lightTheme", "export const darkTheme"]
+        reason: "Theme objects for styled-components ThemeProvider"
+
+    scss:
+      - path: "build/scss/_variables.scss"
+        must_contain: ["$color-", "$spacing-"]
+        reason: "SCSS variables from design tokens"
+
+      - path: "examples/styles.scss"
+        must_contain: ["@import", "$color-primary"]
+        reason: "SCSS consuming token variables"
+
+  state_management:
+    context:
+      - path: "examples/ThemeProvider.tsx"
+        must_contain: ["createContext", "ThemeContext.Provider"]
+        reason: "React Context for theme state"
+
+    zustand:
+      - path: "examples/useThemeStore.ts"
+        must_contain: ["create", "persist"]
+        reason: "Zustand store with persistence for theme state"
+
+    redux:
+      - path: "examples/themeSlice.ts"
+        must_contain: ["createSlice", "setTheme"]
+        reason: "Redux slice for theme management"
+
+    pinia:
+      - path: "examples/themeStore.ts"
+        must_contain: ["defineStore", "pinia"]
+        reason: "Pinia store for Vue theme state"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "tokens/global/colors.json"
+    reason: "Initialize primitive color tokens (9-shade scales)"
+
+  - path: "tokens/global/spacing.json"
+    reason: "Initialize spacing scale (4px base)"
+
+  - path: "tokens/global/typography.json"
+    reason: "Initialize typography tokens (fonts, sizes, weights)"
+
+  - path: "tokens/global/borders.json"
+    reason: "Initialize border width and radius tokens"
+
+  - path: "tokens/global/shadows.json"
+    reason: "Initialize shadow token definitions"
+
+  - path: "tokens/global/motion.json"
+    reason: "Initialize animation duration and easing tokens"
+
+  - path: "tokens/global/z-index.json"
+    reason: "Initialize z-index layering system"
+
+  - path: "tokens/themes/light.json"
+    reason: "Initialize light theme (default)"
+
+  - path: "tokens/themes/dark.json"
+    reason: "Initialize dark theme configuration"
+
+  - path: "tokens/themes/high-contrast.json"
+    reason: "Initialize high-contrast accessibility theme"
+
+  - path: "tokens/components/.gitkeep"
+    reason: "Initialize component tokens directory"
+
+  - path: "config.js"
+    reason: "Style Dictionary build configuration"
+
+  - path: "package.json"
+    reason: "Node.js dependencies (style-dictionary)"
+
+  - path: "build/.gitkeep"
+    reason: "Initialize build output directory"
+
+  - path: ".gitignore"
+    reason: "Ignore node_modules and build artifacts"
+
+  - path: "README.md"
+    reason: "Document design token system and usage"
+
+# Metadata
+metadata:
+  primary_blueprints: ["dashboard", "frontend"]
+  contributes_to:
+    - "Design token system (primitives, semantic, component tokens)"
+    - "Theme switching (light, dark, high-contrast, custom brands)"
+    - "RTL/i18n support (CSS logical properties)"
+    - "Accessibility (WCAG 2.1 AA/AAA compliance)"
+    - "Multi-platform export (CSS, SCSS, iOS, Android, JavaScript)"
+
+  common_patterns:
+    - "3-tier token hierarchy (primitive → semantic → component)"
+    - "W3C design token format ($value, $type)"
+    - "CSS custom properties with var() references"
+    - "Theme switching via data-theme attribute"
+    - "System preference detection (prefers-color-scheme)"
+    - "LocalStorage persistence for theme preference"
+    - "CSS logical properties for RTL support"
+    - "Reduced motion support (@media prefers-reduced-motion)"
+    - "WCAG contrast validation (4.5:1 normal text, 3:1 large text)"
+
+  integration_points:
+    all_component_skills: "All component skills reference design tokens for styling"
+    forms: "Form inputs use button/input component tokens"
+    data_viz: "Charts use semantic color tokens for consistent visualization"
+    dashboards: "Dashboard layout uses spacing and z-index tokens"
+    navigation: "Nav components use semantic color and spacing tokens"
+    feedback: "Alerts/toasts use semantic color tokens (success, error, warning)"
+
+  typical_directory_structure: |
+    project/
+    ├── tokens/                     # Source design tokens
+    │   ├── global/                 # Primitive tokens
+    │   │   ├── colors.json         # Color scales (blue-50 to blue-900)
+    │   │   ├── spacing.json        # Spacing scale (4px base)
+    │   │   ├── typography.json     # Font families, sizes, weights
+    │   │   ├── borders.json        # Border widths, radius
+    │   │   ├── shadows.json        # Box shadow definitions
+    │   │   ├── motion.json         # Animation durations, easings
+    │   │   └── z-index.json        # Layering system
+    │   ├── themes/                 # Theme overrides
+    │   │   ├── light.json          # Light theme (default)
+    │   │   ├── dark.json           # Dark theme
+    │   │   └── high-contrast.json  # Accessibility theme
+    │   ├── components/             # Component-specific tokens
+    │   │   ├── button.json         # Button tokens
+    │   │   ├── input.json          # Input tokens
+    │   │   └── chart.json          # Chart color tokens
+    │   └── languages/              # RTL/i18n configs
+    │       └── ar.json             # Arabic (RTL) overrides
+    ├── build/                      # Generated platform outputs
+    │   ├── css/
+    │   │   ├── variables.css           # Light theme CSS
+    │   │   ├── variables-dark.css      # Dark theme CSS
+    │   │   └── variables-high-contrast.css
+    │   ├── scss/
+    │   │   └── _variables.scss     # SCSS variables
+    │   ├── js/
+    │   │   ├── tokens.js           # ES6 module
+    │   │   └── tokens.d.ts         # TypeScript definitions
+    │   ├── ios/
+    │   │   └── DesignTokens.swift  # Swift class
+    │   └── android/
+    │       └── colors.xml          # Android resources
+    ├── scripts/                    # Token utilities
+    │   ├── generate_color_scale.py     # Generate 9-shade scales
+    │   ├── validate_tokens.py          # Structure validation
+    │   ├── validate_contrast.py        # WCAG compliance
+    │   └── validate_logical_properties.py  # RTL validation
+    ├── examples/                   # Usage examples
+    │   ├── ThemeProvider.tsx       # React theme provider
+    │   ├── ThemeToggle.tsx         # Theme switcher UI
+    │   ├── TokenUsageExample.tsx   # Token hierarchy demo
+    │   └── theme-switcher.html     # Vanilla JS example
+    ├── references/                 # Documentation
+    │   ├── color-system.md         # Color token details
+    │   ├── theme-switching.md      # Theme implementation guide
+    │   ├── logical-properties.md   # RTL support patterns
+    │   ├── accessibility-tokens.md # WCAG compliance guide
+    │   └── component-integration.md # How skills use tokens
+    ├── config.js                   # Style Dictionary config
+    ├── package.json                # Node dependencies
+    └── README.md                   # Project overview
+
+  tools_required:
+    - name: "Style Dictionary"
+      version: "^4.0.0"
+      purpose: "Transform design tokens to platform formats"
+      install: "npm install style-dictionary"
+
+    - name: "Python 3.x"
+      purpose: "Run validation and generation scripts"
+      packages: ["colorsys (built-in)"]
+
+  validation_checks:
+    - "W3C design token format ($value, $type) in all token files"
+    - "Primitive tokens exist (colors.json, spacing.json, typography.json)"
+    - "Light and dark themes defined"
+    - "CSS custom properties use kebab-case naming"
+    - "Component tokens reference semantic tokens (not primitives)"
+    - "WCAG 2.1 AA contrast ratios met (4.5:1 normal, 3:1 large)"
+    - "CSS logical properties used (margin-inline vs margin-left)"
+    - "Reduced motion support (@media prefers-reduced-motion)"
+    - "Theme switcher persists to localStorage"
+    - "System preference detection (prefers-color-scheme)"
+
+  anti_patterns:
+    - name: "Components use primitive tokens directly"
+      avoid: "--color-blue-500 in button"
+      use: "--button-bg-primary referencing --color-primary"
+
+    - name: "Physical CSS properties"
+      avoid: "margin-left, padding-right, text-align: left"
+      use: "margin-inline-start, padding-inline-end, text-align: start"
+
+    - name: "Hardcoded colors in components"
+      avoid: "color: #3B82F6"
+      use: "color: var(--button-text-primary)"
+
+    - name: "No theme switching support"
+      avoid: "Single hardcoded color set"
+      use: "CSS custom properties with data-theme attribute"
+
+    - name: "Missing accessibility themes"
+      avoid: "Only light and dark themes"
+      use: "Include high-contrast theme for WCAG AAA"

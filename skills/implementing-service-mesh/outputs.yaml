@@ -1,0 +1,539 @@
+skill: "implementing-service-mesh"
+version: "1.0"
+domain: "infrastructure"
+
+base_outputs:
+  - path: "mesh/README.md"
+    must_contain: ["Service Mesh", "mTLS", "traffic management"]
+    description: "Service mesh documentation and architecture overview"
+  - path: "mesh/config/namespace-config.yaml"
+    must_contain: ["namespace", "labels"]
+    description: "Namespace configuration for mesh injection"
+  - path: "docs/mesh-decision.md"
+    must_contain: ["Istio", "Linkerd", "Cilium", "comparison"]
+    description: "Service mesh selection rationale"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "mesh/config/mtls-config.yaml"
+        must_contain: ["PeerAuthentication", "PERMISSIVE"]
+        description: "Basic mTLS configuration in permissive mode"
+      - path: "mesh/traffic/basic-routing.yaml"
+        must_contain: ["VirtualService", "route"]
+        description: "Simple traffic routing configuration"
+      - path: "docs/getting-started.md"
+        must_contain: ["installation", "verification"]
+        description: "Getting started guide"
+
+    intermediate:
+      - path: "mesh/config/mtls-config.yaml"
+        must_contain: ["PeerAuthentication", "STRICT"]
+        description: "Strict mTLS enforcement"
+      - path: "mesh/security/authorization-policies.yaml"
+        must_contain: ["AuthorizationPolicy", "principals"]
+        description: "Identity-based authorization policies"
+      - path: "mesh/traffic/canary-deployment.yaml"
+        must_contain: ["weight", "subset"]
+        description: "Canary deployment configuration"
+      - path: "mesh/resilience/circuit-breaker.yaml"
+        must_contain: ["DestinationRule", "connectionPool", "outlierDetection"]
+        description: "Circuit breaker and connection pool settings"
+      - path: "mesh/observability/telemetry-config.yaml"
+        must_contain: ["metrics", "traces"]
+        description: "Observability configuration"
+
+    advanced:
+      - path: "mesh/multi-cluster/remote-secrets.yaml"
+        must_contain: ["secret", "cluster"]
+        description: "Multi-cluster service mesh secrets"
+      - path: "mesh/progressive-delivery/flagger-canary.yaml"
+        must_contain: ["Canary", "analysis", "metrics"]
+        description: "Automated progressive delivery with Flagger"
+      - path: "mesh/security/external-authorization.yaml"
+        must_contain: ["extensionProvider", "opa"]
+        description: "External authorization (OPA/custom)"
+      - path: "mesh/traffic/fault-injection.yaml"
+        must_contain: ["fault", "delay", "abort"]
+        description: "Chaos engineering with fault injection"
+      - path: "mesh/gateway/mesh-gateway.yaml"
+        must_contain: ["Gateway", "hosts", "servers"]
+        description: "Ingress/egress gateway configuration"
+      - path: "monitoring/mesh-dashboards.yaml"
+        must_contain: ["dashboard", "service mesh"]
+        description: "Grafana dashboards for mesh metrics"
+      - path: "monitoring/mesh-alerts.yaml"
+        must_contain: ["alert", "mtls", "traffic"]
+        description: "Alerting rules for mesh health"
+
+  service_mesh:
+    istio:
+      - path: "mesh/istio/install-config.yaml"
+        must_contain: ["IstioOperator", "profile"]
+        description: "Istio installation configuration"
+      - path: "mesh/istio/peer-authentication.yaml"
+        must_contain: ["apiVersion: security.istio.io/v1", "PeerAuthentication"]
+        description: "Istio mTLS peer authentication"
+      - path: "mesh/istio/virtual-service.yaml"
+        must_contain: ["apiVersion: networking.istio.io/v1", "VirtualService"]
+        description: "Istio traffic routing"
+      - path: "mesh/istio/destination-rule.yaml"
+        must_contain: ["apiVersion: networking.istio.io/v1", "DestinationRule"]
+        description: "Istio traffic policies and subsets"
+      - path: "mesh/istio/authorization-policy.yaml"
+        must_contain: ["apiVersion: security.istio.io/v1", "AuthorizationPolicy"]
+        description: "Istio authorization policies"
+      - path: "scripts/istio-install.sh"
+        must_contain: ["istioctl", "install"]
+        description: "Istio installation script"
+
+    linkerd:
+      - path: "mesh/linkerd/install-config.yaml"
+        must_contain: ["linkerd", "config"]
+        description: "Linkerd installation configuration"
+      - path: "mesh/linkerd/http-route.yaml"
+        must_contain: ["apiVersion: policy.linkerd.io/v1beta2", "HTTPRoute"]
+        description: "Linkerd traffic splitting"
+      - path: "mesh/linkerd/service-profile.yaml"
+        must_contain: ["apiVersion: linkerd.io/v1alpha2", "ServiceProfile"]
+        description: "Linkerd retries and timeouts"
+      - path: "mesh/linkerd/authorization-policy.yaml"
+        must_contain: ["apiVersion: policy.linkerd.io/v1alpha1", "AuthorizationPolicy"]
+        description: "Linkerd authorization"
+      - path: "scripts/linkerd-install.sh"
+        must_contain: ["linkerd", "install"]
+        description: "Linkerd installation script"
+
+    cilium:
+      - path: "mesh/cilium/helm-values.yaml"
+        must_contain: ["meshMode: enabled", "authentication"]
+        description: "Cilium service mesh Helm values"
+      - path: "mesh/cilium/network-policy.yaml"
+        must_contain: ["apiVersion: cilium.io/v2", "CiliumNetworkPolicy"]
+        description: "Cilium L3/L4/L7 network policies"
+      - path: "mesh/cilium/egress-policy.yaml"
+        must_contain: ["toFQDNs", "matchName"]
+        description: "Cilium DNS-based egress control"
+      - path: "mesh/cilium/spire-config.yaml"
+        must_contain: ["spire", "authentication"]
+        description: "Cilium with SPIRE integration"
+      - path: "scripts/cilium-install.sh"
+        must_contain: ["helm install cilium", "meshMode"]
+        description: "Cilium installation script"
+
+    istio-ambient:
+      - path: "mesh/istio/ambient-install.yaml"
+        must_contain: ["profile=ambient", "dataplane-mode=ambient"]
+        description: "Istio Ambient mode installation"
+      - path: "mesh/istio/waypoint-proxy.yaml"
+        must_contain: ["Gateway", "waypoint"]
+        description: "Istio Ambient L7 waypoint proxy"
+      - path: "mesh/istio/ztunnel-config.yaml"
+        must_contain: ["ztunnel"]
+        description: "Istio Ambient L4 ztunnel configuration"
+
+  observability:
+    prometheus:
+      - path: "monitoring/servicemonitor.yaml"
+        must_contain: ["ServiceMonitor", "endpoints"]
+        description: "Prometheus ServiceMonitor for mesh metrics"
+      - path: "monitoring/prometheus-rules.yaml"
+        must_contain: ["PrometheusRule", "groups"]
+        description: "Prometheus alerting rules"
+
+    jaeger:
+      - path: "mesh/tracing/jaeger-deployment.yaml"
+        must_contain: ["Jaeger", "collector"]
+        description: "Jaeger distributed tracing deployment"
+      - path: "mesh/tracing/telemetry-config.yaml"
+        must_contain: ["Telemetry", "providers", "zipkin"]
+        description: "Mesh tracing configuration"
+
+    grafana:
+      - path: "monitoring/grafana-dashboards/mesh-overview.json"
+        must_contain: ["dashboard", "panels"]
+        description: "Service mesh overview dashboard"
+      - path: "monitoring/grafana-dashboards/service-metrics.json"
+        must_contain: ["request_rate", "latency"]
+        description: "Per-service metrics dashboard"
+
+scaffolding:
+  - path: "mesh/"
+    type: "directory"
+    description: "Root directory for service mesh configurations"
+
+  - path: "mesh/config/"
+    type: "directory"
+    description: "Core mesh configuration (mTLS, namespaces)"
+
+  - path: "mesh/security/"
+    type: "directory"
+    description: "Authorization policies and security configs"
+
+  - path: "mesh/traffic/"
+    type: "directory"
+    description: "Traffic management (routing, canary, blue/green)"
+
+  - path: "mesh/resilience/"
+    type: "directory"
+    description: "Resilience patterns (circuit breakers, retries)"
+
+  - path: "mesh/gateway/"
+    type: "directory"
+    description: "Ingress and egress gateway configurations"
+
+  - path: "mesh/multi-cluster/"
+    type: "directory"
+    description: "Multi-cluster mesh federation"
+
+  - path: "mesh/progressive-delivery/"
+    type: "directory"
+    description: "Automated canary and progressive delivery"
+
+  - path: "mesh/observability/"
+    type: "directory"
+    description: "Telemetry and observability configuration"
+
+  - path: "scripts/"
+    type: "directory"
+    description: "Installation and management scripts"
+
+  - path: "monitoring/"
+    type: "directory"
+    description: "Monitoring dashboards and alerts"
+
+  - path: "mesh/README.md"
+    type: "file"
+    template: |
+      # Service Mesh Configuration
+
+      This project uses [Istio/Linkerd/Cilium] for service mesh capabilities.
+
+      ## Architecture
+
+      **Data Plane:** [Sidecar / Ambient / eBPF]
+      **mTLS Mode:** [STRICT / PERMISSIVE]
+      **Authorization:** [Default-deny / Allow-list]
+
+      ## Quick Start
+
+      ### Installation
+
+      ```bash
+      # Install service mesh
+      ./scripts/[istio/linkerd/cilium]-install.sh
+
+      # Verify installation
+      kubectl get pods -n [istio-system/linkerd/kube-system]
+      ```
+
+      ### Enable for Namespace
+
+      ```bash
+      # Label namespace for mesh injection
+      kubectl label namespace production istio.io/dataplane-mode=ambient
+      # OR for Linkerd:
+      kubectl annotate namespace production linkerd.io/inject=enabled
+      ```
+
+      ### Verify mTLS
+
+      ```bash
+      # Istio
+      istioctl authn tls-check frontend.production.svc.cluster.local
+
+      # Linkerd
+      linkerd edges deployment/frontend -n production
+
+      # Cilium
+      cilium bpf auth list
+      ```
+
+      ## Configuration
+
+      ### mTLS Enforcement
+
+      - **Location:** `mesh/config/mtls-config.yaml`
+      - **Mode:** STRICT (reject plaintext connections)
+      - **Scope:** Namespace-wide
+
+      ### Authorization Policies
+
+      - **Location:** `mesh/security/authorization-policies.yaml`
+      - **Default:** Deny all traffic
+      - **Explicit Allow:** Identity-based rules
+
+      ### Traffic Management
+
+      - **Canary Deployments:** `mesh/traffic/canary-deployment.yaml`
+      - **Circuit Breakers:** `mesh/resilience/circuit-breaker.yaml`
+      - **Fault Injection:** `mesh/traffic/fault-injection.yaml`
+
+      ## Progressive Delivery
+
+      Deploy new versions with automated canary analysis:
+
+      1. Deploy v2 with 0% traffic
+      2. Gradually increase: 10% → 25% → 50% → 100%
+      3. Monitor error rate, latency, throughput
+      4. Auto-rollback if metrics degrade
+
+      See `mesh/progressive-delivery/` for Flagger configurations.
+
+      ## Multi-Cluster Setup
+
+      For multi-cluster service mesh:
+
+      1. Install mesh in each cluster
+      2. Exchange cluster secrets (see `mesh/multi-cluster/`)
+      3. Enable cross-cluster service discovery
+      4. Configure gateway for east-west traffic
+
+      ## Troubleshooting
+
+      ### mTLS Issues
+
+      ```bash
+      # Check mTLS status
+      [istioctl authn tls-check / linkerd edges / cilium bpf auth list]
+
+      # Check certificates
+      [istioctl proxy-config secret / linkerd diagnostics proxy-metrics]
+      ```
+
+      ### Traffic Not Routing
+
+      ```bash
+      # Analyze configuration
+      istioctl analyze -n production
+
+      # Tap traffic (Linkerd)
+      linkerd tap deployment/backend -n production
+
+      # Observe flows (Cilium)
+      hubble observe --namespace production
+      ```
+
+      ### Performance Issues
+
+      - Check proxy resource limits
+      - Review connection pool settings
+      - Analyze trace data in Jaeger
+      - Monitor mesh control plane health
+
+      ## Security Best Practices
+
+      1. **Strict mTLS** - Reject plaintext connections
+      2. **Default Deny** - Explicit allow rules only
+      3. **Least Privilege** - Minimal service-to-service permissions
+      4. **Identity-Based** - Use workload identity, not IPs
+      5. **Audit Logging** - Enable for all authorization decisions
+
+      ## Observability
+
+      - **Metrics:** Prometheus + Grafana dashboards
+      - **Traces:** Jaeger distributed tracing
+      - **Logs:** Aggregated control plane logs
+      - **Topology:** Service graph visualization
+
+      Dashboards: `monitoring/grafana-dashboards/`
+
+      ## References
+
+      - Service Mesh Selection: `docs/mesh-decision.md`
+      - Installation Guide: `scripts/[mesh]-install.sh`
+      - Traffic Patterns: `references/[mesh]-patterns.md`
+      - Security Patterns: `references/security-patterns.md`
+      - Troubleshooting: `references/troubleshooting.md`
+
+  - path: "docs/mesh-decision.md"
+    type: "file"
+    template: |
+      # Service Mesh Selection
+
+      ## Decision: [Istio Ambient / Linkerd / Cilium]
+
+      ### Requirements
+
+      - [ ] Mutual TLS for all traffic
+      - [ ] L7 traffic routing
+      - [ ] Authorization policies
+      - [ ] Multi-cluster support
+      - [ ] Low latency overhead
+      - [ ] Easy operations
+
+      ### Comparison
+
+      | Feature | Istio Ambient | Linkerd | Cilium |
+      |---------|---------------|---------|---------|
+      | Latency overhead | 8% (L4) | 33% | 99% |
+      | Architecture | Sidecar-less | Sidecar | eBPF |
+      | mTLS | Automatic | Automatic | With SPIRE |
+      | L7 routing | Optional waypoint | Built-in | Built-in |
+      | Multi-cluster | Strong | Good | Emerging |
+      | Complexity | Medium | Low | High |
+      | Maturity | New (2024) | Mature | Mature (network) |
+
+      ### Rationale
+
+      **Chose [MESH] because:**
+
+      1. [Reason 1]
+      2. [Reason 2]
+      3. [Reason 3]
+
+      ### Trade-offs
+
+      **Accepted:**
+      - [Trade-off 1]
+      - [Trade-off 2]
+
+      **Mitigated:**
+      - [How we addressed concern X]
+
+      ### References
+
+      - Istio Ambient: https://istio.io/latest/docs/ambient/
+      - Linkerd: https://linkerd.io/
+      - Cilium Service Mesh: https://docs.cilium.io/en/stable/network/servicemesh/
+
+metadata:
+  primary_blueprints: ["k8s", "security"]
+  contributes_to:
+    - "Service mesh deployment"
+    - "mTLS implementation"
+    - "Zero-trust security"
+    - "Traffic management"
+    - "Progressive delivery"
+    - "Multi-cluster networking"
+
+  integrates_with:
+    - "deploying-kubernetes"    # Cluster setup, namespaces
+    - "security-hardening"      # Container security, RBAC
+    - "infrastructure-as-code"  # Terraform/Helm for mesh
+    - "building-ci-pipelines"   # Automated canary deployments
+    - "performance-engineering" # Latency optimization
+    - "observability"           # Metrics, traces, logs
+
+  common_patterns:
+    - name: "Istio Ambient with Flagger"
+      description: "Sidecar-less mesh with automated progressive delivery"
+      files: ["mesh/istio/ambient-install.yaml", "mesh/progressive-delivery/flagger-canary.yaml"]
+
+    - name: "Linkerd with HTTPRoute"
+      description: "Lightweight sidecar mesh with Gateway API traffic splitting"
+      files: ["mesh/linkerd/http-route.yaml", "mesh/linkerd/service-profile.yaml"]
+
+    - name: "Cilium with SPIRE"
+      description: "eBPF-native mesh with SPIFFE workload identity"
+      files: ["mesh/cilium/helm-values.yaml", "mesh/cilium/spire-config.yaml"]
+
+    - name: "Zero-Trust Security"
+      description: "Strict mTLS with default-deny authorization"
+      files: ["mesh/config/mtls-config.yaml", "mesh/security/authorization-policies.yaml"]
+
+    - name: "Multi-Cluster Mesh"
+      description: "Federated mesh across Kubernetes clusters"
+      files: ["mesh/multi-cluster/remote-secrets.yaml", "mesh/gateway/mesh-gateway.yaml"]
+
+  anti_patterns:
+    - name: "Permissive mTLS in production"
+      avoid: "Allows plaintext connections, defeats purpose"
+      use: "STRICT mode, reject all non-mTLS traffic"
+
+    - name: "No authorization policies"
+      avoid: "mTLS encrypts but doesn't authorize"
+      use: "Default-deny AuthorizationPolicy with explicit allows"
+
+    - name: "IP-based access control"
+      avoid: "Brittle, doesn't work with pod churn"
+      use: "Identity-based policies (service account principals)"
+
+    - name: "Manual canary weight updates"
+      avoid: "Error-prone, requires monitoring vigilance"
+      use: "Automated progressive delivery (Flagger, Argo Rollouts)"
+
+    - name: "No circuit breakers"
+      avoid: "Cascading failures across services"
+      use: "DestinationRule with outlierDetection and connectionPool"
+
+    - name: "Sidecar mode without resource limits"
+      avoid: "Proxy containers can starve application"
+      use: "Set CPU/memory limits, consider Ambient mode"
+
+  tools:
+    service_meshes:
+      - name: "Istio Ambient"
+        use_when: "Need enterprise features, low overhead, multi-cloud"
+      - name: "Linkerd"
+        use_when: "Simplicity priority, small-medium teams"
+      - name: "Cilium"
+        use_when: "eBPF infrastructure, future-proof, advanced networking"
+
+    progressive_delivery:
+      - name: "Flagger"
+        use_when: "Automated canary with Istio/Linkerd/App Mesh"
+      - name: "Argo Rollouts"
+        use_when: "GitOps workflow, advanced deployment strategies"
+
+    observability:
+      - name: "Kiali"
+        use_when: "Istio service graph visualization"
+      - name: "Linkerd Viz"
+        use_when: "Built-in Linkerd observability"
+      - name: "Hubble"
+        use_when: "Cilium network flow observability"
+
+    multi_cluster:
+      - name: "Istio Multi-Primary"
+        use_when: "Active-active, shared control plane"
+      - name: "Linkerd Multi-Cluster"
+        use_when: "Simple cross-cluster service mirroring"
+
+  validation_checks:
+    - "mTLS enforced (STRICT mode, no PERMISSIVE)"
+    - "Default-deny authorization policy exists"
+    - "Service-to-service policies use principals (not IPs)"
+    - "Circuit breakers configured for external dependencies"
+    - "Resource limits set for sidecar proxies (if using sidecar)"
+    - "Telemetry enabled (metrics, traces, logs)"
+    - "Gateway configured for external traffic"
+    - "Multi-cluster secrets properly scoped (if multi-cluster)"
+    - "Automated canary rollback configured"
+    - "Mesh control plane health monitored"
+    - "Certificate rotation tested"
+    - "Troubleshooting runbooks documented"
+
+  deployment_stages:
+    - stage: "starter"
+      description: "Basic mTLS and traffic routing"
+      files: ["mesh/config/mtls-config.yaml", "mesh/traffic/basic-routing.yaml"]
+
+    - stage: "intermediate"
+      description: "Zero-trust security and canary deployments"
+      files: ["mesh/security/authorization-policies.yaml", "mesh/traffic/canary-deployment.yaml"]
+
+    - stage: "advanced"
+      description: "Multi-cluster, automated progressive delivery, external authz"
+      files: ["mesh/multi-cluster/", "mesh/progressive-delivery/", "mesh/security/external-authorization.yaml"]
+
+  architecture_decisions:
+    - decision: "Data plane architecture"
+      options: ["Sidecar (per-pod proxy)", "Ambient (shared node proxy)", "eBPF (kernel-level)"]
+      considerations: ["Latency overhead", "Resource usage", "L7 features", "Operational complexity"]
+
+    - decision: "mTLS mode"
+      options: ["PERMISSIVE (migration)", "STRICT (production)"]
+      considerations: ["Security posture", "Legacy service compatibility", "Migration timeline"]
+
+    - decision: "Authorization model"
+      options: ["Default-allow", "Default-deny (zero-trust)"]
+      considerations: ["Security requirements", "Team velocity", "Audit compliance"]
+
+    - decision: "Progressive delivery automation"
+      options: ["Manual weight updates", "Flagger", "Argo Rollouts"]
+      considerations: ["Deployment frequency", "Team size", "Risk tolerance"]
+
+    - decision: "Multi-cluster topology"
+      options: ["Single cluster", "Multi-primary", "Primary-remote"]
+      considerations: ["HA requirements", "Geo-distribution", "Compliance boundaries"]

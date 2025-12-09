@@ -1,0 +1,265 @@
+skill: "configuring-firewalls"
+version: "1.0"
+domain: "security"
+
+base_outputs:
+  - path: "firewall/"
+    must_contain:
+      - "rules"
+      - "policy"
+  - path: "docs/firewall-configuration.md"
+    must_contain:
+      - "firewall rules"
+      - "security"
+      - "ports"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "firewall/ufw-rules.sh"
+        must_contain: ["ufw", "allow", "enable"]
+      - path: "firewall/basic-rules.conf"
+        must_contain: ["default deny", "SSH"]
+      - path: "docs/firewall-quick-start.md"
+        must_contain: ["safety checklist", "prevent lockout"]
+
+    intermediate:
+      - path: "firewall/nftables.conf"
+        must_contain: ["table inet", "chain input", "ct state"]
+      - path: "firewall/security-groups.tf"
+        must_contain: ["aws_security_group", "ingress", "egress"]
+      - path: "firewall/network-policies/"
+        must_contain: ["NetworkPolicy", "podSelector"]
+      - path: "scripts/firewall-backup.sh"
+        must_contain: ["backup", "restore"]
+      - path: "docs/firewall-patterns.md"
+        must_contain: ["bastion", "database tier", "web tier"]
+
+    advanced:
+      - path: "firewall/nftables-advanced.conf"
+        must_contain: ["sets", "maps", "log prefix"]
+      - path: "terraform/network-security/"
+        must_contain: ["security_groups", "network_acls", "egress"]
+      - path: "firewall/egress-filtering.conf"
+        must_contain: ["outbound", "whitelist", "deny"]
+      - path: "kubernetes/network-policies/"
+        must_contain: ["default-deny", "namespace", "egress"]
+      - path: "scripts/firewall-audit.sh"
+        must_contain: ["audit", "compliance", "unused rules"]
+      - path: "docs/dmz-architecture.md"
+        must_contain: ["DMZ", "network segmentation", "defense-in-depth"]
+
+  cloud_provider:
+    aws:
+      - path: "terraform/security-groups.tf"
+        must_contain: ["aws_security_group", "vpc_id"]
+      - path: "terraform/network-acls.tf"
+        must_contain: ["aws_network_acl", "subnet_ids"]
+      - path: "terraform/modules/security-groups/"
+        must_contain: ["ingress", "egress", "stateful"]
+      - path: "docs/aws-firewall-guide.md"
+        must_contain: ["Security Groups", "NACLs", "stateful vs stateless"]
+
+    gcp:
+      - path: "terraform/firewall-rules.tf"
+        must_contain: ["google_compute_firewall", "priority"]
+      - path: "terraform/vpc-firewall.tf"
+        must_contain: ["source_ranges", "target_tags"]
+      - path: "docs/gcp-firewall-guide.md"
+        must_contain: ["VPC firewall rules", "priority", "hierarchical"]
+
+    azure:
+      - path: "terraform/nsg.tf"
+        must_contain: ["azurerm_network_security_group", "security_rule"]
+      - path: "terraform/nsg-rules.tf"
+        must_contain: ["priority", "direction", "access"]
+      - path: "docs/azure-nsg-guide.md"
+        must_contain: ["Network Security Groups", "NSG", "application security groups"]
+
+    multi-cloud:
+      - path: "terraform/firewall/"
+        must_contain: ["aws", "gcp", "azure"]
+      - path: "terraform/modules/"
+        must_contain: ["security_groups", "firewall_rules", "nsg"]
+      - path: "docs/multi-cloud-firewall-strategy.md"
+        must_contain: ["standardization", "cloud-agnostic", "provider-specific"]
+
+  infrastructure:
+    kubernetes:
+      - path: "k8s/network-policies/default-deny.yaml"
+        must_contain: ["NetworkPolicy", "podSelector: {}", "Ingress"]
+      - path: "k8s/network-policies/allow-dns.yaml"
+        must_contain: ["port: 53", "protocol: UDP"]
+      - path: "k8s/network-policies/namespace-isolation.yaml"
+        must_contain: ["namespaceSelector", "podSelector"]
+      - path: "k8s/network-policies/egress-control.yaml"
+        must_contain: ["policyTypes", "Egress", "to"]
+      - path: "docs/k8s-networkpolicy-guide.md"
+        must_contain: ["CNI", "Calico", "Cilium", "pod-to-pod"]
+
+    bare-metal:
+      - path: "firewall/ufw/"
+        must_contain: ["ufw", "limit ssh"]
+      - path: "firewall/nftables/"
+        must_contain: ["nftables.conf", "inet filter"]
+      - path: "firewall/iptables/"
+        must_contain: ["iptables-save", "iptables-restore"]
+      - path: "scripts/firewall-setup.sh"
+        must_contain: ["systemctl", "enable"]
+      - path: "docs/host-based-firewall.md"
+        must_contain: ["UFW", "nftables", "iptables", "migration"]
+
+    containers:
+      - path: "docker/firewall-rules.sh"
+        must_contain: ["DOCKER-USER", "iptables"]
+      - path: "k8s/network-policies/"
+        must_contain: ["NetworkPolicy", "podSelector"]
+      - path: "docs/container-firewall.md"
+        must_contain: ["Docker", "iptables", "NetworkPolicy"]
+
+scaffolding:
+  - path: "firewall/"
+    type: "directory"
+    purpose: "Firewall configuration files (UFW, nftables, iptables)"
+
+  - path: "terraform/security/"
+    type: "directory"
+    purpose: "Cloud firewall infrastructure as code"
+
+  - path: "k8s/network-policies/"
+    type: "directory"
+    purpose: "Kubernetes NetworkPolicy manifests"
+
+  - path: "scripts/firewall-management/"
+    type: "directory"
+    purpose: "Firewall automation and audit scripts"
+
+  - path: "firewall/README.md"
+    type: "file"
+    purpose: "Overview of firewall configurations and safety procedures"
+    template: |
+      # Firewall Configuration
+
+      ## Overview
+      Firewall rules for {PROJECT_NAME}. Always test rules before enabling in production.
+
+      ## Safety Checklist
+      - [ ] SSH access allowed before enabling firewall
+      - [ ] Console/physical access available for recovery
+      - [ ] Rules tested in staging environment
+      - [ ] Backup of current configuration created
+      - [ ] Logging enabled for debugging
+
+      ## Files
+      - `ufw/` - Ubuntu/Debian firewall rules
+      - `nftables/` - Modern Linux firewall configuration
+      - `security-groups.tf` - AWS Security Groups (if applicable)
+      - `network-policies/` - Kubernetes NetworkPolicies (if applicable)
+
+      ## Emergency Recovery
+      If locked out via SSH:
+      - Cloud: Use console/session manager
+      - On-prem: Physical console or IPMI/iLO access
+      - Disable firewall: `sudo ufw disable` or `sudo systemctl stop nftables`
+
+  - path: "firewall/.firewall-backup"
+    type: "directory"
+    purpose: "Backup directory for firewall rule rollback"
+
+  - path: "docs/security/firewall-architecture.md"
+    type: "file"
+    purpose: "Documentation of firewall strategy and architecture"
+    template: |
+      # Firewall Architecture
+
+      ## Defense-in-Depth Strategy
+
+      ### Layer 1: Cloud Network (if applicable)
+      - Security Groups (AWS) / Firewall Rules (GCP) / NSGs (Azure)
+      - Network ACLs for subnet-level control
+
+      ### Layer 2: Host-Based Firewalls
+      - UFW/nftables on all instances
+      - Default deny policy
+
+      ### Layer 3: Application Layer (if applicable)
+      - Kubernetes NetworkPolicies
+      - Container network isolation
+
+      ## Common Patterns
+
+      ### Web Tier
+      - Allow: HTTP/HTTPS from 0.0.0.0/0
+      - Allow: SSH from bastion only
+      - Deny: All other inbound
+
+      ### Application Tier
+      - Allow: App port from web tier only
+      - Allow: SSH from bastion only
+      - Deny: All other inbound
+
+      ### Database Tier
+      - Allow: Database port from app tier only
+      - Allow: SSH from bastion only
+      - Deny: All other inbound, including internet
+
+      ## Maintenance
+      - Quarterly audit of firewall rules
+      - Remove unused rules
+      - Update documentation when rules change
+      - Test rule changes in staging first
+
+metadata:
+  primary_blueprints: ["security"]
+  contributes_to:
+    - "Security hardening"
+    - "Network segmentation"
+    - "Compliance (PCI-DSS, SOC2, HIPAA)"
+    - "Defense-in-depth architecture"
+
+  common_file_patterns:
+    host_based:
+      - "firewall/ufw-rules.sh"
+      - "firewall/nftables.conf"
+      - "firewall/iptables-rules.sh"
+
+    cloud:
+      - "terraform/security-groups.tf"
+      - "terraform/network-acls.tf"
+      - "terraform/nsg.tf"
+      - "terraform/firewall-rules.tf"
+
+    kubernetes:
+      - "k8s/network-policies/default-deny.yaml"
+      - "k8s/network-policies/allow-{service}.yaml"
+      - "k8s/network-policies/namespace-isolation.yaml"
+
+    documentation:
+      - "docs/firewall-architecture.md"
+      - "docs/security-groups-guide.md"
+      - "docs/firewall-troubleshooting.md"
+
+  integration_points:
+    - skill: "security-hardening"
+      relationship: "Firewalls are one layer of server hardening alongside SSH hardening, fail2ban, and SELinux"
+
+    - skill: "infrastructure-as-code"
+      relationship: "Firewall rules managed as code via Terraform/CloudFormation"
+
+    - skill: "kubernetes-operations"
+      relationship: "NetworkPolicies provide pod-level network isolation in K8s clusters"
+
+    - skill: "network-architecture"
+      relationship: "Firewalls implement network segmentation defined in VPC architecture"
+
+    - skill: "monitoring-systems"
+      relationship: "Firewall logs integrated into centralized logging and alerting"
+
+  validation_checks:
+    - "SSH access rule exists before enabling firewall"
+    - "Default policy is deny (not accept)"
+    - "No 0.0.0.0/0 access to sensitive ports (22, 3389, 5432, 3306)"
+    - "Stateful connection tracking enabled for cloud firewalls"
+    - "Ephemeral ports (1024-65535) allowed for stateless firewalls (NACLs)"
+    - "Logging enabled for dropped packets"
+    - "All firewall configs stored in version control"

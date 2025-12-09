@@ -1,0 +1,408 @@
+skill: "shell-scripting"
+version: "1.0"
+domain: "infrastructure"
+
+# Base outputs required for all shell scripting projects
+base_outputs:
+  - path: "scripts/"
+    must_contain: []
+    reason: "Central location for shell scripts with proper organization"
+
+  - path: ".shellcheckrc"
+    must_contain: ["disable=", "shell="]
+    reason: "ShellCheck configuration for consistent linting standards"
+
+  - path: "scripts/README.md"
+    must_contain: ["Usage", "Dependencies", "Testing"]
+    reason: "Documentation for script usage and maintenance"
+
+  - path: "tests/"
+    must_contain: []
+    reason: "Bats test files for script validation"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "scripts/*.sh"
+        must_contain: ["#!/bin/bash", "set -e"]
+        reason: "Basic scripts with error handling (set -e)"
+
+      - path: "scripts/setup.sh"
+        must_contain: ["#!/bin/bash", "command -v"]
+        reason: "Setup script with dependency checking"
+
+      - path: "tests/setup.bats"
+        must_contain: ["@test", "run"]
+        reason: "Basic Bats tests for critical paths"
+
+      - path: ".shellcheckrc"
+        must_contain: ["shell=bash"]
+        reason: "ShellCheck configuration for Bash scripts"
+
+    intermediate:
+      - path: "scripts/*.sh"
+        must_contain: ["#!/bin/bash", "set -euo pipefail", "getopts"]
+        reason: "Scripts with full error handling and argument parsing"
+
+      - path: "scripts/lib/"
+        must_contain: ["*.sh"]
+        reason: "Shared library functions for code reuse"
+
+      - path: "scripts/hooks/"
+        must_contain: ["pre-commit", "pre-push"]
+        reason: "Git hooks for validation and testing"
+
+      - path: "tests/"
+        must_contain: ["*.bats"]
+        reason: "Comprehensive Bats test coverage"
+
+      - path: "scripts/*.sh"
+        must_contain: ["trap", "cleanup"]
+        reason: "Trap handlers for resource cleanup"
+
+      - path: "scripts/*.sh"
+        must_contain: ["log()", ">&2"]
+        reason: "Structured logging functions with stderr output"
+
+      - path: ".github/workflows/lint-scripts.yml"
+        must_contain: ["shellcheck"]
+        reason: "CI/CD integration for ShellCheck linting"
+
+    advanced:
+      - path: "scripts/*.sh"
+        must_contain: ["#!/bin/bash", "set -euo pipefail", "readonly"]
+        reason: "Production scripts with immutable variables"
+
+      - path: "scripts/lib/"
+        must_contain: ["logging.sh", "error-handling.sh", "validation.sh"]
+        reason: "Modular library with separation of concerns"
+
+      - path: "scripts/*.sh"
+        must_contain: ["usage()", "getopt"]
+        reason: "Advanced argument parsing with long options support"
+
+      - path: "scripts/entrypoint.sh"
+        must_contain: ["exec", "trap", "SIGTERM"]
+        reason: "Container entrypoint with signal handling"
+
+      - path: "tests/"
+        must_contain: ["*.bats", "setup()", "teardown()"]
+        reason: "Advanced Bats tests with fixtures and helpers"
+
+      - path: "tests/helpers/"
+        must_contain: ["*.bash"]
+        reason: "Bats test helpers for common operations"
+
+      - path: "scripts/*.sh"
+        must_contain: ["jq", "yq"]
+        reason: "Integration with JSON/YAML utilities"
+
+      - path: ".github/workflows/test-scripts.yml"
+        must_contain: ["bats", "shellcheck"]
+        reason: "Complete CI/CD with linting and testing"
+
+      - path: "docs/scripts/"
+        must_contain: ["*.md"]
+        reason: "Detailed documentation for complex scripts"
+
+      - path: "scripts/benchmark/"
+        must_contain: ["*.sh"]
+        reason: "Performance benchmarking scripts"
+
+  script_type:
+    ci_cd:
+      - path: ".github/workflows/"
+        must_contain: ["*.yml"]
+        reason: "GitHub Actions workflow files"
+
+      - path: "scripts/ci/"
+        must_contain: ["build.sh", "test.sh", "deploy.sh"]
+        reason: "CI/CD pipeline scripts"
+
+      - path: "scripts/ci/lib/"
+        must_contain: ["docker-utils.sh"]
+        reason: "Shared CI/CD utilities"
+
+    docker:
+      - path: "docker/entrypoint.sh"
+        must_contain: ["#!/bin/sh", "exec", "trap"]
+        reason: "POSIX-compliant container entrypoint with signal handling"
+
+      - path: "docker/healthcheck.sh"
+        must_contain: ["#!/bin/sh", "exit 0", "exit 1"]
+        reason: "Docker healthcheck script"
+
+      - path: "Dockerfile"
+        must_contain: ["ENTRYPOINT", "HEALTHCHECK"]
+        reason: "Dockerfile using custom scripts"
+
+    system_admin:
+      - path: "scripts/backup/"
+        must_contain: ["backup.sh", "restore.sh"]
+        reason: "Backup and restoration automation"
+
+      - path: "scripts/cron/"
+        must_contain: ["*.sh"]
+        reason: "Cron job scripts with logging"
+
+      - path: "scripts/monitoring/"
+        must_contain: ["check-*.sh"]
+        reason: "System monitoring and health checks"
+
+      - path: "scripts/log-rotation/"
+        must_contain: ["rotate.sh"]
+        reason: "Log rotation automation"
+
+    kubernetes:
+      - path: "scripts/k8s/"
+        must_contain: ["kubectl", "helm"]
+        reason: "Kubernetes operation scripts"
+
+      - path: "scripts/k8s/init-containers/"
+        must_contain: ["init.sh"]
+        reason: "Kubernetes init container scripts"
+
+      - path: "scripts/k8s/hooks/"
+        must_contain: ["pre-install.sh", "post-install.sh"]
+        reason: "Helm lifecycle hooks"
+
+    development_tooling:
+      - path: "scripts/dev/"
+        must_contain: ["setup.sh", "test.sh", "build.sh"]
+        reason: "Development workflow automation"
+
+      - path: "scripts/generators/"
+        must_contain: ["generate-*.sh"]
+        reason: "Code generation scripts"
+
+      - path: "Makefile"
+        must_contain: ["test:", "lint:", "build:"]
+        reason: "Makefile integrating shell scripts"
+
+  shell_type:
+    posix:
+      - path: "scripts/*.sh"
+        must_contain: ["#!/bin/sh"]
+        reason: "POSIX-compliant scripts (no Bash-isms)"
+
+      - path: ".shellcheckrc"
+        must_contain: ["shell=sh"]
+        reason: "ShellCheck POSIX validation"
+
+      - path: "tests/posix-compliance.bats"
+        must_contain: ["dash", "sh"]
+        reason: "Tests for POSIX shell compatibility"
+
+    bash:
+      - path: "scripts/*.sh"
+        must_contain: ["#!/bin/bash"]
+        reason: "Bash-specific scripts with advanced features"
+
+      - path: "scripts/*.sh"
+        must_contain: ["declare -a", "[[", "=~"]
+        reason: "Bash arrays and advanced conditionals"
+
+      - path: ".shellcheckrc"
+        must_contain: ["shell=bash"]
+        reason: "ShellCheck Bash validation"
+
+  integration:
+    json_yaml:
+      - path: "scripts/*.sh"
+        must_contain: ["jq", "-r"]
+        reason: "JSON processing with jq"
+
+      - path: "scripts/*.sh"
+        must_contain: ["yq", "eval"]
+        reason: "YAML processing with yq"
+
+      - path: "tests/json-yaml.bats"
+        must_contain: ["jq", "yq"]
+        reason: "Tests for JSON/YAML processing"
+
+    cloud_cli:
+      - path: "scripts/aws/"
+        must_contain: ["aws"]
+        reason: "AWS CLI integration scripts"
+
+      - path: "scripts/gcp/"
+        must_contain: ["gcloud"]
+        reason: "Google Cloud CLI scripts"
+
+      - path: "scripts/azure/"
+        must_contain: ["az"]
+        reason: "Azure CLI scripts"
+
+    databases:
+      - path: "scripts/db/"
+        must_contain: ["psql", "mysql"]
+        reason: "Database migration and maintenance scripts"
+
+      - path: "scripts/db/migrations/"
+        must_contain: ["*.sql", "migrate.sh"]
+        reason: "Database migration automation"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "scripts/"
+    reason: "Root directory for shell scripts"
+
+  - path: "scripts/lib/"
+    reason: "Shared library functions and utilities"
+
+  - path: "tests/"
+    reason: "Bats test files directory"
+
+  - path: "tests/helpers/"
+    reason: "Bats test helper functions"
+
+  - path: ".shellcheckrc"
+    reason: "ShellCheck linting configuration"
+
+  - path: "scripts/README.md"
+    reason: "Documentation for script usage and conventions"
+
+  - path: "scripts/.gitkeep"
+    reason: "Ensure scripts directory is tracked by Git"
+
+  - path: ".editorconfig"
+    reason: "Editor configuration for consistent shell script formatting"
+
+  - path: ".github/workflows/shell-lint.yml"
+    reason: "CI/CD workflow for ShellCheck linting"
+
+# Metadata
+metadata:
+  primary_blueprints: ["infrastructure", "devops"]
+  contributes_to:
+    - "Automation scripts"
+    - "CI/CD pipeline scripts"
+    - "Container entrypoints and init scripts"
+    - "System administration automation"
+    - "Development tooling and build scripts"
+    - "Kubernetes operations and hooks"
+
+  common_patterns:
+    - "Fail-fast error handling (set -euo pipefail)"
+    - "Trap handlers for resource cleanup"
+    - "Argument parsing with getopts or manual long options"
+    - "Structured logging to stderr"
+    - "Dependency checking with command -v"
+    - "JSON/YAML processing with jq/yq"
+    - "ShellCheck static analysis"
+    - "Bats automated testing"
+
+  integration_points:
+    ci_cd: "Build, test, and deployment automation in CI/CD pipelines"
+    containers: "Docker entrypoints, healthchecks, and init scripts"
+    kubernetes: "Init containers, Helm hooks, kubectl operations"
+    infrastructure: "Terraform/Pulumi wrapper scripts, cloud CLI automation"
+    databases: "Migration scripts, backup automation, maintenance tasks"
+    monitoring: "Health checks, log processing, alert scripts"
+
+  typical_directory_structure: |
+    project/
+    ├── scripts/
+    │   ├── lib/                    # Shared libraries
+    │   │   ├── logging.sh
+    │   │   ├── error-handling.sh
+    │   │   └── validation.sh
+    │   ├── ci/                     # CI/CD scripts
+    │   │   ├── build.sh
+    │   │   ├── test.sh
+    │   │   └── deploy.sh
+    │   ├── dev/                    # Development tools
+    │   │   ├── setup.sh
+    │   │   └── generate-config.sh
+    │   ├── backup/                 # System admin
+    │   │   ├── backup.sh
+    │   │   └── restore.sh
+    │   └── README.md
+    ├── tests/
+    │   ├── helpers/
+    │   │   └── test-helpers.bash
+    │   ├── setup.bats
+    │   ├── build.bats
+    │   └── backup.bats
+    ├── docker/
+    │   ├── entrypoint.sh
+    │   └── healthcheck.sh
+    ├── .shellcheckrc
+    ├── .editorconfig
+    └── .github/workflows/
+        └── shell-lint.yml
+
+  tools:
+    core:
+      - name: "jq"
+        purpose: "JSON parsing and transformation"
+        install: "brew install jq | apt-get install jq"
+
+      - name: "yq"
+        purpose: "YAML parsing (v4 recommended)"
+        install: "brew install yq | apt-get install yq"
+
+      - name: "ShellCheck"
+        purpose: "Static analysis and linting"
+        install: "brew install shellcheck | apt-get install shellcheck"
+
+      - name: "Bats"
+        purpose: "Automated testing framework"
+        install: "brew install bats-core | npm install -g bats"
+
+    optional:
+      - name: "awk"
+        purpose: "Text processing and column extraction"
+
+      - name: "sed"
+        purpose: "Stream editing and text replacement"
+
+      - name: "grep"
+        purpose: "Pattern matching"
+
+      - name: "getopt"
+        purpose: "Long option parsing (GNU)"
+
+  validation_checks:
+    - "All scripts pass shellcheck with no errors"
+    - "Scripts use proper shebang (#!/bin/bash or #!/bin/sh)"
+    - "Error handling enabled (set -e or set -euo pipefail)"
+    - "All variables are quoted (\"$var\" not $var)"
+    - "Trap handlers implemented for cleanup"
+    - "Dependencies checked at script start (command -v)"
+    - "Bats tests exist for critical functionality"
+    - "Scripts are executable (chmod +x)"
+    - "CI/CD integration configured"
+    - "README documents usage and dependencies"
+
+  anti_patterns:
+    - name: "Unquoted variables"
+      avoid: "echo $file"
+      use: "echo \"$file\""
+      reason: "Prevents word splitting and globbing issues"
+
+    - name: "Ignoring errors"
+      avoid: "command || true"
+      use: "if ! command; then handle_error; fi"
+      reason: "Explicit error handling instead of silent failures"
+
+    - name: "No cleanup"
+      avoid: "Temporary files left after exit"
+      use: "trap cleanup EXIT"
+      reason: "Guaranteed resource cleanup on any exit"
+
+    - name: "Hardcoded paths"
+      avoid: "/usr/local/bin/tool"
+      use: "command -v tool || exit 1"
+      reason: "Portable across different systems"
+
+    - name: "Using eval"
+      avoid: "eval $cmd"
+      use: "Direct command execution"
+      reason: "Security risk and hard to debug"
+
+    - name: "Parsing ls output"
+      avoid: "for file in $(ls); do"
+      use: "for file in *; do"
+      reason: "Globbing is safer and more reliable"

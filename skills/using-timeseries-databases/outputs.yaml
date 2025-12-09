@@ -1,0 +1,310 @@
+skill: "using-timeseries-databases"
+version: "1.0"
+domain: "backend"
+
+# Base outputs required for all time-series database projects
+base_outputs:
+  - path: "timeseries/schema.sql"
+    must_contain: ["CREATE TABLE", "time", "TIMESTAMPTZ|TIMESTAMP"]
+    reason: "Time-series database schema with time-indexed tables"
+
+  - path: "config/"
+    must_contain: []
+    reason: "Database configuration files (retention policies, aggregates, connection settings)"
+
+  - path: "docs/timeseries-architecture.md"
+    must_contain: ["retention", "aggregation", "downsampling"]
+    reason: "Documentation of time-series architecture, retention strategy, and query patterns"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "timeseries/schema.sql"
+        must_contain: ["CREATE TABLE", "time"]
+        reason: "Basic time-series table schema with time indexing"
+
+      - path: "config/retention.yml"
+        must_contain: ["days:", "policy:"]
+        reason: "Simple retention policy configuration (30-90 days)"
+
+      - path: "api/metrics.py"
+        must_contain: ["def get_metrics", "SELECT"]
+        reason: "Basic API endpoint for querying metrics"
+
+    intermediate:
+      - path: "timeseries/hypertables.sql"
+        must_contain: ["create_hypertable|CREATE HYPERTABLE", "time"]
+        reason: "TimescaleDB hypertables or equivalent partitioning setup"
+
+      - path: "timeseries/continuous_aggregates.sql"
+        must_contain: ["time_bucket|GROUP BY time", "AVG|SUM|MAX|MIN"]
+        reason: "Continuous aggregates for hourly/daily rollups"
+
+      - path: "config/retention_policies.sql"
+        must_contain: ["retention", "INTERVAL|DROP"]
+        reason: "Multi-tier retention policies (raw: 30d, hourly: 1y, daily: forever)"
+
+      - path: "api/adaptive_queries.py"
+        must_contain: ["time_range", "rollup", "raw"]
+        reason: "Adaptive data source selection (raw vs rollups based on time range)"
+
+      - path: "docker-compose.yml"
+        must_contain: ["timescaledb|influxdb|clickhouse|questdb"]
+        reason: "Docker Compose setup for time-series database"
+
+    advanced:
+      - path: "timeseries/hypertables_optimized.sql"
+        must_contain: ["create_hypertable", "compression", "chunk_time_interval"]
+        reason: "Optimized hypertables with compression and custom chunk sizing"
+
+      - path: "timeseries/continuous_aggregates_multi_tier.sql"
+        must_contain: ["1 minute", "1 hour", "1 day"]
+        reason: "Multi-tier continuous aggregates (1-min, 1-hour, daily rollups)"
+
+      - path: "timeseries/downsampling.sql"
+        must_contain: ["lttb|downsample"]
+        reason: "LTTB downsampling for visualization (reduces points for charts)"
+
+      - path: "config/retention_advanced.sql"
+        must_contain: ["retention", "compression", "chunk"]
+        reason: "Advanced retention with compression policies and chunk management"
+
+      - path: "api/streaming_websocket.py"
+        must_contain: ["websocket", "real-time|realtime"]
+        reason: "WebSocket endpoint for real-time metric streaming"
+
+      - path: "monitoring/query_performance.sql"
+        must_contain: ["EXPLAIN", "query_time|latency"]
+        reason: "Query performance monitoring and optimization queries"
+
+      - path: "terraform/timeseries_infrastructure.tf"
+        must_contain: ["resource", "timescale|influx|clickhouse"]
+        reason: "Infrastructure-as-code for production time-series database deployment"
+
+  database:
+    timescaledb:
+      - path: "timeseries/timescaledb_setup.sql"
+        must_contain: ["CREATE EXTENSION timescaledb", "create_hypertable"]
+        reason: "TimescaleDB extension setup and hypertable creation"
+
+      - path: "timeseries/compression.sql"
+        must_contain: ["ALTER TABLE", "SET (timescaledb.compress"]
+        reason: "TimescaleDB compression configuration (10-20x space savings)"
+
+      - path: "timeseries/continuous_aggregates.sql"
+        must_contain: ["CREATE MATERIALIZED VIEW", "timescaledb.continuous"]
+        reason: "TimescaleDB continuous aggregates with refresh policies"
+
+      - path: "api/timescaledb_client.py"
+        must_contain: ["psycopg2", "SELECT time_bucket"]
+        reason: "Python client for TimescaleDB with time_bucket queries"
+
+    influxdb:
+      - path: "config/influxdb.conf"
+        must_contain: ["[meta]", "[data]", "retention"]
+        reason: "InfluxDB configuration file with retention policies"
+
+      - path: "timeseries/influxdb_schema.flux"
+        must_contain: ["bucket", "retention"]
+        reason: "InfluxDB bucket and retention policy setup (Flux)"
+
+      - path: "api/influxdb_client.py"
+        must_contain: ["influxdb_client", "query_api"]
+        reason: "Python client for InfluxDB with InfluxQL/Flux queries"
+
+      - path: "pipelines/mqtt_to_influx.go"
+        must_contain: ["mqtt", "influxdb", "WritePoint"]
+        reason: "MQTT to InfluxDB ingestion pipeline (Go for high throughput)"
+
+    clickhouse:
+      - path: "timeseries/clickhouse_schema.sql"
+        must_contain: ["ENGINE = MergeTree", "PARTITION BY", "ORDER BY"]
+        reason: "ClickHouse table with MergeTree engine and time partitioning"
+
+      - path: "timeseries/materialized_views.sql"
+        must_contain: ["CREATE MATERIALIZED VIEW", "SELECT", "GROUP BY"]
+        reason: "ClickHouse materialized views for pre-aggregated data"
+
+      - path: "config/clickhouse_config.xml"
+        must_contain: ["<clickhouse>", "<merge_tree>"]
+        reason: "ClickHouse server configuration for time-series workloads"
+
+      - path: "api/clickhouse_client.py"
+        must_contain: ["clickhouse_connect", "SELECT"]
+        reason: "Python client for ClickHouse with optimized queries"
+
+    questdb:
+      - path: "timeseries/questdb_schema.sql"
+        must_contain: ["CREATE TABLE", "timestamp", "PARTITION BY DAY|MONTH"]
+        reason: "QuestDB table with timestamp designation and partitioning"
+
+      - path: "pipelines/line_protocol_ingestion.py"
+        must_contain: ["Sender", "influxdb line protocol"]
+        reason: "Line Protocol ingestion for high-throughput writes (QuestDB)"
+
+      - path: "api/questdb_client.py"
+        must_contain: ["psycopg2", "SELECT", "SAMPLE BY"]
+        reason: "Python client for QuestDB with SAMPLE BY queries"
+
+  use_case:
+    devops_monitoring:
+      - path: "metrics/system_metrics.sql"
+        must_contain: ["cpu|memory|disk", "host", "time"]
+        reason: "System metrics schema (CPU, memory, disk) for DevOps monitoring"
+
+      - path: "dashboards/grafana_dashboard.json"
+        must_contain: ["panels", "targets", "timeseries"]
+        reason: "Grafana dashboard configuration for system metrics"
+
+      - path: "api/prometheus_exporter.py"
+        must_contain: ["prometheus", "metrics", "gauge|counter"]
+        reason: "Prometheus exporter for custom application metrics"
+
+    iot_sensors:
+      - path: "iot/sensor_schema.sql"
+        must_contain: ["sensor_id", "temperature|humidity|pressure", "time"]
+        reason: "IoT sensor data schema with device ID and measurement fields"
+
+      - path: "pipelines/mqtt_subscriber.py"
+        must_contain: ["mqtt", "subscribe", "on_message"]
+        reason: "MQTT subscriber for IoT sensor data ingestion"
+
+      - path: "iot/geospatial_queries.sql"
+        must_contain: ["location|latitude|longitude", "ST_Distance|distance"]
+        reason: "Geospatial queries for IoT device location tracking"
+
+    financial_data:
+      - path: "financial/tick_data.sql"
+        must_contain: ["symbol|ticker", "price|bid|ask", "time"]
+        reason: "Financial tick data schema (symbol, price, timestamp)"
+
+      - path: "financial/ohlc_aggregates.sql"
+        must_contain: ["OPEN|open", "HIGH|high", "LOW|low", "CLOSE|close"]
+        reason: "OHLC (Open-High-Low-Close) aggregates for candlestick charts"
+
+      - path: "api/market_data_feed.py"
+        must_contain: ["websocket", "symbol", "price"]
+        reason: "Real-time market data feed via WebSocket"
+
+    user_analytics:
+      - path: "analytics/event_schema.sql"
+        must_contain: ["user_id", "event_name", "time"]
+        reason: "User event tracking schema for analytics"
+
+      - path: "analytics/funnel_queries.sql"
+        must_contain: ["COUNT", "GROUP BY", "WHERE"]
+        reason: "Funnel analysis queries for user behavior tracking"
+
+      - path: "analytics/retention_cohorts.sql"
+        must_contain: ["cohort", "retention", "date_trunc"]
+        reason: "Retention cohort analysis for user engagement metrics"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "timeseries/"
+    reason: "Directory for time-series database schemas and migration scripts"
+
+  - path: "config/"
+    reason: "Database configuration files (retention, aggregates, connection settings)"
+
+  - path: "api/"
+    reason: "API layer for querying time-series data with adaptive data source selection"
+
+  - path: "pipelines/"
+    reason: "Data ingestion pipelines (MQTT, Kafka, Prometheus, application events)"
+
+  - path: "monitoring/"
+    reason: "Query performance monitoring and database health checks"
+
+  - path: "docs/timeseries-architecture.md"
+    reason: "Documentation of time-series architecture, retention strategy, and query patterns"
+
+  - path: "docs/retention-strategy.md"
+    reason: "Multi-tier retention policy documentation (raw, hourly, daily rollups)"
+
+  - path: "docker-compose.yml"
+    reason: "Local development setup for time-series database"
+
+  - path: "requirements.txt"
+    reason: "Python dependencies for time-series database clients and APIs"
+
+  - path: ".env.example"
+    reason: "Environment variable template for database connection strings and API keys"
+
+# Metadata
+metadata:
+  primary_blueprints: ["observability", "data-pipeline"]
+  contributes_to:
+    - "Time-series storage and retrieval"
+    - "Metrics dashboards and visualization"
+    - "Real-time monitoring systems"
+    - "IoT data platforms"
+    - "Financial data analytics"
+    - "User behavior analytics"
+    - "Application performance monitoring (APM)"
+    - "Infrastructure monitoring"
+    - "DevOps observability"
+
+  common_patterns:
+    - "Hypertables with automatic time-based partitioning (TimescaleDB)"
+    - "Continuous aggregates for pre-computed rollups (1-min, 1-hour, daily)"
+    - "Multi-tier retention policies (raw: 30d, hourly: 1y, daily: forever)"
+    - "LTTB downsampling for efficient chart rendering (100K→1K points)"
+    - "Adaptive data source selection (raw vs rollups based on time range)"
+    - "Batch ingestion for high throughput (1K-50K points per batch)"
+    - "Time-first query optimization (always filter by time index)"
+    - "Compression on older chunks (10-20x space savings)"
+    - "WebSocket streaming for real-time dashboard updates"
+
+  integration_points:
+    ingestion: "Receives metrics from Prometheus, MQTT, Kafka, application events, Telegraf"
+    visualization: "Powers Grafana dashboards, Recharts/visx charts, real-time monitoring UIs"
+    alerting: "Triggers alerts based on threshold queries (CPU > 80%, anomaly detection)"
+    orchestration: "Scheduled aggregation jobs via Airflow, continuous query refresh policies"
+    monitoring: "Tracks query latency, compression ratio, chunk count, storage usage"
+
+  typical_directory_structure: |
+    project/
+    ├── timeseries/
+    │   ├── schema.sql                    # Initial table schemas
+    │   ├── hypertables.sql               # TimescaleDB hypertables (or equivalent)
+    │   ├── continuous_aggregates.sql     # Pre-computed rollups
+    │   ├── retention_policies.sql        # Data expiration rules
+    │   └── downsampling.sql              # LTTB queries for visualization
+    ├── config/
+    │   ├── database.yml                  # Connection settings
+    │   ├── retention.yml                 # Retention policy configuration
+    │   └── compression.yml               # Compression settings
+    ├── api/
+    │   ├── metrics.py                    # REST API for metrics
+    │   ├── adaptive_queries.py           # Adaptive data source selection
+    │   └── streaming_websocket.py        # Real-time WebSocket streaming
+    ├── pipelines/
+    │   ├── mqtt_subscriber.py            # MQTT ingestion (IoT)
+    │   ├── prometheus_importer.py        # Prometheus remote write
+    │   └── kafka_consumer.py             # Kafka event ingestion
+    ├── monitoring/
+    │   ├── query_performance.sql         # Query latency tracking
+    │   └── database_health_checks.sql    # Storage, compression monitoring
+    ├── dashboards/
+    │   └── grafana_dashboard.json        # Grafana dashboard config
+    ├── docs/
+    │   ├── timeseries-architecture.md
+    │   └── retention-strategy.md
+    ├── docker-compose.yml
+    └── requirements.txt
+
+  performance_benchmarks:
+    timescaledb: "100K-1M inserts/sec (batched), <100ms query latency (1 hour raw data)"
+    influxdb: "500K-1M points/sec, optimized for DevOps metrics and Prometheus integration"
+    clickhouse: "1M-10M inserts/sec, 100M-1B rows/sec queries, best for log analysis and analytics"
+    questdb: "4M+ inserts/sec, sub-millisecond queries, optimized for financial tick data"
+
+  key_optimizations:
+    - "Always filter by time first (leverages time index)"
+    - "Use continuous aggregates for dashboard queries (avoid re-aggregating billions of rows)"
+    - "Downsample to 500-1000 points for charts (browsers can't render 1M points smoothly)"
+    - "Batch inserts (1K-50K rows per transaction for optimal throughput)"
+    - "Enable compression on chunks >7 days old (10-20x space savings)"
+    - "Choose rollup granularity based on time range (1-min for last 24h, 1-hour for last 30d)"

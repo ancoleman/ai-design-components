@@ -1,0 +1,327 @@
+skill: "implementing-realtime-sync"
+version: "1.0"
+domain: "backend"
+
+base_outputs:
+  # WebSocket server implementation
+  - path: "src/websocket/server.{py,rs,go,ts}"
+    must_contain:
+      - "WebSocket"
+      - "connection"
+      - "message handling"
+
+  # SSE endpoint for streaming
+  - path: "src/sse/stream.{py,rs,go,ts}"
+    must_contain:
+      - "EventSource"
+      - "streaming"
+      - "yield"
+
+  # Connection manager
+  - path: "src/realtime/connection_manager.{py,rs,go,ts}"
+    must_contain:
+      - "connections"
+      - "add"
+      - "remove"
+      - "broadcast"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Basic WebSocket chat
+      - path: "src/websocket/chat.{py,rs,go,ts}"
+        must_contain:
+          - "WebSocket"
+          - "receive"
+          - "send"
+          - "connections"
+
+      # Simple SSE endpoint
+      - path: "src/sse/events.{py,rs,go,ts}"
+        must_contain:
+          - "EventSourceResponse"
+          - "async generator"
+          - "yield"
+
+    intermediate:
+      # WebSocket with authentication
+      - path: "src/websocket/authenticated.{py,rs,go,ts}"
+        must_contain:
+          - "WebSocket"
+          - "authentication"
+          - "token"
+
+      # Presence tracking
+      - path: "src/realtime/presence.{py,rs,go,ts}"
+        must_contain:
+          - "awareness"
+          - "online users"
+          - "cursor position"
+
+      # Heartbeat/ping-pong
+      - path: "src/websocket/heartbeat.{py,rs,go,ts}"
+        must_contain:
+          - "ping"
+          - "pong"
+          - "keepalive"
+
+      # Reconnection logic
+      - path: "src/realtime/reconnection.{ts,js}"
+        must_contain:
+          - "exponential backoff"
+          - "retry"
+          - "connection state"
+
+    advanced:
+      # Redis pub/sub for scaling
+      - path: "src/realtime/redis_pubsub.{py,rs,go,ts}"
+        must_contain:
+          - "Redis"
+          - "publish"
+          - "subscribe"
+          - "channel"
+
+      # CRDT implementation (Yjs/Automerge)
+      - path: "src/collaboration/crdt.{ts,js}"
+        must_contain:
+          - "Y.Doc|Automerge"
+          - "WebsocketProvider"
+          - "conflict-free"
+
+      # Offline sync
+      - path: "src/realtime/offline_sync.{ts,js}"
+        must_contain:
+          - "IndexedDB"
+          - "queue"
+          - "sync"
+          - "offline"
+
+      # Rate limiting
+      - path: "src/websocket/rate_limiter.{py,rs,go,ts}"
+        must_contain:
+          - "rate limit"
+          - "sliding window"
+          - "throttle"
+
+  backend_framework:
+    fastapi:
+      - path: "src/websocket/fastapi_ws.py"
+        must_contain:
+          - "from fastapi import WebSocket"
+          - "async def websocket_endpoint"
+          - "await websocket.accept()"
+
+      - path: "src/sse/fastapi_sse.py"
+        must_contain:
+          - "from sse_starlette.sse import EventSourceResponse"
+          - "async def generate"
+          - "yield"
+
+    axum:
+      - path: "src/websocket/axum_ws.rs"
+        must_contain:
+          - "use axum::extract::ws"
+          - "WebSocketUpgrade"
+          - "handle_socket"
+
+      - path: "src/sse/axum_sse.rs"
+        must_contain:
+          - "use axum::response::sse"
+          - "Sse::new"
+          - "Stream"
+
+    express:
+      - path: "src/websocket/express_ws.ts"
+        must_contain:
+          - "import WebSocket"
+          - "wss.on('connection'"
+          - "ws.on('message'"
+
+    socketio:
+      - path: "src/websocket/socketio_server.{py,ts,js}"
+        must_contain:
+          - "Socket.IO|SocketIO"
+          - "on('connect'"
+          - "emit"
+          - "rooms"
+
+scaffolding:
+  # Frontend client examples
+  - path: "src/client/websocket_client.ts"
+    template: |
+      // WebSocket client with reconnection
+      class WebSocketClient {
+        private ws: WebSocket | null = null;
+        private reconnectAttempts = 0;
+        private maxReconnectDelay = 30000;
+
+        connect(url: string) {
+          this.ws = new WebSocket(url);
+          this.ws.onopen = () => {
+            console.log('Connected');
+            this.reconnectAttempts = 0;
+          };
+          this.ws.onclose = () => this.reconnect(url);
+          this.ws.onerror = (error) => console.error('WebSocket error:', error);
+        }
+
+        private reconnect(url: string) {
+          const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), this.maxReconnectDelay);
+          setTimeout(() => {
+            this.reconnectAttempts++;
+            this.connect(url);
+          }, delay);
+        }
+
+        send(data: any) {
+          if (this.ws?.readyState === WebSocket.OPEN) {
+            this.ws.send(JSON.stringify(data));
+          }
+        }
+      }
+
+  - path: "src/client/sse_client.ts"
+    template: |
+      // SSE client for streaming
+      export function connectSSE(url: string, onMessage: (data: string) => void) {
+        const eventSource = new EventSource(url);
+
+        eventSource.addEventListener('token', (event) => {
+          onMessage(event.data);
+        });
+
+        eventSource.addEventListener('done', () => {
+          eventSource.close();
+        });
+
+        eventSource.onerror = (error) => {
+          console.error('SSE error:', error);
+          eventSource.close();
+        };
+
+        return () => eventSource.close();
+      }
+
+  - path: "src/realtime/types.ts"
+    template: |
+      // Type definitions for real-time communication
+      export interface Message {
+        type: 'chat' | 'presence' | 'system';
+        userId: string;
+        content: string;
+        timestamp: number;
+      }
+
+      export interface PresenceState {
+        userId: string;
+        username: string;
+        cursor?: { x: number; y: number };
+        online: boolean;
+      }
+
+      export interface ConnectionState {
+        status: 'connecting' | 'connected' | 'disconnected' | 'reconnecting';
+        error?: string;
+        reconnectAttempts: number;
+      }
+
+  - path: "README.md"
+    template: |
+      # Real-Time Sync Implementation
+
+      ## Protocols Used
+      - **SSE**: Server-Sent Events for one-way streaming (LLM responses, notifications)
+      - **WebSocket**: Bidirectional communication (chat, live updates)
+      - **CRDT**: Conflict-free collaborative editing (Yjs/Automerge)
+
+      ## Running Examples
+
+      ### LLM Streaming with SSE
+      ```bash
+      cd examples/llm-streaming-sse
+      pip install -r requirements.txt
+      python backend.py
+      # Open frontend.html in browser
+      ```
+
+      ### WebSocket Chat
+      ```bash
+      cd examples/chat-websocket
+      # Follow README instructions
+      ```
+
+      ### Collaborative Editing
+      ```bash
+      cd examples/collaborative-yjs
+      npm install
+      npm run dev
+      ```
+
+      ## Testing
+      ```bash
+      python scripts/test_websocket_connection.py
+      ```
+
+      ## Security Considerations
+      - Use token-based authentication (Sec-WebSocket-Protocol header)
+      - Implement rate limiting per user
+      - Validate all incoming messages
+      - Use WSS (WebSocket Secure) in production
+
+      ## Scaling
+      - Use Redis pub/sub for horizontal scaling
+      - Reference: references/websockets.md
+
+metadata:
+  primary_blueprints:
+    - "api-first"
+
+  contributes_to:
+    - "Real-time functionality"
+    - "Live updates"
+    - "Collaborative features"
+    - "LLM streaming"
+    - "Chat applications"
+    - "Presence awareness"
+
+  integrates_with:
+    - "ai-chat"  # LLM streaming integration
+    - "dashboards"  # Live metrics
+    - "implementing-rest-apis"  # Authentication handoff
+
+  library_dependencies:
+    python:
+      - "websockets>=13.0"
+      - "sse-starlette>=2.0"
+      - "redis>=5.0"  # For scaling
+
+    rust:
+      - "tokio-tungstenite = \"0.23\""
+      - "axum = \"0.7\""
+
+    go:
+      - "gorilla/websocket"
+      - "nhooyr.io/websocket"
+
+    typescript:
+      - "ws"
+      - "socket.io@^4.0.0"
+      - "yjs"  # CRDT
+      - "y-websocket"
+      - "y-indexeddb"  # Offline sync
+
+  required_infrastructure:
+    - "Redis (for horizontal scaling)"
+    - "WebSocket-compatible load balancer (sticky sessions or Redis backplane)"
+
+  examples_reference:
+    - "examples/llm-streaming-sse/"
+    - "examples/chat-websocket/"
+    - "examples/collaborative-yjs/"
+
+  references:
+    - "references/sse.md"
+    - "references/websockets.md"
+    - "references/crdts.md"
+    - "references/presence-patterns.md"
+    - "references/offline-sync.md"

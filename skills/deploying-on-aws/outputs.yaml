@@ -1,0 +1,235 @@
+skill: "deploying-on-aws"
+version: "1.0"
+domain: "cloud"
+
+base_outputs:
+  # Core AWS deployment files - always produced
+  - path: "infrastructure/aws/main.tf"
+    must_contain: ["provider \"aws\"", "terraform"]
+    description: "Main Terraform configuration with AWS provider"
+
+  - path: "infrastructure/aws/variables.tf"
+    must_contain: ["variable"]
+    description: "Terraform variables for environment, region, and configuration"
+
+  - path: "infrastructure/aws/outputs.tf"
+    must_contain: ["output"]
+    description: "Terraform outputs for deployed resource URLs and identifiers"
+
+  - path: "infrastructure/aws/vpc.tf"
+    must_contain: ["aws_vpc", "aws_subnet"]
+    description: "VPC configuration with multi-AZ subnets (public, private, database)"
+
+  - path: "infrastructure/aws/security-groups.tf"
+    must_contain: ["aws_security_group"]
+    description: "Security group definitions with least-privilege ingress/egress rules"
+
+  - path: "infrastructure/aws/iam.tf"
+    must_contain: ["aws_iam_role", "aws_iam_policy"]
+    description: "IAM roles and policies following least-privilege principle"
+
+  - path: ".github/workflows/deploy-aws.yml"
+    must_contain: ["aws-actions/configure-aws-credentials", "terraform"]
+    description: "GitHub Actions workflow for AWS deployment automation"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "infrastructure/aws/README.md"
+        must_contain: ["Prerequisites", "Deployment Steps", "aws configure"]
+        description: "Deployment guide with AWS CLI setup and step-by-step instructions"
+
+      - path: "infrastructure/aws/terraform.tfvars.example"
+        must_contain: ["# Example configuration"]
+        description: "Example Terraform variables with comments explaining each setting"
+
+      - path: "infrastructure/aws/backend.tf"
+        must_contain: ["backend \"local\""]
+        description: "Local backend for starter projects (no S3 state)"
+
+    intermediate:
+      - path: "infrastructure/aws/backend.tf"
+        must_contain: ["backend \"s3\"", "dynamodb_table"]
+        description: "S3 backend with DynamoDB state locking for team collaboration"
+
+      - path: "infrastructure/aws/environments/dev/terraform.tfvars"
+        must_contain: ["environment = \"dev\""]
+        description: "Development environment configuration"
+
+      - path: "infrastructure/aws/environments/prod/terraform.tfvars"
+        must_contain: ["environment = \"prod\""]
+        description: "Production environment configuration"
+
+      - path: "infrastructure/aws/monitoring.tf"
+        must_contain: ["aws_cloudwatch"]
+        description: "CloudWatch alarms and dashboards for monitoring"
+
+      - path: "infrastructure/aws/route53.tf"
+        must_contain: ["aws_route53_zone", "aws_route53_record"]
+        description: "DNS configuration with Route 53"
+
+    advanced:
+      - path: "infrastructure/aws/modules/README.md"
+        must_contain: ["Reusable Terraform modules"]
+        description: "Documentation for custom reusable Terraform modules"
+
+      - path: "infrastructure/aws/waf.tf"
+        must_contain: ["aws_wafv2_web_acl"]
+        description: "WAF rules for application protection"
+
+      - path: "infrastructure/aws/backup.tf"
+        must_contain: ["aws_backup_plan", "aws_backup_vault"]
+        description: "AWS Backup configuration for automated backups"
+
+      - path: "infrastructure/aws/disaster-recovery.tf"
+        must_contain: ["aws_route53_health_check"]
+        description: "Multi-region failover and disaster recovery setup"
+
+      - path: "infrastructure/aws/cost-optimization.tf"
+        must_contain: ["aws_budgets_budget"]
+        description: "Cost monitoring with AWS Budgets and alerts"
+
+      - path: "infrastructure/aws/compliance.tf"
+        must_contain: ["aws_config_rule"]
+        description: "AWS Config rules for compliance monitoring"
+
+  infrastructure:
+    serverless:  # Lambda-based
+      - path: "infrastructure/aws/lambda.tf"
+        must_contain: ["aws_lambda_function"]
+        description: "Lambda function definitions with runtime, memory, timeout"
+
+      - path: "infrastructure/aws/api-gateway.tf"
+        must_contain: ["aws_apigatewayv2_api"]
+        description: "API Gateway HTTP API configuration with routes"
+
+      - path: "infrastructure/aws/dynamodb.tf"
+        must_contain: ["aws_dynamodb_table"]
+        description: "DynamoDB tables with on-demand or provisioned billing"
+
+      - path: "infrastructure/aws/eventbridge.tf"
+        must_contain: ["aws_cloudwatch_event_rule"]
+        description: "EventBridge rules for event-driven architecture"
+
+      - path: "infrastructure/aws/s3.tf"
+        must_contain: ["aws_s3_bucket", "lifecycle_rule"]
+        description: "S3 buckets with lifecycle policies and encryption"
+
+      - path: "infrastructure/aws/cloudfront.tf"
+        must_contain: ["aws_cloudfront_distribution"]
+        description: "CloudFront CDN for static content delivery"
+
+    kubernetes:  # EKS
+      - path: "infrastructure/aws/eks-cluster.tf"
+        must_contain: ["aws_eks_cluster", "aws_eks_node_group"]
+        description: "EKS cluster with managed node groups"
+
+      - path: "infrastructure/aws/eks-addons.tf"
+        must_contain: ["aws_eks_addon"]
+        description: "EKS add-ons (VPC CNI, CoreDNS, kube-proxy)"
+
+      - path: "infrastructure/aws/eks-irsa.tf"
+        must_contain: ["aws_iam_role", "oidc"]
+        description: "IAM Roles for Service Accounts (IRSA) configuration"
+
+      - path: "infrastructure/aws/rds.tf"
+        must_contain: ["aws_rds_cluster", "engine = \"aurora"]
+        description: "RDS Aurora cluster for database workloads"
+
+      - path: "infrastructure/aws/elasticache.tf"
+        must_contain: ["aws_elasticache_cluster", "engine = \"redis\""]
+        description: "ElastiCache Redis for caching layer"
+
+      - path: "infrastructure/aws/alb.tf"
+        must_contain: ["aws_lb", "load_balancer_type = \"application\""]
+        description: "Application Load Balancer for ingress traffic"
+
+      - path: "k8s/manifests/namespace.yaml"
+        must_contain: ["kind: Namespace"]
+        description: "Kubernetes namespace definitions"
+
+      - path: "k8s/manifests/deployment.yaml"
+        must_contain: ["kind: Deployment"]
+        description: "Kubernetes deployment manifests"
+
+    managed_platform:  # ECS/Fargate
+      - path: "infrastructure/aws/ecs-cluster.tf"
+        must_contain: ["aws_ecs_cluster"]
+        description: "ECS cluster configuration"
+
+      - path: "infrastructure/aws/ecs-service.tf"
+        must_contain: ["aws_ecs_service", "launch_type = \"FARGATE\""]
+        description: "ECS services with Fargate launch type"
+
+      - path: "infrastructure/aws/ecs-task-definition.tf"
+        must_contain: ["aws_ecs_task_definition", "container_definitions"]
+        description: "ECS task definitions with container configurations"
+
+      - path: "infrastructure/aws/alb.tf"
+        must_contain: ["aws_lb", "load_balancer_type = \"application\""]
+        description: "Application Load Balancer for ECS services"
+
+      - path: "infrastructure/aws/alb-target-groups.tf"
+        must_contain: ["aws_lb_target_group", "target_type = \"ip\""]
+        description: "ALB target groups for Fargate IP targets"
+
+      - path: "infrastructure/aws/rds.tf"
+        must_contain: ["aws_db_instance", "engine"]
+        description: "RDS database instance for ECS applications"
+
+      - path: "infrastructure/aws/ecr.tf"
+        must_contain: ["aws_ecr_repository"]
+        description: "ECR repositories for container images"
+
+      - path: "infrastructure/aws/autoscaling.tf"
+        must_contain: ["aws_appautoscaling_target", "ecs:service"]
+        description: "Auto-scaling policies for ECS services"
+
+    docker_compose:  # EC2-based
+      - path: "infrastructure/aws/ec2-instances.tf"
+        must_contain: ["aws_instance"]
+        description: "EC2 instance definitions with instance types"
+
+      - path: "infrastructure/aws/autoscaling-group.tf"
+        must_contain: ["aws_autoscaling_group", "aws_launch_template"]
+        description: "Auto Scaling Group with launch template"
+
+      - path: "infrastructure/aws/user-data.sh"
+        must_contain: ["#!/bin/bash", "docker"]
+        description: "User data script for Docker installation and setup"
+
+      - path: "infrastructure/aws/alb.tf"
+        must_contain: ["aws_lb"]
+        description: "Application Load Balancer for EC2 instances"
+
+      - path: "infrastructure/aws/ebs-volumes.tf"
+        must_contain: ["aws_ebs_volume", "aws_volume_attachment"]
+        description: "EBS volumes for persistent storage"
+
+      - path: "docker-compose.yml"
+        must_contain: ["version:", "services:"]
+        description: "Docker Compose configuration for multi-container setup"
+
+scaffolding:
+  - path: "infrastructure/aws/.terraform.lock.hcl"
+    reason: "Terraform dependency lock file (auto-generated on terraform init)"
+
+  - path: "infrastructure/aws/terraform.tfstate"
+    reason: "Terraform state file (auto-generated, should be in S3 for production)"
+
+  - path: "infrastructure/aws/.terraform/"
+    reason: "Terraform plugins directory (auto-generated on terraform init)"
+
+metadata:
+  primary_blueprints: ["cloud"]
+  contributes_to:
+    - "AWS infrastructure provisioning"
+    - "VPC and networking setup"
+    - "IAM roles and security policies"
+    - "Compute deployment (Lambda, ECS, EKS, EC2)"
+    - "Database setup (RDS, Aurora, DynamoDB)"
+    - "Storage configuration (S3, EBS, EFS)"
+    - "Load balancing and CDN (ALB, NLB, CloudFront)"
+    - "Monitoring and logging (CloudWatch, X-Ray)"
+    - "CI/CD automation (GitHub Actions, CodePipeline)"
+    - "Cost optimization and compliance"

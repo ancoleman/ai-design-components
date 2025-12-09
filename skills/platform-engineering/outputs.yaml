@@ -1,0 +1,263 @@
+skill: "platform-engineering"
+version: "1.0"
+domain: "devops"
+
+base_outputs:
+  # Core IDP portal configuration
+  - path: "platform/backstage/app-config.yaml"
+    must_contain: ["backend", "catalog", "scaffolder"]
+    description: "Backstage application configuration with backend, catalog, and scaffolder setup"
+
+  - path: "platform/backstage/catalog-info.yaml"
+    must_contain: ["kind: Component", "metadata", "spec"]
+    description: "Service catalog entries tracking ownership, dependencies, and health status"
+
+  # Golden path templates
+  - path: "platform/templates/"
+    must_contain: ["template.yaml", "skeleton/"]
+    description: "Software templates for scaffolding new projects with best practices"
+
+  - path: "platform/templates/*/template.yaml"
+    must_contain: ["apiVersion: scaffolder.backstage.io", "parameters", "steps"]
+    description: "Backstage template definitions with input parameters and generation steps"
+
+  # GitOps continuous delivery
+  - path: "platform/argocd/"
+    must_contain: ["Application", "apiVersion: argoproj.io"]
+    description: "Argo CD application manifests for GitOps-based deployments"
+
+  # Platform documentation
+  - path: "docs/platform/"
+    must_contain: ["getting-started", "golden-paths"]
+    description: "Platform documentation including onboarding guides and golden path usage"
+
+  - path: "docs/platform/architecture.md"
+    must_contain: ["IDP", "architecture", "components"]
+    description: "Platform architecture documentation explaining IDP layers and integrations"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Foundation phase - basic portal and first template
+      - path: "platform/backstage/catalog/systems.yaml"
+        must_contain: ["kind: System", "owner"]
+        description: "Basic service catalog with system definitions"
+
+      - path: "platform/templates/web-app/template.yaml"
+        must_contain: ["scaffolder", "steps"]
+        description: "First golden path template for common web application"
+
+      - path: "docs/platform/getting-started.md"
+        must_contain: ["onboarding", "first deployment"]
+        description: "Basic onboarding documentation for new developers"
+
+    intermediate:
+      # Pilot phase - multiple templates, integrations
+      - path: "platform/backstage/plugins/"
+        must_contain: ["package.json"]
+        description: "Custom Backstage plugins for organization-specific integrations"
+
+      - path: "platform/templates/api-service/template.yaml"
+        must_contain: ["scaffolder", "backend"]
+        description: "API service golden path template"
+
+      - path: "platform/templates/data-pipeline/template.yaml"
+        must_contain: ["scaffolder", "pipeline"]
+        description: "Data pipeline golden path template"
+
+      - path: "platform/crossplane/compositions/"
+        must_contain: ["CompositeResourceDefinition", "Composition"]
+        description: "Crossplane compositions for multi-cloud infrastructure abstractions"
+
+      - path: "platform/policies/"
+        must_contain: ["OPA", "Rego", "deny"]
+        description: "Policy-as-code enforcement using OPA for security and compliance"
+
+      - path: "docs/platform/golden-paths.md"
+        must_contain: ["templates", "customization", "escape hatches"]
+        description: "Documentation for all available golden paths and customization options"
+
+    advanced:
+      # Maturity phase - comprehensive platform, metrics, AI
+      - path: "platform/backstage/catalog/entities/"
+        must_contain: ["Component", "System", "API", "Resource"]
+        description: "Comprehensive service catalog with all entity types"
+
+      - path: "platform/metrics/"
+        must_contain: ["DORA", "SPACE", "adoption"]
+        description: "Platform metrics collection and dashboards (DORA, SPACE, adoption rates)"
+
+      - path: "platform/templates/ml-service/template.yaml"
+        must_contain: ["scaffolder", "machine-learning"]
+        description: "ML service golden path template with model serving"
+
+      - path: "platform/cost-attribution/"
+        must_contain: ["FinOps", "cost", "labels"]
+        description: "Cost attribution configuration for per-service spend tracking"
+
+      - path: "platform/self-service/workflows/"
+        must_contain: ["automation", "approval"]
+        description: "Advanced self-service workflows with approval gates"
+
+      - path: "platform/ai-assistant/"
+        must_contain: ["embeddings", "troubleshooting"]
+        description: "AI-assisted troubleshooting and platform recommendations"
+
+      - path: "docs/platform/contribution-guide.md"
+        must_contain: ["plugins", "templates", "community"]
+        description: "Guide for teams to contribute templates and plugins back to platform"
+
+  infrastructure:
+    kubernetes:
+      - path: "platform/k8s/"
+        must_contain: ["namespace", "rbac"]
+        description: "Kubernetes-specific platform configurations (namespaces, RBAC, network policies)"
+
+      - path: "platform/backstage/kubernetes-plugin.yaml"
+        must_contain: ["kubernetes", "clusters"]
+        description: "Backstage Kubernetes plugin configuration for cluster visibility"
+
+      - path: "platform/argocd/applicationset.yaml"
+        must_contain: ["ApplicationSet", "generators"]
+        description: "Argo CD ApplicationSets for managing multiple environments"
+
+    vm_based:
+      - path: "platform/terraform/"
+        must_contain: ["module", "provider"]
+        description: "Terraform modules for VM-based infrastructure provisioning"
+
+      - path: "platform/ansible/"
+        must_contain: ["playbook", "roles"]
+        description: "Ansible playbooks for configuration management"
+
+    serverless:
+      - path: "platform/templates/lambda-function/template.yaml"
+        must_contain: ["serverless", "function"]
+        description: "Serverless function golden path template"
+
+  cloud_provider:
+    aws:
+      - path: "platform/crossplane/aws/"
+        must_contain: ["Provider", "ProviderConfig", "aws"]
+        description: "Crossplane AWS provider configurations and compositions"
+
+      - path: "platform/templates/aws-service/template.yaml"
+        must_contain: ["AWS", "scaffolder"]
+        description: "AWS-specific service template with IAM roles and VPC setup"
+
+    gcp:
+      - path: "platform/crossplane/gcp/"
+        must_contain: ["Provider", "ProviderConfig", "gcp"]
+        description: "Crossplane GCP provider configurations and compositions"
+
+      - path: "platform/templates/gcp-service/template.yaml"
+        must_contain: ["GCP", "scaffolder"]
+        description: "GCP-specific service template with service accounts and networking"
+
+    azure:
+      - path: "platform/crossplane/azure/"
+        must_contain: ["Provider", "ProviderConfig", "azure"]
+        description: "Crossplane Azure provider configurations and compositions"
+
+      - path: "platform/templates/azure-service/template.yaml"
+        must_contain: ["Azure", "scaffolder"]
+        description: "Azure-specific service template with managed identities and resource groups"
+
+    multi_cloud:
+      - path: "platform/crossplane/abstractions/"
+        must_contain: ["XRD", "Composition", "multi-cloud"]
+        description: "Cloud-agnostic Crossplane abstractions for multi-cloud portability"
+
+scaffolding:
+  # Always create these directories for platform organization
+  - path: "platform/backstage/"
+    reason: "Backstage developer portal configuration and plugins"
+
+  - path: "platform/templates/"
+    reason: "Software templates for golden paths"
+
+  - path: "platform/argocd/"
+    reason: "GitOps continuous delivery configurations"
+
+  - path: "platform/policies/"
+    reason: "Policy-as-code enforcement rules"
+
+  - path: "docs/platform/"
+    reason: "Platform documentation and onboarding guides"
+
+  - path: "platform/metrics/"
+    reason: "Platform metrics, dashboards, and analytics"
+
+  # Conditional scaffolding based on infrastructure choice
+  - path: "platform/crossplane/"
+    reason: "Infrastructure orchestration compositions (if using Crossplane)"
+
+  - path: "platform/terraform/"
+    reason: "Infrastructure as code modules (if using Terraform)"
+
+  - path: "platform/k8s/"
+    reason: "Kubernetes-specific configurations (if using k8s infrastructure)"
+
+metadata:
+  primary_blueprints: ["k8s"]
+  contributes_to:
+    - "Internal Developer Platform (IDP)"
+    - "Self-service infrastructure capabilities"
+    - "Golden path templates and scaffolding"
+    - "Developer portal (Backstage or commercial)"
+    - "GitOps continuous delivery (Argo CD)"
+    - "Platform orchestration (Crossplane)"
+    - "Service catalog and ownership tracking"
+    - "Platform metrics and DevEx measurement"
+    - "Policy-as-code enforcement"
+    - "Multi-cloud infrastructure abstractions"
+    - "Developer onboarding and documentation"
+    - "Cost attribution and FinOps integration"
+
+  key_files:
+    - "platform/backstage/app-config.yaml"
+    - "platform/templates/*/template.yaml"
+    - "platform/argocd/applications/*.yaml"
+    - "platform/crossplane/compositions/*.yaml"
+    - "docs/platform/architecture.md"
+    - "platform/metrics/dashboards/*.json"
+
+  typical_workflows:
+    - name: "bootstrap_platform"
+      description: "Set up initial IDP with Backstage, first golden path, and GitOps"
+      outputs: ["backstage/app-config.yaml", "templates/web-app/", "argocd/applications/"]
+
+    - name: "create_golden_path"
+      description: "Design and implement new software template for common use case"
+      outputs: ["templates/*/template.yaml", "templates/*/skeleton/", "docs/platform/golden-paths.md"]
+
+    - name: "add_cloud_integration"
+      description: "Integrate new cloud provider with Crossplane compositions"
+      outputs: ["crossplane/*/compositions.yaml", "templates/*/template.yaml"]
+
+    - name: "implement_self_service"
+      description: "Build self-service workflow for environment provisioning or deployment"
+      outputs: ["backstage/plugins/", "argocd/applicationsets/", "policies/"]
+
+    - name: "measure_platform_success"
+      description: "Set up platform metrics, DORA tracking, and DevEx measurement"
+      outputs: ["metrics/dashboards/", "metrics/collectors/", "docs/platform/metrics.md"]
+
+  integration_points:
+    - skill: "kubernetes-operations"
+      shared_outputs: ["k8s/namespaces/", "k8s/rbac/", "argocd/"]
+
+    - skill: "gitops-workflows"
+      shared_outputs: ["argocd/applications/", "argocd/applicationsets/"]
+
+    - skill: "infrastructure-as-code"
+      shared_outputs: ["terraform/modules/", "crossplane/compositions/"]
+
+    - skill: "security-hardening"
+      shared_outputs: ["policies/", "templates/*/security/"]
+
+    - skill: "observability"
+      shared_outputs: ["backstage/plugins/", "metrics/dashboards/"]
+
+    - skill: "secret-management"
+      shared_outputs: ["backstage/app-config.yaml", "templates/*/secrets/"]

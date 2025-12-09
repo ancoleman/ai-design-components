@@ -5,6 +5,134 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2025-12-09
+
+### 🎯 MAJOR MILESTONE: Complete Skillchain Validation & Context Architecture
+
+**Strategic Achievement:** Implemented the complete Skillchain Improvement Plan, solving the "58% completeness problem" where generated projects had missing deliverables. This release introduces a comprehensive validation and context-passing architecture that ensures skills produce complete outputs matching blueprint promises.
+
+### Added
+
+**Skill Deliverables Declaration (76 outputs.yaml files):**
+Every skill now declares its expected outputs, enabling validation:
+- All 76 skills have `outputs.yaml` files specifying:
+  - `base_outputs` - Files always generated
+  - `conditional_outputs` - Maturity-dependent outputs (starter/intermediate/advanced)
+  - `path`, `must_contain`, `content_markers` for validation
+- Schema validates against `config/rules.yaml` outputs_yaml section
+
+**Chain Context Architecture:**
+- `chain-context-schema.yaml` - Comprehensive state tracking specification
+  - Router metadata (blueprint, goal, domains, matched_skills)
+  - Orchestrator config (maturity, project_path, skills_sequence)
+  - Execution tracking (skill_outputs with files_created, deliverables_contributed)
+  - Deliverables validation (status: pending/fulfilled/missing/skipped)
+- Context flows: start.md → orchestrator → validation.md → skills
+
+**Skillchain Validation Framework:**
+- `validation.md` - Shared validation logic with pseudo-code functions:
+  - `validate_chain()` - Full chain validation against blueprint
+  - `validate_deliverable()` - Single deliverable check
+  - `check_files_exist()` - Glob pattern file checking
+  - `run_content_checks()` - Regex content validation
+  - `run_basic_completeness_check()` - Fallback when no blueprint
+- Step 5.5 added to all 12 category orchestrators (devops, frontend, backend, etc.)
+- Step 8 added to start.md for post-generation validation
+
+**Blueprint Deliverables Specification:**
+All 12 blueprints updated with concrete validation requirements:
+- `## Deliverables Specification` section with YAML definitions
+- Each deliverable specifies: `primary_skill`, `required_files`, `content_checks`, `maturity_required`
+- `### Maturity Profiles` section with starter/intermediate/advanced configurations
+- `skip_deliverables`, `require_additionally`, `empty_dirs_allowed` per maturity level
+
+**Validation Package Extensions (`scripts/validation/`):**
+- **New** `blueprints.py` - Blueprint validation engine:
+  - `BlueprintValidator` class with YAML extraction from markdown
+  - `BlueprintResult` and `BlueprintReport` dataclasses
+  - Validates deliverables and maturity profile structure
+- **New** CLI command: `python -m scripts.validation blueprints`
+  - Single blueprint: `validation blueprints api-first.md`
+  - All blueprints: `validation blueprints --verbose`
+- **New** outputs.yaml validation integrated into skill validation:
+  - `_validate_outputs_yaml()` method in validator.py
+  - Checks required fields, output sections, maturity levels
+- **New** rule sections in `config/rules.yaml`:
+  - `outputs_yaml:` - Schema for skill deliverables files
+  - `blueprints:` - Schema for blueprint markdown validation
+
+**Post-Generation Evaluation Tools:**
+- `scripts/runtime/completeness_checker.py` - Project validation:
+  - Blueprint-based validation with maturity filtering
+  - Basic mode for projects without blueprints
+  - File existence and content pattern checking
+  - 80% completeness threshold with remediation suggestions
+- `evaluation/post_gen_evaluate.py` - Comprehensive project scoring:
+  - Directory completeness (0-1 score)
+  - Runnability checks (poetry, pytest, imports)
+  - Blueprint promise fulfillment
+  - Sample data availability
+  - Documentation coverage
+- Updated `evaluation/scenarios.yaml` with post_generation criteria:
+  - `expected_directories`, `expected_files`, `blueprint_promises`
+  - `runnability_checks` with commands and expected exit codes
+
+**GitHub Actions Updates:**
+- Enhanced `validate-skillchain.yml`:
+  - Added blueprint YAML validation step
+  - Path triggers for `scripts/validation/**` and `scripts/runtime/**`
+  - Installs skillchain commands before validation
+  - Runs `python -m scripts.validation blueprints --verbose`
+
+**Documentation:**
+- `evaluation/README.md` - Complete evaluation tools documentation
+- Updated `scripts/validation/README.md` with blueprint validation docs
+
+### Changed
+
+**Skillchain Flow:**
+- start.md now creates and passes `chain_context` to orchestrators
+- All 12 orchestrators track skill outputs and validate deliverables
+- Validation reports show fulfilled/missing/skipped status with completeness %
+- Remediation flow offers to generate missing components
+
+**Validation Package:**
+- `rules.py` - Added `OutputsYamlRules` and `BlueprintRules` dataclasses
+- `validator.py` - Integrated outputs.yaml validation into skill validation
+- `__init__.py` - Exports `BlueprintValidator`, `BlueprintResult`, `BlueprintReport`, `BlueprintRules`
+- `__main__.py` - Added `blueprints` subcommand
+
+**Evaluation Framework:**
+- `scenarios.yaml` - Added Phase 2 post_generation_criteria with 5 metrics
+- S11 (ML Pipeline) now has complete post_generation validation spec
+
+### Statistics
+
+- **outputs.yaml files created:** 76 (100% skill coverage)
+- **Blueprints updated:** 12 (all with deliverables specs)
+- **Orchestrators updated:** 12 (all with Step 5.5)
+- **New validation methods:** 5 (in validator.py and blueprints.py)
+- **New CLI commands:** 1 (`validation blueprints`)
+- **Files in this release:** 116 uncommitted changes
+
+### Architecture Impact
+
+**Before v0.6.0:**
+- Skills executed without output tracking
+- Blueprints promised features but didn't validate
+- 58% average completeness on generated projects
+- No remediation path for missing deliverables
+
+**After v0.6.0:**
+- Complete chain context tracking from router to validation
+- Skills declare expected outputs in outputs.yaml
+- Blueprints define concrete deliverables with validation rules
+- Maturity-aware validation (skip non-required deliverables)
+- Automated completeness checking with 80% threshold
+- Remediation flow for missing components
+
+---
+
 ## [0.5.2] - 2025-12-08
 
 ### Added
@@ -684,6 +812,9 @@ All init.md files include research from:
 - Design tokens foundational system
 - AI chat interfaces (strategic priority)
 
+[0.6.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.6.0
+[0.5.2]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.5.2
+[0.5.1]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.5.1
 [0.5.0]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.5.0
 [0.4.2]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.4.2
 [0.4.1]: https://github.com/ancoleman/ai-design-components/releases/tag/v0.4.1

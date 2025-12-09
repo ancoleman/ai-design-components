@@ -1,11 +1,85 @@
 # AI Design Components - Evaluation Scenarios
 # 12 Demo Scenarios to Validate Skillchain Effectiveness
-# Version: 1.1.0 | Last Updated: 2025-12-08
+# Version: 1.2.0 | Last Updated: 2025-12-08
 
-version: "1.1.0"
+version: "1.2.0"
 total_scenarios: 12
 
-# Evaluation Criteria (scored 1-5)
+# =============================================================================
+# PHASE 1: PRE-GENERATION CRITERIA (Triggering Accuracy)
+# =============================================================================
+# Scored 1-5, evaluated during skillchain execution
+
+pre_generation_criteria:
+  - name: skill_detection
+    description: "Correct skills identified from user goal"
+    weight: 0.30
+    scorer: automated
+
+  - name: blueprint_match
+    description: "Correct blueprint triggered (if applicable)"
+    weight: 0.25
+    scorer: automated
+
+  - name: question_reduction
+    description: "Questions reduced from normal flow"
+    weight: 0.20
+    scorer: automated
+
+  - name: domain_detection
+    description: "Correct domain identified from goal keywords"
+    weight: 0.25
+    scorer: automated
+
+# =============================================================================
+# PHASE 2: POST-GENERATION CRITERIA (Output Quality)
+# =============================================================================
+# Scored 0-1 (percentage), evaluated after project generation
+
+post_generation_criteria:
+  - name: directory_completeness
+    description: "% of directories with content (not just .gitkeep)"
+    weight: 0.20
+    threshold: 0.70  # Minimum 70% dirs have content
+    scorer: automated
+
+  - name: runnability
+    description: "Project can install deps and run tests"
+    weight: 0.25
+    threshold: 1.0  # Must pass
+    checks:
+      - "poetry install succeeds (or npm/pip equivalent)"
+      - "pytest --collect-only finds tests"
+      - "main entrypoint imports without error"
+    scorer: automated
+
+  - name: blueprint_fulfillment
+    description: "% of blueprint-promised features delivered"
+    weight: 0.25
+    threshold: 0.80  # 80% of promises fulfilled
+    scorer: automated
+
+  - name: sample_data_availability
+    description: "Sample data or generation script exists"
+    weight: 0.15
+    threshold: 1.0  # Must exist for starter projects
+    checks:
+      - "data/raw/ has sample files OR"
+      - "scripts/generate_sample_data.py exists OR"
+      - "README has working data generation snippet"
+    scorer: automated
+
+  - name: documentation_coverage
+    description: "README covers all major components"
+    weight: 0.15
+    threshold: 0.80
+    checks:
+      - "Quick start section exists"
+      - "Project structure documented"
+      - "All config files explained"
+    scorer: automated
+
+# Legacy criteria mapping (for backward compatibility)
 criteria:
   - name: skill_detection
     description: "Correct skills identified from user goal"
@@ -287,6 +361,37 @@ scenarios:
       - "A/B testing infrastructure"
     complexity: high
     estimated_time_minutes: 30
+
+    # Post-generation validation (NEW)
+    post_generation:
+      expected_directories:
+        - src/data
+        - src/models
+        - src/serving
+        - src/features  # Must have content, not empty
+        - infrastructure/kubernetes
+        - monitoring/grafana/dashboards
+      expected_files:
+        - pipelines/training_pipeline.py
+        - src/models/train.py
+        - src/serving/api.py
+        - config/model_config.yaml
+      blueprint_promises:
+        - name: "MLflow tracking"
+          check: "grep -r 'mlflow' src/"
+        - name: "Feature store"
+          check: "ls src/features/*.py | grep -v __init__"
+        - name: "Kubernetes deployment"
+          check: "ls infrastructure/kubernetes/*.yaml"
+        - name: "Grafana dashboards"
+          check: "ls monitoring/grafana/dashboards/*.json"
+        - name: "Sample data script"
+          check: "test -f scripts/generate_sample_data.py || test -f data/raw/*.csv"
+      runnability_checks:
+        - command: "poetry install --dry-run"
+          expected_exit: 0
+        - command: "poetry run pytest --collect-only"
+          expected_exit: 0
 
   # =============================================================================
   # DATA DOMAIN (1 scenario)

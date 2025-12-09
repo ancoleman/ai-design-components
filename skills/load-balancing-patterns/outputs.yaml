@@ -1,0 +1,153 @@
+skill: "load-balancing-patterns"
+version: "1.0"
+domain: "infrastructure"
+
+base_outputs:
+  # Files ALWAYS produced by this skill
+  - path: "docs/load-balancing-design.md"
+    must_contain: ["## Load Balancer Selection", "## Health Check Configuration", "## Routing Rules"]
+    description: "Load balancing architecture documentation including selection rationale, routing rules, and health check strategy"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "nginx.conf"
+        must_contain: ["upstream", "server", "location"]
+        description: "Basic NGINX reverse proxy configuration with simple round-robin load balancing"
+      - path: "docker-compose.yml"
+        must_contain: ["nginx", "services"]
+        description: "Docker Compose setup with NGINX load balancer and backend services"
+
+    intermediate:
+      - path: "terraform/load-balancer.tf"
+        must_contain: ["aws_lb|google_compute_", "health_check"]
+        description: "Cloud load balancer infrastructure with Terraform (ALB/NLB for AWS, Load Balancer for GCP/Azure)"
+      - path: "nginx/load-balancer.conf"
+        must_contain: ["upstream", "least_conn|ip_hash", "proxy_pass"]
+        description: "Advanced NGINX configuration with multiple algorithms and health checks"
+      - path: "haproxy/haproxy.cfg"
+        must_contain: ["frontend", "backend", "balance"]
+        description: "HAProxy configuration for high-performance load balancing"
+
+    advanced:
+      - path: "kubernetes/ingress.yaml"
+        must_contain: ["kind: Ingress", "ingressClassName", "rules"]
+        description: "Kubernetes Ingress resource with path-based routing and TLS"
+      - path: "kubernetes/ingress-controller.yaml"
+        must_contain: ["kind: Deployment", "nginx-ingress|traefik|haproxy"]
+        description: "Ingress controller deployment configuration"
+      - path: "terraform/global-load-balancer.tf"
+        must_contain: ["health_check", "backend|target_group"]
+        description: "Multi-region global load balancer with geographic routing"
+      - path: "envoy/envoy.yaml"
+        must_contain: ["clusters", "listeners", "routes"]
+        description: "Envoy proxy configuration for service mesh integration"
+
+  infrastructure:
+    kubernetes:
+      - path: "kubernetes/ingress.yaml"
+        must_contain: ["kind: Ingress", "networking.k8s.io/v1"]
+        description: "Kubernetes Ingress resource for cluster traffic management"
+      - path: "kubernetes/service.yaml"
+        must_contain: ["kind: Service", "type: ClusterIP|LoadBalancer"]
+        description: "Kubernetes Service definitions for backend pods"
+      - path: "manifests/ingress-controller.yaml"
+        must_contain: ["nginx-ingress|traefik|contour"]
+        description: "Ingress controller installation manifest"
+
+    docker_compose:
+      - path: "docker-compose.yml"
+        must_contain: ["nginx|haproxy|traefik", "depends_on"]
+        description: "Docker Compose configuration with load balancer and services"
+      - path: "nginx/nginx.conf"
+        must_contain: ["upstream", "proxy_pass"]
+        description: "NGINX configuration for Docker Compose deployment"
+
+    vm_based:
+      - path: "nginx/load-balancer.conf"
+        must_contain: ["upstream", "server.*weight"]
+        description: "NGINX load balancer configuration for VM-based infrastructure"
+      - path: "haproxy/haproxy.cfg"
+        must_contain: ["frontend", "backend", "server"]
+        description: "HAProxy configuration for VM deployments"
+      - path: "systemd/nginx.service"
+        description: "Systemd service file for NGINX load balancer"
+
+  cloud_provider:
+    aws:
+      - path: "terraform/alb.tf"
+        must_contain: ["aws_lb.*application", "aws_lb_target_group", "aws_lb_listener"]
+        description: "AWS Application Load Balancer (Layer 7) Terraform configuration"
+      - path: "terraform/nlb.tf"
+        must_contain: ["aws_lb.*network", "aws_lb_target_group"]
+        description: "AWS Network Load Balancer (Layer 4) Terraform configuration"
+      - path: "terraform/target-groups.tf"
+        must_contain: ["aws_lb_target_group", "health_check"]
+        description: "Target group definitions with health check configuration"
+
+    gcp:
+      - path: "terraform/load-balancer.tf"
+        must_contain: ["google_compute_.*load_balancer|google_compute_backend_service", "health_check"]
+        description: "GCP Load Balancer configuration (Application or Network LB)"
+      - path: "terraform/backend-service.tf"
+        must_contain: ["google_compute_backend_service", "google_compute_health_check"]
+        description: "GCP backend service with health checks"
+
+    azure:
+      - path: "terraform/load-balancer.tf"
+        must_contain: ["azurerm_lb|azurerm_application_gateway", "backend_address_pool"]
+        description: "Azure Load Balancer or Application Gateway configuration"
+      - path: "terraform/health-probe.tf"
+        must_contain: ["azurerm_lb_probe"]
+        description: "Azure health probe configuration"
+
+  iac_tool:
+    terraform:
+      - path: "terraform/main.tf"
+        must_contain: ["provider", "terraform"]
+        description: "Terraform main configuration file"
+      - path: "terraform/load-balancer.tf"
+        must_contain: ["resource.*lb|load_balancer", "health_check"]
+        description: "Load balancer resource definitions"
+      - path: "terraform/variables.tf"
+        must_contain: ["variable"]
+        description: "Input variables for load balancer configuration"
+      - path: "terraform/outputs.tf"
+        must_contain: ["output.*dns_name|ip_address"]
+        description: "Load balancer DNS name or IP address outputs"
+
+    pulumi:
+      - path: "index.ts"
+        must_contain: ["import.*pulumi", "LoadBalancer|ApplicationGateway"]
+        description: "Pulumi program for load balancer deployment"
+      - path: "Pulumi.yaml"
+        must_contain: ["name:", "runtime:"]
+        description: "Pulumi project configuration"
+
+    ansible:
+      - path: "playbooks/deploy-load-balancer.yml"
+        must_contain: ["hosts:", "tasks:", "nginx|haproxy"]
+        description: "Ansible playbook to deploy and configure load balancer"
+      - path: "templates/nginx.conf.j2"
+        must_contain: ["upstream", "{{.*}}"]
+        description: "Jinja2 template for NGINX configuration"
+
+scaffolding:
+  - path: "monitoring/"
+    reason: "Directory for Prometheus exporters, Grafana dashboards, and health check scripts"
+  - path: "certs/"
+    reason: "Directory for SSL/TLS certificates (should remain empty in version control)"
+  - path: "tests/"
+    reason: "Directory for load balancer configuration tests and validation scripts"
+
+metadata:
+  primary_blueprints: ["api-first", "k8s", "infrastructure"]
+  contributes_to:
+    - "Load balancer configuration files"
+    - "Traffic distribution and routing rules"
+    - "Health check endpoints and monitoring"
+    - "SSL/TLS termination setup"
+    - "Session persistence configuration"
+    - "Infrastructure as code for load balancers"
+    - "Kubernetes Ingress resources"
+    - "Global traffic management"

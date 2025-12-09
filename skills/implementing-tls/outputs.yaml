@@ -1,0 +1,499 @@
+skill: "implementing-tls"
+version: "1.0"
+domain: "security"
+
+base_outputs:
+  - path: "certs/README.md"
+    must_contain: ["TLS certificates", "Let's Encrypt", "renewal"]
+  - path: "tls/openssl.cnf"
+    must_contain: ["req_extensions", "subjectAltName", "DNS"]
+  - path: "scripts/check-tls-expiry.sh"
+    must_contain: ["openssl x509", "expiry", "days"]
+  - path: ".gitignore"
+    must_contain: ["*.key", "*.pem", "*.p12"]
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "tls/self-signed/generate.sh"
+        must_contain: ["openssl req", "self-signed", "SAN"]
+      - path: "tls/mkcert-setup.sh"
+        must_contain: ["mkcert -install", "localhost"]
+      - path: "nginx/tls.conf"
+        must_contain: ["ssl_certificate", "ssl_protocols TLSv1.3"]
+      - path: "docs/tls-setup.md"
+        must_contain: ["development certificates", "production"]
+
+    intermediate:
+      - path: "tls/letsencrypt/certbot-setup.sh"
+        must_contain: ["certbot certonly", "renew"]
+      - path: "tls/letsencrypt/renewal-hook.sh"
+        must_contain: ["nginx -s reload", "systemctl restart"]
+      - path: "nginx/tls-hardened.conf"
+        must_contain: ["ssl_ciphers", "OCSP stapling", "HSTS"]
+      - path: "systemd/certbot-renew.timer"
+        must_contain: ["OnCalendar", "certbot renew"]
+      - path: "scripts/test-tls.sh"
+        must_contain: ["openssl s_client", "testssl.sh"]
+      - path: "monitoring/cert-expiry-alert.yaml"
+        must_contain: ["probe_ssl_earliest_cert_expiry", "< 7"]
+
+    advanced:
+      - path: "tls/internal-ca/cfssl-config.json"
+        must_contain: ["signing", "profiles", "server", "client"]
+      - path: "tls/internal-ca/ca-csr.json"
+        must_contain: ["CN", "key", "algo", "ca"]
+      - path: "tls/internal-ca/setup-ca.sh"
+        must_contain: ["cfssl genkey -initca", "cfssljson"]
+      - path: "tls/mtls/nginx-mtls.conf"
+        must_contain: ["ssl_verify_client on", "ssl_client_certificate"]
+      - path: "tls/mtls/client-cert-gen.sh"
+        must_contain: ["client auth", "cfssl gencert"]
+      - path: "tls/rotation-policy.md"
+        must_contain: ["certificate lifecycle", "rotation schedule", "zero-downtime"]
+      - path: "scripts/validate-cert-chain.sh"
+        must_contain: ["openssl verify", "CAfile"]
+      - path: "scripts/convert-cert-formats.sh"
+        must_contain: ["PEM to DER", "PKCS#12"]
+
+  infrastructure:
+    kubernetes:
+      - path: "k8s/cert-manager/installation.yaml"
+        must_contain: ["cert-manager", "CustomResourceDefinition"]
+      - path: "k8s/cert-manager/clusterissuer-letsencrypt.yaml"
+        must_contain: ["ClusterIssuer", "acme", "letsencrypt"]
+      - path: "k8s/cert-manager/issuer-staging.yaml"
+        must_contain: ["Issuer", "staging"]
+      - path: "k8s/ingress-tls.yaml"
+        must_contain: ["tls:", "hosts:", "secretName:", "cert-manager.io/cluster-issuer"]
+      - path: "k8s/cert-manager/certificate.yaml"
+        must_contain: ["kind: Certificate", "dnsNames:", "issuerRef:"]
+      - path: "k8s/tls-secret.yaml"
+        must_contain: ["type: kubernetes.io/tls", "tls.crt", "tls.key"]
+
+    docker_compose:
+      - path: "docker-compose.yml"
+        must_contain: ["nginx:", "volumes:", "./certs:/etc/nginx/certs"]
+      - path: "nginx/docker-tls.conf"
+        must_contain: ["ssl_certificate /etc/nginx/certs", "listen 443 ssl"]
+      - path: "scripts/generate-dev-certs.sh"
+        must_contain: ["mkcert", "docker cp"]
+
+    vault:
+      - path: "vault/pki-config.hcl"
+        must_contain: ["pki", "max_ttl", "allowed_domains"]
+      - path: "vault/pki-roles.hcl"
+        must_contain: ["pki/roles", "ttl", "allow_subdomains"]
+      - path: "scripts/vault-pki-setup.sh"
+        must_contain: ["vault secrets enable pki", "generate/root", "ca_chain"]
+      - path: "k8s/vault-agent/cert-template.yaml"
+        must_contain: ["vault.hashicorp.com/agent-inject", "pki/issue"]
+
+  tls_type:
+    standard:
+      - path: "nginx/standard-tls.conf"
+        must_contain: ["listen 443 ssl", "ssl_certificate", "ssl_protocols"]
+      - path: "apache/ssl-vhost.conf"
+        must_contain: ["SSLEngine on", "SSLCertificateFile"]
+      - path: "docs/standard-tls.md"
+        must_contain: ["server authentication", "public CA"]
+
+    mtls:
+      - path: "nginx/mtls.conf"
+        must_contain: ["ssl_verify_client on", "ssl_client_certificate", "ssl_verify_depth"]
+      - path: "tls/mtls/ca.conf"
+        must_contain: ["client CA", "verification"]
+      - path: "scripts/generate-client-cert.sh"
+        must_contain: ["client auth", "usages"]
+      - path: "docs/mtls-architecture.md"
+        must_contain: ["mutual authentication", "service-to-service", "zero-trust"]
+      - path: "scripts/test-mtls-connection.sh"
+        must_contain: ["curl --cert", "--key", "--cacert"]
+
+    service_mesh:
+      - path: "istio/mtls-policy.yaml"
+        must_contain: ["PeerAuthentication", "STRICT"]
+      - path: "istio/destination-rule.yaml"
+        must_contain: ["DestinationRule", "ISTIO_MUTUAL"]
+      - path: "linkerd/server-policy.yaml"
+        must_contain: ["Server", "mtlsPolicy"]
+      - path: "docs/service-mesh-tls.md"
+        must_contain: ["automatic mTLS", "identity", "sidecar"]
+
+  certificate_authority:
+    letsencrypt:
+      - path: "tls/letsencrypt/http01-config.sh"
+        must_contain: ["--standalone", "http-01"]
+      - path: "tls/letsencrypt/dns01-config.sh"
+        must_contain: ["--dns", "wildcard"]
+      - path: "tls/letsencrypt/renewal-hooks/deploy.sh"
+        must_contain: ["RENEWED_DOMAINS", "reload"]
+      - path: "scripts/certbot-install.sh"
+        must_contain: ["apt install certbot", "snap install"]
+
+    internal_ca:
+      - path: "tls/ca/cfssl-ca-config.json"
+        must_contain: ["signing", "default", "expiry", "profiles"]
+      - path: "tls/ca/ca-csr.json"
+        must_contain: ["CN", "Internal CA", "key"]
+      - path: "tls/ca/setup.sh"
+        must_contain: ["cfssl genkey -initca"]
+      - path: "tls/ca/server-csr.json"
+        must_contain: ["hosts", "key", "names"]
+      - path: "scripts/issue-server-cert.sh"
+        must_contain: ["cfssl gencert", "-profile=server"]
+
+    commercial:
+      - path: "tls/commercial/csr-generation.sh"
+        must_contain: ["openssl req -new", "CSR"]
+      - path: "docs/commercial-ca-process.md"
+        must_contain: ["purchase", "validation", "installation"]
+
+scaffolding:
+  - path: "certs/"
+    type: "directory"
+    description: "Root directory for TLS certificates and keys"
+
+  - path: "tls/"
+    type: "directory"
+    description: "TLS configuration files and scripts"
+
+  - path: "tls/ca/"
+    type: "directory"
+    description: "Certificate Authority configuration (CFSSL, internal PKI)"
+
+  - path: "tls/letsencrypt/"
+    type: "directory"
+    description: "Let's Encrypt certbot configuration and renewal hooks"
+
+  - path: "tls/mtls/"
+    type: "directory"
+    description: "Mutual TLS configuration and client certificates"
+
+  - path: "k8s/cert-manager/"
+    type: "directory"
+    description: "Kubernetes cert-manager manifests and issuers"
+
+  - path: "nginx/"
+    type: "directory"
+    description: "Nginx TLS configuration files"
+
+  - path: "scripts/tls/"
+    type: "directory"
+    description: "TLS utility scripts for testing, validation, and rotation"
+
+  - path: ".gitignore"
+    type: "file"
+    template: |
+      # TLS private keys and certificates
+      *.key
+      *.pem
+      *.crt
+      *.csr
+      *.p12
+      *.pfx
+      *.der
+
+      # Certificate Authority
+      ca-key.pem
+      *-key.pem
+
+      # Let's Encrypt
+      .certbot/
+      letsencrypt/accounts/
+      letsencrypt/archive/
+
+      # Local development
+      certs/localhost*
+      certs/dev/
+
+      # Exclude example/template files
+      !*.example.pem
+      !*.template.crt
+
+  - path: "certs/README.md"
+    type: "file"
+    template: |
+      # TLS Certificates
+
+      This directory contains TLS certificates for secure communications.
+
+      ## Certificate Locations
+
+      - **Development**: `certs/dev/` (self-signed or mkcert)
+      - **Production**: `/etc/letsencrypt/live/` (Let's Encrypt) or `certs/prod/` (internal CA)
+      - **Internal CA**: `tls/ca/` (CA certificates and keys)
+
+      ## Quick Start
+
+      ### Development (Local HTTPS)
+
+      ```bash
+      # Generate local trusted certificates
+      ./scripts/generate-dev-certs.sh
+      ```
+
+      ### Production (Let's Encrypt)
+
+      ```bash
+      # Obtain certificate
+      sudo certbot certonly --standalone -d example.com
+
+      # Test renewal
+      sudo certbot renew --dry-run
+      ```
+
+      ### Internal Services (Internal CA)
+
+      ```bash
+      # Setup CA
+      cd tls/ca && ./setup.sh
+
+      # Issue server certificate
+      ./scripts/issue-server-cert.sh api.internal.com
+      ```
+
+      ## Certificate Renewal
+
+      - **Let's Encrypt**: Auto-renews via systemd timer (see `systemd/certbot-renew.timer`)
+      - **Internal CA**: Manual renewal, expires in 1 year
+      - **Monitoring**: Check `monitoring/cert-expiry-alert.yaml` for expiration alerts
+
+      ## Debugging
+
+      ```bash
+      # Test TLS connection
+      ./scripts/test-tls.sh example.com
+
+      # Check certificate expiry
+      ./scripts/check-tls-expiry.sh example.com
+
+      # Validate certificate chain
+      ./scripts/validate-cert-chain.sh cert.pem
+      ```
+
+      ## Security Notes
+
+      - Private keys (*.key, *-key.pem) are in .gitignore - NEVER commit them
+      - Store production keys in Vault or cloud secret manager
+      - Use strong key sizes: RSA 2048+ or ECDSA P-256+
+      - Enable TLS 1.3 and disable TLS 1.0/1.1
+      - Implement OCSP stapling and HSTS headers
+
+      See `docs/tls-setup.md` for detailed configuration guides.
+
+  - path: "tls/openssl.cnf"
+    type: "file"
+    template: |
+      # OpenSSL configuration for certificate generation
+
+      [req]
+      default_bits = 2048
+      prompt = no
+      default_md = sha256
+      distinguished_name = dn
+      req_extensions = v3_req
+
+      [dn]
+      CN = example.com
+      C = US
+      ST = California
+      L = San Francisco
+      O = Example Corp
+      OU = IT
+
+      [v3_req]
+      subjectAltName = @alt_names
+      keyUsage = keyEncipherment, dataEncipherment
+      extendedKeyUsage = serverAuth
+
+      [alt_names]
+      DNS.1 = example.com
+      DNS.2 = www.example.com
+      DNS.3 = api.example.com
+      IP.1 = 192.168.1.100
+
+      # For client certificates, use:
+      # extendedKeyUsage = clientAuth
+
+      # For server + client (mTLS peer), use:
+      # extendedKeyUsage = serverAuth, clientAuth
+
+  - path: "scripts/check-tls-expiry.sh"
+    type: "file"
+    template: |
+      #!/bin/bash
+      # Check TLS certificate expiration
+
+      set -e
+
+      DOMAIN="${1:-example.com}"
+      PORT="${2:-443}"
+      WARN_DAYS="${3:-30}"
+
+      echo "Checking certificate expiration for $DOMAIN:$PORT..."
+
+      # Get expiration date
+      EXPIRY=$(echo | openssl s_client -connect "$DOMAIN:$PORT" -servername "$DOMAIN" 2>/dev/null \
+        | openssl x509 -noout -enddate 2>/dev/null \
+        | cut -d= -f2)
+
+      if [ -z "$EXPIRY" ]; then
+        echo "ERROR: Could not retrieve certificate"
+        exit 1
+      fi
+
+      # Calculate days until expiration
+      EXPIRY_EPOCH=$(date -d "$EXPIRY" +%s)
+      NOW_EPOCH=$(date +%s)
+      DAYS_LEFT=$(( ($EXPIRY_EPOCH - $NOW_EPOCH) / 86400 ))
+
+      echo "Certificate expires: $EXPIRY"
+      echo "Days until expiration: $DAYS_LEFT"
+
+      if [ "$DAYS_LEFT" -lt 0 ]; then
+        echo "ERROR: Certificate has EXPIRED!"
+        exit 2
+      elif [ "$DAYS_LEFT" -lt "$WARN_DAYS" ]; then
+        echo "WARNING: Certificate expires in less than $WARN_DAYS days"
+        exit 1
+      else
+        echo "OK: Certificate is valid"
+      fi
+
+  - path: "scripts/test-tls.sh"
+    type: "file"
+    template: |
+      #!/bin/bash
+      # Test TLS connection and configuration
+
+      set -e
+
+      DOMAIN="${1:-example.com}"
+      PORT="${2:-443}"
+
+      echo "Testing TLS connection to $DOMAIN:$PORT..."
+      echo ""
+
+      # Test connection
+      echo "=== Connection Test ==="
+      openssl s_client -connect "$DOMAIN:$PORT" -servername "$DOMAIN" </dev/null 2>&1 | grep -E "Verify|Protocol|Cipher"
+      echo ""
+
+      # Show certificate details
+      echo "=== Certificate Details ==="
+      echo | openssl s_client -connect "$DOMAIN:$PORT" -servername "$DOMAIN" 2>/dev/null \
+        | openssl x509 -noout -subject -issuer -dates -ext subjectAltName
+      echo ""
+
+      # Test TLS 1.3
+      echo "=== TLS 1.3 Support ==="
+      if openssl s_client -connect "$DOMAIN:$PORT" -tls1_3 </dev/null 2>&1 | grep -q "Protocol.*TLSv1.3"; then
+        echo "✓ TLS 1.3 supported"
+      else
+        echo "✗ TLS 1.3 not supported"
+      fi
+      echo ""
+
+      # Check for deprecated protocols
+      echo "=== Security Check ==="
+      for version in tls1 tls1_1; do
+        if openssl s_client -connect "$DOMAIN:$PORT" -"$version" </dev/null 2>&1 | grep -q "Protocol"; then
+          echo "✗ WARNING: Deprecated ${version//_/.} is enabled"
+        else
+          echo "✓ ${version//_/.} is disabled"
+        fi
+      done
+
+metadata:
+  primary_blueprints: ["security"]
+  contributes_to: ["TLS/SSL configuration", "Certificate management", "Secure communications", "Zero-trust networking"]
+  integrates_with:
+    - "secret-management"       # Store private keys in Vault
+    - "load-balancing-patterns" # TLS termination at load balancers
+    - "kubernetes-operations"   # cert-manager, ingress TLS
+    - "observability"           # Monitor certificate expiration
+    - "infrastructure-as-code"  # Automate TLS configuration
+
+  common_patterns:
+    - name: "Let's Encrypt with cert-manager (Kubernetes)"
+      description: "Automatic HTTPS certificates for Kubernetes Ingress"
+      files: ["k8s/cert-manager/", "k8s/ingress-tls.yaml"]
+
+    - name: "Internal CA with CFSSL"
+      description: "Self-managed PKI for internal services"
+      files: ["tls/ca/", "scripts/issue-server-cert.sh"]
+
+    - name: "Mutual TLS (mTLS) for microservices"
+      description: "Service-to-service authentication with client certificates"
+      files: ["tls/mtls/", "nginx/mtls.conf"]
+
+    - name: "Vault PKI for dynamic certificates"
+      description: "Short-lived certificates from Vault PKI engine"
+      files: ["vault/pki-config.hcl", "k8s/vault-agent/"]
+
+  anti_patterns:
+    - name: "Committing private keys to Git"
+      avoid: "*.key, *.pem files in version control"
+      use: "Add to .gitignore, store in secret manager"
+
+    - name: "Self-signed certs in production"
+      avoid: "Browser warnings, manual trust"
+      use: "Let's Encrypt (public) or internal CA (private)"
+
+    - name: "Expired certificates"
+      avoid: "Manual renewal, no monitoring"
+      use: "Automated renewal (certbot, cert-manager) + expiration alerts"
+
+    - name: "TLS 1.0/1.1 enabled"
+      avoid: "Vulnerable to attacks (BEAST, POODLE)"
+      use: "TLS 1.3 and 1.2 only"
+
+    - name: "Missing Subject Alternative Names (SAN)"
+      avoid: "CN-only certificates (deprecated)"
+      use: "SAN with all DNS names and IPs"
+
+  tools:
+    certificate_generation:
+      - name: "OpenSSL"
+        use_when: "Manual generation, self-signed, debugging"
+      - name: "mkcert"
+        use_when: "Local development, trusted by browser"
+      - name: "CFSSL"
+        use_when: "Internal CA, API-driven certificate issuance"
+
+    automation:
+      - name: "cert-manager"
+        use_when: "Kubernetes, Let's Encrypt, Vault PKI"
+      - name: "Certbot"
+        use_when: "Traditional servers (VMs), Let's Encrypt"
+      - name: "HashiCorp Vault PKI"
+        use_when: "Dynamic secrets, short-lived certs, microservices"
+
+    testing:
+      - name: "openssl s_client"
+        use_when: "Test connections, debug handshakes"
+      - name: "testssl.sh"
+        use_when: "Comprehensive security assessment"
+      - name: "curl -v"
+        use_when: "HTTP client testing with certificates"
+
+    service_mesh:
+      - name: "Istio"
+        use_when: "Automatic mTLS, large Kubernetes clusters"
+      - name: "Linkerd"
+        use_when: "Lightweight mTLS, simplicity"
+      - name: "Consul Connect"
+        use_when: "Multi-platform service mesh"
+
+  validation_checks:
+    - "Private keys not committed to Git (check .gitignore)"
+    - "Certificates include Subject Alternative Names (SAN)"
+    - "TLS 1.3 or 1.2 enabled, TLS 1.0/1.1 disabled"
+    - "OCSP stapling enabled (production)"
+    - "HSTS header configured"
+    - "Certificate expiration monitoring configured"
+    - "Automated renewal tested (certbot renew --dry-run)"
+    - "Certificate chain valid (openssl verify)"
+    - "Strong cipher suites configured"
+    - "Perfect Forward Secrecy (PFS) enabled"

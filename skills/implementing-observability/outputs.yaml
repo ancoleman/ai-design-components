@@ -1,0 +1,271 @@
+skill: "implementing-observability"
+version: "1.0"
+domain: "backend"
+
+base_outputs:
+  # OpenTelemetry configuration
+  - path: "observability/otel-collector.yaml"
+    must_contain: ["receivers:", "processors:", "exporters:", "service:"]
+
+  # Prometheus configuration
+  - path: "observability/prometheus.yml"
+    must_contain: ["global:", "scrape_configs:", "job_name:"]
+
+  # Alerting rules
+  - path: "observability/alerts/"
+    must_contain: ["groups:", "alert:", "expr:"]
+
+  # Structured logging configuration
+  - path: "observability/logging/"
+    must_contain: []  # Language-specific files
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "observability/docker-compose.yml"
+        must_contain: ["prometheus:", "grafana:", "services:"]
+      - path: "observability/grafana/dashboards/overview.json"
+        must_contain: ["dashboard", "panels"]
+      - path: "observability/prometheus.yml"
+        must_contain: ["scrape_configs:"]
+
+    intermediate:
+      - path: "observability/lgtm-stack/"
+        must_contain: ["loki", "grafana", "tempo", "mimir"]
+      - path: "observability/alloy/config.alloy"
+        must_contain: ["otelcol.receiver", "otelcol.exporter"]
+      - path: "observability/grafana/dashboards/"
+        must_contain: []  # Multiple dashboard files
+      - path: "observability/alerts/slos.yml"
+        must_contain: ["record:", "expr:", "labels:"]
+      - path: "observability/loki/config.yaml"
+        must_contain: ["auth_enabled:", "server:", "ingester:"]
+      - path: "observability/tempo/config.yaml"
+        must_contain: ["server:", "distributor:", "ingester:"]
+
+    advanced:
+      - path: "observability/kubernetes/alloy-daemonset.yaml"
+        must_contain: ["DaemonSet", "containers:", "opentelemetry"]
+      - path: "observability/kubernetes/prometheus-operator.yaml"
+        must_contain: ["Prometheus", "ServiceMonitor"]
+      - path: "observability/kubernetes/loki-distributed.yaml"
+        must_contain: ["StatefulSet", "loki"]
+      - path: "observability/alerts/advanced-slos.yml"
+        must_contain: ["record:", "expr:", "multiburn"]
+      - path: "observability/grafana/dashboards/advanced/"
+        must_contain: []  # Advanced dashboards directory
+      - path: "observability/tempo/tempo-distributed.yaml"
+        must_contain: ["StatefulSet", "distributor", "ingester", "querier"]
+
+  observability:
+    prometheus_grafana:
+      - path: "observability/prometheus.yml"
+        must_contain: ["scrape_configs:", "job_name:"]
+      - path: "observability/grafana/datasources.yaml"
+        must_contain: ["apiVersion:", "datasources:", "prometheus"]
+      - path: "observability/grafana/dashboards/"
+        must_contain: []
+      - path: "observability/alerts/prometheus-rules.yml"
+        must_contain: ["groups:", "alert:"]
+
+    lgtm_stack:
+      - path: "observability/lgtm/docker-compose.yml"
+        must_contain: ["loki:", "grafana:", "tempo:", "mimir:", "alloy:"]
+      - path: "observability/lgtm/alloy/config.alloy"
+        must_contain: ["otelcol.receiver.otlp", "loki.write", "prometheus.remote_write"]
+      - path: "observability/lgtm/loki/config.yaml"
+        must_contain: ["auth_enabled:", "ingester:", "schema_config:"]
+      - path: "observability/lgtm/tempo/config.yaml"
+        must_contain: ["server:", "distributor:", "storage:"]
+      - path: "observability/lgtm/mimir/config.yaml"
+        must_contain: ["target:", "server:", "ingester:"]
+      - path: "observability/grafana/datasources.yaml"
+        must_contain: ["prometheus", "loki", "tempo"]
+
+    datadog:
+      - path: "observability/datadog/datadog.yaml"
+        must_contain: ["api_key:", "site:", "logs_enabled:", "apm_config:"]
+      - path: "observability/datadog/agent-daemonset.yaml"
+        must_contain: ["DaemonSet", "datadog/agent"]
+      - path: "observability/datadog/monitors/"
+        must_contain: []  # Monitor definitions
+
+    newrelic:
+      - path: "observability/newrelic/newrelic.yml"
+        must_contain: ["license_key:", "app_name:", "log_level:"]
+      - path: "observability/newrelic/otel-collector.yaml"
+        must_contain: ["exporters:", "otlp:", "endpoint: https://otlp.nr-data.net"]
+
+    cloudwatch:
+      - path: "observability/cloudwatch/otel-collector.yaml"
+        must_contain: ["exporters:", "awsemf:", "awsxray:"]
+      - path: "observability/cloudwatch/alarms.tf"
+        must_contain: ["aws_cloudwatch_metric_alarm", "comparison_operator"]
+      - path: "observability/cloudwatch/log-groups.tf"
+        must_contain: ["aws_cloudwatch_log_group", "retention_in_days"]
+
+  infrastructure:
+    docker:
+      - path: "observability/docker-compose.yml"
+        must_contain: ["services:", "prometheus:", "grafana:"]
+      - path: "observability/Dockerfile.alloy"
+        must_contain: ["FROM grafana/alloy"]
+
+    kubernetes:
+      - path: "observability/kubernetes/namespace.yaml"
+        must_contain: ["kind: Namespace", "name: observability"]
+      - path: "observability/kubernetes/alloy-daemonset.yaml"
+        must_contain: ["kind: DaemonSet", "opentelemetry"]
+      - path: "observability/kubernetes/prometheus/"
+        must_contain: []  # Prometheus Operator manifests
+      - path: "observability/kubernetes/grafana/"
+        must_contain: []  # Grafana Deployment
+      - path: "observability/kubernetes/loki/"
+        must_contain: []  # Loki StatefulSet
+      - path: "observability/kubernetes/tempo/"
+        must_contain: []  # Tempo StatefulSet
+
+    helm:
+      - path: "observability/helm/values-lgtm.yaml"
+        must_contain: ["loki:", "grafana:", "tempo:", "mimir:"]
+      - path: "observability/helm/Chart.yaml"
+        must_contain: ["apiVersion:", "name:", "dependencies:"]
+
+scaffolding:
+  # Core OpenTelemetry SDK setup (language-specific)
+  - path: "src/observability/otel.py"
+    template: "examples/fastapi-otel/main.py"
+    condition: "language == 'python'"
+    description: "OpenTelemetry SDK initialization for Python"
+
+  - path: "src/observability/otel.rs"
+    template: "examples/axum-tracing/src/main.rs"
+    condition: "language == 'rust'"
+    description: "OpenTelemetry SDK initialization for Rust with tracing"
+
+  # Structured logging configuration
+  - path: "src/observability/logging.py"
+    template: "references/structured-logging.md"
+    condition: "language == 'python'"
+    description: "structlog configuration with trace correlation"
+
+  - path: "src/observability/tracing.rs"
+    template: "references/structured-logging.md"
+    condition: "language == 'rust'"
+    description: "tracing-subscriber configuration"
+
+  # LGTM Stack docker-compose
+  - path: "observability/lgtm/docker-compose.yml"
+    template: "examples/lgtm-docker-compose/docker-compose.yml"
+    condition: "maturity == 'starter' OR maturity == 'intermediate'"
+    description: "Complete LGTM stack for local development"
+
+  # Grafana Alloy collector configuration
+  - path: "observability/alloy/config.alloy"
+    template: "examples/lgtm-docker-compose/alloy-config.alloy"
+    condition: "observability == 'lgtm_stack'"
+    description: "Grafana Alloy OpenTelemetry collector configuration"
+
+  # Prometheus configuration
+  - path: "observability/prometheus.yml"
+    template: "examples/lgtm-docker-compose/prometheus.yml"
+    description: "Prometheus scrape configuration"
+
+  # Base alert rules
+  - path: "observability/alerts/base-alerts.yml"
+    template: "references/alerting-rules.md"
+    description: "Essential Prometheus alert rules (SLOs, error rates, latency)"
+
+  # Loki alert rules
+  - path: "observability/alerts/loki-alerts.yml"
+    template: "references/alerting-rules.md"
+    description: "Log-based alerting with Loki"
+
+  # Grafana dashboards
+  - path: "observability/grafana/dashboards/api-overview.json"
+    template: "examples/grafana-dashboards/api-overview.json"
+    description: "API service overview dashboard (RED metrics)"
+
+  - path: "observability/grafana/dashboards/traces.json"
+    template: "examples/grafana-dashboards/traces.json"
+    description: "Distributed tracing visualization dashboard"
+
+  # Kubernetes manifests (advanced)
+  - path: "observability/kubernetes/alloy-daemonset.yaml"
+    template: "references/lgtm-stack.md"
+    condition: "infrastructure == 'kubernetes'"
+    description: "Grafana Alloy DaemonSet for Kubernetes"
+
+  - path: "observability/kubernetes/prometheus-operator.yaml"
+    template: "references/lgtm-stack.md"
+    condition: "infrastructure == 'kubernetes' AND observability == 'prometheus_grafana'"
+    description: "Prometheus Operator with ServiceMonitors"
+
+  # Helper scripts
+  - path: "scripts/setup_otel.py"
+    template: "scripts/setup_otel.py"
+    description: "Bootstrap OpenTelemetry SDK installation"
+
+  - path: "scripts/generate_dashboards.py"
+    template: "scripts/generate_dashboards.py"
+    description: "Generate Grafana dashboards from templates"
+
+  - path: "scripts/validate_metrics.py"
+    template: "scripts/validate_metrics.py"
+    description: "Validate metric naming and cardinality"
+
+metadata:
+  primary_blueprints:
+    - "observability"
+
+  contributes_to:
+    - "Monitoring and observability"
+    - "Distributed tracing"
+    - "Structured logging"
+    - "Metrics collection"
+    - "Alerting and incident response"
+
+  related_skills:
+    - "implementing-kubernetes"
+    - "implementing-cicd"
+    - "handling-errors"
+    - "implementing-databases"
+
+  key_technologies:
+    - "OpenTelemetry"
+    - "Prometheus"
+    - "Grafana"
+    - "Loki"
+    - "Tempo"
+    - "Mimir"
+    - "Grafana Alloy"
+    - "Jaeger"
+    - "structlog"
+    - "tracing (Rust)"
+    - "slog (Go)"
+    - "pino (Node.js)"
+
+  output_patterns:
+    logs:
+      - "observability/loki/"
+      - "observability/logging/"
+      - "src/observability/logging.*"
+
+    metrics:
+      - "observability/prometheus.yml"
+      - "observability/mimir/"
+      - "observability/alerts/"
+
+    traces:
+      - "observability/tempo/"
+      - "observability/jaeger/"
+      - "src/observability/otel.*"
+
+    visualization:
+      - "observability/grafana/dashboards/"
+      - "observability/grafana/datasources.yaml"
+
+    deployment:
+      - "observability/docker-compose.yml"
+      - "observability/kubernetes/"
+      - "observability/helm/"

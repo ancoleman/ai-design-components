@@ -1,0 +1,410 @@
+skill: "building-forms"
+version: "1.0"
+domain: "frontend"
+
+base_outputs:
+  # Core form component artifacts
+  - path: "components/forms/Input.tsx"
+    must_contain: ["label", "error", "aria-"]
+    description: "Accessible input component with label, error handling, and ARIA attributes"
+
+  - path: "components/forms/validation-schema.ts"
+    must_contain: ["schema", "validation", "z.object|yup.object"]
+    description: "Form validation schema using Zod or Yup for type-safe validation"
+
+  - path: "docs/forms/accessibility.md"
+    must_contain: ["WCAG", "aria-", "keyboard navigation"]
+    description: "Form accessibility documentation covering WCAG 2.1 AA compliance, ARIA patterns, and keyboard support"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Starter: Basic form with inline validation
+      - path: "components/forms/BasicForm.tsx"
+        must_contain: ["useForm", "register", "handleSubmit"]
+        description: "Simple form component with React Hook Form and basic validation"
+
+      - path: "components/forms/Input.tsx"
+        must_contain: ["label", "htmlFor", "error"]
+        description: "Basic text input component with label and error display"
+
+      - path: "components/forms/Button.tsx"
+        must_contain: ["type=\"submit\"", "disabled"]
+        description: "Form submit button with loading state"
+
+      - path: "validation/schemas/contact-form.ts"
+        must_contain: ["email", "z.string().email|yup.string().email"]
+        description: "Contact form validation schema"
+
+      - path: "docs/forms/form-setup.md"
+        must_contain: ["React Hook Form", "installation", "basic usage"]
+        description: "Basic form setup guide with library installation and simple example"
+
+    intermediate:
+      # Intermediate: Multi-step forms, conditional fields, rich components
+      - path: "components/forms/MultiStepForm.tsx"
+        must_contain: ["step", "progress", "navigation"]
+        description: "Multi-step form wizard with progress indicator and navigation"
+
+      - path: "components/forms/ConditionalField.tsx"
+        must_contain: ["watch", "conditional", "show|hide"]
+        description: "Conditional field component that shows/hides based on other field values"
+
+      - path: "components/forms/Select.tsx"
+        must_contain: ["select", "option", "aria-activedescendant"]
+        description: "Accessible select dropdown with keyboard navigation"
+
+      - path: "components/forms/DatePicker.tsx"
+        must_contain: ["date", "calendar", "aria-label"]
+        description: "Accessible date picker component with calendar interface"
+
+      - path: "components/forms/FileUpload.tsx"
+        must_contain: ["file", "upload", "accept"]
+        description: "File upload component with drag-and-drop support and validation"
+
+      - path: "validation/schemas/registration.ts"
+        must_contain: ["password", "refine", "match"]
+        description: "Registration form schema with password strength and confirmation matching"
+
+      - path: "hooks/useFormPersistence.ts"
+        must_contain: ["localStorage|sessionStorage", "autosave", "restore"]
+        description: "Custom hook for form autosave and draft recovery"
+
+      - path: "utils/form-validation.ts"
+        must_contain: ["validateEmail|validatePhone", "custom validator"]
+        description: "Custom validation utilities for common patterns (email, phone, credit card)"
+
+      - path: "docs/forms/validation-strategies.md"
+        must_contain: ["on blur", "on change", "progressive"]
+        description: "Validation timing strategies documentation"
+
+      - path: "docs/forms/multi-step-patterns.md"
+        must_contain: ["wizard", "navigation", "state management"]
+        description: "Multi-step form patterns and implementation guide"
+
+    advanced:
+      # Advanced: Dynamic forms, field arrays, autosave, complex validation
+      - path: "components/forms/DynamicForm.tsx"
+        must_contain: ["useFieldArray", "append", "remove"]
+        description: "Dynamic form with repeating sections (add/remove fields)"
+
+      - path: "components/forms/RichTextEditor.tsx"
+        must_contain: ["editor", "formatting", "content"]
+        description: "Rich text editor component with toolbar and formatting options"
+
+      - path: "components/forms/AddressInput.tsx"
+        must_contain: ["address", "geocode|autocomplete", "structured"]
+        description: "Structured address input with autocomplete and validation"
+
+      - path: "components/forms/CreditCardInput.tsx"
+        must_contain: ["card number", "format", "luhn"]
+        description: "Credit card input with formatting and Luhn validation"
+
+      - path: "components/forms/PhoneNumberInput.tsx"
+        must_contain: ["phone", "international", "E.164|libphonenumber"]
+        description: "International phone number input with country selection and validation"
+
+      - path: "components/forms/TagInput.tsx"
+        must_contain: ["tags", "multiple", "chip"]
+        description: "Tag input component for multiple value selection"
+
+      - path: "components/forms/InlineEdit.tsx"
+        must_contain: ["inline", "edit mode", "save|cancel"]
+        description: "Inline editing component with click-to-edit pattern"
+
+      - path: "validation/schemas/survey.ts"
+        must_contain: ["conditional", "branch", "logic"]
+        description: "Survey schema with branching logic and conditional validation"
+
+      - path: "hooks/useOptimisticUpdate.ts"
+        must_contain: ["optimistic", "rollback", "mutation"]
+        description: "Optimistic UI updates for form submissions"
+
+      - path: "hooks/useFormAnalytics.ts"
+        must_contain: ["analytics", "track", "completion rate"]
+        description: "Form analytics tracking (field completion, abandonment, errors)"
+
+      - path: "utils/form-serialization.ts"
+        must_contain: ["serialize", "deserialize", "transform"]
+        description: "Form data serialization utilities for API submission"
+
+      - path: "docs/forms/complex-patterns.md"
+        must_contain: ["field array", "nested forms", "dynamic"]
+        description: "Complex form patterns documentation (field arrays, nested forms, conditional logic)"
+
+      - path: "docs/forms/performance-optimization.md"
+        must_contain: ["debounce", "memoization", "render optimization"]
+        description: "Form performance optimization techniques"
+
+      - path: "docs/forms/error-handling.md"
+        must_contain: ["error boundary", "network error", "recovery"]
+        description: "Comprehensive error handling and recovery patterns"
+
+      - path: "scripts/generate-form-schema.py"
+        must_contain: ["generate", "schema", "JSON Schema"]
+        description: "Script to generate JSON Schema from form configuration"
+
+      - path: "tests/forms/accessibility.test.tsx"
+        must_contain: ["screen reader", "keyboard", "aria"]
+        description: "Automated accessibility testing for forms"
+
+  frontend_framework:
+    react:
+      - path: "components/forms/ReactHookFormExample.tsx"
+        must_contain: ["useForm", "react-hook-form", "zodResolver"]
+        description: "React Hook Form implementation with Zod validation"
+
+      - path: "components/forms/FormProvider.tsx"
+        must_contain: ["FormProvider", "useFormContext", "context"]
+        description: "Form context provider for nested components"
+
+      - path: "hooks/useFormValidation.ts"
+        must_contain: ["useForm", "validation", "error"]
+        description: "Custom React Hook Form validation utilities"
+
+    vue:
+      - path: "components/forms/VueFormExample.vue"
+        must_contain: ["v-model", "vee-validate", "yup"]
+        description: "Vue form implementation with VeeValidate and Yup"
+
+      - path: "composables/useForm.ts"
+        must_contain: ["ref", "reactive", "computed"]
+        description: "Vue composable for form state management"
+
+    svelte:
+      - path: "components/forms/SvelteFormExample.svelte"
+        must_contain: ["bind:", "use:", "action"]
+        description: "Svelte form implementation with validation actions"
+
+      - path: "stores/formStore.ts"
+        must_contain: ["writable", "derived", "subscribe"]
+        description: "Svelte store for form state management"
+
+    solid:
+      - path: "components/forms/SolidFormExample.tsx"
+        must_contain: ["createSignal", "createMemo", "onMount"]
+        description: "SolidJS form implementation with reactive primitives"
+
+  styling:
+    tailwind:
+      - path: "components/forms/Input.tsx"
+        must_contain: ["className", "focus:ring", "border-"]
+        description: "Tailwind-styled input components with focus states"
+
+      - path: "styles/form-utilities.css"
+        must_contain: ["@apply", "@layer components"]
+        description: "Tailwind utility classes for form components"
+
+    css_modules:
+      - path: "components/forms/Input.module.css"
+        must_contain: [".input", ".label", ".error"]
+        description: "CSS Modules for scoped form component styles"
+
+    styled_components:
+      - path: "components/forms/Input.styles.ts"
+        must_contain: ["styled", "css", "theme"]
+        description: "Styled-components for form elements with theme support"
+
+    radix_ui:
+      - path: "components/forms/RadixFormExample.tsx"
+        must_contain: ["@radix-ui", "Root", "Field"]
+        description: "Form built with Radix UI primitives for accessibility"
+
+  state_management:
+    redux:
+      - path: "store/formSlice.ts"
+        must_contain: ["createSlice", "reducer", "actions"]
+        description: "Redux slice for form state management"
+
+      - path: "middleware/formMiddleware.ts"
+        must_contain: ["middleware", "dispatch", "getState"]
+        description: "Redux middleware for form autosave and validation"
+
+    zustand:
+      - path: "stores/formStore.ts"
+        must_contain: ["create", "zustand", "persist"]
+        description: "Zustand store for form state with persistence"
+
+    tanstack_query:
+      - path: "hooks/useFormMutation.ts"
+        must_contain: ["useMutation", "queryClient", "invalidate"]
+        description: "TanStack Query mutations for form submissions"
+
+scaffolding:
+  # Essential form component scaffolding
+  - path: "components/forms/"
+    reason: "Root directory for form components (inputs, selects, buttons)"
+
+  - path: "components/forms/primitives/"
+    reason: "Primitive form components (input, label, error message)"
+
+  - path: "components/forms/composite/"
+    reason: "Composite form components (address input, credit card, phone number)"
+
+  - path: "components/forms/layouts/"
+    reason: "Form layout components (field group, fieldset, form wrapper)"
+
+  - path: "validation/"
+    reason: "Validation schemas and utilities"
+
+  - path: "validation/schemas/"
+    reason: "Zod/Yup schemas for different form types"
+
+  - path: "validation/rules/"
+    reason: "Custom validation rules and functions"
+
+  - path: "hooks/"
+    reason: "Custom React hooks for form functionality"
+
+  - path: "utils/"
+    reason: "Form utility functions (formatting, serialization, helpers)"
+
+  - path: "types/"
+    reason: "TypeScript type definitions for forms"
+
+  - path: "docs/forms/"
+    reason: "Form documentation (patterns, accessibility, validation strategies)"
+
+  - path: "docs/forms/examples/"
+    reason: "Example forms for common use cases (contact, registration, checkout)"
+
+  - path: "tests/forms/"
+    reason: "Form component tests (unit, integration, accessibility)"
+
+  - path: "scripts/"
+    reason: "Form generation and validation scripts"
+
+  - path: "styles/"
+    reason: "Form styles and CSS utilities"
+
+metadata:
+  primary_blueprints: ["dashboard", "crud-api", "frontend"]
+  contributes_to:
+    - "Form components and data collection"
+    - "Input validation and error handling"
+    - "Form state management"
+    - "Accessibility compliance (WCAG 2.1 AA)"
+    - "Multi-step form wizards"
+    - "Conditional form logic"
+    - "Autosave and draft recovery"
+    - "Dynamic forms with field arrays"
+    - "Rich input components (date pickers, file uploads, rich text)"
+    - "Structured data inputs (address, credit card, phone number)"
+    - "Form performance optimization"
+    - "Form analytics and tracking"
+
+  form_types_covered:
+    - "Contact forms"
+    - "Login and registration flows"
+    - "Checkout processes"
+    - "Survey and questionnaire forms"
+    - "Settings pages"
+    - "Search filters"
+    - "Data entry forms"
+    - "Multi-step wizards"
+
+  input_components:
+    - "Text inputs (single-line, email, password, number, tel, URL, search)"
+    - "Textarea (multi-line text)"
+    - "Select dropdown and multi-select"
+    - "Radio buttons and checkboxes"
+    - "Toggle switches"
+    - "Date and time pickers"
+    - "File and image uploads"
+    - "Rich text editors"
+    - "Autocomplete and combobox"
+    - "Tag input"
+    - "Slider and range inputs"
+    - "Color picker"
+    - "Rating inputs"
+    - "Code and markdown editors"
+    - "Structured inputs (address, credit card, phone)"
+
+  validation_strategies:
+    - "On submit validation (simple forms)"
+    - "On blur validation (recommended default)"
+    - "On change validation (real-time feedback)"
+    - "Debounced validation (API checks)"
+    - "Progressive validation (blur → change after first error)"
+    - "Schema validation (Zod, Yup)"
+    - "Custom validation rules"
+    - "Async validation (username availability, email verification)"
+    - "Cross-field validation (password confirmation)"
+
+  accessibility_features:
+    - "Semantic HTML (label, fieldset, legend)"
+    - "ARIA attributes (aria-label, aria-describedby, aria-invalid)"
+    - "Keyboard navigation support"
+    - "Screen reader announcements (aria-live)"
+    - "Focus management"
+    - "Error association with inputs"
+    - "Required field indicators"
+    - "Clear error messages"
+    - "Color contrast compliance"
+    - "Mobile touch target sizes (44px minimum)"
+
+  key_patterns:
+    - "React Hook Form + Zod (TypeScript-first validation)"
+    - "Progressive validation timing (on-blur → on-change)"
+    - "Error messages with actionable guidance"
+    - "Label + input association (htmlFor/id)"
+    - "Loading states during submission"
+    - "Optimistic UI updates"
+    - "Form autosave with localStorage/sessionStorage"
+    - "Multi-step wizard with progress tracking"
+    - "Conditional fields with watch()"
+    - "Dynamic field arrays (add/remove sections)"
+    - "Inline editing with click-to-edit pattern"
+    - "Form analytics tracking"
+
+  integration_points:
+    - "Design tokens (theming-components skill for styling)"
+    - "API integration (designing-apis skill for form submission)"
+    - "Authentication (securing-authentication skill for login forms)"
+    - "Data validation (backend validation with Pydantic/FastAPI)"
+    - "Testing (testing-strategies skill for form testing)"
+    - "Accessibility testing (automated WCAG compliance checks)"
+    - "Analytics (form completion tracking, abandonment analysis)"
+
+  recommended_libraries:
+    react:
+      - "react-hook-form (form state management, 8KB bundle)"
+      - "zod (TypeScript-first validation)"
+      - "yup (JavaScript validation alternative)"
+      - "@hookform/resolvers (validation resolver adapters)"
+      - "radix-ui (accessible component primitives)"
+      - "react-aria (Adobe's accessible React components)"
+      - "react-select (advanced select component)"
+      - "react-datepicker (date picker component)"
+      - "react-dropzone (file upload with drag-and-drop)"
+      - "react-quill (rich text editor)"
+    vue:
+      - "vee-validate (Vue form validation)"
+      - "yup (validation schema)"
+      - "vue-multiselect (advanced select)"
+      - "vue-datepicker (date picker)"
+    svelte:
+      - "svelte-forms-lib (form state management)"
+      - "yup (validation schema)"
+      - "svelte-select (select component)"
+    python_backend:
+      - "pydantic (FastAPI data validation)"
+      - "wtforms (Flask/Django form handling)"
+      - "django-crispy-forms (Django form rendering)"
+
+  validation_tools:
+    - "Zod (TypeScript-first schema validation)"
+    - "Yup (JavaScript schema validation)"
+    - "validator.js (string validation)"
+    - "ajv (JSON Schema validation)"
+    - "libphonenumber-js (phone number validation)"
+    - "credit-card-type (credit card detection)"
+    - "email-validator (Python email validation)"
+
+  testing_tools:
+    - "@testing-library/react (component testing)"
+    - "@testing-library/user-event (user interaction simulation)"
+    - "axe-core (accessibility testing)"
+    - "jest-axe (Jest accessibility matcher)"
+    - "cypress (E2E form testing)"
+    - "playwright (E2E form testing)"

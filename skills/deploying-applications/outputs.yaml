@@ -1,0 +1,313 @@
+skill: "deploying-applications"
+version: "1.0"
+domain: "backend"
+
+base_outputs:
+  - path: ".dockerignore"
+    must_contain: ["node_modules", ".git", ".env"]
+  - path: "Dockerfile"
+    must_contain: ["FROM", "WORKDIR", "COPY", "CMD"]
+  - path: "docker-compose.yml"
+    must_contain: ["version:", "services:"]
+  - path: "deploy/README.md"
+    must_contain: ["Deployment", "Prerequisites", "Setup"]
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "deploy/vercel.json"
+        must_contain: ["builds", "routes"]
+      - path: "deploy/railway.json"
+        must_contain: ["build", "deploy"]
+      - path: ".github/workflows/deploy.yml"
+        must_contain: ["name:", "on:", "jobs:"]
+
+    intermediate:
+      - path: "infrastructure/pulumi/index.ts"
+        must_contain: ["import * as pulumi", "export"]
+      - path: "infrastructure/pulumi/Pulumi.yaml"
+        must_contain: ["name:", "runtime: nodejs"]
+      - path: "deploy/ecs/task-definition.json"
+        must_contain: ["family", "containerDefinitions", "cpu", "memory"]
+      - path: "deploy/cloud-run/service.yaml"
+        must_contain: ["apiVersion: serving.knative.dev", "kind: Service"]
+      - path: ".github/workflows/deploy-staging.yml"
+        must_contain: ["environment: staging"]
+      - path: ".github/workflows/deploy-production.yml"
+        must_contain: ["environment: production"]
+
+    advanced:
+      - path: "infrastructure/pulumi/index.ts"
+        must_contain: ["import * as pulumi", "import * as aws", "export"]
+      - path: "infrastructure/opentofu/main.tf"
+        must_contain: ["terraform {", "provider", "resource"]
+      - path: "infrastructure/opentofu/variables.tf"
+        must_contain: ["variable"]
+      - path: "infrastructure/opentofu/outputs.tf"
+        must_contain: ["output"]
+      - path: "k8s/base/deployment.yaml"
+        must_contain: ["apiVersion: apps/v1", "kind: Deployment", "replicas"]
+      - path: "k8s/base/service.yaml"
+        must_contain: ["apiVersion: v1", "kind: Service", "selector"]
+      - path: "k8s/base/ingress.yaml"
+        must_contain: ["apiVersion: networking.k8s.io", "kind: Ingress"]
+      - path: "argocd/application.yaml"
+        must_contain: ["apiVersion: argoproj.io", "kind: Application"]
+      - path: "helm/Chart.yaml"
+        must_contain: ["apiVersion: v2", "name:", "version:"]
+      - path: "helm/values.yaml"
+        must_contain: ["replicaCount:", "image:"]
+
+  infrastructure:
+    kubernetes:
+      - path: "k8s/base/deployment.yaml"
+        must_contain: ["apiVersion: apps/v1", "kind: Deployment", "spec:", "containers:"]
+      - path: "k8s/base/service.yaml"
+        must_contain: ["apiVersion: v1", "kind: Service", "spec:", "ports:"]
+      - path: "k8s/base/configmap.yaml"
+        must_contain: ["apiVersion: v1", "kind: ConfigMap", "data:"]
+      - path: "k8s/base/hpa.yaml"
+        must_contain: ["apiVersion: autoscaling/v2", "kind: HorizontalPodAutoscaler"]
+      - path: "k8s/overlays/production/kustomization.yaml"
+        must_contain: ["resources:", "../../base"]
+      - path: "helm/Chart.yaml"
+        must_contain: ["apiVersion: v2", "name:", "type: application"]
+      - path: "helm/values.yaml"
+        must_contain: ["replicaCount:", "image:", "resources:"]
+      - path: "helm/templates/deployment.yaml"
+        must_contain: ["{{", "Values", "Release.Name"]
+      - path: "argocd/application.yaml"
+        must_contain: ["apiVersion: argoproj.io/v1alpha1", "kind: Application", "source:", "destination:"]
+
+    docker_compose:
+      - path: "docker-compose.yml"
+        must_contain: ["version:", "services:", "networks:", "volumes:"]
+      - path: "docker-compose.prod.yml"
+        must_contain: ["version:", "services:"]
+      - path: ".env.example"
+        must_contain: ["DATABASE_URL", "NODE_ENV"]
+      - path: "Dockerfile"
+        must_contain: ["FROM", "WORKDIR", "RUN", "EXPOSE", "CMD"]
+      - path: "deploy/fly.toml"
+        must_contain: ["app =", "[build]", "[env]"]
+      - path: "deploy/render.yaml"
+        must_contain: ["services:", "name:", "env:"]
+
+    serverless:
+      - path: "infrastructure/sst/sst.config.ts"
+        must_contain: ["import { SSTConfig }", "export default"]
+      - path: "infrastructure/pulumi/lambda.ts"
+        must_contain: ["aws.lambda.Function", "runtime:", "handler:"]
+      - path: "infrastructure/pulumi/api-gateway.ts"
+        must_contain: ["aws.apigateway", "RestApi"]
+      - path: "serverless.yml"
+        must_contain: ["service:", "provider:", "functions:"]
+      - path: "wrangler.toml"
+        must_contain: ["name =", "main =", "compatibility_date"]
+      - path: "deno.json"
+        must_contain: ["tasks", "imports"]
+
+  cloud_provider:
+    aws:
+      - path: "infrastructure/pulumi/ecs.ts"
+        must_contain: ["aws.ecs.Cluster", "aws.ecs.Service", "aws.ecs.TaskDefinition"]
+      - path: "infrastructure/pulumi/lambda.ts"
+        must_contain: ["aws.lambda.Function", "aws.lambda.Permission"]
+      - path: "infrastructure/pulumi/vpc.ts"
+        must_contain: ["aws.ec2.Vpc", "aws.ec2.Subnet"]
+      - path: "deploy/ecs/task-definition.json"
+        must_contain: ["family", "containerDefinitions", "requiresCompatibilities"]
+      - path: ".github/workflows/deploy-ecs.yml"
+        must_contain: ["aws-actions/configure-aws-credentials", "aws ecs"]
+
+    gcp:
+      - path: "infrastructure/pulumi/cloud-run.ts"
+        must_contain: ["gcp.cloudrun.Service", "location:"]
+      - path: "deploy/cloud-run/service.yaml"
+        must_contain: ["apiVersion: serving.knative.dev/v1", "kind: Service"]
+      - path: ".github/workflows/deploy-cloud-run.yml"
+        must_contain: ["google-github-actions/auth", "gcloud run deploy"]
+
+    azure:
+      - path: "infrastructure/pulumi/app-service.ts"
+        must_contain: ["azure.appservice", "ResourceGroup"]
+      - path: ".github/workflows/deploy-azure.yml"
+        must_contain: ["azure/login", "azure/webapps-deploy"]
+
+    cloudflare:
+      - path: "wrangler.toml"
+        must_contain: ["name =", "main =", "compatibility_date ="]
+      - path: "src/index.ts"
+        must_contain: ["export default", "fetch", "Request", "Response"]
+      - path: ".github/workflows/deploy-workers.yml"
+        must_contain: ["cloudflare/wrangler-action"]
+
+  database:
+    neon:
+      - path: "infrastructure/pulumi/database.ts"
+        must_contain: ["@pulumi/neon", "Project", "Branch"]
+      - path: ".env.example"
+        must_contain: ["DATABASE_URL", "NEON_"]
+
+    turso:
+      - path: "infrastructure/pulumi/database.ts"
+        must_contain: ["turso", "database"]
+      - path: ".env.example"
+        must_contain: ["TURSO_DATABASE_URL", "TURSO_AUTH_TOKEN"]
+
+    planetscale:
+      - path: ".env.example"
+        must_contain: ["DATABASE_URL", "mysql://"]
+      - path: "deploy/planetscale/schema.sql"
+        must_contain: ["CREATE TABLE"]
+
+  gitops:
+    argocd:
+      - path: "argocd/application.yaml"
+        must_contain: ["apiVersion: argoproj.io/v1alpha1", "kind: Application", "spec:", "source:", "destination:"]
+      - path: "argocd/project.yaml"
+        must_contain: ["apiVersion: argoproj.io/v1alpha1", "kind: AppProject"]
+      - path: "k8s/base/kustomization.yaml"
+        must_contain: ["resources:"]
+
+    flux:
+      - path: "flux/clusters/production/infrastructure.yaml"
+        must_contain: ["apiVersion: kustomize.toolkit.fluxcd.io", "kind: Kustomization"]
+      - path: "flux/clusters/production/apps.yaml"
+        must_contain: ["apiVersion: kustomize.toolkit.fluxcd.io", "kind: Kustomization"]
+
+scaffolding:
+  starter:
+    - template: "docker-compose-basic"
+      generates:
+        - "docker-compose.yml"
+        - "Dockerfile"
+        - ".dockerignore"
+      description: "Basic Docker Compose setup for local development"
+
+    - template: "vercel-deployment"
+      generates:
+        - "vercel.json"
+        - ".vercelignore"
+        - "deploy/README.md"
+      description: "Zero-config Vercel deployment for Next.js/Vite"
+
+    - template: "railway-deployment"
+      generates:
+        - "railway.json"
+        - "Procfile"
+        - "nixpacks.toml"
+      description: "Railway deployment configuration"
+
+  intermediate:
+    - template: "pulumi-ecs-fargate"
+      generates:
+        - "infrastructure/pulumi/index.ts"
+        - "infrastructure/pulumi/ecs.ts"
+        - "infrastructure/pulumi/vpc.ts"
+        - "infrastructure/pulumi/Pulumi.yaml"
+        - "infrastructure/pulumi/Pulumi.dev.yaml"
+      description: "AWS ECS Fargate deployment with Pulumi"
+
+    - template: "cloud-run-deployment"
+      generates:
+        - "deploy/cloud-run/service.yaml"
+        - ".github/workflows/deploy-cloud-run.yml"
+        - "Dockerfile"
+      description: "GCP Cloud Run serverless container deployment"
+
+    - template: "github-actions-cicd"
+      generates:
+        - ".github/workflows/deploy-staging.yml"
+        - ".github/workflows/deploy-production.yml"
+        - ".github/workflows/rollback.yml"
+      description: "Multi-environment CI/CD with GitHub Actions"
+
+  advanced:
+    - template: "kubernetes-helm-argocd"
+      generates:
+        - "k8s/base/deployment.yaml"
+        - "k8s/base/service.yaml"
+        - "k8s/base/ingress.yaml"
+        - "k8s/base/hpa.yaml"
+        - "k8s/overlays/production/kustomization.yaml"
+        - "helm/Chart.yaml"
+        - "helm/values.yaml"
+        - "helm/templates/deployment.yaml"
+        - "argocd/application.yaml"
+        - "argocd/project.yaml"
+      description: "Full GitOps deployment with Kubernetes, Helm 4.0, and ArgoCD"
+
+    - template: "pulumi-multi-cloud"
+      generates:
+        - "infrastructure/pulumi/index.ts"
+        - "infrastructure/pulumi/aws/ecs.ts"
+        - "infrastructure/pulumi/gcp/cloud-run.ts"
+        - "infrastructure/pulumi/cloudflare/workers.ts"
+        - "infrastructure/pulumi/shared/networking.ts"
+        - "infrastructure/pulumi/Pulumi.yaml"
+      description: "Multi-cloud deployment with Pulumi (AWS + GCP + Cloudflare)"
+
+    - template: "opentofu-terraform"
+      generates:
+        - "infrastructure/opentofu/main.tf"
+        - "infrastructure/opentofu/variables.tf"
+        - "infrastructure/opentofu/outputs.tf"
+        - "infrastructure/opentofu/backend.tf"
+        - "infrastructure/opentofu/versions.tf"
+      description: "Infrastructure as Code with OpenTofu (Terraform-compatible)"
+
+    - template: "sst-serverless-fullstack"
+      generates:
+        - "infrastructure/sst/sst.config.ts"
+        - "infrastructure/sst/stacks/ApiStack.ts"
+        - "infrastructure/sst/stacks/DatabaseStack.ts"
+        - "infrastructure/sst/stacks/FrontendStack.ts"
+      description: "Full-stack serverless deployment with SST v3"
+
+    - template: "edge-functions-cloudflare"
+      generates:
+        - "wrangler.toml"
+        - "src/index.ts"
+        - "src/router.ts"
+        - ".github/workflows/deploy-workers.yml"
+      description: "Edge function deployment with Cloudflare Workers + Hono"
+
+metadata:
+  primary_blueprints: ["ci-cd"]
+  contributes_to:
+    - "Application deployment"
+    - "Infrastructure automation"
+    - "GitOps workflows"
+    - "Serverless architectures"
+    - "Container orchestration"
+
+  deployment_targets:
+    - "Kubernetes (EKS, GKE, AKS)"
+    - "AWS ECS Fargate"
+    - "GCP Cloud Run"
+    - "Serverless (Lambda, Cloud Functions)"
+    - "Edge Functions (Cloudflare Workers, Deno Deploy)"
+    - "Platform-as-a-Service (Vercel, Railway, Render, Fly.io)"
+
+  iac_tools:
+    - "Pulumi (TypeScript-first, multi-cloud)"
+    - "OpenTofu (Terraform-compatible, CNCF)"
+    - "SST v3 (Serverless TypeScript)"
+    - "Terraform (legacy support)"
+
+  gitops_tools:
+    - "ArgoCD (platform teams, rich UI)"
+    - "Flux (DevOps automation, CLI-focused)"
+
+  databases:
+    - "Neon PostgreSQL (scale-to-zero)"
+    - "Turso SQLite (edge deployment)"
+    - "PlanetScale MySQL (non-blocking schema changes)"
+
+  integration_points:
+    - "assembling-components (application → deployment flow)"
+    - "managing-containers (Docker, container optimization)"
+    - "implementing-cicd (CI/CD pipelines)"
+    - "observing-services (monitoring post-deployment)"
+    - "securing-infrastructure (security hardening)"

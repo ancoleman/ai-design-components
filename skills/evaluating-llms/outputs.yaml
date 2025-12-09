@@ -1,0 +1,243 @@
+skill: "evaluating-llms"
+version: "1.0"
+domain: "ai-ml"
+
+base_outputs:
+  # Core evaluation test files
+  - path: "tests/test_*.py"
+    must_contain: ["def test_", "assert"]
+    description: "pytest test files for LLM unit evaluation"
+
+  - path: "evaluation/config.yaml"
+    must_contain: ["model:|metrics:|thresholds:"]
+    description: "Evaluation configuration (models, metrics, targets)"
+
+  - path: "evaluation/run_evaluation.py"
+    must_contain: ["def evaluate", "def main"]
+    description: "Main evaluation runner script"
+
+  # Metrics and results
+  - path: "evaluation/results/"
+    must_contain: []
+    description: "Directory for evaluation results (JSON, CSV)"
+
+  - path: "evaluation/metrics/"
+    must_contain: []
+    description: "Directory for metrics collection scripts"
+
+  # Test datasets
+  - path: "data/test_dataset.json"
+    must_contain: ["question|prompt|input"]
+    description: "Test dataset for evaluation (JSON format)"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Basic unit testing with pytest
+      - path: "tests/test_prompts.py"
+        must_contain: ["def test_", "assert", "=="]
+        description: "Basic pytest tests for prompt validation"
+
+      - path: "evaluation/simple_metrics.py"
+        must_contain: ["accuracy|precision|recall"]
+        description: "Simple automated metrics (accuracy, exact match)"
+
+      - path: "data/test_cases.json"
+        must_contain: ["input", "expected"]
+        description: "Small test dataset (10-50 examples)"
+
+      - path: ".env.example"
+        must_contain: ["OPENAI_API_KEY|ANTHROPIC_API_KEY"]
+        description: "Environment variable template for API keys"
+
+    intermediate:
+      # LLM-as-judge + RAG evaluation
+      - path: "evaluation/llm_judge.py"
+        must_contain: ["def evaluate_with_llm", "gpt-4|claude"]
+        description: "LLM-as-judge evaluation implementation"
+
+      - path: "evaluation/rag_eval.py"
+        must_contain: ["ragas|faithfulness|context_relevancy"]
+        description: "RAG evaluation using RAGAS framework"
+
+      - path: "evaluation/metrics/automated.py"
+        must_contain: ["bleu|rouge|bertscore"]
+        description: "Automated metrics (BLEU, ROUGE, BERTScore)"
+
+      - path: "data/rag_test_set.json"
+        must_contain: ["question", "answer", "contexts", "ground_truth"]
+        description: "RAG evaluation dataset with context"
+
+      - path: "evaluation/rubrics.yaml"
+        must_contain: ["criteria:|scale:|description:"]
+        description: "Evaluation rubrics for LLM-as-judge"
+
+      - path: "requirements.txt"
+        must_contain: ["ragas|deepeval|openai|anthropic"]
+        description: "Python dependencies for evaluation frameworks"
+
+      - path: "evaluation/reports/"
+        must_contain: []
+        description: "Directory for detailed evaluation reports"
+
+    advanced:
+      # Production monitoring + comprehensive safety evaluation
+      - path: "evaluation/safety/"
+        must_contain: []
+        description: "Directory for safety evaluation (hallucination, bias, toxicity)"
+
+      - path: "evaluation/safety/hallucination_detector.py"
+        must_contain: ["faithfulness|self_consistency"]
+        description: "Hallucination detection evaluation"
+
+      - path: "evaluation/safety/bias_evaluator.py"
+        must_contain: ["counterfactual|stereotype|demographic"]
+        description: "Bias evaluation (gender, racial, cultural)"
+
+      - path: "evaluation/safety/toxicity_checker.py"
+        must_contain: ["perspective_api|detoxify|moderation"]
+        description: "Toxicity detection using APIs/models"
+
+      - path: "evaluation/benchmarks/"
+        must_contain: []
+        description: "Directory for benchmark testing (MMLU, HumanEval)"
+
+      - path: "evaluation/benchmarks/run_mmlu.py"
+        must_contain: ["lm_eval|mmlu"]
+        description: "MMLU benchmark evaluation"
+
+      - path: "evaluation/production/monitoring.py"
+        must_contain: ["sample_rate|alert|threshold"]
+        description: "Production evaluation monitoring"
+
+      - path: "evaluation/production/ab_testing.py"
+        must_contain: ["variant_a|variant_b|statistical"]
+        description: "A/B testing framework for model comparison"
+
+      - path: "evaluation/human_eval/"
+        must_contain: []
+        description: "Directory for human evaluation interfaces/scripts"
+
+      - path: "evaluation/dashboards/"
+        must_contain: []
+        description: "Directory for evaluation dashboards/visualizations"
+
+      - path: "ci/evaluation_pipeline.yaml"
+        must_contain: ["pytest|evaluate|threshold"]
+        description: "CI/CD pipeline for automated evaluation"
+
+      - path: "data/benchmark_datasets/"
+        must_contain: []
+        description: "Directory for standard benchmark datasets"
+
+      - path: "evaluation/reports/comprehensive_report.html"
+        must_contain: ["<html>|metrics|results"]
+        description: "HTML report with visualizations"
+
+scaffolding:
+  - path: "evaluation/"
+    reason: "Organizational directory for all evaluation scripts and utilities"
+
+  - path: "tests/"
+    reason: "Standard directory for pytest test files"
+
+  - path: "data/"
+    reason: "Directory for test datasets and ground truth data"
+
+  - path: "evaluation/metrics/"
+    reason: "Organized location for metrics collection scripts"
+
+  - path: "evaluation/results/"
+    reason: "Centralized storage for evaluation results"
+
+  - path: "evaluation/safety/"
+    reason: "Dedicated directory for safety evaluations (hallucination, bias, toxicity)"
+
+  - path: "evaluation/benchmarks/"
+    reason: "Directory for standard benchmark testing (MMLU, HumanEval)"
+
+  - path: "evaluation/production/"
+    reason: "Production monitoring and A/B testing scripts"
+
+metadata:
+  primary_blueprints: ["rag-pipeline", "ml-pipeline"]
+  contributes_to:
+    - "LLM evaluation framework"
+    - "Quality assurance testing"
+    - "RAG system validation"
+    - "Production monitoring"
+    - "Safety and alignment testing"
+    - "Model comparison and selection"
+    - "Benchmark testing infrastructure"
+
+  common_patterns:
+    unit_testing:
+      - "tests/test_*.py with pytest assertions"
+      - "Exact match, regex, JSON schema validation"
+      - "Parametrized tests for multiple examples"
+
+    rag_evaluation:
+      - "RAGAS metrics (faithfulness, answer_relevancy, context_relevancy)"
+      - "Test dataset with question/answer/contexts/ground_truth"
+      - "Metrics interpretation and recommendations"
+
+    llm_as_judge:
+      - "GPT-4/Claude as evaluator with rubrics"
+      - "Quality scoring (1-5 scale) with reasoning"
+      - "Batch evaluation for medium-volume datasets"
+
+    safety_evaluation:
+      - "Hallucination detection (faithfulness, fact-checking)"
+      - "Bias evaluation (counterfactual, stereotype tests)"
+      - "Toxicity detection (Perspective API, Detoxify)"
+
+    production_monitoring:
+      - "A/B testing framework for model comparison"
+      - "Real-time quality monitoring (sample-based)"
+      - "Human-in-the-loop evaluation workflows"
+
+  key_metrics:
+    classification:
+      - "Accuracy, Precision, Recall, F1 Score"
+      - "Confusion matrix"
+
+    generation:
+      - "BLEU, ROUGE, METEOR, BERTScore"
+      - "LLM-as-judge quality scores"
+
+    rag_systems:
+      - "Faithfulness (> 0.8)"
+      - "Answer Relevance (> 0.7)"
+      - "Context Relevance (> 0.7)"
+      - "Context Precision (> 0.5)"
+      - "Context Recall (> 0.8)"
+
+    code_generation:
+      - "Pass@K, Test pass rate"
+      - "HumanEval benchmark"
+
+    safety:
+      - "Hallucination rate"
+      - "Bias scores (demographic parity)"
+      - "Toxicity scores"
+
+  frameworks:
+    - name: "RAGAS"
+      purpose: "RAG system evaluation"
+      install: "pip install ragas"
+
+    - name: "DeepEval"
+      purpose: "General LLM evaluation with pytest integration"
+      install: "pip install deepeval"
+
+    - name: "lm-evaluation-harness"
+      purpose: "Benchmark testing (MMLU, HumanEval)"
+      install: "pip install lm-eval"
+
+    - name: "LangSmith"
+      purpose: "Production monitoring and A/B testing"
+      install: "pip install langsmith"
+
+    - name: "scikit-learn"
+      purpose: "Classification metrics"
+      install: "pip install scikit-learn"

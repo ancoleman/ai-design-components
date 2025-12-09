@@ -1,0 +1,215 @@
+skill: "configuring-nginx"
+version: "1.0"
+domain: "infrastructure"
+
+base_outputs:
+  # Core nginx configuration files ALWAYS produced
+  - path: "nginx/nginx.conf"
+    must_contain: ["events", "http", "worker_processes"]
+    description: "Main nginx configuration file with global settings"
+
+  - path: "nginx/conf.d/default.conf"
+    must_contain: ["server", "listen", "server_name"]
+    description: "Default server configuration"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "nginx/sites-available/site.conf"
+        description: "Basic site configuration for static files or simple reverse proxy"
+      - path: "nginx/snippets/proxy-params.conf"
+        description: "Reusable proxy header configuration"
+
+    intermediate:
+      - path: "nginx/sites-available/site.conf"
+        must_contain: ["upstream", "proxy_pass"]
+        description: "Reverse proxy with load balancing configuration"
+      - path: "nginx/ssl/ssl-params.conf"
+        must_contain: ["ssl_protocols", "ssl_prefer_server_ciphers"]
+        description: "Modern TLS configuration"
+      - path: "nginx/snippets/security-headers.conf"
+        must_contain: ["add_header", "Strict-Transport-Security"]
+        description: "Security headers (HSTS, X-Frame-Options, CSP)"
+      - path: "nginx/snippets/cache-static.conf"
+        description: "Static asset caching configuration"
+
+    advanced:
+      - path: "nginx/sites-available/site.conf"
+        must_contain: ["upstream", "proxy_cache", "limit_req_zone"]
+        description: "Advanced proxy with caching and rate limiting"
+      - path: "nginx/ssl/ssl-params.conf"
+        must_contain: ["ssl_protocols TLSv1.3", "ssl_session_cache"]
+        description: "Advanced TLS 1.3 configuration with session caching"
+      - path: "nginx/snippets/rate-limit.conf"
+        must_contain: ["limit_req_zone", "limit_conn_zone"]
+        description: "Rate limiting and connection limiting configuration"
+      - path: "nginx/snippets/security-headers.conf"
+        must_contain: ["Content-Security-Policy", "Strict-Transport-Security"]
+        description: "Comprehensive security headers including CSP"
+      - path: "nginx/upstreams.conf"
+        must_contain: ["upstream", "keepalive"]
+        description: "Centralized upstream backend definitions"
+
+  infrastructure:
+    docker_compose:
+      - path: "docker-compose.yml"
+        must_contain: ["nginx:", "image: nginx"]
+        description: "Docker compose service definition for nginx"
+      - path: "nginx/Dockerfile"
+        description: "Custom nginx Docker image (if needed)"
+
+    kubernetes:
+      - path: "k8s/nginx-configmap.yaml"
+        must_contain: ["kind: ConfigMap", "nginx.conf"]
+        description: "ConfigMap for nginx configuration"
+      - path: "k8s/nginx-deployment.yaml"
+        must_contain: ["kind: Deployment", "image: nginx"]
+        description: "Nginx deployment manifest"
+      - path: "k8s/nginx-service.yaml"
+        must_contain: ["kind: Service", "port: 80"]
+        description: "Service exposing nginx"
+      - path: "k8s/nginx-ingress.yaml"
+        must_contain: ["kind: Ingress"]
+        description: "Ingress resource using nginx ingress controller"
+
+    bare_metal:
+      - path: "scripts/install-nginx.sh"
+        must_contain: ["apt install nginx", "systemctl enable nginx"]
+        description: "Installation script for Ubuntu/Debian"
+      - path: "nginx/sites-available/site.conf"
+        description: "Site configuration file"
+      - path: "scripts/enable-site.sh"
+        must_contain: ["ln -s", "nginx -t", "systemctl reload"]
+        description: "Script to enable site configuration"
+
+  use_case:
+    static_site:
+      - path: "nginx/sites-available/static-site.conf"
+        must_contain: ["root", "try_files", "location ~* \\.(jpg|jpeg|png|gif|css|js)"]
+        description: "Static file serving with cache headers"
+
+    reverse_proxy:
+      - path: "nginx/sites-available/reverse-proxy.conf"
+        must_contain: ["upstream", "proxy_pass", "proxy_set_header"]
+        description: "Reverse proxy configuration with proper headers"
+      - path: "nginx/snippets/proxy-params.conf"
+        must_contain: ["X-Real-IP", "X-Forwarded-For", "X-Forwarded-Proto"]
+        description: "Standard proxy headers snippet"
+
+    load_balancer:
+      - path: "nginx/sites-available/load-balancer.conf"
+        must_contain: ["upstream", "server .* weight", "keepalive"]
+        description: "Load balancing configuration with health checks"
+      - path: "nginx/upstreams.conf"
+        must_contain: ["max_fails", "fail_timeout"]
+        description: "Upstream backend pool with health monitoring"
+
+    websocket:
+      - path: "nginx/sites-available/websocket.conf"
+        must_contain: ["Upgrade", "Connection.*upgrade", "proxy_http_version 1.1"]
+        description: "WebSocket proxy configuration"
+
+    ssl_termination:
+      - path: "nginx/sites-available/ssl-site.conf"
+        must_contain: ["listen 443 ssl", "ssl_certificate", "ssl_certificate_key"]
+        description: "HTTPS configuration with SSL/TLS"
+      - path: "nginx/snippets/ssl-modern.conf"
+        must_contain: ["ssl_protocols TLSv1.3 TLSv1.2", "ssl_session_cache"]
+        description: "Modern TLS configuration snippet"
+      - path: "scripts/setup-letsencrypt.sh"
+        description: "Script to obtain Let's Encrypt certificates"
+
+  cloud_provider:
+    aws:
+      - path: "terraform/nginx-ec2.tf"
+        description: "Terraform configuration for nginx on EC2"
+      - path: "terraform/nginx-alb.tf"
+        description: "Application Load Balancer configuration"
+      - path: "scripts/userdata.sh"
+        must_contain: ["apt install nginx", "aws s3 cp"]
+        description: "EC2 user data script for nginx setup"
+
+    gcp:
+      - path: "terraform/nginx-gce.tf"
+        description: "Terraform configuration for nginx on GCE"
+      - path: "terraform/nginx-lb.tf"
+        description: "GCP Load Balancer configuration"
+
+    azure:
+      - path: "terraform/nginx-vm.tf"
+        description: "Terraform configuration for nginx on Azure VM"
+      - path: "terraform/nginx-appgw.tf"
+        description: "Azure Application Gateway configuration"
+
+scaffolding:
+  - path: "nginx/sites-available/"
+    reason: "Directory for available nginx site configurations"
+  - path: "nginx/sites-enabled/"
+    reason: "Directory for enabled sites (symlinks to sites-available)"
+  - path: "nginx/snippets/"
+    reason: "Directory for reusable configuration snippets"
+  - path: "nginx/ssl/"
+    reason: "Directory for SSL/TLS certificates and configuration"
+  - path: "nginx/conf.d/"
+    reason: "Additional configuration files loaded by nginx"
+  - path: "scripts/"
+    reason: "Helper scripts for nginx management and deployment"
+
+metadata:
+  primary_blueprints: ["api-first", "infrastructure"]
+  contributes_to:
+    - "Nginx configuration with modern security practices"
+    - "Reverse proxy setup for application backends"
+    - "Load balancing across multiple servers"
+    - "SSL/TLS termination with TLS 1.3 support"
+    - "Static file serving with caching"
+    - "WebSocket proxying"
+    - "Rate limiting and DDoS protection"
+    - "Security headers and CORS configuration"
+    - "Performance optimization (gzip, caching, keepalive)"
+
+  common_patterns:
+    - pattern: "Static website hosting"
+      files: ["nginx/sites-available/static-site.conf", "nginx/snippets/cache-static.conf"]
+
+    - pattern: "API reverse proxy"
+      files: ["nginx/sites-available/reverse-proxy.conf", "nginx/snippets/proxy-params.conf", "nginx/snippets/security-headers.conf"]
+
+    - pattern: "Load balanced application"
+      files: ["nginx/sites-available/load-balancer.conf", "nginx/upstreams.conf", "nginx/snippets/proxy-params.conf"]
+
+    - pattern: "HTTPS termination"
+      files: ["nginx/sites-available/ssl-site.conf", "nginx/snippets/ssl-modern.conf", "nginx/snippets/security-headers.conf"]
+
+    - pattern: "High-traffic production"
+      files: ["nginx/nginx.conf", "nginx/sites-available/site.conf", "nginx/snippets/rate-limit.conf", "nginx/upstreams.conf"]
+
+  validation:
+    required_checks:
+      - command: "nginx -t"
+        description: "Validate nginx configuration syntax"
+        must_succeed: true
+
+      - pattern: "listen (80|443)"
+        files: ["nginx/sites-available/*.conf"]
+        description: "Ensure server blocks have listen directive"
+
+      - pattern: "server_name"
+        files: ["nginx/sites-available/*.conf"]
+        description: "Ensure server blocks have server_name directive"
+
+    security_checks:
+      - pattern: "ssl_protocols.*TLSv1\\.3"
+        files: ["nginx/snippets/ssl-*.conf", "nginx/sites-available/*ssl*.conf"]
+        description: "Ensure modern TLS 1.3 is enabled"
+        required_when: "ssl_termination"
+
+      - pattern: "Strict-Transport-Security"
+        files: ["nginx/snippets/security-headers.conf"]
+        description: "Ensure HSTS header is configured"
+        required_when: "ssl_termination"
+
+      - pattern: "proxy_set_header X-Forwarded-Proto"
+        files: ["nginx/snippets/proxy-params.conf", "nginx/sites-available/*proxy*.conf"]
+        description: "Ensure forwarded protocol header is set"
+        required_when: "reverse_proxy"

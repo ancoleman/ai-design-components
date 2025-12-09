@@ -1,6 +1,6 @@
-# Skill Validation Package
+# Skill & Blueprint Validation Package
 
-A comprehensive validation toolkit for Claude Skills, supporting both CI/CD pipelines and interactive development workflows.
+A comprehensive validation toolkit for Claude Skills and Skillchain Blueprints, supporting both CI/CD pipelines and interactive development workflows.
 
 ## Installation
 
@@ -43,6 +43,19 @@ python -m validation check building-forms
 
 # With verbose output
 python -m validation check building-forms --verbose
+```
+
+### Blueprint Validation
+
+```bash
+# Validate all skillchain blueprints
+python -m validation blueprints
+
+# Validate a single blueprint
+python -m validation blueprints api-first.md
+
+# Verbose output
+python -m validation blueprints --verbose
 ```
 
 ## Features
@@ -121,6 +134,13 @@ python -m validation check building-forms --verbose
 | `--rules-only` | Skip community practice checks |
 | `--skip-project-rules` | Skip project-specific rule checks |
 | `--verbose, -v` | Show detailed output |
+
+### Blueprints Command Options
+
+| Option | Description |
+|--------|-------------|
+| `--blueprints-dir, -d` | Path to blueprints directory (default: ~/.claude/commands/skillchain/blueprints) |
+| `--verbose, -v` | Show detailed output including warnings |
 
 ## Exit Codes
 
@@ -203,13 +223,14 @@ scripts/validation/
 ├── __main__.py          # CLI entry point
 ├── cli.py               # CI-friendly interface
 ├── tui.py               # Interactive TUI (Textual)
-├── validator.py         # Core validation engine
+├── validator.py         # Skill validation engine
+├── blueprints.py        # Blueprint validation engine
 ├── result.py            # Result data types
 ├── rules.py             # Rule loading and parsing
 ├── formatters.py        # Output formatters
 └── config/
     ├── __init__.py      # Config path utilities
-    ├── rules.yaml       # Core validation rules
+    ├── rules.yaml       # Core validation rules (skills, outputs.yaml, blueprints)
     ├── community.yaml   # Community practices
     └── project.yaml     # Project-specific rules
 ```

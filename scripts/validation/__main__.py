@@ -112,6 +112,75 @@ def cmd_check(args: argparse.Namespace) -> int:
     )
 
 
+def cmd_blueprints(args: argparse.Namespace) -> int:
+    """Validate skillchain blueprints."""
+    from .blueprints import BlueprintValidator
+
+    # Determine blueprints directory
+    if args.blueprints_dir:
+        blueprints_dir = Path(args.blueprints_dir)
+    else:
+        blueprints_dir = Path.home() / ".claude" / "commands" / "skillchain" / "blueprints"
+
+    if not blueprints_dir.exists():
+        print(f"Error: Blueprints directory not found: {blueprints_dir}", file=sys.stderr)
+        return 2
+
+    # Initialize validator
+    validator = BlueprintValidator()
+
+    # Validate single blueprint or all
+    if args.blueprint:
+        blueprint_path = blueprints_dir / args.blueprint
+        if not blueprint_path.exists():
+            print(f"Error: Blueprint not found: {args.blueprint}", file=sys.stderr)
+            print(f"Looked in: {blueprint_path}", file=sys.stderr)
+            return 2
+        result = validator.validate_blueprint(blueprint_path)
+        results = [result]
+    else:
+        report = validator.validate_all(blueprints_dir)
+        results = report.results
+
+    # Print results
+    print("\n\033[1mBlueprint Validation Report\033[0m")
+    print("=" * 50)
+    print()
+
+    for result in results:
+        status = "\033[92mPASS\033[0m" if result.is_valid else "\033[91mFAIL\033[0m"
+        suffix = ""
+        if result.warnings:
+            suffix = f"\033[93m ({len(result.warnings)} warnings)\033[0m"
+        elif result.is_valid and result.deliverable_count > 0:
+            suffix = f" ({result.deliverable_count} deliverables)"
+
+        print(f"[{status}] {result.blueprint_name}{suffix}")
+
+        if args.verbose or not result.is_valid:
+            for error in result.errors:
+                print(f"  \033[91mERROR\033[0m: {error}")
+            if args.verbose:
+                for warning in result.warnings:
+                    print(f"  \033[93mWARN\033[0m: {warning}")
+
+    # Summary
+    total = len(results)
+    passed = sum(1 for r in results if r.is_valid)
+    failed = total - passed
+
+    print()
+    print("-" * 50)
+    print(f"Total: {total} | Passed: \033[92m{passed}\033[0m | Failed: \033[{'92' if failed == 0 else '91'}m{failed}\033[0m")
+
+    if failed == 0:
+        print("\033[92m\033[1m\nAll blueprints valid!\033[0m")
+    else:
+        print("\033[91m\033[1m\nSome blueprints have errors.\033[0m")
+
+    return 0 if failed == 0 else 1
+
+
 def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
@@ -128,6 +197,8 @@ Examples:
   %(prog)s tui                         Launch interactive TUI
   %(prog)s tui --completed             TUI with completed skills only
   %(prog)s check building-forms        Validate single skill
+  %(prog)s blueprints                  Validate all skillchain blueprints
+  %(prog)s blueprints api-first.md     Validate single blueprint
         """
     )
 
@@ -265,6 +336,27 @@ Examples:
         help="Show detailed output"
     )
     check_parser.set_defaults(func=cmd_check)
+
+    # Blueprints command
+    blueprints_parser = subparsers.add_parser(
+        "blueprints",
+        help="Validate skillchain blueprints"
+    )
+    blueprints_parser.add_argument(
+        "blueprint",
+        nargs="?",
+        help="Blueprint filename to validate (e.g., api-first.md). If not specified, validates all."
+    )
+    blueprints_parser.add_argument(
+        "--blueprints-dir", "-d",
+        help="Path to blueprints directory (default: ~/.claude/commands/skillchain/blueprints)"
+    )
+    blueprints_parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Show detailed output including warnings"
+    )
+    blueprints_parser.set_defaults(func=cmd_blueprints)
 
     # Parse arguments
     args = parser.parse_args()

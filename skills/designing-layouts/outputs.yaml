@@ -1,0 +1,385 @@
+skill: "designing-layouts"
+version: "1.0"
+domain: "frontend"
+
+# Base outputs required for all layout implementations
+base_outputs:
+  - path: "layouts/"
+    must_contain: ["components/", "styles/"]
+    reason: "Layout component and style directory structure"
+
+  - path: "layouts/styles/breakpoints.css"
+    must_contain: ["@media", "min-width"]
+    reason: "Responsive breakpoint definitions using mobile-first approach"
+
+  - path: "layouts/styles/spacing.css"
+    must_contain: ["--spacing-", "margin", "padding"]
+    reason: "Consistent spacing system using design tokens"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "layouts/components/Container.tsx"
+        must_contain: ["max-width", "padding", "margin: 0 auto"]
+        reason: "Basic centered container component"
+
+      - path: "layouts/styles/grid.css"
+        must_contain: ["display: grid", "grid-template-columns", "gap"]
+        reason: "Basic CSS Grid layout patterns"
+
+      - path: "layouts/styles/flexbox.css"
+        must_contain: ["display: flex", "justify-content", "align-items"]
+        reason: "Basic Flexbox layout patterns"
+
+      - path: "examples/simple-grid.tsx"
+        must_contain: ["grid-container", "auto-fit", "minmax"]
+        reason: "Simple responsive grid example"
+
+    intermediate:
+      - path: "layouts/components/Container.tsx"
+        must_contain: ["max-width", "padding", "className"]
+        reason: "Container with customizable props"
+
+      - path: "layouts/components/Grid.tsx"
+        must_contain: ["grid-template-columns", "gap", "responsive"]
+        reason: "Reusable grid component with responsive props"
+
+      - path: "layouts/components/Flex.tsx"
+        must_contain: ["display: flex", "direction", "align", "justify"]
+        reason: "Reusable flexbox component with utility props"
+
+      - path: "layouts/components/Stack.tsx"
+        must_contain: ["flex-direction: column", "gap", "children"]
+        reason: "Vertical/horizontal stack component"
+
+      - path: "layouts/styles/breakpoints.css"
+        must_contain: ["640px", "768px", "1024px", "1280px"]
+        reason: "Standard 5-tier breakpoint system (sm, md, lg, xl, 2xl)"
+
+      - path: "examples/admin-layout.tsx"
+        must_contain: ["sidebar", "header", "main", "nav"]
+        reason: "Admin dashboard layout with sidebar and header"
+
+      - path: "examples/responsive-grid.tsx"
+        must_contain: ["auto-fit", "minmax", "@media"]
+        reason: "Auto-responsive grid system"
+
+      - path: "scripts/generate_breakpoints.js"
+        must_contain: ["mobile-first", "min-width"]
+        reason: "Generate responsive breakpoint configurations"
+
+    advanced:
+      - path: "layouts/components/AdminLayout.tsx"
+        must_contain: ["sidebar", "header", "collapsible", "responsive"]
+        reason: "Complete admin layout with collapsible sidebar"
+
+      - path: "layouts/components/SplitPane.tsx"
+        must_contain: ["resizable", "drag", "min-width", "max-width"]
+        reason: "Resizable split-pane interface"
+
+      - path: "layouts/components/MasonryGrid.tsx"
+        must_contain: ["masonry", "column-count", "break-inside"]
+        reason: "Pinterest-style masonry layout"
+
+      - path: "layouts/components/HolyGrail.tsx"
+        must_contain: ["flex", "header", "nav", "main", "aside", "footer"]
+        reason: "Holy Grail layout pattern"
+
+      - path: "layouts/styles/container-queries.css"
+        must_contain: ["container-type", "@container", "inline-size"]
+        reason: "Container query patterns for component-responsive design"
+
+      - path: "layouts/styles/fluid-typography.css"
+        must_contain: ["clamp", "calc", "vw", "font-size"]
+        reason: "Fluid typography scales between breakpoints"
+
+      - path: "scripts/generate_breakpoints.js"
+        must_contain: ["mobile-first", "desktop-first", "min-width", "max-width"]
+        reason: "Configurable breakpoint generation (mobile-first/desktop-first)"
+
+      - path: "scripts/calculate_fluid_typography.js"
+        must_contain: ["clamp", "min-vw", "max-vw", "slope"]
+        reason: "Calculate fluid typography scales"
+
+      - path: "scripts/validate_layout_accessibility.js"
+        must_contain: ["landmarks", "role", "aria", "semantic HTML"]
+        reason: "Validate semantic HTML and ARIA landmarks"
+
+      - path: "examples/split-pane.tsx"
+        must_contain: ["resizable", "onDragStart", "onDrag", "onDragEnd"]
+        reason: "Resizable split-pane implementation"
+
+      - path: "examples/masonry-layout.tsx"
+        must_contain: ["masonry", "column-gap", "break-inside: avoid"]
+        reason: "CSS-based masonry grid"
+
+  frontend_framework:
+    react:
+      - path: "layouts/components/Container.tsx"
+        must_contain: ["React", "interface", "children: React.ReactNode"]
+        reason: "TypeScript React container component"
+
+      - path: "layouts/components/Grid.tsx"
+        must_contain: ["React.FC", "props", "className"]
+        reason: "React grid component with prop interface"
+
+      - path: "layouts/components/Flex.tsx"
+        must_contain: ["React", "FlexProps", "direction", "align"]
+        reason: "React flexbox component with typed props"
+
+      - path: "examples/admin-layout.tsx"
+        must_contain: ["useState", "useEffect", "React"]
+        reason: "React admin layout with hooks"
+
+    vue:
+      - path: "layouts/components/Container.vue"
+        must_contain: ["<template>", "<script setup>", "defineProps"]
+        reason: "Vue 3 Composition API container component"
+
+      - path: "layouts/components/Grid.vue"
+        must_contain: ["<template>", "props", "computed"]
+        reason: "Vue grid component with reactive props"
+
+      - path: "examples/AdminLayout.vue"
+        must_contain: ["<template>", "ref", "onMounted"]
+        reason: "Vue admin layout with Composition API"
+
+    svelte:
+      - path: "layouts/components/Container.svelte"
+        must_contain: ["<script>", "export let", "slot"]
+        reason: "Svelte container component with props"
+
+      - path: "layouts/components/Grid.svelte"
+        must_contain: ["<script>", "export let columns", "class:"]
+        reason: "Svelte grid component with reactive classes"
+
+    vanilla:
+      - path: "layouts/vanilla/grid.html"
+        must_contain: ["<div class=\"grid\"", "display: grid"]
+        reason: "Vanilla HTML/CSS grid implementation"
+
+      - path: "layouts/vanilla/admin.html"
+        must_contain: ["<aside", "<nav", "<main", "sidebar"]
+        reason: "Vanilla HTML admin layout structure"
+
+  styling:
+    tailwind:
+      - path: "tailwind.config.js"
+        must_contain: ["theme:", "extend:", "screens:"]
+        reason: "Tailwind configuration with custom breakpoints and spacing"
+
+      - path: "layouts/components/Container.tsx"
+        must_contain: ["className", "container", "mx-auto", "px-"]
+        reason: "Tailwind utility classes for container"
+
+      - path: "examples/admin-layout.tsx"
+        must_contain: ["flex", "grid", "gap-", "p-", "md:"]
+        reason: "Tailwind responsive utilities in layout"
+
+      - path: "tailwind.config.js"
+        must_contain: ["spacing:", "var(--spacing-"]
+        reason: "Tailwind integrated with design tokens"
+
+    css_modules:
+      - path: "layouts/components/Container.module.css"
+        must_contain: [".container", "max-width", "var(--"]
+        reason: "CSS Modules with design token integration"
+
+      - path: "layouts/components/Grid.module.css"
+        must_contain: [".grid", "grid-template-columns", "gap"]
+        reason: "Grid styles in CSS Modules"
+
+      - path: "examples/AdminLayout.module.css"
+        must_contain: [".layout", ".sidebar", ".main", "@media"]
+        reason: "Admin layout CSS Modules with responsive styles"
+
+    styled_components:
+      - path: "layouts/components/Container.tsx"
+        must_contain: ["styled.div", "max-width", "props.theme"]
+        reason: "Styled-components container with theme"
+
+      - path: "layouts/components/Grid.tsx"
+        must_contain: ["styled.div", "grid-template-columns", "${props =>"]
+        reason: "Dynamic grid with styled-components props"
+
+      - path: "layouts/components/breakpoints.ts"
+        must_contain: ["export const breakpoints", "sm:", "md:", "lg:"]
+        reason: "Breakpoint definitions for styled-components media queries"
+
+    scss:
+      - path: "layouts/styles/_variables.scss"
+        must_contain: ["$breakpoint-", "$spacing-", "$container-"]
+        reason: "SCSS variables from design tokens"
+
+      - path: "layouts/styles/_mixins.scss"
+        must_contain: ["@mixin", "media-query", "container"]
+        reason: "SCSS mixins for responsive utilities"
+
+      - path: "layouts/components/grid.scss"
+        must_contain: [".grid", "display: grid", "@include media-query"]
+        reason: "Grid styles using SCSS mixins"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "layouts/components/Container.tsx"
+    reason: "Initialize centered container component"
+
+  - path: "layouts/components/Grid.tsx"
+    reason: "Initialize reusable grid component"
+
+  - path: "layouts/components/Flex.tsx"
+    reason: "Initialize flexbox utility component"
+
+  - path: "layouts/components/Stack.tsx"
+    reason: "Initialize vertical/horizontal stack component"
+
+  - path: "layouts/styles/breakpoints.css"
+    reason: "Initialize responsive breakpoint system"
+
+  - path: "layouts/styles/spacing.css"
+    reason: "Initialize spacing utilities"
+
+  - path: "layouts/styles/grid.css"
+    reason: "Initialize CSS Grid patterns"
+
+  - path: "layouts/styles/flexbox.css"
+    reason: "Initialize Flexbox patterns"
+
+  - path: "assets/breakpoint-config.json"
+    reason: "Standard breakpoint configurations template"
+
+  - path: "assets/layout-templates.json"
+    reason: "Common layout templates (admin, landing, docs)"
+
+  - path: "assets/spacing-scale.json"
+    reason: "Spacing system configuration"
+
+  - path: "README.md"
+    reason: "Document layout system usage and patterns"
+
+# Metadata
+metadata:
+  primary_blueprints: ["dashboard", "frontend"]
+  contributes_to:
+    - "Responsive layout systems (Grid, Flexbox, Container Queries)"
+    - "Layout components (Container, Grid, Flex, Stack)"
+    - "Admin dashboards with sidebars and headers"
+    - "Mobile-first responsive design"
+    - "Spacing and breakpoint systems"
+
+  common_patterns:
+    - "Mobile-first media queries (@media min-width)"
+    - "CSS Grid for two-dimensional layouts"
+    - "Flexbox for one-dimensional layouts and alignment"
+    - "Container queries for component-responsive design"
+    - "12-column grid system with flexible columns"
+    - "Auto-fit/auto-fill responsive grids"
+    - "Holy Grail layout pattern (header, nav, main, aside, footer)"
+    - "Collapsible sidebar with responsive behavior"
+    - "Semantic HTML with landmark ARIA roles"
+    - "Design token integration for spacing and breakpoints"
+
+  integration_points:
+    design_tokens: "All spacing, breakpoints, and container widths use design tokens"
+    dashboards: "Admin layouts provide structure for dashboard components"
+    navigation: "Sidebar and header integrate with navigation components"
+    forms: "Form layouts use grid and flex components"
+    data_viz: "Grid layouts for chart galleries and dashboards"
+    tables: "Container components wrap table grids"
+
+  typical_directory_structure: |
+    project/
+    ├── layouts/                    # Layout components and styles
+    │   ├── components/             # Reusable layout components
+    │   │   ├── Container.tsx       # Centered container with max-width
+    │   │   ├── Grid.tsx            # CSS Grid wrapper component
+    │   │   ├── Flex.tsx            # Flexbox wrapper component
+    │   │   ├── Stack.tsx           # Vertical/horizontal stack
+    │   │   ├── AdminLayout.tsx     # Complete admin layout
+    │   │   ├── SplitPane.tsx       # Resizable split-pane
+    │   │   ├── MasonryGrid.tsx     # Masonry layout
+    │   │   └── HolyGrail.tsx       # Holy Grail pattern
+    │   └── styles/                 # Layout CSS
+    │       ├── breakpoints.css     # Responsive breakpoints
+    │       ├── spacing.css         # Spacing utilities
+    │       ├── grid.css            # Grid patterns
+    │       ├── flexbox.css         # Flexbox patterns
+    │       ├── container-queries.css   # Container query patterns
+    │       └── fluid-typography.css    # Fluid type scales
+    ├── scripts/                    # Layout utilities
+    │   ├── generate_breakpoints.js         # Generate breakpoint configs
+    │   ├── calculate_fluid_typography.js   # Calculate fluid scales
+    │   └── validate_layout_accessibility.js # Validate semantic HTML
+    ├── examples/                   # Usage examples
+    │   ├── admin-layout.tsx        # Admin dashboard layout
+    │   ├── responsive-grid.tsx     # Auto-responsive grid
+    │   ├── masonry-layout.tsx      # Pinterest-style layout
+    │   └── split-pane.tsx          # Resizable split-pane
+    ├── assets/                     # Configuration templates
+    │   ├── breakpoint-config.json  # Breakpoint definitions
+    │   ├── layout-templates.json   # Layout presets
+    │   └── spacing-scale.json      # Spacing scale config
+    ├── references/                 # Documentation
+    │   ├── layout-patterns.md      # Common layout patterns
+    │   ├── responsive-strategies.md # Mobile-first design
+    │   ├── css-techniques.md       # Modern CSS features
+    │   ├── accessibility-layouts.md # Semantic HTML/ARIA
+    │   ├── library-guide.md        # Framework integration
+    │   └── performance-optimization.md # CSS performance
+    └── README.md                   # Project overview
+
+  tools_required:
+    - name: "Node.js"
+      version: "^18.0.0"
+      purpose: "Run generation and validation scripts"
+
+    - name: "TypeScript"
+      version: "^5.0.0"
+      purpose: "Type-safe React/Vue component development"
+      install: "npm install typescript"
+
+  validation_checks:
+    - "Mobile-first approach (min-width media queries)"
+    - "Semantic HTML (header, nav, main, aside, footer)"
+    - "ARIA landmarks for accessibility (role=\"navigation\", role=\"main\")"
+    - "Container max-width uses design tokens"
+    - "Spacing uses consistent scale from design tokens"
+    - "Breakpoints match design system (640px, 768px, 1024px, 1280px, 1536px)"
+    - "Grid gap uses design token spacing"
+    - "Flexbox components have accessible min-height (44px touch targets)"
+    - "Skip links for keyboard navigation"
+    - "Responsive behavior tested at all breakpoints"
+
+  anti_patterns:
+    - name: "Desktop-first media queries"
+      avoid: "@media (max-width: 768px)"
+      use: "@media (min-width: 768px) for mobile-first"
+
+    - name: "Hardcoded spacing values"
+      avoid: "padding: 16px"
+      use: "padding: var(--spacing-md)"
+
+    - name: "Div soup without semantic HTML"
+      avoid: "<div><div><div>Content</div></div></div>"
+      use: "<header><nav><main> with landmark roles"
+
+    - name: "Pixel-based container widths"
+      avoid: "max-width: 1200px"
+      use: "max-width: var(--container-max-width)"
+
+    - name: "Missing skip links"
+      avoid: "No keyboard navigation shortcuts"
+      use: "<a href=\"#main\" class=\"skip-link\">Skip to content</a>"
+
+    - name: "Non-responsive layouts"
+      avoid: "Fixed widths with no media queries"
+      use: "Fluid layouts with responsive breakpoints"
+
+    - name: "Physical CSS properties only"
+      avoid: "margin-left, padding-right"
+      use: "margin-inline-start, padding-inline-end for RTL support"
+
+    - name: "Inaccessible touch targets"
+      avoid: "Button height: 32px (too small for mobile)"
+      use: "min-height: 44px (WCAG AAA touch target size)"

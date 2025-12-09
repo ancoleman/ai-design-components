@@ -1,0 +1,493 @@
+skill: "streaming-data"
+version: "1.0"
+domain: "data"
+
+base_outputs:
+  # Core streaming infrastructure configurations
+  - path: "streaming/kafka/broker-config.yaml"
+    must_contain:
+      - "broker.id"
+      - "log.dirs"
+      - "num.partitions"
+      - "replication.factor"
+
+  - path: "streaming/kafka/producer-config.yaml"
+    must_contain:
+      - "bootstrap.servers"
+      - "acks"
+      - "retries"
+      - "idempotence"
+
+  - path: "streaming/kafka/consumer-config.yaml"
+    must_contain:
+      - "bootstrap.servers"
+      - "group.id"
+      - "auto.offset.reset"
+      - "enable.auto.commit"
+
+  # Topic management and schemas
+  - path: "streaming/topics/topic-definitions.yaml"
+    must_contain:
+      - "topic_name"
+      - "partitions"
+      - "replication_factor"
+      - "retention_ms"
+
+  - path: "schemas/README.md"
+    must_contain:
+      - "Schema Registry"
+      - "Avro"
+      - "schema evolution"
+
+  # Error handling and observability
+  - path: "streaming/error-handling/dlq-config.yaml"
+    must_contain:
+      - "dead_letter_topic"
+      - "retry_policy"
+      - "max_retries"
+
+  - path: "monitoring/metrics-config.yaml"
+    must_contain:
+      - "consumer.lag"
+      - "producer.record-send-rate"
+      - "broker.under-replicated-partitions"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Basic producer/consumer setup
+      - path: "streaming/producers/basic-producer.ts"
+        must_contain:
+          - "Kafka("
+          - "producer.connect()"
+          - "producer.send("
+          - "idempotent: true"
+
+      - path: "streaming/consumers/basic-consumer.ts"
+        must_contain:
+          - "consumer.connect()"
+          - "consumer.subscribe("
+          - "consumer.run("
+          - "commitOffsets"
+
+      - path: "streaming/README.md"
+        must_contain:
+          - "Getting Started"
+          - "Producer Pattern"
+          - "Consumer Pattern"
+          - "At-Least-Once Delivery"
+
+    intermediate:
+      # Advanced patterns and stream processing
+      - path: "streaming/producers/transactional-producer.ts"
+        must_contain:
+          - "transaction()"
+          - "exactly-once"
+          - "transactional.id"
+
+      - path: "streaming/consumers/consumer-with-dlq.ts"
+        must_contain:
+          - "dead letter queue"
+          - "retry logic"
+          - "error handling"
+
+      - path: "streaming/processors/kafka-streams-app.java"
+        must_contain:
+          - "StreamsBuilder"
+          - "KStream"
+          - "aggregate"
+          - "windowing"
+
+      - path: "schemas/avro/user-event.avsc"
+        must_contain:
+          - "type"
+          - "namespace"
+          - "fields"
+
+      - path: "streaming/cdc/debezium-connector.json"
+        must_contain:
+          - "connector.class"
+          - "database.hostname"
+          - "table.include.list"
+
+    advanced:
+      # Production-grade patterns and multi-language support
+      - path: "streaming/processors/flink-job.java"
+        must_contain:
+          - "StreamExecutionEnvironment"
+          - "DataStream"
+          - "window("
+          - "checkpoint"
+
+      - path: "streaming/event-sourcing/event-store.ts"
+        must_contain:
+          - "event store"
+          - "append events"
+          - "event versioning"
+          - "snapshot"
+
+      - path: "streaming/exactly-once/transactional-pipeline.ts"
+        must_contain:
+          - "exactly-once semantics"
+          - "transaction coordinator"
+          - "commit marker"
+
+      - path: "streaming/performance/partitioning-strategy.ts"
+        must_contain:
+          - "custom partitioner"
+          - "partition key"
+          - "load balancing"
+
+      - path: "monitoring/grafana-dashboard.json"
+        must_contain:
+          - "consumer lag"
+          - "throughput"
+          - "latency percentiles"
+
+  queue:
+    kafka:
+      - path: "streaming/kafka/docker-compose.yaml"
+        must_contain:
+          - "image: confluentinc/cp-kafka"
+          - "KAFKA_BROKER_ID"
+          - "KAFKA_ZOOKEEPER_CONNECT"
+          - "KAFKA_ADVERTISED_LISTENERS"
+
+      - path: "streaming/kafka/client-config.properties"
+        must_contain:
+          - "bootstrap.servers"
+          - "security.protocol"
+          - "compression.type"
+
+      - path: "streaming/kafka/schema-registry-config.yaml"
+        must_contain:
+          - "kafkastore.connection.url"
+          - "schema.registry.url"
+
+    pulsar:
+      - path: "streaming/pulsar/broker-config.conf"
+        must_contain:
+          - "zookeeperServers"
+          - "brokerServicePort"
+          - "managedLedgerDefaultEnsembleSize"
+
+      - path: "streaming/pulsar/producer-config.yaml"
+        must_contain:
+          - "topic"
+          - "producerName"
+          - "sendTimeout"
+          - "batchingEnabled"
+
+      - path: "streaming/pulsar/tenant-namespace.yaml"
+        must_contain:
+          - "tenant"
+          - "namespace"
+          - "retention_policies"
+
+    redpanda:
+      - path: "streaming/redpanda/redpanda.yaml"
+        must_contain:
+          - "kafka_api:"
+          - "admin:"
+          - "pandaproxy:"
+          - "data_directory:"
+
+      - path: "streaming/redpanda/docker-compose.yaml"
+        must_contain:
+          - "image: vectorized/redpanda"
+          - "redpanda start"
+          - "--kafka-addr"
+
+      - path: "streaming/redpanda/rpk-config.yaml"
+        must_contain:
+          - "brokers:"
+          - "tls:"
+          - "sasl:"
+
+    rabbitmq:
+      - path: "streaming/rabbitmq/rabbitmq.conf"
+        must_contain:
+          - "listeners.tcp"
+          - "default_user"
+          - "default_vhost"
+
+      - path: "streaming/rabbitmq/producer-consumer.ts"
+        must_contain:
+          - "amqplib"
+          - "channel.sendToQueue"
+          - "channel.consume"
+          - "channel.ack"
+
+  cloud_provider:
+    aws:
+      - path: "streaming/aws/msk-cluster.tf"
+        must_contain:
+          - "aws_msk_cluster"
+          - "kafka_version"
+          - "number_of_broker_nodes"
+
+      - path: "streaming/aws/kinesis-stream.tf"
+        must_contain:
+          - "aws_kinesis_stream"
+          - "shard_count"
+          - "retention_period"
+
+      - path: "streaming/aws/lambda-consumer.ts"
+        must_contain:
+          - "KinesisStreamEvent"
+          - "event.Records"
+          - "kinesis.data"
+
+    gcp:
+      - path: "streaming/gcp/pubsub-topic.tf"
+        must_contain:
+          - "google_pubsub_topic"
+          - "google_pubsub_subscription"
+          - "message_retention_duration"
+
+      - path: "streaming/gcp/dataflow-pipeline.py"
+        must_contain:
+          - "apache_beam"
+          - "ReadFromPubSub"
+          - "WriteToBigQuery"
+
+    azure:
+      - path: "streaming/azure/eventhub-namespace.tf"
+        must_contain:
+          - "azurerm_eventhub_namespace"
+          - "azurerm_eventhub"
+          - "partition_count"
+
+      - path: "streaming/azure/stream-analytics-job.json"
+        must_contain:
+          - "input"
+          - "output"
+          - "transformation"
+
+  language:
+    typescript:
+      - path: "streaming/typescript/basic-producer.ts"
+        must_contain:
+          - "kafkajs"
+          - "producer.send("
+          - "CompressionTypes"
+
+      - path: "streaming/typescript/basic-consumer.ts"
+        must_contain:
+          - "consumer.run("
+          - "eachMessage"
+          - "heartbeat()"
+
+      - path: "streaming/typescript/package.json"
+        must_contain:
+          - "kafkajs"
+          - "@types/node"
+
+    python:
+      - path: "streaming/python/basic_producer.py"
+        must_contain:
+          - "confluent_kafka"
+          - "Producer("
+          - "produce("
+          - "flush()"
+
+      - path: "streaming/python/basic_consumer.py"
+        must_contain:
+          - "Consumer("
+          - "subscribe("
+          - "poll("
+          - "commit()"
+
+      - path: "streaming/python/requirements.txt"
+        must_contain:
+          - "confluent-kafka"
+          - "avro-python3"
+
+    go:
+      - path: "streaming/go/basic_producer.go"
+        must_contain:
+          - "github.com/segmentio/kafka-go"
+          - "kafka.Writer"
+          - "WriteMessages"
+
+      - path: "streaming/go/basic_consumer.go"
+        must_contain:
+          - "kafka.Reader"
+          - "ReadMessage"
+          - "CommitMessages"
+
+      - path: "streaming/go/go.mod"
+        must_contain:
+          - "module"
+          - "github.com/segmentio/kafka-go"
+
+    java:
+      - path: "streaming/java/BasicProducer.java"
+        must_contain:
+          - "org.apache.kafka.clients.producer"
+          - "KafkaProducer"
+          - "send("
+          - "ProducerRecord"
+
+      - path: "streaming/java/BasicConsumer.java"
+        must_contain:
+          - "org.apache.kafka.clients.consumer"
+          - "KafkaConsumer"
+          - "poll("
+          - "commitSync()"
+
+      - path: "streaming/java/pom.xml"
+        must_contain:
+          - "kafka-clients"
+          - "org.apache.kafka"
+
+scaffolding:
+  # Directory structure for streaming systems
+  - path: "streaming/"
+    reason: "Root directory for all streaming infrastructure and code"
+
+  - path: "streaming/kafka/"
+    reason: "Kafka-specific configurations, docker-compose, and setup files"
+
+  - path: "streaming/producers/"
+    reason: "Producer implementations for various patterns (basic, transactional, batch)"
+
+  - path: "streaming/consumers/"
+    reason: "Consumer implementations including DLQ, retry logic, and error handling"
+
+  - path: "streaming/processors/"
+    reason: "Stream processing applications (Flink, Spark, Kafka Streams, ksqlDB)"
+
+  - path: "streaming/topics/"
+    reason: "Topic definitions, partitioning strategies, and retention policies"
+
+  - path: "schemas/"
+    reason: "Schema definitions for Avro, Protobuf, and JSON Schema"
+
+  - path: "schemas/avro/"
+    reason: "Avro schema definitions for Schema Registry"
+
+  - path: "schemas/protobuf/"
+    reason: "Protobuf schema definitions for type-safe serialization"
+
+  - path: "streaming/cdc/"
+    reason: "Change Data Capture configurations for Debezium connectors"
+
+  - path: "streaming/event-sourcing/"
+    reason: "Event sourcing patterns, event store implementations, and snapshots"
+
+  - path: "streaming/exactly-once/"
+    reason: "Transactional processing implementations for exactly-once semantics"
+
+  - path: "streaming/error-handling/"
+    reason: "Dead letter queue configs, retry policies, and circuit breakers"
+
+  - path: "streaming/performance/"
+    reason: "Performance tuning configs, custom partitioners, and benchmarks"
+
+  - path: "monitoring/"
+    reason: "Metrics exporters, Grafana dashboards, and alerting rules"
+
+  - path: "tests/"
+    reason: "Integration tests for producers, consumers, and stream processors"
+
+metadata:
+  primary_blueprints:
+    - "data-pipeline"
+
+  contributes_to:
+    - "Stream processing infrastructure"
+    - "Event-driven architecture"
+    - "Real-time data pipelines"
+    - "Microservices communication"
+    - "CDC and event sourcing"
+    - "IoT data ingestion"
+
+  integrates_with:
+    - "observability" # Metrics, tracing, and monitoring
+    - "auth-security" # SASL/SSL authentication
+    - "infrastructure-as-code" # Terraform/K8s deployment
+    - "transforming-data" # Downstream data transformation
+    - "data-architecture" # Data lake/warehouse integration
+
+  common_patterns:
+    - "Producer/Consumer pattern"
+    - "Dead Letter Queue (DLQ)"
+    - "At-least-once delivery"
+    - "Exactly-once processing"
+    - "Event sourcing"
+    - "Change Data Capture (CDC)"
+    - "Stream joins and windowing"
+    - "Backpressure handling"
+
+  technology_stack:
+    message_brokers:
+      - "Apache Kafka"
+      - "Apache Pulsar"
+      - "Redpanda"
+      - "RabbitMQ"
+      - "AWS MSK/Kinesis"
+      - "GCP Pub/Sub"
+      - "Azure Event Hubs"
+
+    stream_processors:
+      - "Apache Flink"
+      - "Apache Spark Streaming"
+      - "Kafka Streams"
+      - "ksqlDB"
+      - "Faust (Python)"
+
+    client_libraries:
+      - "KafkaJS (TypeScript)"
+      - "confluent-kafka-python"
+      - "kafka-go"
+      - "Apache Kafka Java Client"
+
+    serialization:
+      - "Apache Avro"
+      - "Protocol Buffers"
+      - "JSON Schema"
+      - "Schema Registry"
+
+    cdc_tools:
+      - "Debezium"
+      - "Maxwell"
+      - "AWS DMS"
+
+  validation:
+    scripts:
+      - "validate-kafka-config.py - Validates broker/producer/consumer configs"
+      - "generate-schema.py - Generates Avro/Protobuf schemas"
+      - "benchmark-throughput.sh - Tests producer/consumer performance"
+
+    checks:
+      - "Broker connectivity validation"
+      - "Topic existence and partition count"
+      - "Consumer group status and lag"
+      - "Schema Registry compatibility"
+      - "Serialization format validation"
+
+  examples_structure:
+    typescript:
+      - "basic-producer.ts - Simple event producer with error handling"
+      - "basic-consumer.ts - Consumer with manual offset commits"
+      - "transactional-producer.ts - Exactly-once producer pattern"
+      - "consumer-with-dlq.ts - Dead letter queue implementation"
+
+    python:
+      - "basic_producer.py - Producer with delivery callbacks"
+      - "basic_consumer.py - Consumer with error handling"
+      - "async_producer.py - AsyncIO producer (aiokafka)"
+      - "schema_registry.py - Avro serialization with Schema Registry"
+
+    go:
+      - "basic_producer.go - Idiomatic Go producer"
+      - "basic_consumer.go - Consumer with manual commits"
+      - "high_perf_consumer.go - Concurrent processing pattern"
+      - "batch_producer.go - Batch message sending"
+
+    java:
+      - "BasicProducer.java - Producer with idempotence"
+      - "BasicConsumer.java - Consumer with error recovery"
+      - "TransactionalProducer.java - Exactly-once transactions"
+      - "StreamsAggregation.java - Kafka Streams aggregation"

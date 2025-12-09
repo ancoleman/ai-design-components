@@ -1,0 +1,616 @@
+skill: "using-message-queues"
+version: "1.0"
+domain: "backend"
+
+# Base outputs required for all message queue implementations
+base_outputs:
+  - path: "queues/"
+    must_contain: []
+    reason: "Root directory for queue configurations and consumer/producer code"
+
+  - path: "src/messaging/"
+    must_contain: []
+    reason: "Core messaging code (producers, consumers, events)"
+
+  - path: "workers/"
+    must_contain: []
+    reason: "Background worker implementations"
+
+  - path: "events/schemas/"
+    must_contain: []
+    reason: "Event schema definitions for type safety and validation"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "queues/config.py"
+        must_contain: ["broker_url", "queue_name"]
+        reason: "Basic queue configuration with connection settings"
+
+      - path: "src/messaging/producer.py"
+        must_contain: ["def publish", "queue.add"]
+        reason: "Simple message producer for enqueueing tasks"
+
+      - path: "src/messaging/consumer.py"
+        must_contain: ["def process", "while True"]
+        reason: "Basic consumer polling loop"
+
+      - path: "workers/tasks.py"
+        must_contain: ["@task", "def"]
+        reason: "Task definitions for background jobs"
+
+      - path: "events/schemas/events.json"
+        must_contain: ["event_type", "data"]
+        reason: "Simple event schema for validation"
+
+    intermediate:
+      - path: "queues/producer.py"
+        must_contain: ["idempotency_key", "retry", "exponential_backoff"]
+        reason: "Producer with retry logic and idempotency"
+
+      - path: "queues/consumer.py"
+        must_contain: ["consumer_group", "acknowledge", "reject"]
+        reason: "Consumer with proper acknowledgment and error handling"
+
+      - path: "queues/dlq_handler.py"
+        must_contain: ["dead_letter_queue", "max_retries"]
+        reason: "Dead letter queue implementation for failed messages"
+
+      - path: "events/schemas/"
+        must_contain: ["*.json", "*.avro"]
+        reason: "Structured event schemas with versioning"
+
+      - path: "src/messaging/event_bus.py"
+        must_contain: ["publish_event", "subscribe", "event_type"]
+        reason: "Event bus abstraction for pub/sub patterns"
+
+      - path: "monitoring/queue_metrics.py"
+        must_contain: ["queue_depth", "processing_time", "error_rate"]
+        reason: "Queue monitoring and metrics collection"
+
+      - path: "tests/test_messaging.py"
+        must_contain: ["test_producer", "test_consumer", "mock"]
+        reason: "Unit tests for messaging components"
+
+    advanced:
+      - path: "queues/event_sourcing.py"
+        must_contain: ["event_store", "aggregate", "replay"]
+        reason: "Event sourcing implementation with event replay"
+
+      - path: "queues/saga_orchestrator.py"
+        must_contain: ["saga", "compensate", "workflow"]
+        reason: "Saga pattern for distributed transactions"
+
+      - path: "events/schemas/"
+        must_contain: ["versioning", "migration"]
+        reason: "Schema evolution and backward compatibility"
+
+      - path: "src/messaging/outbox_pattern.py"
+        must_contain: ["transactional_outbox", "polling", "dual_write"]
+        reason: "Transactional outbox pattern for consistency"
+
+      - path: "monitoring/tracing.py"
+        must_contain: ["trace_id", "correlation_id", "distributed_tracing"]
+        reason: "Distributed tracing across message flows"
+
+      - path: "monitoring/alerting.py"
+        must_contain: ["dlq_alert", "lag_threshold", "error_spike"]
+        reason: "Alerting for queue health and performance"
+
+      - path: "workers/priority_queues.py"
+        must_contain: ["priority", "weighted", "scheduling"]
+        reason: "Priority-based task scheduling"
+
+      - path: "workers/rate_limiting.py"
+        must_contain: ["rate_limit", "token_bucket", "backpressure"]
+        reason: "Rate limiting and backpressure handling"
+
+      - path: "docs/runbook.md"
+        must_contain: ["troubleshooting", "recovery", "incident"]
+        reason: "Operational runbook for queue incidents"
+
+  queue:
+    kafka:
+      - path: "queues/kafka/producer.py"
+        must_contain: ["confluent_kafka", "Producer", "bootstrap.servers"]
+        reason: "Kafka producer configuration"
+
+      - path: "queues/kafka/consumer.py"
+        must_contain: ["Consumer", "group.id", "poll", "commit"]
+        reason: "Kafka consumer with consumer groups"
+
+      - path: "queues/kafka/partitioner.py"
+        must_contain: ["partition", "key", "hash"]
+        reason: "Custom partitioning logic for Kafka"
+
+      - path: "queues/kafka/schema_registry.py"
+        must_contain: ["schema_registry_client", "avro", "serialize"]
+        reason: "Schema Registry integration for Avro/Protobuf"
+
+      - path: "docker-compose.yml"
+        must_contain: ["zookeeper:", "kafka:", "schema-registry:"]
+        reason: "Kafka local development setup"
+
+      - path: "events/schemas/avro/"
+        must_contain: ["*.avsc"]
+        reason: "Avro schemas for Kafka messages"
+
+    rabbitmq:
+      - path: "queues/rabbitmq/publisher.py"
+        must_contain: ["pika", "connection", "channel", "basic_publish"]
+        reason: "RabbitMQ publisher implementation"
+
+      - path: "queues/rabbitmq/consumer.py"
+        must_contain: ["basic_consume", "callback", "basic_ack"]
+        reason: "RabbitMQ consumer with acknowledgments"
+
+      - path: "queues/rabbitmq/exchanges.py"
+        must_contain: ["exchange_declare", "routing_key", "binding"]
+        reason: "Exchange and routing configuration"
+
+      - path: "queues/rabbitmq/dlx_config.py"
+        must_contain: ["dead_letter_exchange", "x-dead-letter-exchange"]
+        reason: "Dead letter exchange configuration"
+
+      - path: "docker-compose.yml"
+        must_contain: ["rabbitmq:", "management"]
+        reason: "RabbitMQ with management console"
+
+    sqs:
+      - path: "queues/sqs/producer.py"
+        must_contain: ["boto3", "send_message", "MessageBody"]
+        reason: "AWS SQS message producer"
+
+      - path: "queues/sqs/consumer.py"
+        must_contain: ["receive_message", "delete_message", "VisibilityTimeout"]
+        reason: "SQS consumer with visibility timeout handling"
+
+      - path: "queues/sqs/fifo_queue.py"
+        must_contain: ["MessageGroupId", "MessageDeduplicationId", ".fifo"]
+        reason: "FIFO queue configuration for ordering"
+
+      - path: "queues/sqs/dlq_setup.py"
+        must_contain: ["RedrivePolicy", "maxReceiveCount"]
+        reason: "DLQ configuration for failed messages"
+
+      - path: "terraform/sqs.tf"
+        must_contain: ["aws_sqs_queue", "visibility_timeout_seconds"]
+        reason: "Infrastructure as code for SQS"
+
+    redis:
+      - path: "queues/redis/producer.py"
+        must_contain: ["redis", "xadd", "MAXLEN"]
+        reason: "Redis Streams producer"
+
+      - path: "queues/redis/consumer.py"
+        must_contain: ["xreadgroup", "xack", "consumer_group"]
+        reason: "Redis Streams consumer groups"
+
+      - path: "queues/redis/config.py"
+        must_contain: ["connection_pool", "decode_responses"]
+        reason: "Redis connection configuration"
+
+      - path: "docker-compose.yml"
+        must_contain: ["redis:", "6379"]
+        reason: "Redis local development setup"
+
+    celery:
+      - path: "workers/celery_app.py"
+        must_contain: ["Celery(", "broker=", "backend="]
+        reason: "Celery application configuration"
+
+      - path: "workers/tasks.py"
+        must_contain: ["@app.task", "bind=True", "max_retries"]
+        reason: "Celery task definitions with retry logic"
+
+      - path: "workers/celeryconfig.py"
+        must_contain: ["task_serializer", "result_expires", "timezone"]
+        reason: "Celery configuration settings"
+
+      - path: "workers/periodic_tasks.py"
+        must_contain: ["@periodic_task", "crontab", "schedule"]
+        reason: "Periodic/scheduled task definitions"
+
+      - path: "monitoring/flower_config.py"
+        must_contain: ["flower", "port", "broker_api"]
+        reason: "Flower monitoring dashboard configuration"
+
+    bullmq:
+      - path: "workers/queue.ts"
+        must_contain: ["Queue", "bullmq", "connection"]
+        reason: "BullMQ queue initialization"
+
+      - path: "workers/worker.ts"
+        must_contain: ["Worker", "async job", "connection"]
+        reason: "BullMQ worker implementation"
+
+      - path: "workers/flow.ts"
+        must_contain: ["FlowProducer", "children", "parent"]
+        reason: "BullMQ flows for job dependencies"
+
+      - path: "monitoring/bull-board.ts"
+        must_contain: ["createBullBoard", "BullMQAdapter"]
+        reason: "Bull Board monitoring UI setup"
+
+      - path: "package.json"
+        must_contain: ["bullmq", "ioredis"]
+        reason: "BullMQ dependencies"
+
+    temporal:
+      - path: "workflows/order_workflow.py"
+        must_contain: ["@workflow.defn", "workflow.run", "execute_activity"]
+        reason: "Temporal workflow definitions"
+
+      - path: "activities/order_activities.py"
+        must_contain: ["@activity.defn", "async def"]
+        reason: "Temporal activity implementations"
+
+      - path: "workers/worker.py"
+        must_contain: ["Worker(", "workflows=", "activities=", "task_queue"]
+        reason: "Temporal worker configuration"
+
+      - path: "workflows/saga_compensations.py"
+        must_contain: ["compensate", "try:", "except", "rollback"]
+        reason: "Saga pattern with compensating transactions"
+
+      - path: "monitoring/temporal_metrics.py"
+        must_contain: ["workflow_status", "activity_duration"]
+        reason: "Temporal workflow monitoring"
+
+    nats:
+      - path: "queues/nats/publisher.py"
+        must_contain: ["nats.connect", "js.publish", "ack"]
+        reason: "NATS JetStream publisher"
+
+      - path: "queues/nats/subscriber.py"
+        must_contain: ["js.subscribe", "msg.ack()", "callback"]
+        reason: "NATS JetStream subscriber"
+
+      - path: "queues/nats/stream_config.py"
+        must_contain: ["stream_name", "subjects", "retention"]
+        reason: "JetStream stream configuration"
+
+      - path: "queues/nats/request_reply.py"
+        must_contain: ["nc.request", "respond", "timeout"]
+        reason: "NATS request-reply pattern"
+
+      - path: "docker-compose.yml"
+        must_contain: ["nats:", "jetstream"]
+        reason: "NATS with JetStream enabled"
+
+  integration:
+    api:
+      - path: "api/queue_endpoints.py"
+        must_contain: ["@app.post", "task_id", "status_url"]
+        reason: "API endpoints for job submission and status"
+
+      - path: "api/sse_status.py"
+        must_contain: ["EventSourceResponse", "task.state", "yield"]
+        reason: "Server-Sent Events for real-time job status"
+
+      - path: "api/webhook_callbacks.py"
+        must_contain: ["callback_url", "requests.post", "job_complete"]
+        reason: "Webhook callbacks for job completion"
+
+    frontend:
+      - path: "frontend/JobStatus.tsx"
+        must_contain: ["EventSource", "useEffect", "progress"]
+        reason: "React component for job status updates"
+
+      - path: "frontend/useJobStatus.ts"
+        must_contain: ["useState", "jobId", "eventSource"]
+        reason: "React hook for job status polling"
+
+    observability:
+      - path: "monitoring/prometheus_metrics.py"
+        must_contain: ["Counter", "Histogram", "queue_depth"]
+        reason: "Prometheus metrics for queue monitoring"
+
+      - path: "monitoring/jaeger_tracing.py"
+        must_contain: ["tracer", "span", "inject", "extract"]
+        reason: "Distributed tracing integration"
+
+      - path: "monitoring/grafana_dashboard.json"
+        must_contain: ["queue_depth", "processing_time", "error_rate"]
+        reason: "Grafana dashboard for queue metrics"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "queues/"
+    type: "directory"
+    description: "Root directory for queue implementations"
+
+  - path: "workers/"
+    type: "directory"
+    description: "Background worker implementations"
+
+  - path: "events/schemas/"
+    type: "directory"
+    description: "Event schema definitions"
+
+  - path: "monitoring/"
+    type: "directory"
+    description: "Queue monitoring and metrics"
+
+  - path: "tests/"
+    type: "directory"
+    description: "Unit and integration tests"
+
+  - path: "queues/config.py"
+    type: "file"
+    template: |
+      # Message Queue Configuration
+      import os
+
+      # Broker connection settings
+      BROKER_URL = os.getenv("BROKER_URL", "redis://localhost:6379")
+      QUEUE_NAME = os.getenv("QUEUE_NAME", "default")
+
+      # Retry configuration
+      MAX_RETRIES = 3
+      RETRY_BACKOFF = [60, 300, 900]  # 1min, 5min, 15min
+
+      # DLQ configuration
+      DLQ_NAME = f"{QUEUE_NAME}_dlq"
+      DLQ_RETENTION_DAYS = 7
+
+      # Consumer configuration
+      CONSUMER_PREFETCH = 10
+      VISIBILITY_TIMEOUT = 300  # 5 minutes
+
+  - path: "events/schemas/base_event.json"
+    type: "file"
+    template: |
+      {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "required": ["event_type", "event_id", "timestamp", "version", "data"],
+        "properties": {
+          "event_type": {
+            "type": "string",
+            "description": "Domain.Entity.Action.Version (e.g., order.created.v1)"
+          },
+          "event_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique event identifier"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp"
+          },
+          "version": {
+            "type": "string",
+            "description": "Schema version (e.g., 1.0, 2.0)"
+          },
+          "data": {
+            "type": "object",
+            "description": "Event payload"
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "producer": {"type": "string"},
+              "trace_id": {"type": "string"},
+              "correlation_id": {"type": "string"}
+            }
+          }
+        }
+      }
+
+  - path: "workers/README.md"
+    type: "file"
+    template: |
+      # Background Workers
+
+      This directory contains background worker implementations for processing queued jobs.
+
+      ## Quick Start
+
+      ### Development
+      ```bash
+      # Start worker (Celery example)
+      celery -A workers.celery_app worker --loglevel=info
+
+      # Monitor tasks (Flower)
+      celery -A workers.celery_app flower --port=5555
+      ```
+
+      ### Production
+      ```bash
+      # Multiple workers with concurrency
+      celery -A workers.celery_app worker --concurrency=4 --loglevel=info
+      ```
+
+      ## Adding New Tasks
+
+      1. Define task in `tasks.py`:
+         ```python
+         @app.task(bind=True, max_retries=3)
+         def process_order(self, order_id: str):
+             try:
+                 # Task logic
+                 return result
+             except RecoverableError as e:
+                 raise self.retry(exc=e, countdown=60)
+         ```
+
+      2. Enqueue from API:
+         ```python
+         task = process_order.delay(order_id="123")
+         return {"task_id": task.id}
+         ```
+
+      3. Check status:
+         ```python
+         result = AsyncResult(task_id)
+         status = result.state  # PENDING, STARTED, SUCCESS, FAILURE
+         ```
+
+      ## Best Practices
+
+      - **Idempotency**: Always check if work already completed
+      - **Timeouts**: Set task time limits
+      - **Retries**: Use exponential backoff
+      - **DLQ**: Route failed messages after max retries
+      - **Monitoring**: Track queue depth, processing time, error rates
+
+  - path: "monitoring/README.md"
+    type: "file"
+    template: |
+      # Queue Monitoring
+
+      ## Key Metrics
+
+      - **Queue Depth**: Number of messages waiting
+      - **Processing Time**: p50, p95, p99 latencies
+      - **Error Rate**: Failed messages per minute
+      - **Consumer Lag**: Offset lag (Kafka) or age of oldest message
+      - **Throughput**: Messages processed per second
+
+      ## Alerts
+
+      ### Critical
+      - DLQ depth > 100
+      - Consumer lag > 5 minutes
+      - Error rate > 10%
+
+      ### Warning
+      - Queue depth > 1000
+      - Processing time p99 > 30s
+      - No messages processed in 5 minutes
+
+      ## Dashboards
+
+      - Grafana: Queue health overview
+      - Flower/Bull Board: Real-time task monitoring
+      - Jaeger: Distributed tracing
+
+  - path: ".gitignore"
+    type: "file"
+    template: |
+      # Queue artifacts
+      celerybeat-schedule
+      celerybeat.pid
+
+      # Environment
+      .env
+      *.log
+
+      # Dependencies
+      node_modules/
+      __pycache__/
+      *.pyc
+
+# Metadata
+metadata:
+  primary_blueprints: ["data-pipeline"]
+  contributes_to:
+    - "Message queue integration"
+    - "Event-driven architecture"
+    - "Background job processing"
+    - "Asynchronous communication"
+    - "Workflow orchestration"
+
+  common_patterns:
+    - name: "Task Queue Pattern"
+      description: "Simple job enqueueing with workers (Celery, BullMQ)"
+      files: ["workers/tasks.py", "queues/config.py"]
+
+    - name: "Event Sourcing"
+      description: "Event-driven architecture with event replay (Kafka, Temporal)"
+      files: ["queues/event_sourcing.py", "events/schemas/"]
+
+    - name: "Saga Pattern"
+      description: "Distributed transactions with compensations (Temporal)"
+      files: ["workflows/saga_orchestrator.py", "activities/compensations.py"]
+
+    - name: "Transactional Outbox"
+      description: "Guaranteed message delivery with dual-write prevention"
+      files: ["src/messaging/outbox_pattern.py", "queues/outbox_poller.py"]
+
+    - name: "Dead Letter Queue"
+      description: "Failed message handling with manual inspection"
+      files: ["queues/dlq_handler.py", "monitoring/dlq_alerts.py"]
+
+    - name: "Priority Queues"
+      description: "Weighted task scheduling by priority"
+      files: ["workers/priority_queues.py", "queues/weighted_scheduler.py"]
+
+  integration_points:
+    api: "Job submission endpoints and status polling"
+    frontend: "Real-time job status via SSE/WebSocket"
+    databases: "Persistent event stores and transactional outbox"
+    observability: "Metrics, tracing, and alerting for queue health"
+    auth: "Secure message signing and verification"
+
+  typical_directory_structure: |
+    project/
+    ├── queues/
+    │   ├── kafka/              # Kafka producer/consumer
+    │   ├── rabbitmq/           # RabbitMQ publisher/consumer
+    │   ├── sqs/                # AWS SQS
+    │   └── config.py           # Broker configuration
+    ├── workers/
+    │   ├── celery_app.py       # Celery application
+    │   ├── tasks.py            # Task definitions
+    │   └── periodic_tasks.py   # Scheduled tasks
+    ├── workflows/
+    │   ├── order_saga.py       # Temporal workflows
+    │   └── compensations.py    # Saga compensations
+    ├── events/
+    │   └── schemas/
+    │       ├── order.created.v1.json
+    │       └── payment.failed.v1.json
+    ├── monitoring/
+    │   ├── prometheus_metrics.py
+    │   ├── grafana_dashboard.json
+    │   └── alerting.py
+    ├── tests/
+    │   ├── test_producer.py
+    │   └── test_consumer.py
+    └── docker-compose.yml
+
+  tools:
+    event_streaming:
+      - name: "Apache Kafka"
+        use_when: "Event sourcing, log aggregation, 500K+ msg/s throughput"
+      - name: "NATS JetStream"
+        use_when: "Cloud-native microservices, sub-ms latency, request-reply"
+      - name: "Redis Streams"
+        use_when: "Simple queues, already using Redis, 100K+ msg/s"
+
+    task_queues:
+      - name: "Celery (Python)"
+        use_when: "Python ecosystem, periodic tasks, simple job queues"
+      - name: "BullMQ (TypeScript)"
+        use_when: "Node.js ecosystem, job prioritization, flows"
+      - name: "Asynq (Go)"
+        use_when: "Go ecosystem, Redis-backed task queues"
+
+    workflow_orchestration:
+      - name: "Temporal"
+        use_when: "Durable execution, saga patterns, complex workflows"
+      - name: "Conductor"
+        use_when: "Microservice orchestration, human-in-the-loop"
+
+    message_brokers:
+      - name: "RabbitMQ"
+        use_when: "Complex routing, dead letter exchanges, pub/sub"
+      - name: "AWS SQS"
+        use_when: "AWS-native, FIFO ordering, managed service"
+      - name: "Google Pub/Sub"
+        use_when: "GCP-native, global scale, exactly-once delivery"
+
+  validation_checks:
+    - "Producer includes idempotency keys"
+    - "Consumer acknowledges messages after processing"
+    - "Dead letter queue configured with retention"
+    - "Retry logic uses exponential backoff"
+    - "Event schemas versioned and validated"
+    - "Monitoring dashboards track queue depth and lag"
+    - "Distributed tracing propagates trace_id/correlation_id"
+    - "Tests cover happy path and error scenarios"
+    - "Runbook documents incident response procedures"

@@ -1,0 +1,184 @@
+skill: "architecting-data"
+version: "1.0"
+domain: "data"
+
+base_outputs:
+  - path: "docs/architecture/data-platform-design.md"
+    must_contain: ["storage paradigm", "data modeling", "governance"]
+    description: "High-level data platform architecture document covering storage strategy, modeling approach, and governance framework"
+
+  - path: "docs/architecture/erd-diagram.*"
+    must_contain: []
+    description: "Entity-relationship diagram (ERD) showing data model relationships (any format: .png, .svg, .mmd, .puml)"
+
+  - path: "docs/architecture/data-governance.md"
+    must_contain: ["catalog", "lineage", "quality", "access control"]
+    description: "Data governance framework covering cataloging, lineage tracking, quality standards, and access policies"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "docs/architecture/simple-warehouse.md"
+        must_contain: ["BigQuery|Snowflake", "Airbyte|Fivetran", "dbt"]
+        description: "Simple data warehouse architecture for startups (<50 people) with basic ETL/ELT pipeline"
+
+      - path: "schemas/*.sql"
+        must_contain: ["CREATE TABLE"]
+        description: "SQL schema definitions for core tables (fact and dimension tables)"
+
+    intermediate:
+      - path: "docs/architecture/medallion-architecture.md"
+        must_contain: ["bronze", "silver", "gold"]
+        description: "Medallion architecture design (bronze/silver/gold layers) with data quality checkpoints"
+
+      - path: "dbt_project.yml"
+        must_contain: ["name:", "models:"]
+        description: "dbt project configuration for transformation pipelines"
+
+      - path: "models/staging/*.sql"
+        must_contain: ["SELECT", "FROM"]
+        description: "dbt staging models (silver layer) with data cleaning and validation"
+
+      - path: "models/marts/*.sql"
+        must_contain: ["SELECT", "FROM"]
+        description: "dbt mart models (gold layer) with business logic and aggregations"
+
+      - path: "docs/architecture/data-lineage.md"
+        must_contain: ["source", "transformation", "destination"]
+        description: "Data lineage documentation showing data flow from sources through transformations"
+
+    advanced:
+      - path: "docs/architecture/data-mesh-design.md"
+        must_contain: ["domain", "data product", "self-serve", "governance"]
+        description: "Data mesh architecture with domain-oriented decentralization and data products"
+
+      - path: "docs/architecture/iceberg-lakehouse.md"
+        must_contain: ["Apache Iceberg|Delta Lake", "ACID", "time travel"]
+        description: "Data lakehouse architecture using open table formats (Iceberg/Delta Lake)"
+
+      - path: "terraform/data-platform/*.tf"
+        must_contain: ["resource"]
+        description: "Infrastructure-as-code for data platform components (storage, compute, networking)"
+
+      - path: "data-products/*/README.md"
+        must_contain: ["SLA", "quality", "owner"]
+        description: "Data product definitions with SLAs, quality metrics, and ownership"
+
+      - path: "docs/architecture/federated-governance.md"
+        must_contain: ["policy", "standards", "compliance"]
+        description: "Federated governance framework for data mesh with policies and standards"
+
+  database:
+    postgres:
+      - path: "schemas/postgres/*.sql"
+        must_contain: ["CREATE TABLE", "CREATE INDEX"]
+        description: "PostgreSQL schema definitions with indexes and constraints"
+
+      - path: "docs/architecture/postgres-normalization.md"
+        must_contain: ["3NF", "foreign key", "constraint"]
+        description: "PostgreSQL normalized schema design (3NF) for OLTP workloads"
+
+    mysql:
+      - path: "schemas/mysql/*.sql"
+        must_contain: ["CREATE TABLE", "ENGINE=InnoDB"]
+        description: "MySQL schema definitions with InnoDB engine and indexes"
+
+    snowflake:
+      - path: "schemas/snowflake/*.sql"
+        must_contain: ["CREATE TABLE", "CREATE SCHEMA"]
+        description: "Snowflake schema definitions with warehouses and stages"
+
+      - path: "docs/architecture/snowflake-star-schema.md"
+        must_contain: ["fact table", "dimension table", "star schema"]
+        description: "Snowflake star schema design for analytical workloads"
+
+    bigquery:
+      - path: "schemas/bigquery/*.sql"
+        must_contain: ["CREATE TABLE", "PARTITION BY"]
+        description: "BigQuery table definitions with partitioning and clustering"
+
+      - path: "docs/architecture/bigquery-optimization.md"
+        must_contain: ["partition", "cluster", "cost"]
+        description: "BigQuery schema optimization for performance and cost"
+
+    databricks:
+      - path: "schemas/databricks/*.sql"
+        must_contain: ["CREATE TABLE", "USING DELTA|USING ICEBERG"]
+        description: "Databricks table definitions using Delta Lake or Iceberg"
+
+      - path: "docs/architecture/lakehouse-architecture.md"
+        must_contain: ["medallion", "Delta Lake|Iceberg", "unity catalog"]
+        description: "Databricks lakehouse architecture with Unity Catalog governance"
+
+    redshift:
+      - path: "schemas/redshift/*.sql"
+        must_contain: ["CREATE TABLE", "DISTKEY", "SORTKEY"]
+        description: "Redshift schema definitions with distribution and sort keys"
+
+  cloud_provider:
+    aws:
+      - path: "docs/architecture/aws-data-platform.md"
+        must_contain: ["S3", "Redshift|Athena|EMR", "Glue"]
+        description: "AWS data platform architecture using S3, analytics services, and Glue catalog"
+
+      - path: "terraform/aws/*.tf"
+        must_contain: ["aws_", "provider \"aws\""]
+        description: "AWS infrastructure definitions for data platform (S3, Redshift, Glue, etc.)"
+
+    azure:
+      - path: "docs/architecture/azure-data-platform.md"
+        must_contain: ["Azure Data Lake", "Synapse|Databricks", "Purview"]
+        description: "Azure data platform architecture using ADLS, analytics services, and Purview catalog"
+
+      - path: "terraform/azure/*.tf"
+        must_contain: ["azurerm_", "provider \"azurerm\""]
+        description: "Azure infrastructure definitions for data platform (ADLS, Synapse, etc.)"
+
+    gcp:
+      - path: "docs/architecture/gcp-data-platform.md"
+        must_contain: ["BigQuery", "Cloud Storage", "Dataflow|Dataproc"]
+        description: "GCP data platform architecture using BigQuery, GCS, and data processing services"
+
+      - path: "terraform/gcp/*.tf"
+        must_contain: ["google_", "provider \"google\""]
+        description: "GCP infrastructure definitions for data platform (BigQuery, GCS, etc.)"
+
+scaffolding:
+  - path: "docs/architecture/"
+    reason: "Directory for architecture documentation (platform design, ERD, governance)"
+
+  - path: "docs/decisions/"
+    reason: "Architecture Decision Records (ADRs) for key data platform decisions"
+
+  - path: "schemas/"
+    reason: "SQL schema definitions organized by database/layer"
+
+  - path: "models/"
+    reason: "dbt models directory for transformation logic (staging, intermediate, marts)"
+
+  - path: "data-products/"
+    reason: "Data product definitions for data mesh architecture (advanced maturity)"
+
+  - path: "terraform/"
+    reason: "Infrastructure-as-code for data platform provisioning"
+
+  - path: "tests/"
+    reason: "Data quality tests (Great Expectations, dbt tests, custom validation)"
+
+metadata:
+  primary_blueprints: ["data-pipeline"]
+  contributes_to:
+    - "Data architecture"
+    - "Data platform design"
+    - "Data governance"
+    - "Data modeling"
+    - "Storage strategy"
+    - "ETL/ELT pipelines"
+    - "Data quality"
+    - "Data cataloging"
+    - "Data lineage"
+    - "Analytics infrastructure"
+    - "ML data infrastructure"
+    - "Data mesh implementation"
+    - "Medallion architecture"
+    - "Data lakehouse design"

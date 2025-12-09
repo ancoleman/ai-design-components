@@ -116,6 +116,66 @@ anti_patterns:
     message: "Use forward slashes for file paths"
 
 # =============================================================================
+# Outputs.yaml Requirements (Skill Deliverables)
+# =============================================================================
+outputs_yaml:
+  # Required top-level fields
+  required_fields:
+    - skill
+    - version
+
+  # At least one of these output sections must be present
+  output_sections:
+    - base_outputs
+    - conditional_outputs
+
+  # Skill field rules (must match skill directory name)
+  skill:
+    must_match_directory: true
+
+  # Version field rules
+  version:
+    type: "string_or_number"
+
+  # base_outputs item rules
+  base_output_item:
+    required_fields:
+      - path
+    optional_fields:
+      - reason
+      - description
+      - must_contain
+      - patterns
+      - content_markers
+    path:
+      type: "string"
+    reason:
+      type: "string"
+    description:
+      type: "string"
+    must_contain:
+      type: "list"
+
+  # conditional_outputs structure rules
+  conditional_outputs:
+    allowed_sections:
+      - maturity
+      - provider
+      - technology
+      - framework
+      - platform
+    maturity:
+      allowed_levels:
+        # Blueprint naming convention
+        - mvp
+        - production
+        - enterprise
+        # Alternative naming convention (used in some skills)
+        - starter
+        - intermediate
+        - advanced
+
+# =============================================================================
 # File Structure
 # =============================================================================
 structure:
@@ -206,6 +266,51 @@ phases:
       - resource-tagging
       - shell-scripting
       - designing-distributed-systems
+
+# =============================================================================
+# Blueprint Validation Rules (Skillchain Blueprints)
+# =============================================================================
+blueprints:
+  # Required section in blueprint markdown
+  required_section: "## Deliverables Specification"
+
+  # Required subsections within Deliverables Specification
+  required_subsections:
+    - "### Deliverables"
+    - "### Maturity Profiles"
+
+  # Deliverables structure rules
+  deliverables:
+    # Required fields for each deliverable
+    required_fields:
+      - primary_skill
+      - required_files
+    # Optional allowed fields
+    optional_fields:
+      - content_checks
+      - maturity_required
+      - condition
+      - conditional
+      - cloud_provider
+
+  # Maturity profiles rules
+  maturity_profiles:
+    # Required profile levels
+    required_profiles:
+      - starter
+      - intermediate
+      - advanced
+    # Allowed fields in each profile
+    allowed_fields:
+      - description
+      - require_additionally
+      - skip_deliverables
+      - empty_dirs_allowed
+      - generation_adjustments
+      - additional_deliverables
+
+  # Default blueprints directory (relative to ~/.claude/commands/)
+  default_path: "skillchain/blueprints"
 
 # =============================================================================
 # Severity Configuration

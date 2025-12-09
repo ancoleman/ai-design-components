@@ -58,6 +58,56 @@ class CommunityPractice:
 
 
 @dataclass
+class OutputsYamlRules:
+    """Configuration for outputs.yaml validation."""
+    required_fields: List[str]
+    output_sections: List[str]
+    skill_rules: Dict[str, Any]
+    version_rules: Dict[str, Any]
+    base_output_item: Dict[str, Any]
+    conditional_outputs: Dict[str, Any]
+
+    def get_required_item_fields(self) -> List[str]:
+        """Get required fields for base_output items."""
+        return self.base_output_item.get("required_fields", ["path"])
+
+    def get_allowed_maturity_levels(self) -> List[str]:
+        """Get allowed maturity levels for conditional outputs."""
+        maturity = self.conditional_outputs.get("maturity", {})
+        return maturity.get("allowed_levels", ["mvp", "production", "enterprise"])
+
+
+@dataclass
+class BlueprintRules:
+    """Configuration for blueprint validation."""
+    required_section: str
+    required_subsections: List[str]
+    deliverables: Dict[str, Any]
+    maturity_profiles: Dict[str, Any]
+    default_path: str
+
+    def get_required_deliverable_fields(self) -> Set[str]:
+        """Get required fields for deliverables."""
+        return set(self.deliverables.get("required_fields", ["primary_skill", "required_files"]))
+
+    def get_optional_deliverable_fields(self) -> Set[str]:
+        """Get optional fields for deliverables."""
+        return set(self.deliverables.get("optional_fields", []))
+
+    def get_all_deliverable_fields(self) -> Set[str]:
+        """Get all valid deliverable fields."""
+        return self.get_required_deliverable_fields() | self.get_optional_deliverable_fields()
+
+    def get_required_maturity_profiles(self) -> Set[str]:
+        """Get required maturity profile levels."""
+        return set(self.maturity_profiles.get("required_profiles", ["starter", "intermediate", "advanced"]))
+
+    def get_allowed_profile_fields(self) -> Set[str]:
+        """Get allowed fields in maturity profiles."""
+        return set(self.maturity_profiles.get("allowed_fields", []))
+
+
+@dataclass
 class ValidationRules:
     """Container for all validation rules."""
     version: str
@@ -68,6 +118,8 @@ class ValidationRules:
     structure: Dict[str, Any]
     phases: Dict[str, Any]
     severity: Dict[str, List[str]]
+    outputs_yaml: Optional[OutputsYamlRules] = None
+    blueprints: Optional[BlueprintRules] = None
 
     # Raw config for advanced access
     _raw: Dict[str, Any] = field(default_factory=dict)
@@ -229,6 +281,31 @@ def load_rules(path: Optional[Path] = None) -> ValidationRules:
                 message=config.get("message", f"Anti-pattern detected: {name}")
             ))
 
+    # Parse outputs_yaml rules
+    outputs_yaml_config = raw.get("outputs_yaml", {})
+    outputs_yaml_rules = None
+    if outputs_yaml_config:
+        outputs_yaml_rules = OutputsYamlRules(
+            required_fields=outputs_yaml_config.get("required_fields", ["skill", "version"]),
+            output_sections=outputs_yaml_config.get("output_sections", ["base_outputs", "conditional_outputs"]),
+            skill_rules=outputs_yaml_config.get("skill", {}),
+            version_rules=outputs_yaml_config.get("version", {}),
+            base_output_item=outputs_yaml_config.get("base_output_item", {}),
+            conditional_outputs=outputs_yaml_config.get("conditional_outputs", {})
+        )
+
+    # Parse blueprints rules
+    blueprints_config = raw.get("blueprints", {})
+    blueprints_rules = None
+    if blueprints_config:
+        blueprints_rules = BlueprintRules(
+            required_section=blueprints_config.get("required_section", "## Deliverables Specification"),
+            required_subsections=blueprints_config.get("required_subsections", []),
+            deliverables=blueprints_config.get("deliverables", {}),
+            maturity_profiles=blueprints_config.get("maturity_profiles", {}),
+            default_path=blueprints_config.get("default_path", "skillchain/blueprints")
+        )
+
     return ValidationRules(
         version=raw.get("version", "1.0.0"),
         skill_md=raw.get("skill_md", {}),
@@ -238,6 +315,8 @@ def load_rules(path: Optional[Path] = None) -> ValidationRules:
         structure=raw.get("structure", {}),
         phases=raw.get("phases", {}),
         severity=raw.get("severity", {"fail_on": ["error"], "warn_on": ["warning"]}),
+        outputs_yaml=outputs_yaml_rules,
+        blueprints=blueprints_rules,
         _raw=raw
     )
 

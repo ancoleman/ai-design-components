@@ -1,0 +1,228 @@
+skill: "prompt-engineering"
+version: "1.0"
+domain: "ai-ml"
+
+base_outputs:
+  # Core prompt templates - always generated
+  - path: "prompts/system_prompts.py"
+    must_contain: ["system_prompt", "def", "capabilities", "guidelines"]
+    description: "System prompt templates with role definitions and behavior guidelines"
+
+  - path: "prompts/templates/"
+    must_contain: []
+    description: "Directory containing prompt template files"
+
+  - path: "prompts/templates/zero_shot.py"
+    must_contain: ["zero_shot", "template", "instruction"]
+    description: "Zero-shot prompt templates for simple tasks"
+
+  - path: "prompts/templates/few_shot.py"
+    must_contain: ["few_shot", "examples", "template"]
+    description: "Few-shot learning templates with example management"
+
+  - path: "prompts/validation.py"
+    must_contain: ["validate", "sanitize", "injection"]
+    description: "Input validation and prompt injection detection"
+
+  - path: "config/prompt_config.yaml"
+    must_contain: ["temperature", "model", "max_tokens"]
+    description: "Prompt configuration settings and model parameters"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "prompts/basic_templates.py"
+        must_contain: ["simple", "template"]
+        description: "Simple prompt templates for common tasks"
+
+      - path: "examples/quickstart.py"
+        must_contain: ["import", "openai", "example"]
+        description: "Basic working examples with OpenAI SDK"
+
+    intermediate:
+      - path: "prompts/templates/chain_of_thought.py"
+        must_contain: ["chain_of_thought", "reasoning", "step_by_step"]
+        description: "Chain-of-thought prompting templates"
+
+      - path: "prompts/templates/structured_output.py"
+        must_contain: ["json_mode", "schema", "pydantic"]
+        description: "Structured output generation with JSON schemas"
+
+      - path: "prompts/versioning.py"
+        must_contain: ["PROMPTS", "version", "changelog"]
+        description: "Prompt versioning system for tracking changes"
+
+      - path: "utils/token_counter.py"
+        must_contain: ["tiktoken", "count_tokens", "estimate_cost"]
+        description: "Token counting and cost estimation utilities"
+
+    advanced:
+      - path: "prompts/templates/tool_use.py"
+        must_contain: ["tools", "function_calling", "tool_choice"]
+        description: "Tool use and function calling templates"
+
+      - path: "prompts/templates/prompt_chaining.py"
+        must_contain: ["chain", "compose", "pipeline"]
+        description: "Prompt chaining and composition patterns"
+
+      - path: "prompts/optimization/"
+        must_contain: []
+        description: "Directory for prompt optimization utilities"
+
+      - path: "prompts/optimization/ab_testing.py"
+        must_contain: ["ab_test", "variant", "metrics"]
+        description: "A/B testing framework for prompt variants"
+
+      - path: "prompts/optimization/cache_manager.py"
+        must_contain: ["cache", "anthropic", "ephemeral"]
+        description: "Prompt caching for cost optimization"
+
+      - path: "monitoring/prompt_metrics.py"
+        must_contain: ["log_metrics", "usage", "cost"]
+        description: "Prompt usage monitoring and cost tracking"
+
+  model_type:
+    llm:
+      - path: "prompts/providers/"
+        must_contain: []
+        description: "Directory for provider-specific prompt configurations"
+
+      - path: "prompts/providers/openai_config.py"
+        must_contain: ["openai", "gpt", "chat_completion"]
+        description: "OpenAI-specific prompt configurations and helpers"
+
+      - path: "prompts/providers/anthropic_config.py"
+        must_contain: ["anthropic", "claude", "messages"]
+        description: "Anthropic Claude-specific configurations with XML tags"
+
+      - path: "prompts/providers/multi_provider.py"
+        must_contain: ["provider", "switch", "compatible"]
+        description: "Multi-provider portable prompt patterns"
+
+    vision:
+      - path: "prompts/templates/multimodal.py"
+        must_contain: ["image", "vision", "multimodal"]
+        description: "Multimodal prompting for vision models"
+
+      - path: "prompts/templates/image_analysis.py"
+        must_contain: ["analyze_image", "describe", "extract"]
+        description: "Image analysis and description prompts"
+
+    embedding:
+      - path: "prompts/embedding_prompts.py"
+        must_contain: ["embedding", "semantic", "similarity"]
+        description: "Prompts for embedding generation and semantic search"
+
+    chat:
+      - path: "prompts/conversation/"
+        must_contain: []
+        description: "Directory for conversational AI prompts"
+
+      - path: "prompts/conversation/system_messages.py"
+        must_contain: ["persona", "assistant", "conversation"]
+        description: "Conversational system messages and personas"
+
+      - path: "prompts/conversation/context_management.py"
+        must_contain: ["context", "history", "window"]
+        description: "Conversation context and history management"
+
+scaffolding:
+  - path: "tests/test_prompts.py"
+    reason: "Unit tests for prompt validation and output quality"
+
+  - path: "tests/test_templates.py"
+    reason: "Template rendering and variable substitution tests"
+
+  - path: ".env.example"
+    reason: "Environment variable template for API keys and configuration"
+
+  - path: "pyproject.toml"
+    reason: "Python project configuration with required dependencies"
+
+  - path: "requirements.txt"
+    reason: "Pip-compatible dependency list"
+
+  - path: "README.md"
+    reason: "Setup instructions and prompt engineering guide"
+
+  - path: "utils/retry_handler.py"
+    reason: "Exponential backoff and retry logic for API calls"
+
+  - path: "utils/error_handler.py"
+    reason: "Error handling and fallback strategies"
+
+metadata:
+  primary_blueprints: ["rag-pipeline"]
+  contributes_to:
+    - "System prompts for LLM applications"
+    - "Prompt templates (zero-shot, few-shot, CoT, tool use)"
+    - "Structured output generation (JSON schemas)"
+    - "Prompt validation and injection prevention"
+    - "Token counting and cost estimation"
+    - "Multi-provider prompt portability"
+    - "A/B testing framework for prompts"
+    - "Prompt versioning and changelog"
+  common_integrations:
+    - skill: "building-ai-chat"
+      files: ["prompts/conversation/", "prompts/providers/"]
+      reason: "Provides conversation templates and system messages"
+
+    - skill: "ai-data-engineering"
+      files: ["prompts/embedding_prompts.py", "prompts/templates/rag_prompts.py"]
+      reason: "RAG-specific prompts for retrieval and context"
+
+    - skill: "llm-evaluation"
+      files: ["prompts/optimization/ab_testing.py", "monitoring/prompt_metrics.py"]
+      reason: "Evaluation metrics and testing framework"
+
+    - skill: "model-serving"
+      files: ["prompts/providers/multi_provider.py", "config/prompt_config.yaml"]
+      reason: "Multi-model deployment configuration"
+
+  technology_stack:
+    python:
+      - "openai>=1.12.0"
+      - "anthropic>=0.18.0"
+      - "langchain>=0.1.0"
+      - "pydantic>=2.6.0"
+      - "tiktoken>=0.5.0"
+      - "tenacity>=8.2.0"
+
+    typescript:
+      - "ai (Vercel AI SDK)"
+      - "@ai-sdk/openai"
+      - "@ai-sdk/anthropic"
+      - "zod"
+
+  patterns_implemented:
+    - "Zero-shot prompting with clear instructions"
+    - "Few-shot learning with example selection"
+    - "Chain-of-thought for complex reasoning"
+    - "Structured output generation (JSON mode, tool use)"
+    - "System prompts and personas"
+    - "Tool use and function calling"
+    - "Prompt chaining and composition"
+    - "RAG context integration"
+    - "Multi-provider portability"
+    - "Prompt injection prevention"
+    - "Cost optimization (caching, token counting)"
+    - "A/B testing and versioning"
+
+  additional_outputs_for:
+    rag_integration:
+      - path: "prompts/templates/rag_prompts.py"
+        must_contain: ["rag", "context", "retrieval", "citation"]
+        description: "RAG-specific prompts with context integration and source citation"
+
+      - path: "prompts/templates/reranking_prompts.py"
+        must_contain: ["rerank", "relevance", "score"]
+        description: "Prompts for document reranking and relevance scoring"
+
+    agent_workflows:
+      - path: "prompts/templates/react_agent.py"
+        must_contain: ["react", "thought", "action", "observation"]
+        description: "ReAct agent prompts with reasoning and tool use"
+
+      - path: "prompts/templates/planning_prompts.py"
+        must_contain: ["plan", "step", "execute", "reflect"]
+        description: "Agent planning and multi-step task decomposition"

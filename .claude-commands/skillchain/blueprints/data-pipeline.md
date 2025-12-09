@@ -1238,4 +1238,508 @@ All additions will integrate with existing pipeline structure.
 
 ---
 
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "Pipeline configuration and orchestration":
+    primary_skill: transforming-data
+    required_files:
+      - pipeline/config/pipeline.yaml
+      - pipeline/config/connections.yaml
+    content_checks:
+      - pattern: "source:|destination:|schedule:"
+        in: pipeline/config/pipeline.yaml
+      - pattern: "host:|port:|database:|credentials:"
+        in: pipeline/config/connections.yaml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Data extraction layer":
+    primary_skill: transforming-data
+    required_files:
+      - pipeline/extract/sources/
+    content_checks:
+      - pattern: "def extract|class.*Extractor"
+        in: pipeline/extract/sources/
+      - pattern: "connect|query|fetch"
+        in: pipeline/extract/sources/
+    maturity_required: [starter, intermediate, advanced]
+
+  "dbt transformation pipeline":
+    primary_skill: transforming-data
+    required_files:
+      - dbt/dbt_project.yml
+      - dbt/models/staging/
+      - dbt/models/marts/
+    content_checks:
+      - pattern: "name:|models:|version:"
+        in: dbt/dbt_project.yml
+      - pattern: "stg_.*\\.sql"
+        in: dbt/models/staging/
+      - pattern: "fct_.*\\.sql|dim_.*\\.sql"
+        in: dbt/models/marts/
+    maturity_required: [starter, intermediate, advanced]
+
+  "SQL transformations":
+    primary_skill: transforming-data
+    required_files:
+      - pipeline/transform/sql/staging_tables.sql
+      - pipeline/transform/sql/transformations.sql
+    content_checks:
+      - pattern: "CREATE TABLE|CREATE OR REPLACE"
+        in: pipeline/transform/sql/
+      - pattern: "SELECT.*FROM.*WHERE|JOIN"
+        in: pipeline/transform/sql/transformations.sql
+    maturity_required: [intermediate, advanced]
+
+  "Python data transformations":
+    primary_skill: transforming-data
+    required_files:
+      - pipeline/transform/transformations/cleansing.py
+      - pipeline/transform/transformations/business_rules.py
+    content_checks:
+      - pattern: "def transform|def clean|def enrich"
+        in: pipeline/transform/transformations/
+      - pattern: "pandas|polars|pyspark"
+        in: pipeline/transform/transformations/
+    maturity_required: [starter, intermediate, advanced]
+
+  "Data loading strategies":
+    primary_skill: transforming-data
+    required_files:
+      - pipeline/load/sinks/warehouse_loader.py
+      - pipeline/load/strategies/incremental.py
+    content_checks:
+      - pattern: "def load|class.*Loader"
+        in: pipeline/load/sinks/
+      - pattern: "upsert|merge|insert|copy"
+        in: pipeline/load/strategies/
+    maturity_required: [starter, intermediate, advanced]
+
+  "Streaming infrastructure (Kafka/Kinesis)":
+    primary_skill: streaming-data
+    required_files:
+      - streaming/kafka/broker-config.yaml
+      - streaming/kafka/topic-definitions.yaml
+      - streaming/kafka/producer-config.yaml
+      - streaming/kafka/consumer-config.yaml
+    content_checks:
+      - pattern: "broker.id|num.partitions|replication.factor"
+        in: streaming/kafka/broker-config.yaml
+      - pattern: "topic_name|partitions|retention_ms"
+        in: streaming/kafka/topic-definitions.yaml
+      - pattern: "bootstrap.servers|acks|idempotence"
+        in: streaming/kafka/producer-config.yaml
+      - pattern: "group.id|auto.offset.reset|enable.auto.commit"
+        in: streaming/kafka/consumer-config.yaml
+    maturity_required: [intermediate, advanced]
+
+  "Stream producer implementation":
+    primary_skill: streaming-data
+    required_files:
+      - pipeline/orchestration/streaming/stream_producer.py
+    content_checks:
+      - pattern: "Producer|produce|send"
+        in: pipeline/orchestration/streaming/stream_producer.py
+      - pattern: "serialize|schema"
+        in: pipeline/orchestration/streaming/
+    maturity_required: [intermediate, advanced]
+
+  "Stream consumer with error handling":
+    primary_skill: streaming-data
+    required_files:
+      - pipeline/orchestration/streaming/consumer_groups.py
+    content_checks:
+      - pattern: "Consumer|subscribe|poll"
+        in: pipeline/orchestration/streaming/consumer_groups.py
+      - pattern: "dead.letter|retry|error.handling"
+        in: pipeline/orchestration/streaming/
+    maturity_required: [intermediate, advanced]
+
+  "Avro/Protobuf schemas":
+    primary_skill: streaming-data
+    required_files:
+      - schemas/avro/
+    content_checks:
+      - pattern: "type.*record|namespace|fields"
+        in: schemas/avro/
+    maturity_required: [intermediate, advanced]
+
+  "Airflow orchestration DAGs":
+    primary_skill: transforming-data
+    required_files:
+      - pipeline/orchestration/airflow/dags/batch_pipeline.py
+    content_checks:
+      - pattern: "DAG\\(|@task|PythonOperator"
+        in: pipeline/orchestration/airflow/dags/
+      - pattern: "schedule_interval|default_args"
+        in: pipeline/orchestration/airflow/dags/batch_pipeline.py
+    maturity_required: [intermediate, advanced]
+
+  "SQL query optimization":
+    primary_skill: optimizing-sql
+    required_files:
+      - sql/indexes/create-indexes.sql
+      - analysis/explain-plan.md
+    content_checks:
+      - pattern: "CREATE INDEX|CREATE UNIQUE INDEX"
+        in: sql/indexes/create-indexes.sql
+      - pattern: "EXPLAIN|execution plan|cost"
+        in: analysis/explain-plan.md
+    maturity_required: [intermediate, advanced]
+
+  "Optimized queries":
+    primary_skill: optimizing-sql
+    required_files:
+      - sql/optimized/queries.sql
+      - sql/optimized/before-after.md
+    content_checks:
+      - pattern: "SELECT|FROM|JOIN|WHERE"
+        in: sql/optimized/queries.sql
+      - pattern: "before.*after|improvement|optimization"
+        in: sql/optimized/before-after.md
+    maturity_required: [intermediate, advanced]
+
+  "Data quality validation":
+    primary_skill: testing-strategies
+    required_files:
+      - pipeline/quality/expectations/source_expectations.py
+      - pipeline/quality/validators/schema_validator.py
+    content_checks:
+      - pattern: "great_expectations|ExpectationSuite|expect_"
+        in: pipeline/quality/expectations/
+      - pattern: "def validate|assert|check"
+        in: pipeline/quality/validators/
+    maturity_required: [intermediate, advanced]
+
+  "Pipeline unit tests":
+    primary_skill: testing-strategies
+    required_files:
+      - pipeline/tests/unit/test_transformations.py
+      - pipeline/tests/unit/test_validators.py
+    content_checks:
+      - pattern: "def test_|@pytest"
+        in: pipeline/tests/unit/
+      - pattern: "assert|assertEqual|expect"
+        in: pipeline/tests/unit/
+    maturity_required: [intermediate, advanced]
+
+  "Pipeline integration tests":
+    primary_skill: testing-strategies
+    required_files:
+      - pipeline/tests/integration/test_end_to_end.py
+    content_checks:
+      - pattern: "def test_.*pipeline|def test_.*end_to_end"
+        in: pipeline/tests/integration/
+      - pattern: "extract.*transform.*load"
+        in: pipeline/tests/integration/
+    maturity_required: [advanced]
+
+  "Prometheus metrics collection":
+    primary_skill: implementing-observability
+    required_files:
+      - pipeline/monitoring/metrics/pipeline_metrics.py
+      - pipeline/monitoring/metrics/prometheus_exporter.py
+    content_checks:
+      - pattern: "Counter|Gauge|Histogram|Summary"
+        in: pipeline/monitoring/metrics/pipeline_metrics.py
+      - pattern: "prometheus_client|start_http_server"
+        in: pipeline/monitoring/metrics/prometheus_exporter.py
+    maturity_required: [intermediate, advanced]
+
+  "Structured logging":
+    primary_skill: implementing-observability
+    required_files:
+      - pipeline/monitoring/logging/logger.py
+      - pipeline/monitoring/logging/log_config.yaml
+    content_checks:
+      - pattern: "structlog|logging.config"
+        in: pipeline/monitoring/logging/logger.py
+      - pattern: "formatters:|handlers:|loggers:"
+        in: pipeline/monitoring/logging/log_config.yaml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Alert rules":
+    primary_skill: implementing-observability
+    required_files:
+      - pipeline/monitoring/alerts/alert_rules.yaml
+    content_checks:
+      - pattern: "alert:|expr:|for:|annotations:"
+        in: pipeline/monitoring/alerts/alert_rules.yaml
+      - pattern: "error_rate|latency|lag"
+        in: pipeline/monitoring/alerts/
+    maturity_required: [intermediate, advanced]
+
+  "Grafana dashboards":
+    primary_skill: implementing-observability
+    required_files:
+      - pipeline/monitoring/dashboards/grafana/pipeline_dashboard.json
+    content_checks:
+      - pattern: 'dashboard|panels|targets'
+        in: pipeline/monitoring/dashboards/grafana/
+      - pattern: 'title.*Pipeline|type.*graph'
+        in: pipeline/monitoring/dashboards/grafana/pipeline_dashboard.json
+    maturity_required: [intermediate, advanced]
+
+  "Architecture documentation":
+    primary_skill: generating-documentation
+    required_files:
+      - docs/architecture/data_flow_diagram.md
+      - docs/architecture/component_diagram.md
+    content_checks:
+      - pattern: 'mermaid|graph|flowchart'
+        in: docs/architecture/data_flow_diagram.md
+      - pattern: "source|transform|destination|pipeline"
+        in: docs/architecture/
+    maturity_required: [starter, intermediate, advanced]
+
+  "Operational runbooks":
+    primary_skill: generating-documentation
+    required_files:
+      - docs/runbooks/deployment.md
+      - docs/runbooks/troubleshooting.md
+    content_checks:
+      - pattern: "##.*Deploy|##.*Step|procedure"
+        in: docs/runbooks/deployment.md
+      - pattern: "##.*Troubleshoot|##.*Issue|solution"
+        in: docs/runbooks/troubleshooting.md
+    maturity_required: [intermediate, advanced]
+
+  "Data catalog documentation":
+    primary_skill: generating-documentation
+    required_files:
+      - docs/data_catalog/data_dictionary.md
+      - docs/data_catalog/lineage.md
+    content_checks:
+      - pattern: "table|column|description|type"
+        in: docs/data_catalog/data_dictionary.md
+      - pattern: "source.*transformation.*destination"
+        in: docs/data_catalog/lineage.md
+    maturity_required: [intermediate, advanced]
+
+  "Sample data generation":
+    primary_skill: transforming-data
+    required_files:
+      - scripts/generate_sample_data.py
+    content_checks:
+      - pattern: "def generate|def create"
+        in: scripts/generate_sample_data.py
+      - pattern: "faker|random|sample"
+        in: scripts/generate_sample_data.py
+    maturity_required: [starter]
+
+  "Pipeline validation script":
+    primary_skill: testing-strategies
+    required_files:
+      - scripts/validate_pipeline.py
+    content_checks:
+      - pattern: "def validate|def check"
+        in: scripts/validate_pipeline.py
+      - pattern: "connection|schema|permissions"
+        in: scripts/validate_pipeline.py
+    maturity_required: [intermediate, advanced]
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Simple batch pipeline with basic ETL, local development setup, minimal infrastructure"
+
+    require_additionally:
+      - "Pipeline configuration and orchestration"
+      - "Data extraction layer"
+      - "dbt transformation pipeline"
+      - "Python data transformations"
+      - "Data loading strategies"
+      - "Structured logging"
+      - "Architecture documentation"
+      - "Sample data generation"
+
+    skip_deliverables:
+      - "Streaming infrastructure (Kafka/Kinesis)"
+      - "Stream producer implementation"
+      - "Stream consumer with error handling"
+      - "Avro/Protobuf schemas"
+      - "Airflow orchestration DAGs"
+      - "SQL query optimization"
+      - "Optimized queries"
+      - "Data quality validation"
+      - "Pipeline unit tests"
+      - "Pipeline integration tests"
+      - "Prometheus metrics collection"
+      - "Alert rules"
+      - "Grafana dashboards"
+      - "Operational runbooks"
+      - "Data catalog documentation"
+      - "Pipeline validation script"
+
+    empty_dirs_allowed:
+      - pipeline/orchestration/airflow/
+      - pipeline/orchestration/streaming/
+      - streaming/
+      - schemas/
+      - pipeline/quality/
+      - pipeline/monitoring/dashboards/
+      - pipeline/monitoring/alerts/
+      - pipeline/tests/integration/
+      - sql/optimized/
+      - analysis/
+
+    generation_adjustments:
+      - Use pandas for small datasets (<10GB)
+      - Docker Compose for local dependencies
+      - Simple scheduled Python scripts (no Airflow)
+      - Basic error handling and retry logic
+      - Inline comments for learning
+      - README with step-by-step setup
+      - Sample CSV/JSON data included
+
+  intermediate:
+    description: "Production-ready pipeline with orchestration, monitoring, data quality, and testing"
+
+    require_additionally:
+      - "SQL transformations"
+      - "Airflow orchestration DAGs"
+      - "SQL query optimization"
+      - "Optimized queries"
+      - "Data quality validation"
+      - "Pipeline unit tests"
+      - "Prometheus metrics collection"
+      - "Alert rules"
+      - "Grafana dashboards"
+      - "Operational runbooks"
+      - "Data catalog documentation"
+      - "Pipeline validation script"
+
+    skip_deliverables:
+      - "Streaming infrastructure (Kafka/Kinesis)"
+      - "Stream producer implementation"
+      - "Stream consumer with error handling"
+      - "Avro/Protobuf schemas"
+      - "Pipeline integration tests"
+      - "Sample data generation"
+
+    empty_dirs_allowed:
+      - pipeline/orchestration/streaming/
+      - streaming/
+      - schemas/avro/
+      - pipeline/tests/integration/
+
+    generation_adjustments:
+      - Use polars for medium datasets (10-100GB)
+      - Airflow for orchestration (Docker Compose or Kubernetes)
+      - Great Expectations for data quality
+      - dbt for SQL transformations
+      - Prometheus + Grafana for monitoring
+      - Comprehensive error handling and retries
+      - Unit tests for transformation logic
+      - Documentation for operators and data analysts
+
+  advanced:
+    description: "Enterprise-scale with streaming, CDC, distributed processing, comprehensive testing, advanced monitoring"
+
+    require_additionally:
+      - "Streaming infrastructure (Kafka/Kinesis)"
+      - "Stream producer implementation"
+      - "Stream consumer with error handling"
+      - "Avro/Protobuf schemas"
+      - "Pipeline integration tests"
+      - "SQL transformations"
+      - "Airflow orchestration DAGs"
+      - "SQL query optimization"
+      - "Optimized queries"
+      - "Data quality validation"
+      - "Pipeline unit tests"
+      - "Prometheus metrics collection"
+      - "Alert rules"
+      - "Grafana dashboards"
+      - "Operational runbooks"
+      - "Data catalog documentation"
+      - "Pipeline validation script"
+
+    skip_deliverables:
+      - "Sample data generation"
+
+    empty_dirs_allowed: []
+
+    generation_adjustments:
+      - Use PySpark for large datasets (100GB+)
+      - Kafka or Kinesis for streaming pipelines
+      - Airflow on Kubernetes with CeleryExecutor
+      - Distributed Flink/Spark Streaming jobs
+      - Comprehensive test suite (unit + integration + E2E)
+      - Advanced monitoring (SLOs, multi-burn alerts)
+      - Schema Registry for Avro/Protobuf
+      - CDC with Debezium or Maxwell
+      - Terraform for infrastructure provisioning
+      - Cost optimization and performance tuning
+      - Data lineage tracking
+      - Disaster recovery procedures
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **File existence checks**: Verify required files exist at specified paths
+2. **Content validation**: Use regex patterns to ensure files contain expected code/configuration
+3. **Maturity compliance**: Check that maturity-specific deliverables are present
+4. **Cross-skill integration**: Validate that skills produced compatible outputs (e.g., dbt models reference correct source tables)
+5. **Report generation**: Create validation report showing pass/fail for each deliverable
+
+**Validation command:**
+```bash
+python scripts/validate_skillchain.py data-pipeline-project/ --blueprint data-pipeline --maturity intermediate
+```
+
+**Example validation report:**
+```yaml
+validation_results:
+  passed: 18
+  failed: 2
+  warnings: 3
+
+  failed_deliverables:
+    - deliverable: "Data quality validation"
+      reason: "File pipeline/quality/expectations/source_expectations.py missing"
+      severity: "error"
+
+    - deliverable: "Grafana dashboards"
+      reason: "Pattern '\"dashboard\"' not found in pipeline/monitoring/dashboards/grafana/pipeline_dashboard.json"
+      severity: "error"
+
+  warnings:
+    - deliverable: "SQL query optimization"
+      reason: "File sql/indexes/create-indexes.sql exists but pattern 'CREATE INDEX' not found"
+      severity: "warning"
+```
+
+### Implementation Notes
+
+**For skill developers:**
+- Each skill's `outputs.yaml` defines what files it generates
+- Deliverables map blueprint promises to concrete file checks
+- Skills should coordinate to avoid duplicate file generation
+- Use `primary_skill` to indicate which skill owns the deliverable
+
+**For users:**
+- Deliverables specification makes blueprint promises verifiable
+- Validation report helps identify missing or incomplete components
+- Maturity profiles adjust expectations based on project complexity
+- Empty directories are allowed for unused features
+
+**Integration with skillchain orchestrator:**
+- After all skills run, orchestrator executes validation
+- Validation failures can trigger skill re-runs with adjustments
+- Users can customize deliverables for specific needs
+- Validation reports aid debugging when pipelines don't work
+
+---
+
 **Blueprint Complete**

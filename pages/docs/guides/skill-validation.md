@@ -268,8 +268,157 @@ rules:
 - Files are read with UTF-8 and error replacement
 - Convert problematic files: `iconv -f ISO-8859-1 -t UTF-8 file.md > file_new.md`
 
+## Blueprint Validation
+
+Validate skillchain blueprints to ensure deliverables specifications are correct.
+
+### Quick Start
+
+```bash
+cd scripts
+
+# Validate all blueprints
+python -m validation blueprints
+
+# Validate a specific blueprint
+python -m validation blueprints api-first.md
+
+# Verbose output with warnings
+python -m validation blueprints --verbose
+```
+
+### What It Validates
+
+Blueprint validation checks that each blueprint has proper deliverables specifications:
+
+**Required Structure:**
+- `## Deliverables Specification` section
+- `### Deliverables` subsection with valid YAML
+- `### Maturity Profiles` subsection with valid YAML
+
+**Deliverables Requirements:**
+- Each deliverable must have `primary_skill` and `required_files`
+- Optional: `content_checks`, `maturity_required`, `condition`
+
+**Maturity Profiles:**
+- Must define all three profiles: `starter`, `intermediate`, `advanced`
+- Optional fields: `description`, `skip_deliverables`, `require_additionally`
+
+### Blueprint Structure Example
+
+```markdown
+## Deliverables Specification
+
+### Deliverables
+
+```yaml
+deliverables:
+  "CI/CD Pipeline":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/workflows/*.yml
+    content_checks:
+      - pattern: "on:\\s*(push|pull_request)"
+        in: .github/workflows/
+    maturity_required:
+      - starter
+      - intermediate
+      - advanced
+
+  "Kubernetes Manifests":
+    primary_skill: operating-kubernetes
+    required_files:
+      - infrastructure/kubernetes/deployment.yaml
+      - infrastructure/kubernetes/service.yaml
+    maturity_required:
+      - intermediate
+      - advanced
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Basic setup for getting started"
+    skip_deliverables:
+      - "Kubernetes Manifests"
+    require_additionally:
+      - "Sample Data Script"
+
+  intermediate:
+    description: "Production-ready configuration"
+
+  advanced:
+    description: "Enterprise features and observability"
+    require_additionally:
+      - "Load Testing Suite"
+```
+```
+
+### Custom Blueprints Directory
+
+```bash
+# Use a custom blueprints location
+python -m validation blueprints --blueprints-dir /path/to/blueprints
+```
+
+## outputs.yaml Validation
+
+Skills can declare expected outputs in `outputs.yaml` files, which are validated automatically during skill validation.
+
+### outputs.yaml Structure
+
+```yaml
+skill: building-ci-pipelines
+version: "1.0"
+
+base_outputs:
+  - path: ".github/workflows/ci.yml"
+    reason: "Main CI workflow"
+    must_contain:
+      - "name:"
+      - "on:"
+      - "jobs:"
+
+conditional_outputs:
+  maturity:
+    intermediate:
+      - path: ".github/workflows/cd.yml"
+        reason: "Continuous deployment workflow"
+    advanced:
+      - path: ".github/workflows/security-scan.yml"
+        reason: "Security scanning workflow"
+```
+
+### What It Validates
+
+- Required fields: `skill`, `version`
+- At least one of: `base_outputs` or `conditional_outputs`
+- `skill` field must match directory name
+- Each output item must have `path` field
+- Maturity levels must be valid (starter, intermediate, advanced, mvp, production, enterprise)
+
+## Post-Generation Evaluation
+
+For validating generated projects against blueprint promises, use the completeness checker:
+
+```bash
+# Validate against a blueprint
+python scripts/runtime/completeness_checker.py \
+  --project ./my-generated-project \
+  --blueprint ml-pipeline \
+  --maturity starter
+
+# Basic validation (no blueprint)
+python scripts/runtime/completeness_checker.py --project ./my-project
+```
+
+See [Chain Context & Validation](/docs/skillchain/chain-context) for the complete skillchain validation architecture.
+
 ## See Also
 
 - [Creating Skills](/docs/guides/creating-skills) - How to create new skills
 - [Best Practices](/docs/guides/best-practices) - Skill authoring guidelines
 - [Research Methodology](/docs/guides/research-methodology) - Library research guide
+- [Chain Context & Validation](/docs/skillchain/chain-context) - Skillchain validation architecture

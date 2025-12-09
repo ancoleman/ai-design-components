@@ -1,0 +1,131 @@
+skill: "siem-logging"
+version: "1.0"
+domain: "security"
+
+base_outputs:
+  # Core SIEM configuration files
+  - path: "siem/config/log-sources.yaml"
+    must_contain: ["log sources", "data ingestion", "parsing rules"]
+
+  - path: "siem/config/retention-policy.yaml"
+    must_contain: ["retention periods", "storage tiers", "compliance requirements"]
+
+  # Detection rules (SIGMA universal format)
+  - path: "siem/detection-rules/sigma/authentication-failures.yml"
+    must_contain: ["logsource", "detection", "level", "MITRE ATT&CK"]
+
+  - path: "siem/detection-rules/sigma/privilege-escalation.yml"
+    must_contain: ["logsource", "detection", "level", "MITRE ATT&CK"]
+
+  # Alert configuration
+  - path: "siem/alerts/alert-rules.yaml"
+    must_contain: ["severity levels", "notification channels", "thresholds"]
+
+  - path: "siem/alerts/whitelist.yaml"
+    must_contain: ["known-safe patterns", "scanner IPs", "monitoring systems"]
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Simple setup for small teams
+      - path: "siem/config/wazuh-config.yml"
+        must_contain: ["ossec.conf", "agent configuration", "log collection"]
+
+      - path: "siem/detection-rules/sigma/basic-threats.yml"
+        must_contain: ["failed authentication", "brute force", "unauthorized access"]
+
+      - path: "siem/docker-compose.yml"
+        must_contain: ["wazuh", "elasticsearch", "kibana"]
+
+    intermediate:
+      # Multi-cloud log aggregation
+      - path: "siem/log-aggregation/fluentd-config.yaml"
+        must_contain: ["source", "filter", "match", "elasticsearch"]
+
+      - path: "siem/detection-rules/platform-specific/elastic-eql/"
+        must_contain: ["sequence queries", "correlation rules"]
+
+      - path: "siem/config/storage-tiering.yaml"
+        must_contain: ["hot tier", "warm tier", "cold tier", "ILM policy"]
+
+      - path: "siem/cost-analysis/volume-estimate.yaml"
+        must_contain: ["daily volume", "retention", "monthly cost"]
+
+    advanced:
+      # Enterprise SIEM with distributed architecture
+      - path: "siem/architecture/multi-region-setup.yaml"
+        must_contain: ["regional instances", "global correlation", "data residency"]
+
+      - path: "siem/detection-rules/advanced/correlation-rules.yml"
+        must_contain: ["multi-event correlation", "threat intelligence", "anomaly detection"]
+
+      - path: "siem/automation/soar-playbooks/"
+        must_contain: ["automated response", "incident enrichment", "threat hunting"]
+
+      - path: "siem/compliance/audit-reports.yaml"
+        must_contain: ["compliance frameworks", "audit trails", "evidence collection"]
+
+      - path: "siem/optimization/alert-tuning-metrics.yaml"
+        must_contain: ["true positive rate", "false positive rate", "MTTI", "performance KPIs"]
+
+  cloud_provider:
+    aws:
+      - path: "siem/cloud-integration/aws-security-lake.tf"
+        must_contain: ["CloudTrail", "VPC Flow Logs", "GuardDuty", "S3 data lake"]
+
+      - path: "siem/log-sources/aws-config.yaml"
+        must_contain: ["CloudWatch Logs", "EventBridge", "Security Hub"]
+
+      - path: "siem/detection-rules/aws-specific/iam-abuse.yml"
+        must_contain: ["IAM policy changes", "root account usage", "privilege escalation"]
+
+    gcp:
+      - path: "siem/cloud-integration/gcp-chronicle.yaml"
+        must_contain: ["Cloud Logging", "Security Command Center", "Chronicle SIEM"]
+
+      - path: "siem/log-sources/gcp-config.yaml"
+        must_contain: ["Cloud Audit Logs", "VPC Flow Logs", "GKE logs"]
+
+      - path: "siem/detection-rules/gcp-specific/gce-security.yml"
+        must_contain: ["GCE metadata", "service account abuse", "firewall changes"]
+
+    azure:
+      - path: "siem/cloud-integration/microsoft-sentinel.tf"
+        must_contain: ["Log Analytics workspace", "Microsoft Sentinel", "data connectors"]
+
+      - path: "siem/log-sources/azure-config.yaml"
+        must_contain: ["Azure Activity Logs", "NSG Flow Logs", "Entra ID logs"]
+
+      - path: "siem/detection-rules/azure-specific/entra-id-threats.kql"
+        must_contain: ["SigninLogs", "AuditLogs", "risky sign-ins", "conditional access"]
+
+scaffolding:
+  # Directory structure for SIEM implementation
+  - "siem/"
+  - "siem/config/"
+  - "siem/detection-rules/"
+  - "siem/detection-rules/sigma/"
+  - "siem/detection-rules/platform-specific/"
+  - "siem/alerts/"
+  - "siem/log-aggregation/"
+  - "siem/log-sources/"
+  - "siem/compliance/"
+  - "siem/automation/"
+  - "siem/dashboards/"
+  - "siem/reports/"
+  - "logging/"
+  - "logging/shippers/"
+  - "logging/parsers/"
+  - "detection/"
+  - "detection/rules/"
+  - "detection/correlation/"
+
+metadata:
+  primary_blueprints: ["security", "observability"]
+  contributes_to:
+    - "SIEM integration"
+    - "Security logging infrastructure"
+    - "Threat detection and response"
+    - "Compliance audit trails"
+    - "Log aggregation pipelines"
+    - "Security monitoring dashboards"

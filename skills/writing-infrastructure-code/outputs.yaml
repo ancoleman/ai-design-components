@@ -1,0 +1,256 @@
+skill: "writing-infrastructure-code"
+version: "1.0"
+domain: "infrastructure"
+
+base_outputs:
+  # Files ALWAYS produced by this skill
+  - path: "terraform/main.tf"
+    must_contain: ["terraform\\s*\\{", "provider\\s+\""]
+    description: "Primary Terraform/OpenTofu configuration file with resources"
+
+  - path: "terraform/variables.tf"
+    must_contain: ["variable\\s+\""]
+    description: "Input variable declarations with types and descriptions"
+
+  - path: "terraform/outputs.tf"
+    must_contain: ["output\\s+\""]
+    description: "Output values for resource references and state sharing"
+
+  - path: "terraform/versions.tf"
+    must_contain: ["required_version", "required_providers"]
+    description: "Terraform and provider version constraints"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "terraform/main.tf"
+        description: "Monolithic configuration (all resources in main.tf)"
+      - path: "terraform/terraform.tfvars.example"
+        description: "Example variable values for getting started"
+
+    intermediate:
+      - path: "terraform/backend.tf"
+        must_contain: ["backend\\s+\""]
+        description: "Remote state configuration (S3, GCS, or Azure)"
+      - path: "terraform/dev.tfvars"
+        description: "Development environment variables"
+      - path: "terraform/prod.tfvars"
+        description: "Production environment variables"
+      - path: "modules/"
+        description: "Reusable module directory structure"
+
+    advanced:
+      - path: "terraform/backend.tf"
+        must_contain: ["backend\\s+\"", "encrypt\\s*=\\s*true"]
+        description: "Remote state with encryption and locking"
+      - path: "modules/vpc/main.tf"
+        description: "VPC module with composable networking"
+      - path: "modules/vpc/variables.tf"
+        description: "VPC module input contract"
+      - path: "modules/vpc/outputs.tf"
+        description: "VPC module outputs for consumption"
+      - path: "modules/vpc/README.md"
+        description: "Module documentation with usage examples"
+      - path: ".github/workflows/terraform-ci.yml"
+        must_contain: ["terraform\\s+plan", "terraform\\s+apply"]
+        description: "CI/CD pipeline for infrastructure deployment"
+      - path: "tests/"
+        description: "Infrastructure tests (Terratest or similar)"
+
+  iac_tool:
+    terraform:
+      - path: "terraform/main.tf"
+        must_contain: ["terraform\\s*\\{", "resource\\s+\""]
+        description: "Terraform HCL configuration files"
+      - path: "terraform/versions.tf"
+        must_contain: ["required_version\\s*=\\s*\">=\\s*1\\."]
+        description: "Terraform version >= 1.6.0"
+      - path: ".terraform.lock.hcl"
+        description: "Dependency lock file for provider versions"
+
+    pulumi:
+      - path: "Pulumi.yaml"
+        must_contain: ["name:", "runtime:"]
+        description: "Pulumi project configuration"
+      - path: "index.ts"
+        must_contain: ["import.*@pulumi"]
+        description: "Pulumi TypeScript infrastructure code"
+      - path: "package.json"
+        must_contain: ["@pulumi/pulumi", "@pulumi/aws|@pulumi/gcp|@pulumi/azure"]
+        description: "Node.js dependencies for Pulumi"
+      - path: "Pulumi.dev.yaml"
+        description: "Dev stack configuration"
+      - path: "Pulumi.prod.yaml"
+        description: "Production stack configuration"
+
+    cloudformation:
+      - path: "cloudformation/template.yaml"
+        must_contain: ["AWSTemplateFormatVersion", "Resources:"]
+        description: "CloudFormation YAML template"
+      - path: "cloudformation/parameters.json"
+        description: "Stack parameters for deployments"
+
+    cdk:
+      - path: "cdk.json"
+        must_contain: ["app:", "context:"]
+        description: "AWS CDK application configuration"
+      - path: "bin/app.ts"
+        must_contain: ["import.*aws-cdk-lib"]
+        description: "CDK application entry point"
+      - path: "lib/stack.ts"
+        must_contain: ["extends\\s+Stack"]
+        description: "CDK stack definition"
+      - path: "package.json"
+        must_contain: ["aws-cdk-lib", "constructs"]
+        description: "CDK dependencies"
+
+  cloud_provider:
+    aws:
+      - path: "terraform/main.tf"
+        must_contain: ["provider\\s+\"aws\""]
+        description: "AWS provider configuration"
+      - path: "terraform/backend.tf"
+        must_contain: ["backend\\s+\"s3\"", "dynamodb_table"]
+        description: "S3 backend with DynamoDB locking"
+      - path: "modules/vpc/main.tf"
+        must_contain: ["aws_vpc", "aws_subnet"]
+        description: "AWS VPC networking module"
+
+    gcp:
+      - path: "terraform/main.tf"
+        must_contain: ["provider\\s+\"google\""]
+        description: "GCP provider configuration"
+      - path: "terraform/backend.tf"
+        must_contain: ["backend\\s+\"gcs\""]
+        description: "Google Cloud Storage backend"
+      - path: "modules/network/main.tf"
+        must_contain: ["google_compute_network"]
+        description: "GCP VPC networking module"
+
+    azure:
+      - path: "terraform/main.tf"
+        must_contain: ["provider\\s+\"azurerm\""]
+        description: "Azure provider configuration"
+      - path: "terraform/backend.tf"
+        must_contain: ["backend\\s+\"azurerm\""]
+        description: "Azure Blob Storage backend"
+      - path: "modules/vnet/main.tf"
+        must_contain: ["azurerm_virtual_network"]
+        description: "Azure VNet networking module"
+
+  infrastructure:
+    compute:
+      - path: "modules/compute/main.tf"
+        must_contain: ["aws_instance|google_compute_instance|azurerm_virtual_machine"]
+        description: "Compute resource module (EC2, GCE, Azure VM)"
+      - path: "modules/compute/autoscaling.tf"
+        must_contain: ["autoscaling_group|instance_group_manager|scale_set"]
+        description: "Auto-scaling configuration"
+
+    containers:
+      - path: "modules/ecs/main.tf"
+        must_contain: ["aws_ecs_cluster", "aws_ecs_service"]
+        description: "Container orchestration (ECS, GKE, AKS)"
+      - path: "modules/ecs/task-definition.tf"
+        must_contain: ["aws_ecs_task_definition"]
+        description: "Container task/pod specifications"
+
+    serverless:
+      - path: "modules/lambda/main.tf"
+        must_contain: ["aws_lambda_function"]
+        description: "Serverless function definitions"
+      - path: "modules/lambda/api-gateway.tf"
+        must_contain: ["aws_apigatewayv2"]
+        description: "API Gateway integration"
+
+    database:
+      - path: "modules/database/main.tf"
+        must_contain: ["aws_db_instance|google_sql_database_instance|azurerm_sql_server"]
+        description: "Managed database resources"
+      - path: "modules/database/backup.tf"
+        must_contain: ["backup_retention"]
+        description: "Database backup configuration"
+
+    networking:
+      - path: "modules/vpc/main.tf"
+        must_contain: ["vpc|virtual_network", "subnet"]
+        description: "VPC/VNet with subnets"
+      - path: "modules/vpc/nat.tf"
+        must_contain: ["nat_gateway|cloud_nat"]
+        description: "NAT gateway for private subnet internet access"
+      - path: "modules/security-group/main.tf"
+        must_contain: ["security_group|firewall"]
+        description: "Security group/firewall rules"
+
+    storage:
+      - path: "modules/storage/main.tf"
+        must_contain: ["aws_s3_bucket|google_storage_bucket|azurerm_storage_account"]
+        description: "Object storage (S3, GCS, Azure Storage)"
+      - path: "modules/storage/encryption.tf"
+        must_contain: ["encryption|kms_key"]
+        description: "Storage encryption configuration"
+
+  service_mesh:
+    istio:
+      - path: "modules/istio/main.tf"
+        must_contain: ["istio", "gateway"]
+        description: "Istio service mesh infrastructure"
+      - path: "modules/istio/virtual-service.tf"
+        description: "Traffic routing configuration"
+
+    linkerd:
+      - path: "modules/linkerd/main.tf"
+        must_contain: ["linkerd"]
+        description: "Linkerd service mesh infrastructure"
+
+scaffolding:
+  - path: "terraform/environments/"
+    reason: "Directory for environment-specific configurations (dev, staging, prod)"
+
+  - path: "modules/"
+    reason: "Root directory for reusable infrastructure modules"
+
+  - path: "tests/"
+    reason: "Infrastructure testing directory (Terratest, CDK assertions)"
+
+  - path: "scripts/"
+    reason: "Utility scripts (validation, drift-check, cost-estimate, security-scan)"
+
+  - path: "docs/"
+    reason: "Infrastructure documentation (architecture diagrams, runbooks)"
+
+metadata:
+  primary_blueprints: ["cloud", "k8s"]
+  contributes_to:
+    - "Infrastructure as Code"
+    - "Cloud resource provisioning"
+    - "State management and drift detection"
+    - "Reusable infrastructure modules"
+    - "Multi-cloud deployment patterns"
+    - "Disaster recovery infrastructure"
+    - "Security hardening via IaC"
+    - "Cost optimization controls"
+
+  common_patterns:
+    - "VPC with public/private subnets and NAT gateways"
+    - "ECS Fargate service with ALB and auto-scaling"
+    - "RDS cluster with backups and encryption"
+    - "Lambda functions with API Gateway"
+    - "S3 buckets with versioning and encryption"
+    - "Remote state backend setup (S3 + DynamoDB)"
+    - "Multi-environment deployments (dev/staging/prod)"
+    - "Module-based architecture for reusability"
+
+  validation_scripts:
+    - "scripts/validate-terraform.sh - Run fmt, validate, tflint"
+    - "scripts/cost-estimate.sh - Infracost integration for cost analysis"
+    - "scripts/drift-check.sh - Detect infrastructure drift"
+    - "scripts/security-scan.sh - Checkov/tfsec security scanning"
+    - "scripts/state-backup.sh - State file backup automation"
+
+  integration_points:
+    ci_cd: "building-ci-pipelines - Automate plan/apply in CI/CD"
+    kubernetes: "kubernetes-operations - Provision EKS/GKE/AKS clusters"
+    security: "secret-management, security-hardening, compliance-frameworks"
+    observability: "observability - Provision monitoring infrastructure"
+    cost: "cost-optimization - FinOps practices via IaC"

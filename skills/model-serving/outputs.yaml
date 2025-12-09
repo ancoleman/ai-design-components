@@ -1,0 +1,333 @@
+skill: "model-serving"
+version: "1.0"
+domain: "backend"
+
+# Base outputs required for all model serving projects
+base_outputs:
+  - path: "api/"
+    must_contain: []
+    reason: "API layer for model serving endpoints (FastAPI/Flask)"
+
+  - path: "api/main.py"
+    must_contain: ["FastAPI", "StreamingResponse", "/health"]
+    reason: "Main API application with health checks and streaming support"
+
+  - path: "requirements.txt"
+    must_contain: []
+    reason: "Python dependencies for model serving stack"
+
+  - path: "config/"
+    must_contain: []
+    reason: "Model configurations and serving parameters"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "api/main.py"
+        must_contain: ["@app.post", "/chat"]
+        reason: "Basic chat endpoint for LLM inference"
+
+      - path: "docker-compose.yml"
+        must_contain: ["ollama:", "image:"]
+        reason: "Local development setup with Ollama (no GPU required)"
+
+      - path: "config/models.yaml"
+        must_contain: ["model_name:", "max_tokens:"]
+        reason: "Basic model configuration file"
+
+      - path: "examples/ollama-local/main.py"
+        must_contain: ["OLLAMA_URL", "generate"]
+        reason: "Ollama local development example"
+
+      - path: "requirements.txt"
+        must_contain: ["fastapi", "requests"]
+        reason: "Basic API dependencies"
+
+    intermediate:
+      - path: "api/main.py"
+        must_contain: ["StreamingResponse", "text/event-stream", "async def"]
+        reason: "Streaming SSE endpoints for real-time responses"
+
+      - path: "api/routes/chat.py"
+        must_contain: ["ChatRequest", "ChatResponse", "@router"]
+        reason: "Modular route structure with request/response models"
+
+      - path: "docker-compose.yml"
+        must_contain: ["vllm", "nvidia", "runtime"]
+        reason: "vLLM serving with GPU support"
+
+      - path: "config/vllm-config.yaml"
+        must_contain: ["gpu_memory_utilization", "max_model_len", "dtype"]
+        reason: "vLLM server configuration parameters"
+
+      - path: "monitoring/prometheus.yml"
+        must_contain: ["scrape_configs", "metrics_path"]
+        reason: "Prometheus monitoring for throughput and latency metrics"
+
+      - path: "scripts/benchmark_inference.py"
+        must_contain: ["benchmark", "latency", "throughput"]
+        reason: "Performance benchmarking script"
+
+      - path: "requirements.txt"
+        must_contain: ["vllm", "openai", "prometheus-client"]
+        reason: "vLLM and monitoring dependencies"
+
+    advanced:
+      - path: "k8s/deployment.yaml"
+        must_contain: ["nvidia.com/gpu", "Deployment", "livenessProbe"]
+        reason: "Kubernetes deployment with GPU resources and health checks"
+
+      - path: "k8s/service.yaml"
+        must_contain: ["Service", "LoadBalancer", "port: 8000"]
+        reason: "LoadBalancer service for external access"
+
+      - path: "k8s/hpa.yaml"
+        must_contain: ["HorizontalPodAutoscaler", "targetCPUUtilizationPercentage"]
+        reason: "Horizontal Pod Autoscaler for dynamic scaling"
+
+      - path: "k8s/configmap.yaml"
+        must_contain: ["ConfigMap", "model-config"]
+        reason: "Model configuration as ConfigMap"
+
+      - path: "k8s/ingress.yaml"
+        must_contain: ["Ingress", "tls:", "host:"]
+        reason: "Ingress with TLS for production routing"
+
+      - path: "api-gateway/kong.yaml"
+        must_contain: ["rate-limiting", "key-auth", "prometheus"]
+        reason: "API gateway configuration with rate limiting and auth"
+
+      - path: "monitoring/grafana-dashboard.json"
+        must_contain: ["tokens_per_second", "gpu_utilization"]
+        reason: "Grafana dashboard for LLM metrics visualization"
+
+      - path: "examples/langchain-agents/main.py"
+        must_contain: ["ReAct", "AgentExecutor", "tools"]
+        reason: "Advanced LangChain agent integration"
+
+      - path: "scripts/validate_model_config.py"
+        must_contain: ["validate", "gpu_memory", "model_size"]
+        reason: "Model configuration validation script"
+
+      - path: "requirements.txt"
+        must_contain: ["langchain", "qdrant-client", "tiktoken"]
+        reason: "Advanced orchestration and RAG dependencies"
+
+  infrastructure:
+    kubernetes:
+      - path: "k8s/deployment.yaml"
+        must_contain: ["kind: Deployment", "nvidia.com/gpu"]
+        reason: "K8s deployment manifest with GPU support"
+
+      - path: "k8s/service.yaml"
+        must_contain: ["kind: Service"]
+        reason: "K8s service for load balancing"
+
+      - path: "k8s/configmap.yaml"
+        must_contain: ["kind: ConfigMap"]
+        reason: "Model configuration as K8s ConfigMap"
+
+      - path: "k8s/hpa.yaml"
+        must_contain: ["HorizontalPodAutoscaler"]
+        reason: "Autoscaling based on metrics"
+
+      - path: "k8s/pvc.yaml"
+        must_contain: ["PersistentVolumeClaim", "storage:"]
+        reason: "Persistent storage for model caching"
+
+    docker_compose:
+      - path: "docker-compose.yml"
+        must_contain: ["services:", "vllm:", "volumes:"]
+        reason: "Docker Compose for local/dev deployment"
+
+      - path: "Dockerfile"
+        must_contain: ["FROM", "vllm", "ENTRYPOINT"]
+        reason: "Custom Docker image for model serving"
+
+  cache:
+    redis:
+      - path: "api/cache/redis_client.py"
+        must_contain: ["redis", "get", "set", "expire"]
+        reason: "Redis client for response caching"
+
+      - path: "config/redis.yaml"
+        must_contain: ["host:", "port:", "ttl:"]
+        reason: "Redis connection configuration"
+
+      - path: "docker-compose.yml"
+        must_contain: ["redis:", "image: redis"]
+        reason: "Redis service in Docker Compose"
+
+      - path: "requirements.txt"
+        must_contain: ["redis"]
+        reason: "Redis Python client dependency"
+
+  queue:
+    celery:
+      - path: "workers/celery_app.py"
+        must_contain: ["Celery", "broker", "backend"]
+        reason: "Celery application for async inference"
+
+      - path: "workers/tasks.py"
+        must_contain: ["@app.task", "inference", "retry"]
+        reason: "Celery task definitions for batch processing"
+
+      - path: "docker-compose.yml"
+        must_contain: ["rabbitmq:", "celery-worker:"]
+        reason: "RabbitMQ broker and Celery workers"
+
+      - path: "requirements.txt"
+        must_contain: ["celery", "redis"]
+        reason: "Celery and broker dependencies"
+
+  auth:
+    jwt:
+      - path: "api/auth/jwt_handler.py"
+        must_contain: ["jwt", "encode", "decode", "verify"]
+        reason: "JWT token handling for API authentication"
+
+      - path: "api/middleware/auth_middleware.py"
+        must_contain: ["verify_token", "Authorization", "Bearer"]
+        reason: "Authentication middleware for protected endpoints"
+
+      - path: "requirements.txt"
+        must_contain: ["pyjwt"]
+        reason: "PyJWT dependency"
+
+    api_key:
+      - path: "api/auth/api_key_handler.py"
+        must_contain: ["api_key", "validate", "header"]
+        reason: "API key validation logic"
+
+      - path: "config/api_keys.yaml"
+        must_contain: ["keys:", "rate_limits:"]
+        reason: "API key configuration with rate limits"
+
+# Scaffolding files created as starting points
+scaffolding:
+  - path: "api/__init__.py"
+    reason: "Python package initialization for API module"
+
+  - path: "api/routes/__init__.py"
+    reason: "Routes module initialization"
+
+  - path: "api/models/__init__.py"
+    reason: "Pydantic models module initialization"
+
+  - path: "config/README.md"
+    reason: "Documentation for configuration files"
+
+  - path: "scripts/README.md"
+    reason: "Documentation for utility scripts"
+
+  - path: "examples/README.md"
+    reason: "Overview of example implementations"
+
+  - path: "monitoring/README.md"
+    reason: "Monitoring setup documentation"
+
+  - path: ".env.example"
+    reason: "Example environment variables (DO NOT COMMIT .env)"
+
+  - path: ".gitignore"
+    reason: "Ignore Python cache, .env, model weights, and logs"
+
+  - path: "k8s/.gitkeep"
+    reason: "Initialize Kubernetes manifests directory"
+
+# Metadata
+metadata:
+  primary_blueprints: ["ml-pipeline", "ai-ml"]
+  contributes_to:
+    - "LLM inference APIs with streaming"
+    - "Model serving endpoints (vLLM, TensorRT-LLM, Ollama)"
+    - "RAG pipelines with vector databases"
+    - "AI chat backend integration"
+    - "GPU-optimized model deployment"
+    - "Production ML model serving"
+
+  common_patterns:
+    - "vLLM with OpenAI-compatible API for self-hosted LLMs"
+    - "FastAPI + SSE streaming for real-time token generation"
+    - "LangChain orchestration for RAG and agent workflows"
+    - "BentoML for traditional ML model deployment"
+    - "Kubernetes deployment with GPU resources and autoscaling"
+    - "Prometheus + Grafana monitoring for throughput and latency"
+    - "API gateway (Kong) with rate limiting and authentication"
+    - "Continuous batching for high throughput (vLLM default)"
+
+  integration_points:
+    frontend: "Provides streaming inference endpoints for ai-chat skill"
+    vector_db: "Integrates with Qdrant/Pinecone for RAG retrieval"
+    monitoring: "Exposes Prometheus metrics for observability"
+    orchestration: "Uses Celery for async batch processing"
+    auth: "Secured via JWT or API key authentication"
+    caching: "Uses Redis for response caching and deduplication"
+
+  typical_directory_structure: |
+    project/
+    ├── api/
+    │   ├── main.py              # FastAPI application
+    │   ├── routes/
+    │   │   ├── chat.py          # Chat endpoints
+    │   │   └── health.py        # Health checks
+    │   ├── models/
+    │   │   └── schemas.py       # Pydantic models
+    │   └── middleware/
+    │       └── auth.py          # Authentication
+    ├── config/
+    │   ├── vllm-config.yaml     # vLLM parameters
+    │   └── models.yaml          # Model configurations
+    ├── k8s/
+    │   ├── deployment.yaml      # K8s deployment
+    │   ├── service.yaml         # LoadBalancer
+    │   ├── hpa.yaml             # Autoscaling
+    │   └── ingress.yaml         # TLS ingress
+    ├── monitoring/
+    │   ├── prometheus.yml       # Metrics collection
+    │   └── grafana-dashboard.json
+    ├── scripts/
+    │   ├── benchmark_inference.py
+    │   └── validate_model_config.py
+    ├── examples/
+    │   ├── vllm-serving/        # vLLM + FastAPI
+    │   ├── ollama-local/        # Local development
+    │   ├── langchain-agents/    # LangChain patterns
+    │   └── langchain-rag-qdrant/ # RAG pipeline
+    ├── docker-compose.yml
+    ├── requirements.txt
+    └── .env.example
+
+  tools_and_engines:
+    llm_serving:
+      - name: "vLLM"
+        use_when: "Self-hosted LLM deployment, high throughput (20-30x)"
+      - name: "TensorRT-LLM"
+        use_when: "Maximum GPU efficiency (2-8x faster than vLLM)"
+      - name: "Ollama"
+        use_when: "Local development, no GPU required"
+
+    ml_serving:
+      - name: "BentoML"
+        use_when: "Traditional ML models (scikit-learn, PyTorch, XGBoost)"
+      - name: "Triton Inference Server"
+        use_when: "Multi-model serving, NVIDIA GPU optimization"
+
+    orchestration:
+      - name: "LangChain"
+        use_when: "General RAG and agent workflows, 100+ integrations"
+      - name: "LlamaIndex"
+        use_when: "RAG-focused applications with advanced retrieval"
+
+  validation_checks:
+    - "Health check endpoint (/health) responds successfully"
+    - "Streaming endpoint returns SSE format (text/event-stream)"
+    - "GPU resources allocated in K8s deployment (nvidia.com/gpu)"
+    - "Model configuration includes max_tokens and gpu_memory_utilization"
+    - "Prometheus metrics exposed at /metrics"
+    - "Requirements.txt includes core dependencies (fastapi, vllm/ollama)"
+    - "Docker Compose includes GPU runtime configuration"
+    - "API authentication implemented (JWT or API key)"
+    - "Benchmarking script validates throughput and latency"
+    - "Kubernetes HPA configured for autoscaling"

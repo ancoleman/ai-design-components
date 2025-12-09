@@ -1,0 +1,644 @@
+skill: "managing-configuration"
+version: "1.0"
+domain: "infrastructure"
+
+# Base outputs required for all configuration management projects
+base_outputs:
+  - path: "ansible.cfg"
+    must_contain: ["[defaults]", "inventory", "host_key_checking"]
+    description: "Ansible configuration file with basic settings"
+
+  - path: "inventory/"
+    must_contain: []
+    description: "Inventory directory for host definitions"
+
+  - path: "playbooks/"
+    must_contain: []
+    description: "Ansible playbooks directory"
+
+  - path: "roles/"
+    must_contain: []
+    description: "Ansible roles directory for reusable components"
+
+  - path: "group_vars/"
+    must_contain: []
+    description: "Group-level variables directory"
+
+  - path: ".ansible-lint"
+    must_contain: ["exclude_paths:", "skip_list:"]
+    description: "Ansible linting configuration"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "inventory/hosts"
+        must_contain: ["[webservers]"]
+        description: "Basic static INI inventory"
+
+      - path: "playbooks/site.yml"
+        must_contain: ["hosts:", "tasks:", "become:"]
+        description: "Simple site-wide playbook"
+
+      - path: "playbooks/webserver.yml"
+        must_contain: ["name:", "hosts:", "tasks:"]
+        description: "Basic webserver configuration playbook"
+
+      - path: "group_vars/all.yml"
+        must_contain: ["---"]
+        description: "Global variables file"
+
+      - path: "README.md"
+        must_contain: ["ansible-playbook", "inventory"]
+        description: "Basic usage documentation"
+
+    intermediate:
+      - path: "roles/common/tasks/main.yml"
+        must_contain: ["name:", "become:"]
+        description: "Common role for shared configuration"
+
+      - path: "roles/common/handlers/main.yml"
+        must_contain: ["name:", "service:"]
+        description: "Common handlers for service restarts"
+
+      - path: "roles/common/defaults/main.yml"
+        must_contain: ["---"]
+        description: "Default variables for common role"
+
+      - path: "inventory/production"
+        must_contain: ["[", "]"]
+        description: "Production inventory file"
+
+      - path: "inventory/staging"
+        must_contain: ["[", "]"]
+        description: "Staging inventory file"
+
+      - path: "group_vars/all/vault.yml"
+        must_contain: ["$ANSIBLE_VAULT"]
+        description: "Encrypted vault file for secrets"
+
+      - path: "group_vars/webservers.yml"
+        must_contain: ["---"]
+        description: "Webserver group variables"
+
+      - path: "playbooks/deploy.yml"
+        must_contain: ["pre_tasks:", "roles:", "post_tasks:"]
+        description: "Deployment playbook with lifecycle hooks"
+
+      - path: ".gitignore"
+        must_contain: ["*.retry", ".vault_pass"]
+        description: "Git ignore for Ansible artifacts"
+
+    advanced:
+      - path: "roles/"
+        must_contain: ["tasks/", "handlers/", "templates/", "defaults/", "meta/"]
+        description: "Full role structure with all components"
+
+      - path: "inventory/aws_ec2.yml"
+        must_contain: ["plugin: aws_ec2", "regions:", "filters:"]
+        description: "Dynamic AWS inventory configuration"
+
+      - path: "inventory/group_vars/"
+        must_contain: []
+        description: "Group variables organized by inventory"
+
+      - path: "roles/*/molecule/default/molecule.yml"
+        must_contain: ["driver:", "platforms:", "provisioner:", "verifier:"]
+        description: "Molecule test configuration for roles"
+
+      - path: "roles/*/molecule/default/converge.yml"
+        must_contain: ["name:", "hosts:", "roles:"]
+        description: "Molecule converge playbook"
+
+      - path: "roles/*/molecule/default/verify.yml"
+        must_contain: ["name:", "hosts:", "tasks:"]
+        description: "Molecule verification playbook"
+
+      - path: "roles/*/meta/main.yml"
+        must_contain: ["galaxy_info:", "dependencies:"]
+        description: "Role metadata and dependencies"
+
+      - path: "playbooks/site.yml"
+        must_contain: ["pre_tasks:", "roles:", "post_tasks:", "handlers:"]
+        description: "Production site playbook with full lifecycle"
+
+      - path: "group_vars/all/vault.yml"
+        must_contain: ["$ANSIBLE_VAULT"]
+        description: "Encrypted secrets with ansible-vault"
+
+      - path: "plugins/lookup/vault_lookup.py"
+        must_contain: ["from ansible.plugins.lookup", "class LookupModule"]
+        description: "Custom Vault lookup plugin for HashiCorp Vault"
+
+      - path: ".github/workflows/ansible-ci.yml"
+        must_contain: ["ansible-lint", "molecule test"]
+        description: "CI pipeline for Ansible testing"
+
+      - path: "requirements.yml"
+        must_contain: ["collections:", "roles:"]
+        description: "Ansible Galaxy dependencies"
+
+  infrastructure:
+    kubernetes:
+      - path: "inventory/k8s.yml"
+        must_contain: ["plugin:", "kubernetes"]
+        description: "Dynamic Kubernetes inventory"
+
+      - path: "playbooks/k8s-cluster.yml"
+        must_contain: ["kubeadm", "kubectl"]
+        description: "Kubernetes cluster deployment playbook"
+
+      - path: "roles/kubernetes/tasks/main.yml"
+        must_contain: ["kubeadm", "kubelet"]
+        description: "Kubernetes installation role"
+
+      - path: "group_vars/k8s_cluster.yml"
+        must_contain: ["kubernetes_version:", "pod_network_cidr:"]
+        description: "Kubernetes cluster configuration"
+
+    docker:
+      - path: "playbooks/docker-setup.yml"
+        must_contain: ["docker", "docker-compose"]
+        description: "Docker installation playbook"
+
+      - path: "roles/docker/tasks/main.yml"
+        must_contain: ["docker.io", "docker-compose"]
+        description: "Docker role for container setup"
+
+      - path: "templates/docker-compose.yml.j2"
+        must_contain: ["version:", "services:"]
+        description: "Docker Compose template"
+
+    bare_metal:
+      - path: "inventory/datacenter"
+        must_contain: ["[physical_servers]"]
+        description: "Bare metal server inventory"
+
+      - path: "playbooks/bare-metal-provision.yml"
+        must_contain: ["hosts:", "become: yes"]
+        description: "Bare metal provisioning playbook"
+
+      - path: "roles/hardware/tasks/main.yml"
+        must_contain: ["package:", "service:"]
+        description: "Hardware configuration role"
+
+  cloud_provider:
+    aws:
+      - path: "inventory/aws_ec2.yml"
+        must_contain: ["plugin: aws_ec2", "regions:", "filters:"]
+        description: "AWS EC2 dynamic inventory"
+
+      - path: "group_vars/aws.yml"
+        must_contain: ["aws_region:", "ec2_"]
+        description: "AWS-specific variables"
+
+      - path: "playbooks/aws-provision.yml"
+        must_contain: ["amazon.aws"]
+        description: "AWS provisioning playbook"
+
+      - path: "requirements.yml"
+        must_contain: ["amazon.aws"]
+        description: "AWS collection dependency"
+
+    gcp:
+      - path: "inventory/gcp_compute.yml"
+        must_contain: ["plugin: gcp_compute", "projects:", "filters:"]
+        description: "GCP Compute Engine dynamic inventory"
+
+      - path: "group_vars/gcp.yml"
+        must_contain: ["gcp_project:", "gcp_zone:"]
+        description: "GCP-specific variables"
+
+      - path: "playbooks/gcp-provision.yml"
+        must_contain: ["google.cloud"]
+        description: "GCP provisioning playbook"
+
+      - path: "requirements.yml"
+        must_contain: ["google.cloud"]
+        description: "GCP collection dependency"
+
+    azure:
+      - path: "inventory/azure_rm.yml"
+        must_contain: ["plugin: azure_rm", "include_vm_resource_groups:"]
+        description: "Azure Resource Manager dynamic inventory"
+
+      - path: "group_vars/azure.yml"
+        must_contain: ["azure_subscription_id:", "azure_resource_group:"]
+        description: "Azure-specific variables"
+
+      - path: "playbooks/azure-provision.yml"
+        must_contain: ["azure.azcollection"]
+        description: "Azure provisioning playbook"
+
+      - path: "requirements.yml"
+        must_contain: ["azure.azcollection"]
+        description: "Azure collection dependency"
+
+    multi-cloud:
+      - path: "inventory/aws_ec2.yml"
+        must_contain: ["plugin: aws_ec2"]
+        description: "AWS dynamic inventory"
+
+      - path: "inventory/gcp_compute.yml"
+        must_contain: ["plugin: gcp_compute"]
+        description: "GCP dynamic inventory"
+
+      - path: "inventory/azure_rm.yml"
+        must_contain: ["plugin: azure_rm"]
+        description: "Azure dynamic inventory"
+
+      - path: "group_vars/cloud_common.yml"
+        must_contain: ["---"]
+        description: "Common cloud configuration"
+
+      - path: "playbooks/multi-cloud-deploy.yml"
+        must_contain: ["hosts: all"]
+        description: "Multi-cloud deployment playbook"
+
+  secret_management:
+    ansible_vault:
+      - path: "group_vars/all/vault.yml"
+        must_contain: ["$ANSIBLE_VAULT"]
+        description: "Encrypted secrets with ansible-vault"
+
+      - path: ".vault_pass.example"
+        must_contain: ["# Store your vault password"]
+        description: "Vault password file example"
+
+      - path: "ansible.cfg"
+        must_contain: ["vault_password_file"]
+        description: "Ansible config with vault password reference"
+
+    hashicorp_vault:
+      - path: "plugins/lookup/hashi_vault.py"
+        must_contain: ["hvac", "vault_addr"]
+        description: "HashiCorp Vault lookup plugin"
+
+      - path: "group_vars/all/vault_config.yml"
+        must_contain: ["vault_addr:", "vault_token:"]
+        description: "Vault connection configuration"
+
+      - path: "playbooks/vault-integration.yml"
+        must_contain: ["lookup('hashi_vault'"]
+        description: "Playbook using Vault lookups"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "ansible.cfg"
+    type: "file"
+    template: |
+      [defaults]
+      inventory = inventory/
+      host_key_checking = False
+      retry_files_enabled = False
+      roles_path = roles
+      gathering = smart
+      fact_caching = jsonfile
+      fact_caching_connection = /tmp/ansible_facts
+      fact_caching_timeout = 3600
+
+      [privilege_escalation]
+      become = True
+      become_method = sudo
+      become_user = root
+      become_ask_pass = False
+
+      [ssh_connection]
+      pipelining = True
+      control_path = /tmp/ansible-ssh-%%h-%%p-%%r
+    description: "Default Ansible configuration file"
+
+  - path: ".ansible-lint"
+    type: "file"
+    template: |
+      ---
+      exclude_paths:
+        - molecule/
+        - venv/
+        - .venv/
+        - .tox/
+      skip_list:
+        - name[casing]
+      warn_list:
+        - experimental
+      use_default_rules: true
+    description: "Ansible linting configuration"
+
+  - path: "inventory/hosts"
+    type: "file"
+    template: |
+      [all:vars]
+      ansible_user=ubuntu
+      ansible_ssh_private_key_file=~/.ssh/id_rsa
+
+      [webservers]
+      web1.example.com ansible_host=10.0.1.10
+      web2.example.com ansible_host=10.0.1.11
+
+      [databases]
+      db1.example.com ansible_host=10.0.2.10
+
+      [webservers:vars]
+      nginx_worker_processes=4
+
+      [databases:vars]
+      postgresql_version=14
+    description: "Example static inventory file"
+
+  - path: "playbooks/site.yml"
+    type: "file"
+    template: |
+      ---
+      - name: Configure all servers
+        hosts: all
+        become: yes
+
+        pre_tasks:
+          - name: Update package cache
+            apt:
+              update_cache: yes
+              cache_valid_time: 3600
+
+        roles:
+          - common
+
+      - name: Configure web servers
+        hosts: webservers
+        become: yes
+
+        roles:
+          - nginx
+
+        post_tasks:
+          - name: Verify web service
+            uri:
+              url: http://localhost
+              status_code: 200
+    description: "Example site-wide playbook"
+
+  - path: "group_vars/all.yml"
+    type: "file"
+    template: |
+      ---
+      # Global variables for all hosts
+      ntp_servers:
+        - 0.pool.ntp.org
+        - 1.pool.ntp.org
+
+      common_packages:
+        - vim
+        - curl
+        - git
+        - htop
+
+      timezone: "UTC"
+    description: "Global variables file"
+
+  - path: ".gitignore"
+    type: "file"
+    template: |
+      # Ansible
+      *.retry
+      .vault_pass
+      ansible.log
+
+      # Python
+      __pycache__/
+      *.py[cod]
+      venv/
+      .venv/
+
+      # Testing
+      molecule/**/.molecule/
+      molecule/**/tests/__pycache__/
+
+      # IDE
+      .vscode/
+      .idea/
+
+      # Credentials
+      *.pem
+      *.key
+      credentials.yml
+    description: "Git ignore for Ansible projects"
+
+  - path: "README.md"
+    type: "file"
+    template: |
+      # Ansible Configuration Management
+
+      This project uses Ansible for server and application configuration management.
+
+      ## Quick Start
+
+      ### Prerequisites
+
+      - Ansible 2.9+ installed
+      - SSH access to target hosts
+      - Python 3.6+ on target hosts
+
+      ### Installation
+
+      ```bash
+      # Install Ansible
+      pip install ansible ansible-lint
+
+      # Install required collections
+      ansible-galaxy collection install -r requirements.yml
+
+      # Install required roles (if any)
+      ansible-galaxy role install -r requirements.yml
+      ```
+
+      ### Running Playbooks
+
+      ```bash
+      # Check inventory
+      ansible-inventory -i inventory --list
+
+      # Test connectivity
+      ansible all -i inventory -m ping
+
+      # Run in check mode (dry run)
+      ansible-playbook -i inventory/production playbooks/site.yml --check --diff
+
+      # Execute playbook
+      ansible-playbook -i inventory/production playbooks/site.yml
+
+      # Limit to specific hosts
+      ansible-playbook -i inventory/production playbooks/site.yml --limit webservers
+
+      # Use tags
+      ansible-playbook -i inventory/production playbooks/site.yml --tags "configuration"
+      ```
+
+      ### Working with Secrets
+
+      ```bash
+      # Create encrypted vault file
+      ansible-vault create group_vars/all/vault.yml
+
+      # Edit encrypted file
+      ansible-vault edit group_vars/all/vault.yml
+
+      # Run playbook with vault password
+      ansible-playbook playbooks/site.yml --ask-vault-pass
+      # OR
+      ansible-playbook playbooks/site.yml --vault-password-file ~/.vault_pass
+      ```
+
+      ### Testing
+
+      ```bash
+      # Lint playbooks
+      ansible-lint playbooks/
+
+      # Test roles with Molecule
+      cd roles/myapp
+      molecule test
+      ```
+
+      ## Project Structure
+
+      ```
+      .
+      ├── ansible.cfg           # Ansible configuration
+      ├── inventory/            # Host inventories
+      │   ├── production        # Production hosts
+      │   ├── staging           # Staging hosts
+      │   └── aws_ec2.yml       # Dynamic AWS inventory
+      ├── group_vars/           # Group-level variables
+      │   └── all/
+      │       ├── vars.yml      # Unencrypted variables
+      │       └── vault.yml     # Encrypted secrets
+      ├── host_vars/            # Host-specific variables
+      ├── playbooks/            # Ansible playbooks
+      │   └── site.yml          # Main site playbook
+      ├── roles/                # Ansible roles
+      │   └── common/           # Common role
+      │       ├── tasks/
+      │       ├── handlers/
+      │       ├── templates/
+      │       ├── files/
+      │       ├── defaults/
+      │       └── meta/
+      └── requirements.yml      # Galaxy dependencies
+      ```
+
+      ## Documentation
+
+      - [Ansible Documentation](https://docs.ansible.com/)
+      - [Best Practices](https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html)
+      - [Galaxy Collections](https://galaxy.ansible.com/)
+    description: "Project documentation with usage examples"
+
+  - path: "requirements.yml"
+    type: "file"
+    template: |
+      ---
+      collections:
+        - name: community.general
+          version: ">=3.0.0"
+        - name: ansible.posix
+          version: ">=1.0.0"
+
+      # roles:
+      #   - name: geerlingguy.docker
+      #     version: "4.2.0"
+    description: "Ansible Galaxy dependencies"
+
+# Metadata
+metadata:
+  primary_blueprints: ["infrastructure", "devops", "k8s"]
+  contributes_to:
+    - "Configuration management"
+    - "Infrastructure automation"
+    - "Server provisioning"
+    - "Application deployment"
+    - "GitOps workflows"
+
+  common_patterns:
+    - name: "Three-tier role structure"
+      description: "Roles organized by layer (common → middleware → application)"
+      files: ["roles/common/", "roles/nginx/", "roles/myapp/"]
+
+    - name: "Dynamic cloud inventory"
+      description: "Auto-discovering hosts from AWS/GCP/Azure"
+      files: ["inventory/aws_ec2.yml", "inventory/gcp_compute.yml"]
+
+    - name: "Ansible Vault secrets"
+      description: "Encrypted secrets with ansible-vault"
+      files: ["group_vars/all/vault.yml", ".vault_pass"]
+
+    - name: "Molecule testing"
+      description: "Testing roles with Molecule and Docker"
+      files: ["roles/*/molecule/", "requirements.yml"]
+
+    - name: "GitOps workflow"
+      description: "Infrastructure as code with version control"
+      files: [".github/workflows/ansible-ci.yml", "playbooks/"]
+
+  integration_points:
+    iac: "Terraform provisions infrastructure, Ansible configures"
+    kubernetes: "Ansible deploys K8s clusters, manages nodes"
+    ci_cd: "CI pipelines run ansible-lint and Molecule tests"
+    secrets: "ansible-vault or HashiCorp Vault integration"
+    monitoring: "Ansible configures monitoring agents and dashboards"
+
+  tools:
+    core:
+      - name: "Ansible"
+        use_when: "Configuring servers, deploying applications"
+      - name: "ansible-lint"
+        use_when: "Linting playbooks and roles"
+      - name: "Molecule"
+        use_when: "Testing roles before deployment"
+
+    inventory:
+      - name: "Static inventory (INI/YAML)"
+        use_when: "Stable environments with fixed hosts"
+      - name: "Dynamic inventory (aws_ec2, gcp_compute)"
+        use_when: "Cloud environments with auto-scaling"
+
+    secrets:
+      - name: "ansible-vault"
+        use_when: "Simple secret encryption"
+      - name: "HashiCorp Vault"
+        use_when: "Enterprise secrets management, dynamic credentials"
+
+    testing:
+      - name: "Molecule + Docker"
+        use_when: "Testing roles in isolation"
+      - name: "Check mode (--check --diff)"
+        use_when: "Dry-run before deployment"
+
+  validation_checks:
+    - "ansible-lint passes with no errors"
+    - "Playbooks are idempotent (run twice with no changes)"
+    - "Secrets encrypted with ansible-vault (no plaintext passwords)"
+    - "Roles tested with Molecule before production use"
+    - "Inventory structure matches environment (production/staging)"
+    - "Handlers properly trigger on configuration changes"
+    - "SSH connectivity verified (ansible all -m ping)"
+    - "Role dependencies documented in meta/main.yml"
+
+  anti_patterns:
+    - name: "Using shell/command for package installation"
+      avoid: "command: apt-get install nginx"
+      use: "apt: name=nginx state=present"
+
+    - name: "Hardcoded IPs in playbooks"
+      avoid: "Playbook contains 10.0.1.10"
+      use: "Variables and inventory host definitions"
+
+    - name: "No idempotency checks"
+      avoid: "Tasks always report 'changed'"
+      use: "State-based modules (present, started, latest)"
+
+    - name: "Single monolithic playbook"
+      avoid: "1000+ line site.yml with all logic"
+      use: "Roles for reusable components"
+
+    - name: "Secrets in plaintext"
+      avoid: "Passwords in group_vars/all.yml"
+      use: "ansible-vault encrypted files"

@@ -1,0 +1,245 @@
+skill: "guiding-users"
+version: "1.0"
+domain: "frontend"
+
+base_outputs:
+  - path: "src/components/onboarding/ProductTour.tsx"
+    must_contain: ["react-joyride", "Step[]", "localStorage", "tourCompleted"]
+    description: "Main product tour component with react-joyride integration"
+
+  - path: "src/components/onboarding/FeatureSpotlight.tsx"
+    must_contain: ["spotlight", "tooltip", "pulsing", "dismiss"]
+    description: "Feature announcement component for new feature discovery"
+
+  - path: "src/hooks/useOnboarding.ts"
+    must_contain: ["useState", "useEffect", "localStorage"]
+    description: "Hook for managing onboarding state and tour completion tracking"
+
+  - path: "src/styles/onboarding.css"
+    must_contain: ["--tour-spotlight", "--tour-overlay", "var(--color-primary)"]
+    description: "Design token-based styling for all onboarding components"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "src/components/onboarding/SimpleTour.tsx"
+        must_contain: ["react-joyride", "steps", "run"]
+        description: "Basic 3-step product tour for getting started"
+
+      - path: "src/components/onboarding/WelcomeTooltip.tsx"
+        must_contain: ["tooltip", "first-time", "dismiss"]
+        description: "Simple welcome tooltip for new users"
+
+    intermediate:
+      - path: "src/components/onboarding/ProductTour.tsx"
+        must_contain: ["react-joyride", "callback", "analytics", "skip"]
+        description: "Full-featured tour with progress tracking and analytics"
+
+      - path: "src/components/onboarding/SetupChecklist.tsx"
+        must_contain: ["checklist", "progress", "localStorage"]
+        description: "Multi-step setup checklist with progress tracking"
+
+      - path: "src/components/onboarding/ContextualHelp.tsx"
+        must_contain: ["tooltip", "hover", "keyboard-accessible"]
+        description: "Contextual help system with tooltips and hints"
+
+      - path: "src/utils/onboarding-analytics.ts"
+        must_contain: ["trackTourStart", "trackTourComplete", "trackDropoff"]
+        description: "Analytics utilities for measuring onboarding success"
+
+    advanced:
+      - path: "src/components/onboarding/AdaptiveTour.tsx"
+        must_contain: ["user-type", "personalized", "A/B test"]
+        description: "Adaptive tour that personalizes based on user type and behavior"
+
+      - path: "src/components/onboarding/InteractiveTutorial.tsx"
+        must_contain: ["guided-tasks", "validation", "sandbox", "celebration"]
+        description: "Interactive tutorial with task validation and completion feedback"
+
+      - path: "src/components/onboarding/HelpPanel.tsx"
+        must_contain: ["sidebar", "search", "contextual", "video"]
+        description: "Comprehensive help panel with search and contextual support"
+
+      - path: "src/components/onboarding/ProgressiveDisclosure.tsx"
+        must_contain: ["feature-unlock", "gradual", "context-aware"]
+        description: "Progressive disclosure system for gradual feature introduction"
+
+      - path: "src/hooks/useSmartTriggers.ts"
+        must_contain: ["inactivity", "confusion", "context-based"]
+        description: "Smart triggering system based on user behavior and context"
+
+      - path: "src/utils/tour-optimization.ts"
+        must_contain: ["A/B", "completion-rate", "drop-off", "optimize"]
+        description: "Tour optimization utilities for A/B testing and performance"
+
+  frontend_framework:
+    react:
+      - path: "src/components/onboarding/ProductTour.tsx"
+        must_contain: ["useState", "useEffect", "react-joyride"]
+        description: "React-based product tour with hooks"
+
+      - path: "src/hooks/useOnboarding.ts"
+        must_contain: ["useState", "useCallback", "useMemo"]
+        description: "React hooks for onboarding state management"
+
+    vue:
+      - path: "src/components/onboarding/ProductTour.vue"
+        must_contain: ["<script setup>", "ref", "onMounted"]
+        description: "Vue 3 Composition API product tour component"
+
+      - path: "src/composables/useOnboarding.ts"
+        must_contain: ["ref", "computed", "watch"]
+        description: "Vue composable for onboarding state"
+
+    angular:
+      - path: "src/app/onboarding/product-tour.component.ts"
+        must_contain: ["@Component", "OnInit", "localStorage"]
+        description: "Angular product tour component"
+
+      - path: "src/app/onboarding/onboarding.service.ts"
+        must_contain: ["@Injectable", "BehaviorSubject"]
+        description: "Angular service for onboarding state management"
+
+    svelte:
+      - path: "src/components/ProductTour.svelte"
+        must_contain: ["<script>", "onMount", "writable"]
+        description: "Svelte product tour component with stores"
+
+  styling:
+    tailwind:
+      - path: "src/components/onboarding/ProductTour.tsx"
+        must_contain: ["className", "bg-", "text-", "rounded-"]
+        description: "Tailwind-styled tour components"
+
+      - path: "tailwind.config.js"
+        must_contain: ["theme.extend", "colors.tour", "animation.pulse"]
+        description: "Tailwind configuration with onboarding-specific tokens"
+
+    css-modules:
+      - path: "src/components/onboarding/ProductTour.module.css"
+        must_contain: [".tourSpotlight", ".overlay", "var(--tour"]
+        description: "CSS Modules with design token integration"
+
+    styled-components:
+      - path: "src/components/onboarding/ProductTour.styles.ts"
+        must_contain: ["styled.", "theme.tour", "${props => props.theme"]
+        description: "Styled Components with theme integration"
+
+    css-in-js:
+      - path: "src/components/onboarding/ProductTour.styles.ts"
+        must_contain: ["makeStyles", "theme.tour", "useTheme"]
+        description: "CSS-in-JS (MUI/Emotion) styling"
+
+scaffolding:
+  - path: "src/components/onboarding/"
+    reason: "Directory for all onboarding components"
+
+  - path: "src/hooks/"
+    reason: "Directory for reusable onboarding hooks"
+
+  - path: "src/utils/onboarding/"
+    reason: "Directory for onboarding utilities and analytics"
+
+  - path: "src/config/tours/"
+    reason: "Directory for tour configuration JSON files"
+
+  - path: "src/assets/onboarding/"
+    reason: "Directory for celebration animations and visual assets"
+
+  - path: "src/styles/tokens/onboarding.css"
+    reason: "Design tokens specific to onboarding components"
+
+metadata:
+  primary_blueprints: ["dashboard", "frontend"]
+
+  contributes_to:
+    - "First-time user onboarding"
+    - "Product tours and walkthroughs"
+    - "Feature discovery and announcements"
+    - "Interactive tutorials"
+    - "Setup checklists and progress tracking"
+    - "Contextual help and tooltips"
+    - "Help panels and documentation"
+    - "Progressive disclosure patterns"
+
+  libraries_used:
+    primary:
+      - name: "react-joyride"
+        purpose: "Feature-rich product tours with accessibility"
+        version: "^2.5.0"
+        trust_score: 9.6
+
+    alternatives:
+      - name: "driver.js"
+        purpose: "Lightweight vanilla JS tours (~5KB)"
+        version: "^1.0.0"
+
+      - name: "intro.js"
+        purpose: "Classic battle-tested tour library"
+        version: "^7.0.0"
+
+  design_tokens_used:
+    - "Colors (spotlight, overlay, tooltip backgrounds)"
+    - "Spacing (padding, arrow size)"
+    - "Typography (title and body text)"
+    - "Borders (border radius)"
+    - "Shadows (elevation for spotlights)"
+    - "Motion (transitions, pulse animations)"
+
+  accessibility_features:
+    - "Full keyboard navigation (Tab, ESC, Arrow keys)"
+    - "Screen reader announcements (ARIA labels)"
+    - "Reduced motion support (prefers-reduced-motion)"
+    - "Focus management"
+    - "High contrast theme support"
+
+  key_metrics:
+    - "Tour completion rate (target: >60%)"
+    - "Time to first value"
+    - "Feature adoption rate post-tour"
+    - "Drop-off points in tours"
+    - "Support ticket reduction"
+
+  cross_skill_integration:
+    - skill: "theming-components"
+      usage: "Design tokens for all visual styling and theme switching"
+
+    - skill: "building-forms"
+      usage: "Guided form completion and validation hints"
+
+    - skill: "building-dashboards"
+      usage: "Dashboard feature tours and widget explanations"
+
+    - skill: "building-tables"
+      usage: "Data grid tutorials and feature discovery"
+
+    - skill: "implementing-ai-chat"
+      usage: "Chat interface walkthroughs"
+
+    - skill: "building-navigation"
+      usage: "Menu and navigation guidance"
+
+    - skill: "building-feedback"
+      usage: "Success celebrations and progress notifications"
+
+  anti_patterns:
+    - "Forced tours that block product use"
+    - "Tours exceeding 7 steps (too long)"
+    - "Showing same tour in every session"
+    - "No skip option"
+    - "Wall of text instead of visuals"
+    - "Blocking all interactions during tour"
+    - "Showing help before user exploration"
+    - "Poor timing (interrupting focused work)"
+
+  implementation_notes:
+    - "Keep tours under 7 steps maximum"
+    - "Always provide skip option"
+    - "Store completion state in localStorage"
+    - "Delay tour start 500ms for page load"
+    - "Track analytics for completion and drop-off"
+    - "Use design tokens for theming"
+    - "Implement accessibility from the start"
+    - "Test with keyboard and screen readers"
+    - "Respect prefers-reduced-motion"
+    - "A/B test tour variations"

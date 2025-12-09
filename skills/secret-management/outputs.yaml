@@ -1,0 +1,346 @@
+skill: "secret-management"
+version: "1.0"
+domain: "data"
+
+base_outputs:
+  - path: ".env.example"
+    must_contain: ["# Example environment variables", "DO NOT COMMIT .env"]
+  - path: ".gitleaks.toml"
+    must_contain: ["[allowlist]", "description"]
+  - path: ".git/hooks/pre-commit"
+    must_contain: ["gitleaks", "protect"]
+  - path: "secrets/README.md"
+    must_contain: ["Secret Management", "Vault", "rotation"]
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: ".env.example"
+        must_contain: ["DATABASE_URL", "API_KEY"]
+      - path: "secrets/vault/kv-config.hcl"
+        must_contain: ["kv-v2", "secret/"]
+      - path: "docs/secret-rotation.md"
+        must_contain: ["manual rotation", "quarterly"]
+
+    intermediate:
+      - path: "secrets/vault/policies/app-policy.hcl"
+        must_contain: ["path", "capabilities", "read"]
+      - path: "secrets/vault/auth-config.hcl"
+        must_contain: ["kubernetes", "role"]
+      - path: "k8s/external-secrets/secret-store.yaml"
+        must_contain: ["SecretStore", "vault"]
+      - path: "k8s/external-secrets/external-secret.yaml"
+        must_contain: ["ExternalSecret", "refreshInterval"]
+      - path: "scripts/rotate-secrets.sh"
+        must_contain: ["vault kv put", "version"]
+
+    advanced:
+      - path: "secrets/vault/database-config.hcl"
+        must_contain: ["database", "postgresql", "creation_statements", "default_ttl"]
+      - path: "secrets/vault/policies/dynamic-db-policy.hcl"
+        must_contain: ["database/creds"]
+      - path: "k8s/vault-secrets-operator/dynamic-secret.yaml"
+        must_contain: ["VaultDynamicSecret", "renewalPercent"]
+      - path: "secrets/vault/pki-config.hcl"
+        must_contain: ["pki", "max_ttl", "allowed_domains"]
+      - path: "scripts/vault-backup.sh"
+        must_contain: ["vault operator raft snapshot"]
+      - path: "monitoring/vault-alerts.yaml"
+        must_contain: ["seal status", "token expiration"]
+
+  cloud_provider:
+    aws:
+      - path: "secrets/aws/secretsmanager-config.tf"
+        must_contain: ["aws_secretsmanager_secret", "rotation_lambda_arn"]
+      - path: "secrets/aws/iam-policies.json"
+        must_contain: ["secretsmanager:GetSecretValue"]
+      - path: "k8s/external-secrets/aws-secret-store.yaml"
+        must_contain: ["provider:", "aws"]
+
+    gcp:
+      - path: "secrets/gcp/secret-manager-config.tf"
+        must_contain: ["google_secret_manager_secret", "replication"]
+      - path: "secrets/gcp/iam-bindings.tf"
+        must_contain: ["roles/secretmanager.secretAccessor"]
+      - path: "k8s/external-secrets/gcp-secret-store.yaml"
+        must_contain: ["provider:", "gcpsm"]
+
+    azure:
+      - path: "secrets/azure/key-vault-config.tf"
+        must_contain: ["azurerm_key_vault", "soft_delete_enabled"]
+      - path: "secrets/azure/access-policies.tf"
+        must_contain: ["key_permissions", "secret_permissions"]
+      - path: "k8s/external-secrets/azure-secret-store.yaml"
+        must_contain: ["provider:", "azurekv"]
+
+    multi-cloud:
+      - path: "secrets/vault/vault-ha-config.hcl"
+        must_contain: ["storage \"raft\"", "retry_join"]
+      - path: "k8s/vault/vault-statefulset.yaml"
+        must_contain: ["replicas: 3", "raft"]
+      - path: "secrets/vault/auto-unseal-config.hcl"
+        must_contain: ["seal \"awskms\"", "kms_key_id"]
+
+  infrastructure:
+    kubernetes:
+      - path: "k8s/external-secrets/operator-deployment.yaml"
+        must_contain: ["external-secrets"]
+      - path: "k8s/external-secrets/cluster-secret-store.yaml"
+        must_contain: ["ClusterSecretStore"]
+      - path: "k8s/vault/vault-deployment.yaml"
+        must_contain: ["hashicorp/vault", "ServiceAccount"]
+      - path: "k8s/vault/auth-delegator-rbac.yaml"
+        must_contain: ["system:auth-delegator"]
+      - path: "k8s/sealed-secrets/sealed-secret.yaml"
+        must_contain: ["SealedSecret", "encryptedData"]
+
+    docker:
+      - path: "docker-compose.yml"
+        must_contain: ["vault:", "image: hashicorp/vault"]
+      - path: "vault/config/vault.hcl"
+        must_contain: ["storage \"file\"", "listener \"tcp\""]
+      - path: "scripts/init-vault-docker.sh"
+        must_contain: ["docker exec", "vault operator init"]
+
+    serverless:
+      - path: "serverless.yml"
+        must_contain: ["AWS::SecretsManager::Secret"]
+      - path: "functions/secrets-handler.js"
+        must_contain: ["SecretsManager", "getSecretValue"]
+      - path: "iam/lambda-secrets-policy.json"
+        must_contain: ["secretsmanager:GetSecretValue"]
+
+scaffolding:
+  - path: "secrets/"
+    type: "directory"
+    description: "Root directory for secret management configurations"
+
+  - path: "secrets/vault/"
+    type: "directory"
+    description: "Vault configurations, policies, and auth methods"
+
+  - path: "secrets/vault/policies/"
+    type: "directory"
+    description: "HCL policy files for access control"
+
+  - path: "k8s/external-secrets/"
+    type: "directory"
+    description: "External Secrets Operator manifests"
+
+  - path: "k8s/vault/"
+    type: "directory"
+    description: "Vault Kubernetes deployment manifests"
+
+  - path: "scripts/secret-rotation/"
+    type: "directory"
+    description: "Automated secret rotation scripts"
+
+  - path: ".gitleaks.toml"
+    type: "file"
+    template: |
+      # Gitleaks configuration
+      title = "gitleaks config"
+
+      [allowlist]
+      description = "Allowlisted files"
+      paths = [
+        '''\.example$''',
+        '''\.sample$''',
+        '''\.template$'''
+      ]
+
+      [allowlist.regexes]
+      description = "Allowlisted patterns"
+      regexes = [
+        '''EXAMPLE_''',
+        '''SAMPLE_''',
+        '''PLACEHOLDER_'''
+      ]
+
+  - path: ".env.example"
+    type: "file"
+    template: |
+      # Example environment variables
+      # DO NOT COMMIT .env - Add .env to .gitignore
+      #
+      # To use:
+      # 1. Copy this file: cp .env.example .env
+      # 2. Fill in actual values in .env
+      # 3. Store real secrets in Vault
+
+      # Database
+      DATABASE_URL=postgresql://user:password@localhost:5432/mydb
+
+      # API Keys
+      API_KEY=EXAMPLE_KEY_12345
+      SECRET_KEY=EXAMPLE_SECRET_67890
+
+      # Vault connection (for local dev)
+      VAULT_ADDR=http://localhost:8200
+      VAULT_TOKEN=root
+
+      # Note: In production, use dynamic secrets from Vault
+
+  - path: "secrets/README.md"
+    type: "file"
+    template: |
+      # Secret Management
+
+      This project uses [HashiCorp Vault / Cloud Secret Manager] for secret management.
+
+      ## Quick Start
+
+      ### Local Development
+
+      1. Copy environment template:
+         ```bash
+         cp .env.example .env
+         ```
+
+      2. Install Gitleaks:
+         ```bash
+         brew install gitleaks  # macOS
+         ```
+
+      3. Install pre-commit hook:
+         ```bash
+         chmod +x .git/hooks/pre-commit
+         ```
+
+      ### Production
+
+      Secrets are stored in Vault and synced to Kubernetes via External Secrets Operator.
+
+      ## Secret Rotation
+
+      - Static secrets: Rotate quarterly (see docs/secret-rotation.md)
+      - Dynamic secrets: Auto-rotate every 1 hour (Vault database engine)
+      - TLS certificates: Auto-renew via cert-manager
+
+      ## Adding New Secrets
+
+      1. Store in Vault:
+         ```bash
+         vault kv put secret/myapp/config api_key=VALUE
+         ```
+
+      2. Create ExternalSecret:
+         ```yaml
+         apiVersion: external-secrets.io/v1beta1
+         kind: ExternalSecret
+         metadata:
+           name: myapp-secrets
+         spec:
+           secretStoreRef:
+             name: vault-backend
+           target:
+             name: myapp-secrets
+           data:
+           - secretKey: api_key
+             remoteRef:
+               key: secret/data/myapp/config
+               property: api_key
+         ```
+
+      3. Reference in Pod:
+         ```yaml
+         envFrom:
+         - secretRef:
+             name: myapp-secrets
+         ```
+
+      ## Emergency Rotation
+
+      If a secret is leaked:
+
+      1. Rotate immediately: `./scripts/rotate-secrets.sh myapp`
+      2. Revoke at provider
+      3. Check audit logs
+      4. Document incident
+
+      See `docs/secret-rotation.md` for details.
+
+metadata:
+  primary_blueprints: ["security"]
+  contributes_to: ["Secret management", "Compliance (SOC 2, ISO 27001)", "Zero-trust architecture"]
+  integrates_with:
+    - "auth-security"       # OAuth secrets, JWT keys
+    - "databases-*"         # Dynamic DB credentials
+    - "deploying-kubernetes" # K8s secret injection
+    - "observability"       # Monitoring API keys
+    - "infrastructure-as-code" # Cloud credentials
+
+  common_patterns:
+    - name: "Vault + External Secrets Operator"
+      description: "Central Vault with K8s sync via ESO"
+      files: ["k8s/external-secrets/", "secrets/vault/"]
+
+    - name: "Dynamic Database Credentials"
+      description: "Auto-generated DB creds with short TTL"
+      files: ["secrets/vault/database-config.hcl", "k8s/vault-secrets-operator/"]
+
+    - name: "GitOps with SOPS"
+      description: "Git-encrypted secrets for GitOps workflows"
+      files: [".sops.yaml", "k8s/secrets/*.enc.yaml"]
+
+    - name: "Cloud-Native (AWS/GCP/Azure)"
+      description: "Native cloud secret managers with ESO sync"
+      files: ["secrets/{aws,gcp,azure}/", "k8s/external-secrets/"]
+
+  anti_patterns:
+    - name: "Hardcoded secrets in manifests"
+      avoid: "Base64-encoded secrets in Git"
+      use: "ExternalSecret referencing Vault/cloud secret manager"
+
+    - name: "Secrets in environment variables"
+      avoid: "Visible in process lists"
+      use: "File-based secrets (CSI driver, mounted volumes)"
+
+    - name: "No rotation"
+      avoid: "Static secrets never rotated"
+      use: "Dynamic secrets or automated rotation scripts"
+
+    - name: "Root token in production"
+      avoid: "Unlimited permissions"
+      use: "Auth methods with least-privilege policies"
+
+  tools:
+    secret_stores:
+      - name: "HashiCorp Vault"
+        use_when: "Multi-cloud, enterprise, dynamic secrets"
+      - name: "AWS Secrets Manager"
+        use_when: "AWS-native workloads"
+      - name: "GCP Secret Manager"
+        use_when: "GCP-native workloads"
+      - name: "Azure Key Vault"
+        use_when: "Azure-native workloads"
+
+    kubernetes_integration:
+      - name: "External Secrets Operator"
+        use_when: "Any secret backend, static secrets"
+      - name: "Vault Secrets Operator"
+        use_when: "Vault-specific, dynamic secrets"
+      - name: "Secrets Store CSI Driver"
+        use_when: "File-based secrets, no pod restart on rotation"
+
+    secret_scanning:
+      - name: "Gitleaks"
+        use_when: "Pre-commit hooks, CI/CD scanning"
+      - name: "TruffleHog"
+        use_when: "Git history scanning"
+
+    gitops:
+      - name: "SOPS"
+        use_when: "GitOps workflows, multi-cloud"
+      - name: "Sealed Secrets"
+        use_when: "Kubernetes-only GitOps"
+
+  validation_checks:
+    - "No secrets committed to Git (run gitleaks)"
+    - "Pre-commit hook installed (.git/hooks/pre-commit exists)"
+    - "Vault policies follow least privilege"
+    - "Dynamic secrets have short TTL (< 24h)"
+    - "Secret rotation documented and tested"
+    - "Audit logging enabled"
+    - "TLS enabled for Vault (production)"
+    - "Backup/disaster recovery tested"

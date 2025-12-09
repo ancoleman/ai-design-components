@@ -1,0 +1,373 @@
+skill: "using-document-databases"
+version: "1.0"
+domain: "backend"
+
+# Base outputs required for all document database projects
+base_outputs:
+  - path: "db/"
+    must_contain: []
+    reason: "Database configuration, schemas, and migration scripts"
+
+  - path: "src/models/"
+    must_contain: []
+    reason: "Data models and schema definitions"
+
+  - path: "config/"
+    must_contain: []
+    reason: "Database connection configuration and environment settings"
+
+  - path: "tests/"
+    must_contain: []
+    reason: "Database integration tests and query validation"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "src/models/*.{js,ts,py,rs,go}"
+        must_contain: ["Schema", "model"]
+        reason: "Basic schema definitions with simple data models"
+
+      - path: "db/indexes.{js,ts,py,sql}"
+        must_contain: ["createIndex", "index"]
+        reason: "Basic single-field indexes for common queries"
+
+      - path: "config/database.{js,ts,py,yml}"
+        must_contain: ["connection", "uri"]
+        reason: "Database connection configuration with connection string"
+
+      - path: "src/repositories/*.{js,ts,py,rs,go}"
+        must_contain: ["find", "insert", "update"]
+        reason: "Basic CRUD repository patterns"
+
+    intermediate:
+      - path: "src/models/"
+        must_contain: ["validation", "schema"]
+        reason: "Schema definitions with validation rules and constraints"
+
+      - path: "db/indexes.{js,ts,py,sql}"
+        must_contain: ["compound", "createIndex"]
+        reason: "Compound indexes optimized for query patterns"
+
+      - path: "db/migrations/"
+        must_contain: ["*.{js,ts,py}"]
+        reason: "Database migration scripts for schema evolution"
+
+      - path: "src/repositories/"
+        must_contain: ["pagination", "filter"]
+        reason: "Advanced repository patterns with pagination and filtering"
+
+      - path: "tests/integration/"
+        must_contain: ["*.test.{js,ts,py}"]
+        reason: "Integration tests for database operations"
+
+      - path: "config/connection-pool.{js,ts,py,yml}"
+        must_contain: ["pool", "max", "min"]
+        reason: "Connection pooling configuration for performance"
+
+    advanced:
+      - path: "src/models/"
+        must_contain: ["validation", "schema", "hooks"]
+        reason: "Advanced schema with validation, hooks, and business logic"
+
+      - path: "db/indexes/"
+        must_contain: ["compound", "partial", "ttl"]
+        reason: "Advanced indexing strategies (compound, partial, TTL, text)"
+
+      - path: "db/aggregations/"
+        must_contain: ["pipeline", "$match", "$group"]
+        reason: "Aggregation pipeline definitions for complex queries"
+
+      - path: "db/migrations/"
+        must_contain: ["up", "down", "rollback"]
+        reason: "Bi-directional migrations with rollback capability"
+
+      - path: "src/repositories/"
+        must_contain: ["transaction", "session"]
+        reason: "Transaction support for multi-document operations"
+
+      - path: "tests/performance/"
+        must_contain: ["benchmark", "explain"]
+        reason: "Performance tests and query plan analysis"
+
+      - path: "monitoring/"
+        must_contain: ["metrics", "slow-query"]
+        reason: "Database monitoring and slow query logging"
+
+      - path: "scripts/validate_indexes.py"
+        must_contain: ["explain", "analyze"]
+        reason: "Index validation and query optimization scripts"
+
+  database:
+    mongodb:
+      - path: "src/models/*.{js,ts,py,rs,go}"
+        must_contain: ["Schema|model|struct"]
+        reason: "MongoDB schema definitions (Mongoose, Beanie, mongo-go-driver)"
+
+      - path: "db/indexes.{js,ts,py}"
+        must_contain: ["createIndex", "ensureIndex"]
+        reason: "MongoDB index creation scripts"
+
+      - path: "config/mongodb.{js,ts,py,yml}"
+        must_contain: ["mongodb://|mongodb+srv://", "options"]
+        reason: "MongoDB connection string and client options"
+
+      - path: "db/aggregations/"
+        must_contain: ["$match", "$group", "$lookup"]
+        reason: "MongoDB aggregation pipeline definitions"
+
+      - path: "package.json|requirements.txt|Cargo.toml|go.mod"
+        must_contain: ["mongodb|mongoose|motor|beanie"]
+        reason: "MongoDB driver dependencies"
+
+    dynamodb:
+      - path: "db/table-definitions/"
+        must_contain: ["TableName", "KeySchema", "AttributeDefinitions"]
+        reason: "DynamoDB table definitions with partition/sort keys"
+
+      - path: "src/models/"
+        must_contain: ["PK", "SK", "GSI"]
+        reason: "Single-table design models with PK/SK/GSI patterns"
+
+      - path: "config/dynamodb.{js,ts,py,yml}"
+        must_contain: ["region", "endpoint"]
+        reason: "DynamoDB client configuration with region and endpoint"
+
+      - path: "db/gsi-definitions.{js,ts,py,yml}"
+        must_contain: ["GlobalSecondaryIndexes"]
+        reason: "Global Secondary Index (GSI) definitions for query patterns"
+
+      - path: "serverless.yml|sam.yml|terraform/"
+        must_contain: ["DynamoDB|AWS::DynamoDB"]
+        reason: "Infrastructure-as-code for DynamoDB provisioning"
+
+      - path: "package.json|requirements.txt|Cargo.toml|go.mod"
+        must_contain: ["aws-sdk|boto3|rusoto"]
+        reason: "AWS SDK dependencies for DynamoDB"
+
+    firestore:
+      - path: "src/models/"
+        must_contain: ["collection", "document"]
+        reason: "Firestore collection and document structure definitions"
+
+      - path: "db/security-rules.rules"
+        must_contain: ["rules_version", "allow read", "allow write"]
+        reason: "Firestore security rules for access control"
+
+      - path: "db/indexes.json"
+        must_contain: ["collectionGroup", "fields"]
+        reason: "Firestore composite index definitions"
+
+      - path: "config/firebase.{js,ts,json}"
+        must_contain: ["apiKey", "projectId", "appId"]
+        reason: "Firebase configuration with project credentials"
+
+      - path: "src/listeners/"
+        must_contain: ["onSnapshot", "real-time"]
+        reason: "Real-time listener implementations for live data sync"
+
+      - path: "package.json|requirements.txt"
+        must_contain: ["firebase|firebase-admin"]
+        reason: "Firebase SDK dependencies"
+
+  language:
+    typescript:
+      - path: "src/models/*.ts"
+        must_contain: ["interface", "type", "Schema"]
+        reason: "TypeScript type-safe model definitions"
+
+      - path: "src/repositories/*.ts"
+        must_contain: ["async", "Promise"]
+        reason: "Async TypeScript repository implementations"
+
+      - path: "package.json"
+        must_contain: ["mongodb|@aws-sdk|firebase"]
+        reason: "TypeScript database driver dependencies"
+
+    python:
+      - path: "src/models/*.py"
+        must_contain: ["class", "model|schema"]
+        reason: "Python model definitions (Pydantic, Beanie, or dataclasses)"
+
+      - path: "src/repositories/*.py"
+        must_contain: ["async def", "await"]
+        reason: "Async Python repository implementations"
+
+      - path: "requirements.txt"
+        must_contain: ["motor|pymongo|boto3|firebase-admin"]
+        reason: "Python database driver dependencies"
+
+    rust:
+      - path: "src/models/*.rs"
+        must_contain: ["struct", "derive", "Serialize"]
+        reason: "Rust struct definitions with serde serialization"
+
+      - path: "src/repositories/*.rs"
+        must_contain: ["async fn", "Result"]
+        reason: "Async Rust repository implementations with error handling"
+
+      - path: "Cargo.toml"
+        must_contain: ["mongodb|aws-sdk-dynamodb"]
+        reason: "Rust database driver dependencies"
+
+    go:
+      - path: "models/*.go"
+        must_contain: ["type", "struct", "bson"]
+        reason: "Go struct definitions with BSON tags"
+
+      - path: "repositories/*.go"
+        must_contain: ["context.Context", "error"]
+        reason: "Go repository implementations with context and error handling"
+
+      - path: "go.mod"
+        must_contain: ["mongo-driver|aws-sdk-go"]
+        reason: "Go database driver dependencies"
+
+  use_case:
+    cms:
+      - path: "src/models/content.{js,ts,py,rs,go}"
+        must_contain: ["title", "body", "author", "published"]
+        reason: "Content model with metadata and publishing workflow"
+
+      - path: "src/models/media.{js,ts,py,rs,go}"
+        must_contain: ["url", "type", "metadata"]
+        reason: "Media asset model for images, videos, files"
+
+      - path: "db/indexes.{js,ts,py}"
+        must_contain: ["text", "published", "author"]
+        reason: "Full-text search and content filtering indexes"
+
+    user_profiles:
+      - path: "src/models/user.{js,ts,py,rs,go}"
+        must_contain: ["email", "profile", "preferences"]
+        reason: "User model with embedded profile and preferences"
+
+      - path: "db/indexes.{js,ts,py}"
+        must_contain: ["email", "unique"]
+        reason: "Unique index on email for authentication"
+
+      - path: "src/repositories/user.{js,ts,py,rs,go}"
+        must_contain: ["findByEmail", "update"]
+        reason: "User repository with email lookup and profile updates"
+
+    catalog:
+      - path: "src/models/product.{js,ts,py,rs,go}"
+        must_contain: ["name", "price", "categories", "attributes"]
+        reason: "Product model with flexible attributes and categories"
+
+      - path: "src/models/category.{js,ts,py,rs,go}"
+        must_contain: ["name", "parent", "products"]
+        reason: "Category model with hierarchical structure"
+
+      - path: "db/indexes.{js,ts,py}"
+        must_contain: ["categories", "price", "text"]
+        reason: "Indexes for category filtering, price sorting, and search"
+
+    event_logging:
+      - path: "src/models/event.{js,ts,py,rs,go}"
+        must_contain: ["timestamp", "type", "userId", "data"]
+        reason: "Event model with timestamp, type, and flexible data payload"
+
+      - path: "db/indexes.{js,ts,py}"
+        must_contain: ["timestamp", "TTL|expireAfterSeconds"]
+        reason: "TTL index for automatic event expiration"
+
+      - path: "db/aggregations/event-analytics.{js,ts,py}"
+        must_contain: ["$match", "$group", "count"]
+        reason: "Event aggregation pipelines for analytics"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "config/database.{js,ts,py,yml}"
+    reason: "Database connection configuration template"
+
+  - path: "src/models/README.md"
+    reason: "Documentation for schema design patterns and conventions"
+
+  - path: "db/indexes/README.md"
+    reason: "Index strategy documentation with query patterns"
+
+  - path: "src/repositories/base.{js,ts,py,rs,go}"
+    reason: "Base repository class with common CRUD operations"
+
+  - path: "tests/fixtures/"
+    reason: "Test data fixtures for integration tests"
+
+  - path: ".env.example"
+    reason: "Environment variable template for database credentials"
+
+  - path: "docker-compose.yml"
+    reason: "Local development database setup (MongoDB/DynamoDB Local)"
+
+  - path: "scripts/seed-data.{js,ts,py}"
+    reason: "Database seeding script for development"
+
+  - path: ".gitignore"
+    reason: "Ignore environment files, database dumps, and cache"
+
+# Metadata
+metadata:
+  primary_blueprints: ["api-first"]
+  contributes_to:
+    - "Document storage"
+    - "NoSQL data persistence"
+    - "Flexible schema applications"
+    - "Content management systems"
+    - "User profile storage"
+    - "Product catalogs"
+    - "Event logging"
+    - "Real-time applications"
+    - "Mobile backend services"
+
+  common_patterns:
+    - "Embedding vs referencing decision framework"
+    - "Single-table design for DynamoDB"
+    - "Aggregation pipelines for complex queries"
+    - "Compound indexes for query optimization"
+    - "Partial indexes for subset indexing"
+    - "TTL indexes for auto-expiration"
+    - "Connection pooling for performance"
+    - "Cursor-based pagination"
+    - "Soft deletes with timestamps"
+    - "Audit logs with version history"
+
+  integration_points:
+    api: "Provides data persistence layer for REST/GraphQL APIs"
+    auth: "Stores user profiles, sessions, and authentication data"
+    media: "Stores media metadata with GridFS for large files"
+    search: "Full-text search with MongoDB Atlas Search or Elasticsearch integration"
+    cache: "Primary database with Redis/Memcached for query caching"
+    messaging: "Event sourcing with change streams for real-time updates"
+
+  typical_directory_structure: |
+    project/
+    ├── src/
+    │   ├── models/              # Schema definitions
+    │   │   ├── user.ts
+    │   │   ├── product.ts
+    │   │   └── order.ts
+    │   └── repositories/        # Data access layer
+    │       ├── base.ts
+    │       ├── user.ts
+    │       └── product.ts
+    ├── db/
+    │   ├── indexes/             # Index definitions
+    │   │   ├── user.js
+    │   │   └── product.js
+    │   ├── aggregations/        # Aggregation pipelines
+    │   │   └── sales-analytics.js
+    │   └── migrations/          # Schema migrations
+    │       ├── 001-add-user-indexes.js
+    │       └── 002-update-product-schema.js
+    ├── config/
+    │   ├── database.ts
+    │   └── connection-pool.ts
+    ├── tests/
+    │   ├── integration/
+    │   │   └── user.test.ts
+    │   └── performance/
+    │       └── query-benchmarks.test.ts
+    ├── scripts/
+    │   ├── seed-data.ts
+    │   └── validate_indexes.py
+    └── docker-compose.yml

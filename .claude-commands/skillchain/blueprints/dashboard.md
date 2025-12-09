@@ -750,4 +750,481 @@ All additions will integrate with existing token system and layout.
 
 ---
 
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "Design token system":
+    primary_skill: theming-components
+    required_files:
+      - src/tokens.css
+    content_checks:
+      - pattern: "--color-primary"
+        in: src/tokens.css
+      - pattern: "--spacing-"
+        in: src/tokens.css
+      - pattern: ":root"
+        in: src/tokens.css
+    maturity_required: [starter, intermediate, advanced]
+
+  "Theme switching support":
+    primary_skill: theming-components
+    required_files:
+      - src/context/theme-provider.tsx
+    content_checks:
+      - pattern: "data-theme"
+        in: src/context/theme-provider.tsx
+      - pattern: "localStorage"
+        in: src/context/theme-provider.tsx
+      - pattern: "light.*dark"
+        in: src/context/theme-provider.tsx
+    maturity_required: [starter, intermediate, advanced]
+
+  "Responsive layout system":
+    primary_skill: designing-layouts
+    required_files:
+      - layouts/components/Container.tsx
+      - layouts/styles/breakpoints.css
+    content_checks:
+      - pattern: "@media.*min-width"
+        in: layouts/styles/breakpoints.css
+      - pattern: "max-width.*padding"
+        in: layouts/components/Container.tsx
+    maturity_required: [starter, intermediate, advanced]
+
+  "Admin layout with sidebar":
+    primary_skill: designing-layouts
+    required_files:
+      - layouts/components/AdminLayout.tsx
+    content_checks:
+      - pattern: "sidebar.*header.*main"
+        in: layouts/components/AdminLayout.tsx
+      - pattern: "collapsible|responsive"
+        in: layouts/components/AdminLayout.tsx
+    maturity_required: [intermediate, advanced]
+
+  "Dashboard grid layout":
+    primary_skill: creating-dashboards
+    required_files:
+      - components/layouts/DashboardGrid.tsx
+    content_checks:
+      - pattern: "grid|Grid"
+        in: components/layouts/DashboardGrid.tsx
+      - pattern: "widget|Widget"
+        in: components/layouts/DashboardGrid.tsx
+    maturity_required: [starter, intermediate, advanced]
+
+  "KPI card components":
+    primary_skill: creating-dashboards
+    required_files:
+      - components/widgets/KPICard.tsx
+    content_checks:
+      - pattern: "value.*trend"
+        in: components/widgets/KPICard.tsx
+      - pattern: "interface.*KPI"
+        in: components/widgets/KPICard.tsx
+    maturity_required: [starter, intermediate, advanced]
+
+  "Chart widget components":
+    primary_skill: creating-dashboards
+    required_files:
+      - components/widgets/ChartWidget.tsx
+    content_checks:
+      - pattern: "AreaChart|BarChart|LineChart"
+        in: components/widgets/ChartWidget.tsx
+      - pattern: "loading.*error"
+        in: components/widgets/ChartWidget.tsx
+    maturity_required: [intermediate, advanced]
+
+  "Global filter context":
+    primary_skill: creating-dashboards
+    required_files:
+      - context/DashboardContext.tsx
+    content_checks:
+      - pattern: "createContext"
+        in: context/DashboardContext.tsx
+      - pattern: "filters.*setFilters"
+        in: context/DashboardContext.tsx
+    maturity_required: [intermediate, advanced]
+
+  "Line chart visualization":
+    primary_skill: visualizing-data
+    required_files:
+      - components/charts/LineChart.tsx
+    content_checks:
+      - pattern: "LineChart|Line"
+        in: components/charts/LineChart.tsx
+      - pattern: "XAxis.*YAxis"
+        in: components/charts/LineChart.tsx
+    maturity_required: [starter, intermediate, advanced]
+
+  "Bar chart visualization":
+    primary_skill: visualizing-data
+    required_files:
+      - components/charts/BarChart.tsx
+    content_checks:
+      - pattern: "BarChart|Bar"
+        in: components/charts/BarChart.tsx
+      - pattern: "ResponsiveContainer"
+        in: components/charts/BarChart.tsx
+    maturity_required: [starter, intermediate, advanced]
+
+  "Pie chart visualization":
+    primary_skill: visualizing-data
+    required_files:
+      - components/charts/PieChart.tsx
+    content_checks:
+      - pattern: "PieChart|Pie"
+        in: components/charts/PieChart.tsx
+      - pattern: "Cell"
+        in: components/charts/PieChart.tsx
+    maturity_required: [starter, intermediate, advanced]
+
+  "Accessible chart components":
+    primary_skill: visualizing-data
+    required_files:
+      - components/charts/AccessibleChart.tsx
+    content_checks:
+      - pattern: "role=.*img.*aria-label"
+        in: components/charts/AccessibleChart.tsx
+    maturity_required: [intermediate, advanced]
+
+  "Colorblind-safe palettes":
+    primary_skill: visualizing-data
+    required_files:
+      - utils/colorblind-palettes.ts
+    content_checks:
+      - pattern: "#648FFF.*#785EF0.*#DC267F"
+        in: utils/colorblind-palettes.ts
+    maturity_required: [intermediate, advanced]
+
+  "Data table with sorting":
+    primary_skill: building-tables
+    required_files:
+      - components/DataTable.tsx
+    content_checks:
+      - pattern: "useReactTable|TanStack"
+        in: components/DataTable.tsx
+      - pattern: "getSortedRowModel"
+        in: components/DataTable.tsx
+    maturity_required: [intermediate, advanced]
+
+  "Table pagination":
+    primary_skill: building-tables
+    required_files:
+      - components/PaginatedTable.tsx
+    content_checks:
+      - pattern: "getPaginationRowModel"
+        in: components/PaginatedTable.tsx
+      - pattern: "pageIndex.*pageSize"
+        in: components/PaginatedTable.tsx
+    maturity_required: [intermediate, advanced]
+
+  "Toast notifications":
+    primary_skill: providing-feedback
+    required_files:
+      - components/Toast.tsx
+    content_checks:
+      - pattern: "toast|Toaster|sonner"
+        in: components/Toast.tsx
+      - pattern: "success.*error"
+        in: components/Toast.tsx
+    maturity_required: [starter, intermediate, advanced]
+
+  "Loading skeleton states":
+    primary_skill: providing-feedback
+    required_files:
+      - components/SkeletonScreen.tsx
+    content_checks:
+      - pattern: "skeleton.*shimmer"
+        in: components/SkeletonScreen.tsx
+    maturity_required: [intermediate, advanced]
+
+  "Progress indicators":
+    primary_skill: providing-feedback
+    required_files:
+      - components/ProgressBar.tsx
+    content_checks:
+      - pattern: "progress.*aria-valuenow"
+        in: components/ProgressBar.tsx
+    maturity_required: [intermediate, advanced]
+
+  "Empty state components":
+    primary_skill: providing-feedback
+    required_files:
+      - components/EmptyState.tsx
+    content_checks:
+      - pattern: "illustration.*CTA.*empty"
+        in: components/EmptyState.tsx
+    maturity_required: [intermediate, advanced]
+
+  "Application entry point":
+    primary_skill: assembling-components
+    required_files:
+      - src/main.tsx
+      - src/App.tsx
+    content_checks:
+      - pattern: "ThemeProvider"
+        in: src/main.tsx
+      - pattern: "import.*tokens.css"
+        in: src/main.tsx
+      - pattern: "export default.*App"
+        in: src/App.tsx
+    maturity_required: [starter, intermediate, advanced]
+
+  "Build configuration":
+    primary_skill: assembling-components
+    required_files:
+      - vite.config.ts
+      - tsconfig.json
+      - package.json
+    content_checks:
+      - pattern: "@vitejs/plugin-react"
+        in: vite.config.ts
+      - pattern: "baseUrl.*paths"
+        in: tsconfig.json
+      - pattern: "recharts"
+        in: package.json
+    maturity_required: [starter, intermediate, advanced]
+
+  "Real-time updates (SSE)":
+    primary_skill: creating-dashboards
+    required_files:
+      - hooks/useSSEUpdates.ts
+    content_checks:
+      - pattern: "EventSource"
+        in: hooks/useSSEUpdates.ts
+      - pattern: "useEffect"
+        in: hooks/useSSEUpdates.ts
+    maturity_required: [intermediate, advanced]
+
+  "Smart polling system":
+    primary_skill: creating-dashboards
+    required_files:
+      - hooks/useSmartPolling.ts
+    content_checks:
+      - pattern: "setInterval"
+        in: hooks/useSmartPolling.ts
+      - pattern: "document.hidden"
+        in: hooks/useSmartPolling.ts
+    maturity_required: [advanced]
+
+  "Customizable dashboard grid":
+    primary_skill: creating-dashboards
+    required_files:
+      - components/layouts/CustomizableGrid.tsx
+    content_checks:
+      - pattern: "react-grid-layout"
+        in: components/layouts/CustomizableGrid.tsx
+      - pattern: "onLayoutChange.*localStorage"
+        in: components/layouts/CustomizableGrid.tsx
+    maturity_required: [advanced]
+
+  "Dashboard export utilities":
+    primary_skill: creating-dashboards
+    required_files:
+      - utils/exportDashboard.ts
+    content_checks:
+      - pattern: "exportToPDF.*exportToImage.*exportToCSV"
+        in: utils/exportDashboard.ts
+    maturity_required: [advanced]
+
+  "Widget caching system":
+    primary_skill: creating-dashboards
+    required_files:
+      - hooks/useCachedWidget.ts
+    content_checks:
+      - pattern: "cache.*ttl.*timestamp"
+        in: hooks/useCachedWidget.ts
+    maturity_required: [advanced]
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Basic dashboard with static data, simple visualizations, and essential features"
+
+    require_additionally:
+      - "Design token system"
+      - "Theme switching support"
+      - "Responsive layout system"
+      - "Dashboard grid layout"
+      - "KPI card components"
+      - "Line chart visualization"
+      - "Bar chart visualization"
+      - "Pie chart visualization"
+      - "Toast notifications"
+      - "Application entry point"
+      - "Build configuration"
+
+    skip_deliverables:
+      - "Admin layout with sidebar"
+      - "Chart widget components"
+      - "Global filter context"
+      - "Accessible chart components"
+      - "Colorblind-safe palettes"
+      - "Data table with sorting"
+      - "Table pagination"
+      - "Loading skeleton states"
+      - "Progress indicators"
+      - "Empty state components"
+      - "Real-time updates (SSE)"
+      - "Smart polling system"
+      - "Customizable dashboard grid"
+      - "Dashboard export utilities"
+      - "Widget caching system"
+
+    empty_dirs_allowed:
+      - components/widgets/
+      - components/filters/
+      - hooks/
+      - utils/
+      - context/
+
+    generation_adjustments:
+      - Simple grid layout with fixed positions
+      - Static sample data with mock values
+      - Basic chart components without advanced interactivity
+      - Minimal dependencies (Recharts only for charts)
+      - No real-time updates or auto-refresh
+      - Focus on visual clarity and code readability
+      - Extensive inline comments and documentation
+
+  intermediate:
+    description: "Production-ready dashboard with filtering, real-time updates, tables, and accessibility"
+
+    require_additionally:
+      - "Admin layout with sidebar"
+      - "Chart widget components"
+      - "Global filter context"
+      - "Accessible chart components"
+      - "Colorblind-safe palettes"
+      - "Data table with sorting"
+      - "Table pagination"
+      - "Loading skeleton states"
+      - "Progress indicators"
+      - "Empty state components"
+      - "Real-time updates (SSE)"
+
+    skip_deliverables:
+      - "Smart polling system"
+      - "Customizable dashboard grid"
+      - "Dashboard export utilities"
+      - "Widget caching system"
+
+    empty_dirs_allowed:
+      - data/
+      - tests/
+
+    generation_adjustments:
+      - Responsive sidebar with collapsible behavior
+      - Global filter context coordinating all widgets
+      - Server-sent events for real-time data updates
+      - TanStack Table for advanced data grids
+      - Skeleton loading states for all async components
+      - WCAG 2.1 AA accessibility compliance
+      - Colorblind-safe chart palettes
+      - Toast notifications for all user actions
+      - Error boundaries for widget isolation
+
+  advanced:
+    description: "Enterprise dashboard with customization, caching, exports, and advanced performance"
+
+    require_additionally:
+      - "Smart polling system"
+      - "Customizable dashboard grid"
+      - "Dashboard export utilities"
+      - "Widget caching system"
+
+    skip_deliverables: []
+
+    empty_dirs_allowed: []
+
+    generation_adjustments:
+      - Drag-and-drop customizable grid with persistence
+      - Smart polling with tab visibility detection
+      - Widget-level caching with TTL expiration
+      - Multi-format export (PDF, image, CSV)
+      - WebSocket support for high-frequency updates
+      - Performance monitoring and analytics
+      - Advanced filter presets and saved views
+      - Widget catalog for user customization
+      - Lazy loading for optimal performance
+      - Virtual scrolling for large datasets
+      - Comprehensive test coverage
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **File existence checks**: Verify all required files exist based on maturity level
+2. **Content pattern matching**: Confirm files contain expected code patterns
+3. **Token validation**: Run `scripts/validate_tokens.py` to ensure no hardcoded values
+4. **Build verification**: Ensure `npm run build` completes without errors
+5. **Import resolution**: Verify all imports resolve correctly
+6. **Accessibility audit**: Check WCAG 2.1 AA compliance for interactive components
+7. **Performance benchmarks**: Validate rendering performance for large datasets
+
+### Cross-Skill Dependencies
+
+```yaml
+cross_skill_dependencies:
+  theming-components:
+    must_complete_before: ["designing-layouts", "creating-dashboards", "visualizing-data"]
+    reason: "All components reference design tokens for styling"
+
+  designing-layouts:
+    must_complete_before: ["creating-dashboards"]
+    reason: "Dashboard uses layout grid and container components"
+
+  creating-dashboards:
+    requires: ["theming-components", "designing-layouts"]
+    optionally_uses: ["visualizing-data", "building-tables", "providing-feedback"]
+    reason: "Dashboard composes widgets from multiple skills"
+
+  visualizing-data:
+    requires: ["theming-components"]
+    reason: "Charts reference design token color palettes"
+
+  building-tables:
+    requires: ["theming-components"]
+    reason: "Tables use design tokens for styling"
+
+  providing-feedback:
+    requires: ["theming-components"]
+    reason: "Toast and loading components use theme colors"
+
+  assembling-components:
+    must_complete_last: true
+    reason: "Wires together all component skills into final application"
+```
+
+### Success Criteria
+
+A dashboard blueprint implementation is considered successful when:
+
+- ✅ All maturity-level deliverables present and validated
+- ✅ Design tokens used exclusively (no hardcoded colors/spacing)
+- ✅ Theme switching works correctly (light/dark modes)
+- ✅ Dashboard responsive at all breakpoints (mobile, tablet, desktop)
+- ✅ Charts render with accessible color palettes
+- ✅ KPI cards display values, trends, and comparisons
+- ✅ Data tables sortable and filterable (intermediate+)
+- ✅ Real-time updates functional (intermediate+)
+- ✅ Loading states prevent layout shift
+- ✅ Toast notifications provide user feedback
+- ✅ Build completes without errors
+- ✅ TypeScript types resolve correctly
+- ✅ WCAG 2.1 AA compliance met (intermediate+)
+- ✅ Performance acceptable for target data volume
+
+---
+
 **Blueprint Complete**

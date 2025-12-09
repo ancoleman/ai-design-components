@@ -1,0 +1,543 @@
+skill: "implementing-navigation"
+version: "1.0"
+domain: "frontend"
+
+# Base outputs required for all navigation implementations
+base_outputs:
+  - path: "src/components/"
+    must_contain: []
+    reason: "Component directory for navigation implementations"
+
+  - path: "src/config/"
+    must_contain: []
+    reason: "Navigation configuration and route definitions"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      # Frontend navigation components (starter)
+      - path: "src/components/HorizontalMenu.tsx"
+        must_contain: ["NavLink", "useState", "aria-label"]
+        reason: "Basic horizontal navigation with accessibility"
+
+      - path: "src/components/MobileMenu.tsx"
+        must_contain: ["hamburger", "drawer", "aria-expanded"]
+        reason: "Mobile hamburger menu with drawer"
+
+      - path: "src/config/navigation.ts"
+        must_contain: ["NavItem", "label", "href"]
+        reason: "Navigation structure configuration"
+
+      - path: "src/App.tsx"
+        must_contain: ["BrowserRouter", "Routes", "Route"]
+        reason: "Basic client-side routing setup (React Router)"
+
+      # Backend routing (starter)
+      - path: "app/routes.py"
+        must_contain: ["@app.route", "def"]
+        reason: "Basic Flask route definitions"
+
+    intermediate:
+      # Frontend navigation (intermediate)
+      - path: "src/components/HorizontalMenu.tsx"
+        must_contain: ["NavLink", "dropdown", "useRef", "keyboard navigation"]
+        reason: "Horizontal menu with dropdowns and keyboard nav"
+
+      - path: "src/components/SideNavigation.tsx"
+        must_contain: ["collapsible", "nested", "aria-expanded"]
+        reason: "Side navigation with collapsible sections"
+
+      - path: "src/components/TabNavigation.tsx"
+        must_contain: ["useSearchParams", "aria-selected", "role=\"tablist\""]
+        reason: "Tabs with URL synchronization and ARIA compliance"
+
+      - path: "src/components/Breadcrumbs.tsx"
+        must_contain: ["aria-label=\"breadcrumb\"", "aria-current"]
+        reason: "Breadcrumb navigation with ARIA landmarks"
+
+      - path: "src/components/MobileNavigation.tsx"
+        must_contain: ["hamburger", "bottom navigation", "useMediaQuery"]
+        reason: "Responsive mobile navigation patterns"
+
+      - path: "src/config/routes.ts"
+        must_contain: ["path", "component", "children", "lazy"]
+        reason: "Route configuration with lazy loading"
+
+      - path: "src/hooks/useNavigation.ts"
+        must_contain: ["useNavigate", "useLocation", "useParams"]
+        reason: "Navigation utility hook"
+
+      # Backend routing (intermediate)
+      - path: "app/routes/__init__.py"
+        must_contain: ["Blueprint", "register_blueprint"]
+        reason: "Flask blueprint organization"
+
+      - path: "app/urls.py"
+        must_contain: ["path", "include", "app_name"]
+        reason: "Django URL configuration with namespaces"
+
+      - path: "app/routers/__init__.py"
+        must_contain: ["APIRouter", "include_router"]
+        reason: "FastAPI router organization"
+
+    advanced:
+      # Frontend navigation (advanced)
+      - path: "src/components/navigation/HorizontalMenu.tsx"
+        must_contain: ["NavLink", "dropdown", "mega menu", "useRef", "FocusTrap"]
+        reason: "Advanced horizontal menu with mega menu and focus management"
+
+      - path: "src/components/navigation/SideNavigation.tsx"
+        must_contain: ["collapsible", "nested", "virtualized", "search"]
+        reason: "Advanced side nav with search and virtualization"
+
+      - path: "src/components/navigation/TabNavigation.tsx"
+        must_contain: ["useSearchParams", "lazy loading", "prefetch", "animations"]
+        reason: "Advanced tabs with lazy loading and prefetching"
+
+      - path: "src/components/navigation/Breadcrumbs.tsx"
+        must_contain: ["dynamic", "schema.org", "aria-current"]
+        reason: "Dynamic breadcrumbs with structured data"
+
+      - path: "src/components/navigation/CommandPalette.tsx"
+        must_contain: ["search", "keyboard shortcuts", "cmdk"]
+        reason: "Command palette for power users"
+
+      - path: "src/components/navigation/Pagination.tsx"
+        must_contain: ["aria-label=\"pagination\"", "useSearchParams", "ellipsis"]
+        reason: "Accessible pagination with URL sync"
+
+      - path: "src/components/navigation/TableOfContents.tsx"
+        must_contain: ["IntersectionObserver", "active section", "smooth scroll"]
+        reason: "Automatic table of contents with scroll spy"
+
+      - path: "src/components/navigation/Stepper.tsx"
+        must_contain: ["multi-step", "progress", "validation"]
+        reason: "Multi-step wizard navigation"
+
+      - path: "src/config/navigation-tree.json"
+        must_contain: ["id", "label", "href", "children", "permissions"]
+        reason: "Hierarchical navigation structure with permissions"
+
+      - path: "src/config/routes.ts"
+        must_contain: ["lazy", "prefetch", "guards", "metadata"]
+        reason: "Advanced route configuration with guards and metadata"
+
+      - path: "src/hooks/useNavigation.ts"
+        must_contain: ["useNavigate", "useLocation", "useParams", "useMatches"]
+        reason: "Comprehensive navigation utilities"
+
+      - path: "src/hooks/useBreadcrumbs.ts"
+        must_contain: ["useMatches", "breadcrumb trail", "dynamic"]
+        reason: "Dynamic breadcrumb generation hook"
+
+      - path: "src/hooks/useKeyboardShortcuts.ts"
+        must_contain: ["useEffect", "addEventListener", "key combinations"]
+        reason: "Keyboard shortcut management for navigation"
+
+      - path: "src/utils/navigation-tree-validator.ts"
+        must_contain: ["validate", "schema", "errors"]
+        reason: "Navigation structure validation"
+
+      # Backend routing (advanced)
+      - path: "app/routes/__init__.py"
+        must_contain: ["Blueprint", "before_request", "error_handler"]
+        reason: "Flask blueprints with middleware and error handling"
+
+      - path: "app/routes/api/v1/__init__.py"
+        must_contain: ["Blueprint", "versioning"]
+        reason: "API versioning structure"
+
+      - path: "app/urls.py"
+        must_contain: ["path", "include", "namespace", "middleware"]
+        reason: "Django URLs with middleware and namespaces"
+
+      - path: "app/routers/api/v1/__init__.py"
+        must_contain: ["APIRouter", "dependencies", "tags"]
+        reason: "FastAPI routers with dependencies and OpenAPI tags"
+
+      - path: "app/middleware/auth.py"
+        must_contain: ["authentication", "authorization"]
+        reason: "Route-level authentication middleware"
+
+  frontend_framework:
+    react:
+      - path: "src/components/HorizontalMenu.tsx"
+        must_contain: ["NavLink", "useState", "useRef"]
+        reason: "React horizontal navigation component"
+
+      - path: "src/components/TabNavigation.tsx"
+        must_contain: ["useSearchParams", "useState"]
+        reason: "React tab navigation with hooks"
+
+      - path: "src/config/routes.tsx"
+        must_contain: ["RouteObject", "BrowserRouter", "Routes"]
+        reason: "React Router configuration"
+
+      - path: "src/App.tsx"
+        must_contain: ["BrowserRouter", "Routes", "Route"]
+        reason: "React Router setup"
+
+      - path: "package.json"
+        must_contain: ["react-router-dom"]
+        reason: "React Router dependency"
+
+    vue:
+      - path: "src/components/HorizontalMenu.vue"
+        must_contain: ["<template>", "<script setup>", "RouterLink"]
+        reason: "Vue horizontal navigation component"
+
+      - path: "src/components/TabNavigation.vue"
+        must_contain: ["<template>", "useRoute", "useRouter"]
+        reason: "Vue tab navigation with Composition API"
+
+      - path: "src/router/index.ts"
+        must_contain: ["createRouter", "createWebHistory", "routes"]
+        reason: "Vue Router configuration"
+
+      - path: "package.json"
+        must_contain: ["vue-router"]
+        reason: "Vue Router dependency"
+
+    nextjs:
+      - path: "app/layout.tsx"
+        must_contain: ["Link", "usePathname"]
+        reason: "Next.js App Router layout with navigation"
+
+      - path: "components/Navigation.tsx"
+        must_contain: ["Link", "usePathname", "next/link"]
+        reason: "Next.js navigation component"
+
+      - path: "app/(routes)/page.tsx"
+        must_contain: []
+        reason: "Next.js file-based routing structure"
+
+    svelte:
+      - path: "src/components/HorizontalMenu.svelte"
+        must_contain: ["<script>", "$app/stores", "page"]
+        reason: "Svelte navigation component"
+
+      - path: "src/routes/+layout.svelte"
+        must_contain: ["<slot />"]
+        reason: "SvelteKit layout with navigation"
+
+  backend_framework:
+    flask:
+      - path: "app/routes/__init__.py"
+        must_contain: ["Blueprint", "register_blueprint"]
+        reason: "Flask blueprint registration"
+
+      - path: "app/routes/main.py"
+        must_contain: ["@bp.route", "Blueprint"]
+        reason: "Flask route definitions with blueprints"
+
+      - path: "app/__init__.py"
+        must_contain: ["Flask", "register_blueprint"]
+        reason: "Flask app initialization with blueprints"
+
+      - path: "config.py"
+        must_contain: ["class Config"]
+        reason: "Flask configuration"
+
+    django:
+      - path: "app/urls.py"
+        must_contain: ["path", "include", "urlpatterns"]
+        reason: "Django URL configuration"
+
+      - path: "app/views.py"
+        must_contain: ["def", "HttpResponse"]
+        reason: "Django view functions"
+
+      - path: "project/urls.py"
+        must_contain: ["admin.site.urls", "include"]
+        reason: "Django project-level URL configuration"
+
+      - path: "project/settings.py"
+        must_contain: ["INSTALLED_APPS", "MIDDLEWARE"]
+        reason: "Django settings"
+
+    fastapi:
+      - path: "app/routers/__init__.py"
+        must_contain: ["APIRouter", "include_router"]
+        reason: "FastAPI router registration"
+
+      - path: "app/routers/items.py"
+        must_contain: ["APIRouter", "@router.get", "@router.post"]
+        reason: "FastAPI route definitions"
+
+      - path: "app/main.py"
+        must_contain: ["FastAPI", "include_router"]
+        reason: "FastAPI app initialization"
+
+      - path: "app/dependencies.py"
+        must_contain: ["Depends"]
+        reason: "FastAPI dependency injection"
+
+  styling:
+    tailwind:
+      - path: "src/components/HorizontalMenu.tsx"
+        must_contain: ["className", "hover:", "focus:"]
+        reason: "Tailwind-styled navigation component"
+
+      - path: "tailwind.config.js"
+        must_contain: ["theme", "extend"]
+        reason: "Tailwind configuration"
+
+    css_modules:
+      - path: "src/components/HorizontalMenu.module.css"
+        must_contain: [".menu", ".menuItem", ".active"]
+        reason: "CSS Modules for navigation styling"
+
+      - path: "src/components/HorizontalMenu.tsx"
+        must_contain: ["styles.", "import styles"]
+        reason: "Component using CSS Modules"
+
+    styled_components:
+      - path: "src/components/HorizontalMenu.tsx"
+        must_contain: ["styled.", "theme."]
+        reason: "Styled-components navigation"
+
+    scss:
+      - path: "src/components/HorizontalMenu.scss"
+        must_contain: [".menu", "&:hover", "&.active"]
+        reason: "SCSS navigation styles"
+
+  state_management:
+    context:
+      - path: "src/context/NavigationContext.tsx"
+        must_contain: ["createContext", "Provider", "useContext"]
+        reason: "Navigation state via React Context"
+
+    zustand:
+      - path: "src/stores/navigationStore.ts"
+        must_contain: ["create", "zustand"]
+        reason: "Navigation state via Zustand"
+
+    redux:
+      - path: "src/store/navigationSlice.ts"
+        must_contain: ["createSlice", "PayloadAction"]
+        reason: "Navigation state via Redux Toolkit"
+
+    pinia:
+      - path: "src/stores/navigation.ts"
+        must_contain: ["defineStore", "pinia"]
+        reason: "Navigation state via Pinia (Vue)"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "src/config/navigation.ts"
+    reason: "Initialize navigation structure configuration"
+
+  - path: "src/components/Navigation.tsx"
+    reason: "Base navigation component wrapper"
+
+  - path: "src/hooks/useNavigation.ts"
+    reason: "Navigation utility hooks"
+
+  - path: "src/types/navigation.ts"
+    reason: "TypeScript types for navigation items"
+
+  - path: "src/styles/navigation.css"
+    reason: "Base navigation styles"
+
+  - path: "README.md"
+    reason: "Document navigation implementation and usage"
+
+# Metadata
+metadata:
+  primary_blueprints: ["dashboard", "frontend"]
+  contributes_to:
+    - "Navigation components (horizontal, side, mobile, tabs, breadcrumbs)"
+    - "Routing integration (React Router, Next.js, Vue Router)"
+    - "Mobile navigation patterns (hamburger, bottom nav)"
+    - "Accessibility (ARIA, keyboard navigation, screen readers)"
+    - "Server-side routing (Flask, Django, FastAPI)"
+    - "Navigation state management"
+    - "URL synchronization and deep linking"
+    - "Command palette and search-driven navigation"
+
+  common_patterns:
+    - "NavLink for active state management"
+    - "URL parameter synchronization with useSearchParams"
+    - "ARIA landmarks and roles (navigation, tablist, breadcrumb)"
+    - "Keyboard navigation (Tab, Arrow keys, Enter, Escape)"
+    - "Focus management with useRef and FocusTrap"
+    - "Responsive design with useMediaQuery"
+    - "Lazy loading with React.lazy and Suspense"
+    - "Route-based code splitting"
+    - "Progressive enhancement (works without JavaScript)"
+    - "Flask blueprints for route organization"
+    - "Django URL namespaces and includes"
+    - "FastAPI routers with dependencies"
+
+  integration_points:
+    theming_components: "Navigation uses design tokens for colors, spacing, typography"
+    implementing_forms: "Navigation often contains search forms"
+    implementing_dashboards: "Dashboards require side or top navigation"
+    implementing_auth: "Navigation shows/hides based on auth state"
+    implementing_search: "Command palette integrates with search functionality"
+
+  typical_directory_structure: |
+    project/
+    ├── src/
+    │   ├── components/
+    │   │   └── navigation/
+    │   │       ├── HorizontalMenu.tsx       # Top navigation
+    │   │       ├── SideNavigation.tsx       # Sidebar navigation
+    │   │       ├── MobileNavigation.tsx     # Mobile hamburger/drawer
+    │   │       ├── TabNavigation.tsx        # Tab switching
+    │   │       ├── Breadcrumbs.tsx          # Breadcrumb trail
+    │   │       ├── Pagination.tsx           # Page navigation
+    │   │       ├── CommandPalette.tsx       # Search-driven nav
+    │   │       ├── Stepper.tsx              # Multi-step wizard
+    │   │       └── TableOfContents.tsx      # Auto-generated TOC
+    │   ├── config/
+    │   │   ├── navigation.ts                # Nav structure config
+    │   │   ├── routes.ts                    # Route definitions
+    │   │   └── navigation-tree.json         # Hierarchical nav data
+    │   ├── hooks/
+    │   │   ├── useNavigation.ts             # Navigation utilities
+    │   │   ├── useBreadcrumbs.ts            # Dynamic breadcrumbs
+    │   │   └── useKeyboardShortcuts.ts      # Keyboard navigation
+    │   ├── types/
+    │   │   └── navigation.ts                # TypeScript types
+    │   ├── utils/
+    │   │   └── navigation-tree-validator.ts # Validation utilities
+    │   └── App.tsx                          # Router setup
+    │
+    ├── app/ (Backend - Flask/Django/FastAPI)
+    │   ├── routes/                          # Flask blueprints
+    │   │   ├── __init__.py
+    │   │   ├── main.py
+    │   │   └── api/
+    │   │       └── v1/
+    │   ├── urls.py                          # Django URL config
+    │   └── routers/                         # FastAPI routers
+    │       ├── __init__.py
+    │       └── items.py
+    │
+    ├── examples/                            # Working examples
+    │   ├── horizontal-menu.tsx
+    │   ├── tab-navigation.tsx
+    │   ├── mobile-navigation.tsx
+    │   ├── flask_routes.py
+    │   ├── django_urls.py
+    │   └── fastapi_routes.py
+    │
+    ├── references/                          # Documentation
+    │   ├── menu-patterns.md
+    │   ├── navigation-components.md
+    │   ├── client-routing.md
+    │   ├── flask-routing.md
+    │   ├── django-urls.md
+    │   ├── fastapi-routing.md
+    │   ├── accessibility-navigation.md
+    │   └── library-comparison.md
+    │
+    ├── scripts/                             # Utilities
+    │   ├── validate_navigation_tree.js      # Nav structure validation
+    │   ├── calculate_breadcrumbs.js         # Breadcrumb generation
+    │   └── generate_routes.py               # Route config generator
+    │
+    ├── assets/
+    │   ├── navigation-config-schema.json    # Nav tree schema
+    │   └── route-templates.json             # Route patterns
+    │
+    └── package.json / requirements.txt      # Dependencies
+
+  tools_required:
+    - name: "react-router-dom"
+      version: "^6.x"
+      purpose: "Client-side routing for React"
+      install: "npm install react-router-dom"
+      condition: "frontend_framework: react"
+
+    - name: "vue-router"
+      version: "^4.x"
+      purpose: "Client-side routing for Vue"
+      install: "npm install vue-router"
+      condition: "frontend_framework: vue"
+
+    - name: "next"
+      version: "^14.x"
+      purpose: "Next.js App Router"
+      install: "npm install next"
+      condition: "frontend_framework: nextjs"
+
+    - name: "Flask"
+      purpose: "Python web framework with blueprints"
+      install: "pip install Flask"
+      condition: "backend_framework: flask"
+
+    - name: "Django"
+      purpose: "Python web framework with URL configuration"
+      install: "pip install Django"
+      condition: "backend_framework: django"
+
+    - name: "FastAPI"
+      purpose: "Modern Python API framework with routers"
+      install: "pip install fastapi uvicorn"
+      condition: "backend_framework: fastapi"
+
+    - name: "cmdk"
+      version: "^1.x"
+      purpose: "Command palette component (optional, for advanced)"
+      install: "npm install cmdk"
+      condition: "maturity: advanced"
+
+  validation_checks:
+    - "All navigation links use semantic HTML (<nav>, <a>)"
+    - "ARIA landmarks properly applied (role='navigation', aria-label)"
+    - "Keyboard navigation supported (Tab, Arrow keys, Enter, Escape)"
+    - "Active states indicated with aria-current"
+    - "Focus indicators visible (2px minimum, 3:1 contrast)"
+    - "Mobile navigation responsive (hamburger menu, bottom nav)"
+    - "URL synchronization for tabs and filters"
+    - "Route lazy loading for performance"
+    - "Breadcrumbs use aria-label='breadcrumb'"
+    - "Dropdowns use aria-expanded state"
+    - "Navigation works without JavaScript (progressive enhancement)"
+    - "Backend routes organized with blueprints/routers/URL conf"
+    - "Route parameters validated"
+    - "Deep linking functional"
+
+  anti_patterns:
+    - name: "Using <div> for navigation links"
+      avoid: "<div onClick={...}>Link</div>"
+      use: "<a href='...' onClick={...}>Link</a> or <NavLink>"
+
+    - name: "Missing ARIA attributes"
+      avoid: "No aria-label or aria-current"
+      use: "aria-label='Main navigation', aria-current='page'"
+
+    - name: "No keyboard navigation"
+      avoid: "Only mouse/touch support"
+      use: "Tab, Arrow keys, Enter, Escape handlers"
+
+    - name: "Hardcoded routes in components"
+      avoid: "const routes = [{...}] in component"
+      use: "Centralized routes.ts configuration file"
+
+    - name: "No mobile responsiveness"
+      avoid: "Desktop-only navigation"
+      use: "Responsive design with hamburger menu"
+
+    - name: "Missing active state"
+      avoid: "All links look the same"
+      use: "NavLink with aria-current='page'"
+
+    - name: "No URL synchronization"
+      avoid: "Local state only for tabs/filters"
+      use: "useSearchParams for bookmarkable state"
+
+    - name: "Monolithic route file"
+      avoid: "All routes in single app.py/urls.py"
+      use: "Blueprints/routers/namespaces for organization"
+
+    - name: "No loading states"
+      avoid: "Blank screen during lazy loading"
+      use: "Suspense with fallback UI"
+
+    - name: "Physical CSS properties"
+      avoid: "margin-left, padding-right"
+      use: "margin-inline-start, padding-inline-end (for RTL)"

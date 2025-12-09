@@ -1,0 +1,582 @@
+skill: "displaying-timelines"
+version: "1.0"
+domain: "frontend"
+
+# Base outputs required for all timeline implementations
+base_outputs:
+  - path: "components/timelines/"
+    must_contain: []
+    description: "Timeline component implementations"
+
+  - path: "package.json"
+    must_contain: ["dependencies", "scripts"]
+    description: "Project dependencies and build scripts"
+
+  - path: "types/timeline-data.ts"
+    must_contain: ["interface", "type", "TimelineEvent"]
+    description: "TypeScript types for timeline event structures"
+
+  - path: "utils/timestamp-formatting.ts"
+    must_contain: ["format", "relative", "absolute"]
+    description: "Timestamp formatting utilities (relative/absolute time)"
+
+# Conditional outputs based on configuration
+conditional_outputs:
+  maturity:
+    starter:
+      # Starter: Basic vertical timeline with static data
+      - path: "components/timelines/VerticalTimeline.tsx"
+        must_contain: ["timeline", "event", "marker", "date"]
+        description: "Basic vertical timeline with chronological events"
+
+      - path: "components/timelines/TimelineEvent.tsx"
+        must_contain: ["title", "description", "timestamp"]
+        description: "Individual timeline event component"
+
+      - path: "components/timelines/ActivityFeed.tsx"
+        must_contain: ["feed", "activity", "timestamp", "avatar"]
+        description: "Simple activity feed for social/notification display"
+
+      - path: "utils/timestamp-formatting.ts"
+        must_contain: ["formatRelativeTime", "formatAbsoluteTime"]
+        description: "Basic timestamp formatting (relative: '2 hours ago', absolute: 'Jan 15, 2025')"
+
+      - path: "data/sample-timeline-data.ts"
+        must_contain: ["export", "events", "timestamp"]
+        description: "Sample timeline event datasets for development"
+
+      - path: "styles/timeline.css"
+        must_contain: [".timeline", ".event", ".marker", ".line"]
+        description: "Basic timeline styling with connecting lines and markers"
+
+    intermediate:
+      # Intermediate: Interactive timelines with filtering and responsive design
+      - path: "components/timelines/VerticalTimeline.tsx"
+        must_contain: ["timeline", "event", "marker", "alternating", "responsive"]
+        description: "Responsive vertical timeline with alternating sides"
+
+      - path: "components/timelines/HorizontalTimeline.tsx"
+        must_contain: ["horizontal", "scroll", "zoom", "pan"]
+        description: "Horizontal timeline with zoom and pan controls"
+
+      - path: "components/timelines/ActivityFeed.tsx"
+        must_contain: ["feed", "infinite scroll", "pagination", "filter"]
+        description: "Activity feed with infinite scroll and filtering"
+
+      - path: "components/timelines/NotificationFeed.tsx"
+        must_contain: ["notification", "read", "unread", "group by date"]
+        description: "Notification feed with read/unread states and date grouping"
+
+      - path: "components/timelines/TimelineFilter.tsx"
+        must_contain: ["filter", "category", "date range"]
+        description: "Filter panel for timeline events by category and date"
+
+      - path: "components/timelines/CalendarView.tsx"
+        must_contain: ["calendar", "month", "events"]
+        description: "Calendar month view with event display"
+
+      - path: "hooks/useRealtimeUpdates.ts"
+        must_contain: ["WebSocket|SSE", "useEffect", "update"]
+        description: "Real-time update hook for live activity feeds"
+
+      - path: "utils/timezone-handling.ts"
+        must_contain: ["timezone", "UTC", "locale"]
+        description: "Timezone conversion and locale-aware formatting"
+
+      - path: "tests/timelines/VerticalTimeline.test.tsx"
+        must_contain: ["render", "screen", "expect"]
+        description: "Unit tests for timeline components"
+
+    advanced:
+      # Advanced: Gantt charts, calendar interfaces, real-time updates, full accessibility
+      - path: "components/timelines/GanttChart.tsx"
+        must_contain: ["gantt", "task", "dependency", "drag", "resize"]
+        description: "Full Gantt chart with dependencies, drag-to-reschedule, and progress tracking"
+
+      - path: "components/timelines/InteractiveTimeline.tsx"
+        must_contain: ["zoom", "pan", "filter", "detail view", "keyboard navigation"]
+        description: "Interactive timeline with zoom, pan, filters, and keyboard navigation"
+
+      - path: "components/timelines/CalendarScheduler.tsx"
+        must_contain: ["month view", "week view", "day view", "drag", "resize"]
+        description: "Full calendar scheduler with month/week/day views and event management"
+
+      - path: "components/timelines/AuditLogViewer.tsx"
+        must_contain: ["audit", "search", "export", "filter", "precise timestamp"]
+        description: "Audit log viewer with search, export, and advanced filtering"
+
+      - path: "components/timelines/RealtimeActivityFeed.tsx"
+        must_contain: ["WebSocket", "optimistic update", "rollback", "batch"]
+        description: "Real-time activity feed with optimistic updates and batching"
+
+      - path: "components/timelines/accessibility/TimelineA11y.tsx"
+        must_contain: ["role=\"feed\"", "aria-label", "role=\"article\"", "aria-busy"]
+        description: "Accessibility wrapper with WCAG 2.1 AA compliance (ARIA roles, labels)"
+
+      - path: "components/timelines/accessibility/KeyboardNavigation.tsx"
+        must_contain: ["onKeyDown", "tabIndex", "ArrowUp", "ArrowDown"]
+        description: "Keyboard navigation support (Tab, Arrow keys, Enter/Space)"
+
+      - path: "hooks/useVirtualScrolling.ts"
+        must_contain: ["virtual", "viewport", "render", "1000+"]
+        description: "Virtual scrolling for timelines with 1000+ events"
+
+      - path: "hooks/useWebSocket.ts"
+        must_contain: ["WebSocket", "reconnect", "heartbeat", "onMessage"]
+        description: "WebSocket hook with reconnection and heartbeat"
+
+      - path: "hooks/useOptimisticUpdate.ts"
+        must_contain: ["optimistic", "rollback", "pending", "commit"]
+        description: "Optimistic update hook for immediate UI feedback"
+
+      - path: "utils/performance/virtual-scrolling.ts"
+        must_contain: ["virtual", "window", "offset", "render"]
+        description: "Virtual scrolling implementation for performance optimization"
+
+      - path: "utils/performance/batch-updates.ts"
+        must_contain: ["batch", "debounce", "500ms", "queue"]
+        description: "Batch real-time updates (debounce 500ms) for performance"
+
+      - path: "utils/export-timeline.ts"
+        must_contain: ["export", "CSV", "JSON", "PDF"]
+        description: "Timeline export utilities (CSV, JSON, PDF formats)"
+
+      - path: "scripts/generate-gantt-data.py"
+        must_contain: ["generate", "tasks", "dependencies", "critical path"]
+        description: "Script to generate Gantt chart data with dependencies"
+
+      - path: "scripts/validate-accessibility.js"
+        must_contain: ["axe", "WCAG", "aria", "validate"]
+        description: "Accessibility validation script for timeline components"
+
+      - path: "scripts/benchmark-performance.js"
+        must_contain: ["benchmark", "10000", "render time", "memory"]
+        description: "Performance benchmarking for large timeline datasets"
+
+      - path: "tests/timelines/accessibility.test.tsx"
+        must_contain: ["axe", "toHaveNoViolations", "keyboard", "screen reader"]
+        description: "Accessibility compliance tests (axe-core, keyboard navigation)"
+
+      - path: "tests/timelines/performance.test.ts"
+        must_contain: ["benchmark", "render time", "1000+", "virtual"]
+        description: "Performance tests for large datasets with virtual scrolling"
+
+      - path: "docs/timeline-accessibility.md"
+        must_contain: ["WCAG", "ARIA", "keyboard", "screen reader"]
+        description: "Comprehensive accessibility documentation for timelines"
+
+      - path: "docs/realtime-patterns.md"
+        must_contain: ["WebSocket", "SSE", "optimistic", "batch"]
+        description: "Real-time update patterns and implementation guide"
+
+  frontend_framework:
+    react:
+      - path: "package.json"
+        must_contain: ["react-chrono"]
+        description: "React Chrono library for flexible timeline visualizations"
+
+      - path: "components/timelines/ReactChronoTimeline.tsx"
+        must_contain: ["Chrono", "items", "mode"]
+        description: "Timeline implementation using React Chrono"
+
+      - path: "hooks/useTimeline.ts"
+        must_contain: ["useState", "useEffect", "useMemo"]
+        description: "React hooks for timeline state management"
+
+      - path: "tsconfig.json"
+        must_contain: ["jsx", "react"]
+        description: "TypeScript configuration for React"
+
+    vue:
+      - path: "components/timelines/VueTimeline.vue"
+        must_contain: ["<template>", "<script setup>", "defineProps"]
+        description: "Vue 3 timeline component with script setup"
+
+      - path: "composables/useTimeline.ts"
+        must_contain: ["ref", "computed", "reactive"]
+        description: "Vue composable for timeline state management"
+
+    svelte:
+      - path: "components/timelines/SvelteTimeline.svelte"
+        must_contain: ["<script>", "export let", "$"]
+        description: "Svelte timeline component with reactive props"
+
+      - path: "stores/timelineStore.ts"
+        must_contain: ["writable", "derived", "subscribe"]
+        description: "Svelte store for timeline state management"
+
+  styling:
+    tailwind:
+      - path: "tailwind.config.js"
+        must_contain: ["theme:", "extend:", "colors:", "timeline"]
+        description: "Tailwind configuration with timeline-specific tokens"
+
+      - path: "components/timelines/VerticalTimeline.tsx"
+        must_contain: ["className", "flex", "border-l"]
+        description: "Timeline components styled with Tailwind utility classes"
+
+      - path: "styles/timeline.css"
+        must_contain: ["@tailwind", "@layer components"]
+        description: "Tailwind directives and custom timeline layers"
+
+    css_modules:
+      - path: "components/timelines/VerticalTimeline.module.css"
+        must_contain: [".timeline", ".event", ".marker", ".line"]
+        description: "CSS Modules for scoped timeline component styles"
+
+      - path: "components/timelines/VerticalTimeline.tsx"
+        must_contain: ["import styles from", "styles.timeline"]
+        description: "CSS Module imports in timeline components"
+
+    styled_components:
+      - path: "components/timelines/StyledTimeline.tsx"
+        must_contain: ["styled.", "props.theme", "css"]
+        description: "Styled-components for dynamic timeline styling"
+
+      - path: "theme/timelineTheme.ts"
+        must_contain: ["export const timelineTheme", "colors", "spacing"]
+        description: "Theme configuration for timeline styled-components"
+
+    design_tokens:
+      - path: "tokens/timeline-tokens.css"
+        must_contain: ["--timeline-line-color", "--timeline-dot-color", "--event-card-bg"]
+        description: "CSS custom properties for timeline theming"
+
+      - path: "components/timelines/"
+        must_contain: ["var(--timeline-"]
+        description: "Timeline components referencing design token variables"
+
+  timeline_type:
+    activity_feed:
+      - path: "components/timelines/SocialActivityFeed.tsx"
+        must_contain: ["avatar", "user", "action", "reaction", "comment"]
+        description: "Social activity feed with reactions and comments"
+
+      - path: "components/timelines/NotificationCenter.tsx"
+        must_contain: ["notification", "read", "unread", "mark all read", "dismiss"]
+        description: "Notification center with read/unread states and actions"
+
+      - path: "hooks/useInfiniteScroll.ts"
+        must_contain: ["infinite", "pagination", "hasMore", "fetchMore"]
+        description: "Infinite scroll hook for activity feeds"
+
+    gantt:
+      - path: "package.json"
+        must_contain: ["@svar/gantt"]
+        description: "SVAR React Gantt library for project management"
+
+      - path: "components/timelines/ProjectGantt.tsx"
+        must_contain: ["Gantt", "tasks", "dependencies", "milestones", "progress"]
+        description: "Gantt chart with dependencies, milestones, and progress tracking"
+
+      - path: "scripts/generate-gantt-data.py"
+        must_contain: ["generate", "tasks", "dependencies", "auto"]
+        description: "Script to generate realistic Gantt chart data"
+
+    calendar:
+      - path: "package.json"
+        must_contain: ["react-big-calendar"]
+        description: "React Big Calendar library for scheduling interfaces"
+
+      - path: "components/timelines/CalendarScheduler.tsx"
+        must_contain: ["Calendar", "month", "week", "day", "agenda", "onSelectEvent"]
+        description: "Full calendar scheduler with multiple view types"
+
+      - path: "utils/calendar-events.ts"
+        must_contain: ["event", "start", "end", "allDay", "resource"]
+        description: "Calendar event type definitions and utilities"
+
+  realtime_updates:
+    sse:
+      - path: "hooks/useSSE.ts"
+        must_contain: ["EventSource", "onmessage", "onerror", "close"]
+        description: "Server-Sent Events hook for real-time updates"
+
+      - path: "components/timelines/RealtimeFeed.tsx"
+        must_contain: ["useSSE", "new items", "auto-update"]
+        description: "Real-time activity feed using SSE"
+
+    websocket:
+      - path: "hooks/useWebSocket.ts"
+        must_contain: ["WebSocket", "reconnect", "heartbeat", "send", "receive"]
+        description: "WebSocket hook with reconnection logic and heartbeat"
+
+      - path: "components/timelines/LiveActivityFeed.tsx"
+        must_contain: ["useWebSocket", "optimistic", "batch"]
+        description: "Live activity feed with WebSocket updates"
+
+    polling:
+      - path: "hooks/useSmartPolling.ts"
+        must_contain: ["setInterval", "document.hidden", "pause", "resume"]
+        description: "Smart polling with tab visibility detection"
+
+      - path: "components/timelines/PollingFeed.tsx"
+        must_contain: ["useSmartPolling", "interval", "auto-refresh"]
+        description: "Activity feed with smart polling updates"
+
+# Scaffolding files that should be created as starting points
+scaffolding:
+  - path: "components/timelines/"
+    reason: "Directory for all timeline component implementations"
+
+  - path: "components/timelines/primitives/"
+    reason: "Reusable timeline primitive components (marker, line, event card)"
+
+  - path: "components/timelines/accessibility/"
+    reason: "Accessibility-focused timeline wrapper components"
+
+  - path: "utils/"
+    reason: "Utility functions for timestamp formatting, timezone handling, data processing"
+
+  - path: "utils/performance/"
+    reason: "Performance optimization utilities (virtual scrolling, batching, caching)"
+
+  - path: "hooks/"
+    reason: "React hooks for timeline functionality (real-time updates, virtual scrolling, filtering)"
+
+  - path: "types/timeline-data.ts"
+    reason: "TypeScript type definitions for timeline event structures"
+
+  - path: "data/"
+    reason: "Sample timeline datasets for development and testing"
+
+  - path: "scripts/"
+    reason: "Scripts for data generation, validation, and benchmarking"
+
+  - path: "tests/timelines/"
+    reason: "Unit tests, accessibility tests, and performance benchmarks"
+
+  - path: "docs/"
+    reason: "Documentation for timeline patterns, accessibility, and real-time updates"
+
+  - path: "styles/"
+    reason: "Timeline styles and CSS utilities"
+
+  - path: "tokens/"
+    reason: "Design tokens for timeline theming (CSS custom properties)"
+
+  - path: "package.json"
+    reason: "Initialize npm dependencies and scripts"
+
+  - path: "tsconfig.json"
+    reason: "TypeScript configuration"
+
+  - path: ".gitignore"
+    reason: "Ignore node_modules, build artifacts, and coverage reports"
+
+# Metadata
+metadata:
+  primary_blueprints: ["dashboard", "frontend"]
+  contributes_to:
+    - "Timeline components for chronological event display"
+    - "Activity feeds for social, notifications, and system events"
+    - "Gantt charts for project planning and scheduling"
+    - "Calendar interfaces for event management"
+    - "Real-time updates via WebSocket, SSE, or polling"
+    - "Accessibility compliance (WCAG 2.1 AA with ARIA patterns)"
+    - "Performance optimization for large datasets (virtual scrolling, batching)"
+    - "Responsive timeline designs for mobile and desktop"
+    - "Timestamp formatting (relative and absolute time)"
+    - "Interactive timelines with zoom, pan, and filtering"
+
+  timeline_types_covered:
+    - "Vertical Timeline (historical events, project milestones)"
+    - "Horizontal Timeline (project roadmaps, interactive exploration)"
+    - "Social Activity Feed (user actions, reactions, comments)"
+    - "Notification Feed (system notifications, read/unread states)"
+    - "Audit Log (system events, searchable, exportable)"
+    - "Gantt Chart (project tasks, dependencies, critical path)"
+    - "Calendar Interface (month/week/day views, event scheduling)"
+    - "Interactive Timeline (zoom, pan, filter, detail view)"
+
+  accessibility_features:
+    - "WCAG 2.1 AA compliance"
+    - "Semantic HTML (ordered/unordered lists for timelines)"
+    - "ARIA patterns (role=\"feed\", role=\"article\", aria-label, aria-busy)"
+    - "Keyboard navigation (Tab, Arrow keys, Enter/Space, skip controls)"
+    - "Screen reader support (descriptive timestamp labels, live announcements)"
+    - "Focus indicators for interactive elements"
+    - "Proper heading hierarchy"
+    - "Semantic time elements (<time datetime>)"
+
+  performance_strategies:
+    - "<100 events: Client-side rendering, no virtualization"
+    - "100-1,000 events: Virtual scrolling recommended"
+    - "1,000+ events: Virtual scrolling + server pagination"
+    - "Real-time updates: Debounce updates, batch insertions (500ms)"
+    - "Memoize timeline item components"
+    - "Lazy load event details"
+    - "Optimize timestamp calculations (update relative times every 60s)"
+    - "Smart polling with tab visibility detection (pause when hidden)"
+
+  integration_points:
+    design_tokens: "Uses design-tokens skill for theming (--timeline-line-color, --timeline-dot-color, --event-card-bg)"
+    data_viz: "May integrate chart components for sparklines in activity feeds"
+    forms: "Uses form components for filter inputs (date range, category selection)"
+    tables: "Audit logs may use table components for structured display"
+    feedback: "Uses feedback components for loading states and error messages"
+    realtime_sync: "Integrates with implementing-realtime-sync skill for WebSocket/SSE patterns"
+
+  common_patterns:
+    - name: "Relative vs Absolute Timestamps"
+      description: "Recent events use relative time ('2 hours ago'), older events use absolute ('Jan 15, 2025')"
+      files: ["utils/timestamp-formatting.ts"]
+
+    - name: "Infinite Scroll for Activity Feeds"
+      description: "Pagination with infinite scroll for social feeds and notifications"
+      files: ["hooks/useInfiniteScroll.ts", "components/timelines/ActivityFeed.tsx"]
+
+    - name: "Real-Time Optimistic Updates"
+      description: "Show user action immediately, rollback on error"
+      files: ["hooks/useOptimisticUpdate.ts", "components/timelines/RealtimeActivityFeed.tsx"]
+
+    - name: "Virtual Scrolling for Performance"
+      description: "Render only visible events for timelines with 1000+ items"
+      files: ["hooks/useVirtualScrolling.ts", "utils/performance/virtual-scrolling.ts"]
+
+    - name: "Batch Real-Time Updates"
+      description: "Debounce incoming events (500ms) to avoid overwhelming UI"
+      files: ["utils/performance/batch-updates.ts"]
+
+    - name: "Responsive Timeline Strategy"
+      description: "Horizontal timelines convert to vertical on mobile, simplified display"
+      files: ["components/timelines/ResponsiveTimeline.tsx"]
+
+    - name: "Design Token Integration"
+      description: "Timeline components reference CSS custom properties for theme switching"
+      files: ["tokens/timeline-tokens.css"]
+
+  anti_patterns:
+    - name: "No loading states for timelines"
+      avoid: "Timeline shows nothing while loading events"
+      use: "Skeleton loaders or spinners for better UX"
+
+    - name: "Continuous timestamp updates"
+      avoid: "Updating relative timestamps every second (causes re-renders)"
+      use: "Update every 60 seconds or on visibility change"
+
+    - name: "No virtualization for large datasets"
+      avoid: "Rendering all 10,000 events at once (slow, crashes browser)"
+      use: "Virtual scrolling for 1000+ events"
+
+    - name: "Unbatched real-time updates"
+      avoid: "Inserting each event immediately as it arrives"
+      use: "Debounce and batch updates (500ms) for performance"
+
+    - name: "Color-only event categorization"
+      avoid: "Using only color to distinguish event types"
+      use: "Combine color with icons or text labels for accessibility"
+
+    - name: "Missing timezone handling"
+      avoid: "Displaying server UTC times without conversion"
+      use: "Convert to user's local timezone for display"
+
+    - name: "No keyboard navigation"
+      avoid: "Timeline only navigable with mouse"
+      use: "Arrow keys for navigation, Tab for focus, Enter/Space for actions"
+
+  libraries:
+    timeline_visualization:
+      - name: "react-chrono"
+        use_when: "Flexible timeline visualizations with rich content support"
+        trust_score: "High"
+        install: "npm install react-chrono"
+
+      - name: "react-vertical-timeline-component"
+        use_when: "Simple, clean vertical timelines (lightweight ~10KB)"
+        trust_score: "High"
+        install: "npm install react-vertical-timeline-component"
+
+    gantt_charts:
+      - name: "@svar/gantt"
+        use_when: "Modern Gantt charts with drag-and-drop, dependencies, TypeScript support"
+        trust_score: "High"
+        install: "npm install @svar/gantt"
+
+      - name: "Bryntum Gantt"
+        use_when: "Enterprise-grade project management (commercial license required)"
+        trust_score: "High"
+
+    calendar:
+      - name: "react-big-calendar"
+        use_when: "Full calendar scheduler with month/week/day views, drag-and-drop"
+        trust_score: "High"
+        install: "npm install react-big-calendar"
+
+      - name: "FullCalendar"
+        use_when: "Premium calendar features, excellent documentation, multi-framework"
+        trust_score: "High"
+
+  validation_checks:
+    - "All timeline events have accessible timestamps (aria-label or <time> element)"
+    - "Timeline components have proper ARIA roles (feed, article)"
+    - "Keyboard navigation works (Tab, Arrow keys, Enter/Space)"
+    - "Screen reader announces new items in real-time feeds (aria-live)"
+    - "Virtual scrolling implemented for 1000+ events"
+    - "Real-time updates batched (500ms debounce) for performance"
+    - "Relative timestamps update automatically (every 60s)"
+    - "Timezone conversion to user's local time"
+    - "Responsive design for mobile (vertical stacking or horizontal scroll)"
+    - "Loading and error states for all timeline components"
+
+  typical_directory_structure: |
+    project/
+    ├── components/
+    │   └── timelines/
+    │       ├── primitives/
+    │       │   ├── TimelineMarker.tsx        # Event marker dot
+    │       │   ├── TimelineLine.tsx          # Connecting line
+    │       │   └── EventCard.tsx             # Event content card
+    │       ├── VerticalTimeline.tsx          # Vertical timeline
+    │       ├── HorizontalTimeline.tsx        # Horizontal timeline
+    │       ├── InteractiveTimeline.tsx       # Zoom/pan/filter timeline
+    │       ├── ActivityFeed.tsx              # Social activity feed
+    │       ├── NotificationFeed.tsx          # Notification center
+    │       ├── AuditLogViewer.tsx            # Audit log display
+    │       ├── GanttChart.tsx                # Gantt chart
+    │       ├── CalendarScheduler.tsx         # Calendar interface
+    │       ├── RealtimeActivityFeed.tsx      # Real-time updates
+    │       ├── ResponsiveTimeline.tsx        # Mobile-optimized
+    │       └── accessibility/
+    │           ├── TimelineA11y.tsx          # ARIA wrapper
+    │           └── KeyboardNavigation.tsx    # Keyboard controls
+    ├── hooks/
+    │   ├── useTimeline.ts                    # Timeline state management
+    │   ├── useRealtimeUpdates.ts             # Real-time update hook
+    │   ├── useWebSocket.ts                   # WebSocket connection
+    │   ├── useSSE.ts                         # Server-sent events
+    │   ├── useSmartPolling.ts                # Smart polling with visibility
+    │   ├── useVirtualScrolling.ts            # Virtual scrolling
+    │   ├── useOptimisticUpdate.ts            # Optimistic updates
+    │   └── useInfiniteScroll.ts              # Infinite scroll pagination
+    ├── utils/
+    │   ├── timestamp-formatting.ts           # Timestamp formatting
+    │   ├── timezone-handling.ts              # Timezone conversion
+    │   ├── export-timeline.ts                # Export utilities
+    │   └── performance/
+    │       ├── virtual-scrolling.ts          # Virtual scroll implementation
+    │       └── batch-updates.ts              # Batch update logic
+    ├── types/
+    │   └── timeline-data.ts                  # TypeScript interfaces
+    ├── data/
+    │   └── sample-timeline-data.ts           # Sample datasets
+    ├── scripts/
+    │   ├── generate-gantt-data.py            # Gantt data generator
+    │   ├── validate-accessibility.js         # A11y validation
+    │   ├── benchmark-performance.js          # Performance benchmarks
+    │   └── simulate-realtime.js              # Real-time test simulator
+    ├── tests/
+    │   └── timelines/
+    │       ├── VerticalTimeline.test.tsx     # Component tests
+    │       ├── accessibility.test.tsx        # A11y tests
+    │       └── performance.test.ts           # Performance tests
+    ├── docs/
+    │   ├── timeline-accessibility.md         # A11y documentation
+    │   └── realtime-patterns.md              # Real-time patterns guide
+    ├── styles/
+    │   └── timeline.css                      # Timeline base styles
+    ├── tokens/
+    │   └── timeline-tokens.css               # Design tokens
+    ├── package.json                          # Dependencies
+    ├── tsconfig.json                         # TypeScript config
+    └── README.md                             # Documentation

@@ -1,0 +1,246 @@
+skill: "building-tables"
+version: "1.0"
+domain: "frontend"
+
+base_outputs:
+  - path: "components/Table.tsx"
+    must_contain: ["table", "thead", "tbody", "tr", "td", "th"]
+    description: "Core table component with semantic HTML structure"
+
+  - path: "types/table.ts"
+    must_contain: ["interface", "ColumnDef", "TableProps"]
+    description: "TypeScript type definitions for table data and props"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "components/SimpleTable.tsx"
+        must_contain: ["table", "map", "thead", "tbody"]
+        description: "Basic HTML table with no external dependencies (< 100 rows)"
+
+      - path: "components/SortableTable.tsx"
+        must_contain: ["useState", "sort", "onClick"]
+        description: "Client-side sortable table with click handlers"
+
+    intermediate:
+      - path: "components/DataTable.tsx"
+        must_contain: ["useReactTable", "getCoreRowModel", "getSortedRowModel"]
+        description: "Feature-rich table using TanStack Table with sorting/filtering (100-10K rows)"
+
+      - path: "components/PaginatedTable.tsx"
+        must_contain: ["getPaginationRowModel", "pageIndex", "pageSize"]
+        description: "Table with pagination controls"
+
+      - path: "hooks/useTableFilters.ts"
+        must_contain: ["useState", "useMemo", "filter"]
+        description: "Custom hook for managing table filtering logic"
+
+      - path: "components/TableSearch.tsx"
+        must_contain: ["input", "onChange", "globalFilter"]
+        description: "Global search component for tables"
+
+    advanced:
+      - path: "components/VirtualTable.tsx"
+        must_contain: ["useVirtualizer", "virtualizer", "getVirtualItems"]
+        description: "Virtual scrolling table for large datasets (10K+ rows)"
+
+      - path: "components/EditableTable.tsx"
+        must_contain: ["onUpdate", "validation", "useState", "editable"]
+        description: "Table with inline editing and validation"
+
+      - path: "components/ServerTable.tsx"
+        must_contain: ["useQuery", "fetch", "api", "pagination"]
+        description: "Server-side table with API integration"
+
+      - path: "hooks/useTableState.ts"
+        must_contain: ["localStorage", "useEffect", "persistence"]
+        description: "Hook for persisting table state (sort, filters, columns)"
+
+      - path: "utils/tableExport.ts"
+        must_contain: ["export", "csv", "download"]
+        description: "Utility functions for exporting table data (CSV/Excel)"
+
+  frontend_framework:
+    react:
+      - path: "components/ReactTable.tsx"
+        must_contain: ["useReactTable", "flexRender", "React"]
+        description: "React-specific table implementation using TanStack Table"
+
+      - path: "hooks/useTableData.ts"
+        must_contain: ["useState", "useEffect", "useMemo"]
+        description: "React hooks for managing table data and state"
+
+    vue:
+      - path: "components/VueTable.vue"
+        must_contain: ["<template>", "<script setup>", "ref", "computed"]
+        description: "Vue 3 table component with Composition API"
+
+    angular:
+      - path: "components/angular-table.component.ts"
+        must_contain: ["@Component", "ngOnInit", "selector"]
+        description: "Angular table component"
+
+  styling:
+    tailwind:
+      - path: "components/TailwindTable.tsx"
+        must_contain: ["className", "bg-", "border-", "rounded-"]
+        description: "Table component styled with Tailwind CSS utility classes"
+
+    css-modules:
+      - path: "components/Table.module.css"
+        must_contain: [".table", ".thead", ".tbody"]
+        description: "CSS module styles for table components"
+
+      - path: "components/StyledTable.tsx"
+        must_contain: ["import styles from", "styles.table"]
+        description: "Table component using CSS modules"
+
+    styled-components:
+      - path: "components/StyledTable.tsx"
+        must_contain: ["styled.", "const StyledTable", "css"]
+        description: "Table component using styled-components"
+
+  features:
+    sorting:
+      - path: "hooks/useSorting.ts"
+        must_contain: ["sort", "asc", "desc", "compareFn"]
+        description: "Hook for implementing sorting logic"
+
+      - path: "components/SortIcon.tsx"
+        must_contain: ["arrow", "direction", "sorted"]
+        description: "Visual indicator for sort direction"
+
+    filtering:
+      - path: "components/ColumnFilter.tsx"
+        must_contain: ["filter", "input", "onChange"]
+        description: "Per-column filter component"
+
+      - path: "components/FilterBar.tsx"
+        must_contain: ["filters", "apply", "reset"]
+        description: "Toolbar with filter controls"
+
+    selection:
+      - path: "hooks/useRowSelection.ts"
+        must_contain: ["selected", "toggle", "checkbox"]
+        description: "Hook for managing row selection state"
+
+      - path: "components/BulkActions.tsx"
+        must_contain: ["selected", "bulk", "delete", "export"]
+        description: "Toolbar for bulk operations on selected rows"
+
+    editing:
+      - path: "components/EditableCell.tsx"
+        must_contain: ["editable", "onUpdate", "validation"]
+        description: "Cell component with inline editing capability"
+
+      - path: "hooks/useTableEdit.ts"
+        must_contain: ["edit", "save", "cancel", "validation"]
+        description: "Hook for managing edit state and operations"
+
+    virtualization:
+      - path: "components/VirtualizedTable.tsx"
+        must_contain: ["useVirtualizer", "estimateSize", "overscan"]
+        description: "High-performance table with virtual scrolling"
+
+      - path: "hooks/useVirtualScroll.ts"
+        must_contain: ["virtualizer", "scrollElement", "getVirtualItems"]
+        description: "Hook for virtual scrolling functionality"
+
+    export:
+      - path: "utils/exportToCSV.ts"
+        must_contain: ["csv", "download", "blob", "stringify"]
+        description: "Utility to export table data as CSV"
+
+      - path: "utils/exportToExcel.ts"
+        must_contain: ["xlsx", "workbook", "export"]
+        description: "Utility to export table data as Excel"
+
+    responsive:
+      - path: "components/ResponsiveTable.tsx"
+        must_contain: ["@media", "mobile", "card", "breakpoint"]
+        description: "Table that transforms to cards on mobile"
+
+      - path: "hooks/useResponsiveColumns.ts"
+        must_contain: ["visibility", "priority", "hidden"]
+        description: "Hook for showing/hiding columns based on screen size"
+
+scaffolding:
+  - path: "package.json"
+    reason: "Install TanStack Table, React Virtual, and related dependencies"
+
+  - path: "tsconfig.json"
+    reason: "Ensure TypeScript configuration supports table library types"
+
+  - path: "__tests__/Table.test.tsx"
+    reason: "Unit tests for table component functionality"
+
+  - path: "stories/Table.stories.tsx"
+    reason: "Storybook stories for table component variations"
+
+  - path: "README.md"
+    reason: "Documentation on table usage, features, and examples"
+
+metadata:
+  primary_blueprints: ["dashboard", "crud-api", "frontend"]
+  secondary_blueprints: ["data-pipeline", "observability"]
+
+  contributes_to:
+    - "Data table components"
+    - "Sorting and filtering functionality"
+    - "Pagination controls"
+    - "Virtual scrolling for large datasets"
+    - "Row selection and bulk actions"
+    - "Inline editing interfaces"
+    - "Data export (CSV/Excel)"
+    - "Responsive table designs"
+    - "Server-side table operations"
+    - "Accessible ARIA grid patterns"
+
+  required_dependencies:
+    starter:
+      - "react@^18.0.0"
+
+    intermediate:
+      - "@tanstack/react-table@^8.10.0"
+
+    advanced:
+      - "@tanstack/react-table@^8.10.0"
+      - "@tanstack/react-virtual@^3.0.0"
+
+  optional_dependencies:
+    - "ag-grid-react@^31.0.0"  # Enterprise grid solution
+    - "ag-grid-community@^31.0.0"  # Community version
+    - "xlsx@^0.18.0"  # Excel export
+    - "papaparse@^5.4.0"  # CSV parsing
+    - "date-fns@^2.30.0"  # Date formatting/sorting
+
+  performance_thresholds:
+    client_side_max: 1000  # Max rows for client-side operations
+    server_side_min: 1000  # Min rows to switch to server-side
+    virtualization_min: 10000  # Min rows to require virtualization
+
+  accessibility_requirements:
+    - "Semantic HTML table structure (table, thead, tbody, tr, td, th)"
+    - "ARIA grid pattern for interactive tables"
+    - "Keyboard navigation (arrow keys, Tab, Enter)"
+    - "Screen reader announcements for sort/filter changes"
+    - "Focus management for inline editing"
+    - "High contrast mode support"
+
+  testing_coverage:
+    - "Rendering with various data sizes"
+    - "Sorting (single and multi-column)"
+    - "Filtering (column and global)"
+    - "Pagination navigation"
+    - "Row selection (single and multi)"
+    - "Inline editing and validation"
+    - "Keyboard navigation"
+    - "Responsive behavior"
+    - "Performance benchmarks"
+
+  related_skills:
+    - "building-forms"  # For inline editing
+    - "building-data-viz"  # For data visualization in cells
+    - "design-tokens"  # For theming and styling
+    - "implementing-apis"  # For server-side operations
+    - "optimizing-sql"  # For backend query optimization

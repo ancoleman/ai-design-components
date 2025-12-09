@@ -112,6 +112,9 @@ class Validator:
             # Validate examples
             self._validate_examples(skill_path, content, result)
 
+            # Validate outputs.yaml (for skillchain integration)
+            self._validate_outputs_yaml(skill_path, result)
+
             # Check community practices (suggestions only)
             if self.community:
                 self._check_community_practices(content, result)
@@ -402,6 +405,199 @@ class Validator:
             example_path = skill_path / example
             if not example_path.exists():
                 result.add_error(f"Missing example file: {example}", "examples.missing")
+
+    def _validate_outputs_yaml(
+        self,
+        skill_path: Path,
+        result: ValidationResult
+    ) -> None:
+        """
+        Validate outputs.yaml file for skill deliverables.
+
+        Checks:
+        - File exists (warning, not error - outputs.yaml is optional but recommended)
+        - Required top-level fields (skill, version)
+        - At least one output section (base_outputs or conditional_outputs)
+        - Proper structure for base_outputs items
+        - Proper structure for conditional_outputs sections
+        """
+        outputs_rules = self.rules.outputs_yaml
+        if not outputs_rules:
+            return  # No rules configured
+
+        outputs_path = skill_path / "outputs.yaml"
+
+        # Check if file exists (warning, not error)
+        if not outputs_path.exists():
+            result.add_warning(
+                "Missing outputs.yaml file (recommended for skillchain integration)",
+                "outputs_yaml.missing"
+            )
+            return
+
+        # Load YAML file
+        try:
+            with open(outputs_path, 'r', encoding='utf-8') as f:
+                data = yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            result.add_error(f"Invalid YAML in outputs.yaml: {e}", "outputs_yaml.invalid")
+            return
+        except Exception as e:
+            result.add_error(f"Error reading outputs.yaml: {e}", "outputs_yaml.read")
+            return
+
+        if data is None:
+            result.add_error("outputs.yaml file is empty", "outputs_yaml.empty")
+            return
+
+        if not isinstance(data, dict):
+            result.add_error("outputs.yaml root must be a dictionary", "outputs_yaml.type")
+            return
+
+        # Check required top-level fields
+        for field in outputs_rules.required_fields:
+            if field not in data:
+                result.add_error(
+                    f"outputs.yaml missing required field: {field}",
+                    f"outputs_yaml.{field}.missing"
+                )
+
+        # Validate skill field matches directory name
+        if "skill" in data:
+            if outputs_rules.skill_rules.get("must_match_directory", True):
+                if data["skill"] != skill_path.name:
+                    result.add_warning(
+                        f"outputs.yaml 'skill' value '{data['skill']}' doesn't match directory '{skill_path.name}'",
+                        "outputs_yaml.skill.mismatch"
+                    )
+
+        # Validate version type
+        if "version" in data:
+            version = data["version"]
+            if not isinstance(version, (str, int, float)):
+                result.add_error(
+                    "outputs.yaml 'version' must be a string or number",
+                    "outputs_yaml.version.type"
+                )
+
+        # Check at least one output section exists
+        output_sections = outputs_rules.output_sections
+        has_outputs = any(section in data for section in output_sections)
+        if not has_outputs:
+            result.add_error(
+                f"outputs.yaml must have at least one of: {', '.join(output_sections)}",
+                "outputs_yaml.sections.missing"
+            )
+
+        # Validate base_outputs if present
+        if "base_outputs" in data:
+            self._validate_outputs_list(
+                data["base_outputs"],
+                "base_outputs",
+                outputs_rules,
+                result
+            )
+
+        # Validate conditional_outputs if present
+        if "conditional_outputs" in data:
+            self._validate_conditional_outputs(
+                data["conditional_outputs"],
+                outputs_rules,
+                result
+            )
+
+    def _validate_outputs_list(
+        self,
+        outputs: list,
+        section_name: str,
+        outputs_rules,
+        result: ValidationResult
+    ) -> None:
+        """Validate a list of output items."""
+        if not isinstance(outputs, list):
+            result.add_error(
+                f"outputs.yaml '{section_name}' must be a list",
+                f"outputs_yaml.{section_name}.type"
+            )
+            return
+
+        required_fields = outputs_rules.get_required_item_fields()
+
+        for idx, output in enumerate(outputs):
+            if not isinstance(output, dict):
+                result.add_error(
+                    f"outputs.yaml {section_name} item #{idx + 1} must be a dictionary",
+                    f"outputs_yaml.{section_name}.item.type"
+                )
+                continue
+
+            # Check required fields
+            for field in required_fields:
+                if field not in output:
+                    result.add_error(
+                        f"outputs.yaml {section_name} item #{idx + 1} missing required '{field}' field",
+                        f"outputs_yaml.{section_name}.item.{field}.missing"
+                    )
+
+            # Validate path is a string
+            if "path" in output and not isinstance(output["path"], str):
+                result.add_error(
+                    f"outputs.yaml {section_name} item #{idx + 1} 'path' must be a string",
+                    f"outputs_yaml.{section_name}.item.path.type"
+                )
+
+            # Validate must_contain is a list
+            if "must_contain" in output and not isinstance(output["must_contain"], list):
+                result.add_error(
+                    f"outputs.yaml {section_name} item #{idx + 1} 'must_contain' must be a list",
+                    f"outputs_yaml.{section_name}.item.must_contain.type"
+                )
+
+    def _validate_conditional_outputs(
+        self,
+        conditional: dict,
+        outputs_rules,
+        result: ValidationResult
+    ) -> None:
+        """Validate conditional_outputs section structure."""
+        if not isinstance(conditional, dict):
+            result.add_error(
+                "outputs.yaml 'conditional_outputs' must be a dictionary",
+                "outputs_yaml.conditional_outputs.type"
+            )
+            return
+
+        # Validate maturity section if present
+        if "maturity" in conditional:
+            maturity = conditional["maturity"]
+            if not isinstance(maturity, dict):
+                result.add_error(
+                    "outputs.yaml 'conditional_outputs.maturity' must be a dictionary",
+                    "outputs_yaml.conditional_outputs.maturity.type"
+                )
+            else:
+                allowed_levels = outputs_rules.get_allowed_maturity_levels()
+                for level_name, level_outputs in maturity.items():
+                    # Check maturity level is valid
+                    if level_name not in allowed_levels:
+                        result.add_warning(
+                            f"outputs.yaml maturity level '{level_name}' not in standard levels: {allowed_levels}",
+                            "outputs_yaml.conditional_outputs.maturity.level"
+                        )
+
+                    # Validate outputs list
+                    if isinstance(level_outputs, list):
+                        self._validate_outputs_list(
+                            level_outputs,
+                            f"maturity.{level_name}",
+                            outputs_rules,
+                            result
+                        )
+                    else:
+                        result.add_error(
+                            f"outputs.yaml 'conditional_outputs.maturity.{level_name}' must be a list",
+                            f"outputs_yaml.conditional_outputs.maturity.{level_name}.type"
+                        )
 
     def _check_community_practices(
         self,

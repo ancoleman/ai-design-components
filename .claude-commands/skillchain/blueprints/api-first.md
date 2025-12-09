@@ -1427,3 +1427,518 @@ All additions will integrate with existing auth and database setup.
 ---
 
 **Blueprint Complete**
+
+---
+
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "OpenAPI 3.0 specification":
+    primary_skill: designing-apis
+    required_files:
+      - api/openapi.yaml
+    content_checks:
+      - pattern: "openapi:\\s*3\\."
+        in: api/openapi.yaml
+      - pattern: "paths:"
+        in: api/openapi.yaml
+      - pattern: "components:"
+        in: api/openapi.yaml
+    maturity_required: [starter, intermediate, advanced]
+
+  "API versioning implementation":
+    primary_skill: designing-apis
+    required_files:
+      - src/api/v1/router.py
+    content_checks:
+      - pattern: "/v1/"
+        in: src/api/v1/
+      - pattern: "APIRouter|router|app"
+        in: src/api/v1/router.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "User CRUD endpoints":
+    primary_skill: designing-apis
+    required_files:
+      - src/api/v1/routes/users.py
+    content_checks:
+      - pattern: "@.*\\.(get|post|put|patch|delete)"
+        in: src/api/v1/routes/users.py
+      - pattern: "def (get|create|update|delete).*user"
+        in: src/api/v1/routes/users.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Authentication endpoints":
+    primary_skill: designing-apis
+    required_files:
+      - src/api/v1/routes/auth.py
+    content_checks:
+      - pattern: "login|register|refresh"
+        in: src/api/v1/routes/auth.py
+      - pattern: "@.*\\.post"
+        in: src/api/v1/routes/auth.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "JWT token management":
+    primary_skill: implementing-auth-security
+    required_files:
+      - src/auth/jwt.py
+    content_checks:
+      - pattern: "create.*token|encode.*token"
+        in: src/auth/jwt.py
+      - pattern: "verify.*token|decode.*token"
+        in: src/auth/jwt.py
+      - pattern: "jwt|jose"
+        in: src/auth/jwt.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Password hashing":
+    primary_skill: implementing-auth-security
+    required_files:
+      - src/auth/password.py
+    content_checks:
+      - pattern: "hash.*password|bcrypt"
+        in: src/auth/password.py
+      - pattern: "verify.*password"
+        in: src/auth/password.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "RBAC authorization":
+    primary_skill: implementing-auth-security
+    required_files:
+      - src/auth/rbac.py
+    content_checks:
+      - pattern: "role|permission"
+        in: src/auth/rbac.py
+      - pattern: "check.*permission|require.*role"
+        in: src/auth/rbac.py
+    maturity_required: [intermediate, advanced]
+
+  "Security headers middleware":
+    primary_skill: implementing-auth-security
+    required_files:
+      - src/api/middleware.py
+    content_checks:
+      - pattern: "X-Content-Type-Options|X-Frame-Options|X-XSS-Protection"
+        in: src/api/middleware.py
+      - pattern: "middleware|before_request"
+        in: src/api/middleware.py
+    maturity_required: [intermediate, advanced]
+
+  "Database models":
+    primary_skill: designing-databases-relational
+    required_files:
+      - src/database/models/user.py
+    content_checks:
+      - pattern: "class User|Base|Model"
+        in: src/database/models/user.py
+      - pattern: "Column|Field|Integer|String"
+        in: src/database/models/user.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Database migrations":
+    primary_skill: designing-databases-relational
+    required_files:
+      - src/database/migrations/
+      - alembic.ini
+    content_checks:
+      - pattern: "alembic|migration"
+        in: alembic.ini
+      - pattern: "def upgrade|def downgrade"
+        in: src/database/migrations/
+    maturity_required: [starter, intermediate, advanced]
+
+  "Database session management":
+    primary_skill: designing-databases-relational
+    required_files:
+      - src/database/session.py
+    content_checks:
+      - pattern: "sessionmaker|Session|engine"
+        in: src/database/session.py
+      - pattern: "create_engine|get_db"
+        in: src/database/session.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Connection pooling":
+    primary_skill: designing-databases-relational
+    required_files:
+      - src/database/session.py
+    content_checks:
+      - pattern: "pool_size|max_overflow"
+        in: src/database/session.py
+    maturity_required: [intermediate, advanced]
+
+  "Request/response schemas":
+    primary_skill: designing-apis
+    required_files:
+      - src/api/v1/schemas/user.py
+      - src/api/v1/schemas/auth.py
+    content_checks:
+      - pattern: "BaseModel|Schema"
+        in: src/api/v1/schemas/
+      - pattern: "class.*Request|class.*Response"
+        in: src/api/v1/schemas/
+    maturity_required: [starter, intermediate, advanced]
+
+  "Input validation schemas":
+    primary_skill: implementing-auth-security
+    required_files:
+      - src/api/v1/schemas/validators.py
+    content_checks:
+      - pattern: "validator|field_validator"
+        in: src/api/v1/schemas/validators.py
+      - pattern: "validate|check"
+        in: src/api/v1/schemas/validators.py
+    maturity_required: [intermediate, advanced]
+
+  "RFC 7807 error handling":
+    primary_skill: designing-apis
+    required_files:
+      - src/api/v1/errors.py
+      - src/utils/errors.py
+    content_checks:
+      - pattern: "type.*title.*status.*detail"
+        in: src/api/v1/errors.py
+      - pattern: "ProblemDetails|RFC7807|problem\\+json"
+        in: src/api/v1/errors.py
+    maturity_required: [intermediate, advanced]
+
+  "Rate limiting":
+    primary_skill: implementing-auth-security
+    required_files:
+      - src/core/rate_limit.py
+    content_checks:
+      - pattern: "rate.*limit|throttle"
+        in: src/core/rate_limit.py
+      - pattern: "X-RateLimit|429"
+        in: src/core/rate_limit.py
+    maturity_required: [intermediate, advanced]
+
+  "CORS configuration":
+    primary_skill: implementing-auth-security
+    required_files:
+      - src/core/security.py
+    content_checks:
+      - pattern: "CORS|allow_origins"
+        in: src/core/security.py
+      - pattern: "Access-Control-Allow"
+        in: src/core/security.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Pagination utilities":
+    primary_skill: designing-apis
+    required_files:
+      - src/utils/pagination.py
+    content_checks:
+      - pattern: "cursor|next_cursor|prev_cursor"
+        in: src/utils/pagination.py
+      - pattern: "paginate|limit"
+        in: src/utils/pagination.py
+    maturity_required: [intermediate, advanced]
+
+  "Structured logging":
+    primary_skill: implementing-observability
+    required_files:
+      - src/core/logging.py
+    content_checks:
+      - pattern: "structlog|logging|logger"
+        in: src/core/logging.py
+      - pattern: "json|structured"
+        in: src/core/logging.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Prometheus metrics endpoint":
+    primary_skill: implementing-observability
+    required_files:
+      - src/core/metrics.py
+      - src/api/v1/routes/metrics.py
+    content_checks:
+      - pattern: "prometheus|metrics"
+        in: src/core/metrics.py
+      - pattern: "Counter|Histogram|Gauge"
+        in: src/core/metrics.py
+      - pattern: "/metrics"
+        in: src/api/v1/routes/metrics.py
+    maturity_required: [intermediate, advanced]
+
+  "Health check endpoints":
+    primary_skill: implementing-observability
+    required_files:
+      - src/api/v1/routes/health.py
+    content_checks:
+      - pattern: "/health"
+        in: src/api/v1/routes/health.py
+      - pattern: "liveness|readiness"
+        in: src/api/v1/routes/health.py
+      - pattern: "database.*check"
+        in: src/api/v1/routes/health.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Request logging middleware":
+    primary_skill: implementing-observability
+    required_files:
+      - src/api/middleware.py
+    content_checks:
+      - pattern: "log.*request|request.*logger"
+        in: src/api/middleware.py
+      - pattern: "method|path|status|duration"
+        in: src/api/middleware.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Unit tests":
+    primary_skill: testing-strategies
+    required_files:
+      - tests/unit/test_auth.py
+      - tests/unit/test_password.py
+    content_checks:
+      - pattern: "def test_|@pytest"
+        in: tests/unit/
+      - pattern: "assert"
+        in: tests/unit/
+    maturity_required: [intermediate, advanced]
+
+  "Integration tests":
+    primary_skill: testing-strategies
+    required_files:
+      - tests/integration/test_user_routes.py
+      - tests/integration/test_auth_routes.py
+    content_checks:
+      - pattern: "def test_|@pytest"
+        in: tests/integration/
+      - pattern: "client\\.|TestClient"
+        in: tests/integration/
+      - pattern: "assert.*status_code"
+        in: tests/integration/
+    maturity_required: [intermediate, advanced]
+
+  "E2E tests":
+    primary_skill: testing-strategies
+    required_files:
+      - tests/e2e/test_auth_flow.py
+      - tests/e2e/test_user_flow.py
+    content_checks:
+      - pattern: "def test_|@pytest"
+        in: tests/e2e/
+      - pattern: "register.*login|end.*to.*end"
+        in: tests/e2e/
+    maturity_required: [advanced]
+
+  "Test fixtures and configuration":
+    primary_skill: testing-strategies
+    required_files:
+      - tests/conftest.py
+    content_checks:
+      - pattern: "@pytest\\.fixture"
+        in: tests/conftest.py
+      - pattern: "client|db|session"
+        in: tests/conftest.py
+    maturity_required: [intermediate, advanced]
+
+  "OpenAPI-based client SDK":
+    primary_skill: building-clis
+    required_files:
+      - docs/examples/python-client.py
+      - docs/examples/javascript-client.js
+    content_checks:
+      - pattern: "client|api"
+        in: docs/examples/
+      - pattern: "auth|login|users"
+        in: docs/examples/
+    maturity_required: [intermediate, advanced]
+
+  "Docker containerization":
+    primary_skill: designing-apis
+    required_files:
+      - Dockerfile
+      - docker-compose.yml
+    content_checks:
+      - pattern: "FROM"
+        in: Dockerfile
+      - pattern: "services:|postgres:|redis:"
+        in: docker-compose.yml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Environment configuration":
+    primary_skill: designing-apis
+    required_files:
+      - .env.example
+      - src/core/config.py
+    content_checks:
+      - pattern: "DATABASE_URL|JWT_SECRET"
+        in: .env.example
+      - pattern: "Settings|Config|BaseSettings"
+        in: src/core/config.py
+    maturity_required: [starter, intermediate, advanced]
+
+  "Interactive API documentation":
+    primary_skill: designing-apis
+    required_files:
+      - docs/api-reference.md
+    content_checks:
+      - pattern: "endpoint|authentication|example"
+        in: docs/api-reference.md
+    maturity_required: [starter, intermediate, advanced]
+
+  "Setup and usage documentation":
+    primary_skill: designing-apis
+    required_files:
+      - README.md
+    content_checks:
+      - pattern: "installation|setup|usage"
+        in: README.md
+      - pattern: "docker|run|start"
+        in: README.md
+    maturity_required: [starter, intermediate, advanced]
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Learning-focused REST API with core features, basic authentication, minimal infrastructure"
+
+    require_additionally:
+      - "OpenAPI 3.0 specification"
+      - "API versioning implementation"
+      - "User CRUD endpoints"
+      - "Authentication endpoints"
+      - "JWT token management"
+      - "Password hashing"
+      - "Database models"
+      - "Database migrations"
+      - "Database session management"
+      - "Request/response schemas"
+      - "CORS configuration"
+      - "Structured logging"
+      - "Health check endpoints"
+      - "Request logging middleware"
+      - "Docker containerization"
+      - "Environment configuration"
+      - "Interactive API documentation"
+      - "Setup and usage documentation"
+
+    skip_deliverables:
+      - "RBAC authorization"
+      - "Security headers middleware"
+      - "Connection pooling"
+      - "Input validation schemas"
+      - "RFC 7807 error handling"
+      - "Rate limiting"
+      - "Pagination utilities"
+      - "Prometheus metrics endpoint"
+      - "Unit tests"
+      - "Integration tests"
+      - "E2E tests"
+      - "Test fixtures and configuration"
+      - "OpenAPI-based client SDK"
+
+    empty_dirs_allowed:
+      - tests/unit/
+      - tests/integration/
+      - tests/e2e/
+      - scripts/
+      - docs/examples/
+
+    generation_adjustments:
+      - Use Docker Compose for local development (no Kubernetes)
+      - Include inline comments explaining API patterns
+      - Provide sample .env file with working defaults
+      - Generate basic error responses (not RFC 7807)
+      - Use simple offset-based pagination instead of cursor-based
+      - Include Swagger UI for interactive documentation
+      - Add step-by-step setup guide in README
+
+  intermediate:
+    description: "Production-ready REST API with comprehensive security, testing, monitoring, and automation"
+
+    require_additionally:
+      - "RBAC authorization"
+      - "Security headers middleware"
+      - "Connection pooling"
+      - "Input validation schemas"
+      - "RFC 7807 error handling"
+      - "Rate limiting"
+      - "Pagination utilities"
+      - "Prometheus metrics endpoint"
+      - "Unit tests"
+      - "Integration tests"
+      - "Test fixtures and configuration"
+      - "OpenAPI-based client SDK"
+
+    skip_deliverables:
+      - "E2E tests"
+
+    empty_dirs_allowed:
+      - tests/e2e/
+      - scripts/
+
+    generation_adjustments:
+      - Implement RFC 7807 Problem Details error format
+      - Add cursor-based pagination for scalability
+      - Include rate limiting with configurable quotas
+      - Add comprehensive test suite (80% coverage target)
+      - Generate Prometheus metrics for monitoring
+      - Include RBAC with role-based permissions
+      - Add security headers middleware
+      - Configure connection pooling for database
+      - Generate Python and JavaScript client SDKs
+      - Include API versioning with deprecation support
+
+  advanced:
+    description: "Enterprise-grade REST API with full test coverage, advanced security, comprehensive monitoring, client SDKs"
+
+    require_additionally:
+      - "E2E tests"
+
+    skip_deliverables: []
+
+    empty_dirs_allowed: []
+
+    generation_adjustments:
+      - Include complete test pyramid (unit, integration, E2E)
+      - Add end-to-end authentication and user flow tests
+      - Implement advanced rate limiting (per-user, per-endpoint)
+      - Add comprehensive Prometheus metrics with SLOs
+      - Generate multi-language client SDKs (Python, JS, Go)
+      - Include API gateway patterns (if microservices)
+      - Add distributed tracing support (optional)
+      - Implement advanced RBAC with fine-grained permissions
+      - Add comprehensive API documentation with examples
+      - Include performance testing utilities
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **File existence checks**: Verify all `required_files` exist for the selected maturity level
+2. **Content pattern matching**: Run regex `content_checks` against file contents
+3. **Maturity profile validation**: Ensure deliverables match maturity requirements
+4. **Empty directory allowances**: Verify only allowed directories are empty
+5. **Cross-skill integration**: Validate that skills work together cohesively
+
+**Validation output:**
+```
+✓ OpenAPI 3.0 specification (designing-apis)
+✓ API versioning implementation (designing-apis)
+✓ User CRUD endpoints (designing-apis)
+✓ Authentication endpoints (designing-apis)
+✓ JWT token management (implementing-auth-security)
+✓ Password hashing (implementing-auth-security)
+✗ RBAC authorization - SKIPPED (starter maturity)
+✓ Database models (designing-databases-relational)
+✓ Database migrations (designing-databases-relational)
+...
+
+Blueprint validation: 18/18 required deliverables present
+Maturity level: starter
+Status: PASSED
+```
+
+---

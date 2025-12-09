@@ -1,0 +1,119 @@
+skill: "using-graph-databases"
+version: "1.0"
+domain: "backend"
+
+base_outputs:
+  - path: "src/graph/schema.cypher"
+    must_contain: ["CREATE INDEX", "CREATE CONSTRAINT", "(:User)", "(:"]
+    description: "Graph schema with nodes, relationships, indexes, and constraints"
+
+  - path: "src/graph/queries.cypher"
+    must_contain: ["MATCH", "RETURN"]
+    description: "Core Cypher queries for common graph operations"
+
+  - path: "src/graph/connection.ts"
+    must_contain: ["neo4j-driver", "GraphDatabase.driver"]
+    description: "Database connection configuration"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "src/graph/basic-queries.cypher"
+        must_contain: ["MATCH", "WHERE", "RETURN", "LIMIT"]
+        description: "Basic pattern matching and filtering queries"
+
+      - path: "src/graph/client.ts"
+        must_contain: ["session", "run", "close"]
+        description: "Simple graph database client wrapper"
+
+    intermediate:
+      - path: "src/graph/traversals.cypher"
+        must_contain: ["[:*1..", "shortestPath", "DISTINCT"]
+        description: "Variable-length paths and shortest path queries"
+
+      - path: "src/graph/recommendations.cypher"
+        must_contain: ["MATCH", "WHERE NOT exists", "ORDER BY"]
+        description: "Collaborative filtering and recommendation queries"
+
+      - path: "src/graph/indexes.cypher"
+        must_contain: ["CREATE INDEX", "CREATE FULLTEXT INDEX"]
+        description: "Performance optimization with indexes"
+
+      - path: "src/graph/repository.ts"
+        must_contain: ["class", "async", "Transaction"]
+        description: "Repository pattern with transaction support"
+
+    advanced:
+      - path: "src/graph/fraud-detection.cypher"
+        must_contain: ["MATCH path", "all(r IN relationships", "WHERE"]
+        description: "Pattern detection for fraud analysis"
+
+      - path: "src/graph/hybrid-search.ts"
+        must_contain: ["vector", "graph", "MATCH"]
+        description: "Hybrid vector + graph search for AI/RAG"
+
+      - path: "src/graph/optimizations.cypher"
+        must_contain: ["WITH", "count(*)", "SET"]
+        description: "Materialized aggregations and caching patterns"
+
+      - path: "src/graph/scaling.md"
+        must_contain: ["read replica", "sharding", "cluster"]
+        description: "Horizontal scaling strategies"
+
+scaffolding:
+  - path: "graph/"
+    description: "Graph database schema, queries, and migrations"
+
+  - path: "src/graph/"
+    description: "Graph database client code and repositories"
+
+  - path: "cypher/"
+    description: "Cypher query scripts organized by use case"
+
+  - path: "scripts/graph-migrations/"
+    description: "Schema migration scripts for graph databases"
+
+metadata:
+  primary_blueprints:
+    - "data-pipeline"
+
+  contributes_to:
+    - "Graph storage"
+    - "Relationship modeling"
+    - "Path finding"
+    - "Pattern matching"
+
+  integrations:
+    - skill: "databases-vector"
+      purpose: "Hybrid vector + graph search for AI/RAG"
+      files: ["src/graph/hybrid-search.ts"]
+
+    - skill: "search-filter"
+      purpose: "Relationship-based search queries"
+      files: ["src/graph/traversals.cypher"]
+
+    - skill: "ai-chat"
+      purpose: "Knowledge graph context enrichment"
+      files: ["src/graph/knowledge-graph.ts"]
+
+  common_file_patterns:
+    - "*.cypher"
+    - "*-graph.ts"
+    - "*-neo4j.py"
+    - "graph-*.go"
+
+  database_specific:
+    neo4j:
+      - "neo4j.conf"
+      - "src/graph/neo4j-client.ts"
+      - "cypher/*.cypher"
+
+    arangodb:
+      - "arangodb.conf"
+      - "src/graph/arangodb-client.ts"
+      - "aql/*.aql"
+
+    neptune:
+      - "neptune-cluster.yaml"
+      - "src/graph/gremlin-client.ts"
+      - "gremlin/*.groovy"

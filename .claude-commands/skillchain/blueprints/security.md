@@ -1311,4 +1311,536 @@ Phase 5: Continuous Improvement
 
 ---
 
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "OS and container hardening":
+    primary_skill: hardening-security
+    required_files:
+      - security/baseline/ssh-hardening.conf
+      - security/baseline/sysctl-hardening.conf
+      - security/baseline/Dockerfile.secure
+    content_checks:
+      - pattern: "PermitRootLogin|PasswordAuthentication"
+        in: security/baseline/ssh-hardening.conf
+      - pattern: "USER.*nonroot"
+        in: security/baseline/Dockerfile.secure
+      - pattern: "kernel|net\\.ipv4"
+        in: security/baseline/sysctl-hardening.conf
+    maturity_required: [starter, intermediate, advanced]
+
+  "Network security policies":
+    primary_skill: hardening-security
+    required_files:
+      - security/policies/network-policy-default-deny.yaml
+    content_checks:
+      - pattern: "NetworkPolicy.*Ingress"
+        in: security/policies/network-policy-default-deny.yaml
+    maturity_required: [starter, intermediate, advanced]
+
+  "OAuth2/OIDC authentication":
+    primary_skill: implementing-auth-security
+    required_files:
+      - src/auth/config.ts
+      - src/middleware/auth.ts
+      - src/utils/jwt.ts
+    content_checks:
+      - pattern: "OAuth 2\\.1|PKCE"
+        in: src/auth/config.ts
+      - pattern: "JWT validation|Bearer token"
+        in: src/middleware/auth.ts
+      - pattern: "EdDSA|ES256"
+        in: src/utils/jwt.ts
+    maturity_required: [starter, intermediate, advanced]
+
+  "RBAC authorization policies":
+    primary_skill: implementing-auth-security
+    required_files:
+      - src/auth/rbac/policies.json
+      - src/auth/rbac/enforcer.ts
+    content_checks:
+      - pattern: "roles|permissions|resources"
+        in: src/auth/rbac/policies.json
+      - pattern: "Casbin|policy enforcement"
+        in: src/auth/rbac/enforcer.ts
+    maturity_required: [intermediate, advanced]
+
+  "HashiCorp Vault configuration":
+    primary_skill: managing-secrets
+    required_files:
+      - secrets/vault/kv-config.hcl
+      - secrets/vault/policies/app-policy.hcl
+    content_checks:
+      - pattern: "kv-v2|secret/"
+        in: secrets/vault/kv-config.hcl
+      - pattern: "path|capabilities|read"
+        in: secrets/vault/policies/app-policy.hcl
+    maturity_required: [starter, intermediate, advanced]
+
+  "External Secrets Operator integration":
+    primary_skill: managing-secrets
+    required_files:
+      - k8s/external-secrets/secret-store.yaml
+      - k8s/external-secrets/external-secret.yaml
+    content_checks:
+      - pattern: "SecretStore|vault"
+        in: k8s/external-secrets/secret-store.yaml
+      - pattern: "ExternalSecret|refreshInterval"
+        in: k8s/external-secrets/external-secret.yaml
+    maturity_required: [intermediate, advanced]
+
+  "Dynamic database credentials":
+    primary_skill: managing-secrets
+    required_files:
+      - secrets/vault/database-config.hcl
+      - secrets/vault/policies/dynamic-db-policy.hcl
+    content_checks:
+      - pattern: "database|postgresql|creation_statements"
+        in: secrets/vault/database-config.hcl
+      - pattern: "database/creds"
+        in: secrets/vault/policies/dynamic-db-policy.hcl
+    maturity_required: [advanced]
+
+  "SIEM detection rules":
+    primary_skill: implementing-siem
+    required_files:
+      - siem/detection-rules/sigma/authentication-failures.yml
+      - siem/detection-rules/sigma/privilege-escalation.yml
+    content_checks:
+      - pattern: "logsource|detection|level|MITRE"
+        in: siem/detection-rules/sigma/authentication-failures.yml
+      - pattern: "logsource|detection|level"
+        in: siem/detection-rules/sigma/privilege-escalation.yml
+    maturity_required: [starter, intermediate, advanced]
+
+  "Log aggregation pipeline":
+    primary_skill: implementing-siem
+    required_files:
+      - siem/log-aggregation/fluentd-config.yaml
+      - siem/config/retention-policy.yaml
+    content_checks:
+      - pattern: "source|filter|match|elasticsearch"
+        in: siem/log-aggregation/fluentd-config.yaml
+      - pattern: "retention periods|storage tiers"
+        in: siem/config/retention-policy.yaml
+    maturity_required: [intermediate, advanced]
+
+  "Security scanning pipeline":
+    primary_skill: building-ci-pipelines
+    required_files:
+      - .github/workflows/security-scan.yml
+    content_checks:
+      - pattern: "gitleaks|snyk|trivy|security"
+        in: .github/workflows/security-scan.yml
+    maturity_required: [intermediate, advanced]
+
+  "Firewall rules configuration":
+    primary_skill: configuring-networking
+    required_files:
+      - firewall/nftables.conf
+    content_checks:
+      - pattern: "table inet|chain input|ct state"
+        in: firewall/nftables.conf
+    maturity_required: [intermediate, advanced]
+
+  "Kubernetes network policies":
+    primary_skill: configuring-networking
+    required_files:
+      - k8s/network-policies/default-deny.yaml
+      - k8s/network-policies/namespace-isolation.yaml
+    content_checks:
+      - pattern: "NetworkPolicy|podSelector"
+        in: k8s/network-policies/
+    maturity_required: [intermediate, advanced]
+
+  "TLS configuration":
+    primary_skill: configuring-networking
+    required_files:
+      - config/tls/tls-config.yaml
+      - config/tls/nginx-ssl.conf
+    content_checks:
+      - pattern: "TLS 1\\.3|TLS 1\\.2"
+        in: config/tls/tls-config.yaml
+      - pattern: "ssl_certificate|ssl_protocols"
+        in: config/tls/nginx-ssl.conf
+    maturity_required: [starter, intermediate, advanced]
+
+  "cert-manager configuration":
+    primary_skill: configuring-networking
+    required_files:
+      - k8s/cert-manager/clusterissuer-letsencrypt.yaml
+      - k8s/ingress-tls.yaml
+    content_checks:
+      - pattern: "ClusterIssuer|acme|letsencrypt"
+        in: k8s/cert-manager/clusterissuer-letsencrypt.yaml
+      - pattern: "tls:|hosts:|secretName:"
+        in: k8s/ingress-tls.yaml
+    maturity_required: [intermediate, advanced]
+
+  "Compliance controls mapping":
+    primary_skill: documenting-compliance
+    required_files:
+      - compliance/controls/control-mapping.yaml
+      - compliance/frameworks/soc2-checklist.md
+    content_checks:
+      - pattern: "control_id|frameworks|implementation"
+        in: compliance/controls/control-mapping.yaml
+      - pattern: "Trust Services Criteria|CC6\\.1"
+        in: compliance/frameworks/soc2-checklist.md
+    maturity_required: [starter, intermediate, advanced]
+
+  "Encryption infrastructure":
+    primary_skill: documenting-compliance
+    required_files:
+      - terraform/encryption/s3-encryption.tf
+      - terraform/encryption/rds-encryption.tf
+    content_checks:
+      - pattern: "aws_kms_key|enable_key_rotation"
+        in: terraform/encryption/s3-encryption.tf
+      - pattern: "storage_encrypted|kms_key_id"
+        in: terraform/encryption/rds-encryption.tf
+    maturity_required: [starter, intermediate, advanced]
+
+  "Policy-as-code enforcement":
+    primary_skill: documenting-compliance
+    required_files:
+      - compliance/opa-policies/encryption.rego
+      - .github/workflows/compliance-check.yml
+    content_checks:
+      - pattern: "package compliance|deny|encrypted"
+        in: compliance/opa-policies/encryption.rego
+      - pattern: "checkov|opa eval"
+        in: .github/workflows/compliance-check.yml
+    maturity_required: [intermediate, advanced]
+
+  "Audit logging configuration":
+    primary_skill: documenting-compliance
+    required_files:
+      - audit/audit-logging-config.yaml
+      - terraform/audit/s3-object-lock.tf
+    content_checks:
+      - pattern: "retention|7 years|immutable"
+        in: audit/audit-logging-config.yaml
+      - pattern: "aws_s3_bucket_object_lock_configuration|COMPLIANCE"
+        in: terraform/audit/s3-object-lock.tf
+    maturity_required: [starter, intermediate, advanced]
+
+  "Evidence collection automation":
+    primary_skill: documenting-compliance
+    required_files:
+      - compliance/evidence/evidence_collector.py
+      - compliance/evidence/report_generator.py
+    content_checks:
+      - pattern: "EvidenceCollector|control_id|frameworks"
+        in: compliance/evidence/evidence_collector.py
+      - pattern: "AuditReportGenerator|generate_soc2_report"
+        in: compliance/evidence/report_generator.py
+    maturity_required: [advanced]
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Essential security foundations with manual processes, suitable for small teams"
+
+    require_additionally:
+      - "OS and container hardening"
+      - "Network security policies"
+      - "OAuth2/OIDC authentication"
+      - "HashiCorp Vault configuration"
+      - "SIEM detection rules"
+      - "TLS configuration"
+      - "Compliance controls mapping"
+      - "Encryption infrastructure"
+      - "Audit logging configuration"
+
+    skip_deliverables:
+      - "RBAC authorization policies"
+      - "External Secrets Operator integration"
+      - "Dynamic database credentials"
+      - "Log aggregation pipeline"
+      - "Security scanning pipeline"
+      - "Firewall rules configuration"
+      - "Kubernetes network policies"
+      - "cert-manager configuration"
+      - "Policy-as-code enforcement"
+      - "Evidence collection automation"
+
+    empty_dirs_allowed:
+      - k8s/external-secrets/
+      - k8s/network-policies/
+      - k8s/cert-manager/
+      - compliance/opa-policies/
+      - compliance/evidence/
+      - siem/log-aggregation/
+      - security/monitoring/
+
+    generation_adjustments:
+      - Focus on manual hardening procedures
+      - Provide detailed security checklists
+      - Include step-by-step setup guides
+      - Use simple authentication patterns
+      - Manual secret rotation procedures
+      - Docker Compose for local SIEM setup
+      - Self-signed certificates for development
+      - Basic SOC2 compliance templates
+
+  intermediate:
+    description: "Production-ready security with automation, monitoring, and compliance tracking"
+
+    require_additionally:
+      - "RBAC authorization policies"
+      - "External Secrets Operator integration"
+      - "Log aggregation pipeline"
+      - "Security scanning pipeline"
+      - "Firewall rules configuration"
+      - "Kubernetes network policies"
+      - "cert-manager configuration"
+      - "Policy-as-code enforcement"
+
+    skip_deliverables:
+      - "Dynamic database credentials"
+      - "Evidence collection automation"
+
+    empty_dirs_allowed:
+      - secrets/vault/database/
+      - compliance/evidence/
+      - security/reports/
+
+    generation_adjustments:
+      - Automated secret rotation scripts
+      - CI/CD security scanning integration
+      - Kubernetes-native secret management
+      - Let's Encrypt with cert-manager
+      - SIEM with multi-cloud log aggregation
+      - OPA policy enforcement in CI/CD
+      - Network segmentation with NetworkPolicies
+      - Quarterly compliance documentation
+
+  advanced:
+    description: "Enterprise-scale security with full automation, zero-trust, and continuous compliance"
+
+    require_additionally:
+      - "Dynamic database credentials"
+      - "Evidence collection automation"
+
+    skip_deliverables: []
+
+    empty_dirs_allowed: []
+
+    generation_adjustments:
+      - Zero-trust architecture with mTLS
+      - Dynamic secrets with short TTL
+      - Automated evidence collection
+      - Multi-region SIEM architecture
+      - SLSA Level 3 provenance
+      - Continuous compliance monitoring
+      - Advanced threat detection (UEBA)
+      - Automated incident response (SOAR)
+      - Runtime security monitoring (Falco)
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **Load maturity profile** - Determine which deliverables are required based on user's selected maturity level
+
+2. **Check required files exist** - Verify each deliverable's required files are present in the generated project
+
+3. **Run content checks** - Use grep/pattern matching to verify files contain expected code (not just scaffolding)
+
+4. **Calculate completeness score**:
+   ```
+   completeness = (fulfilled_deliverables / required_deliverables) * 100
+   ```
+
+5. **Report results**:
+   - If completeness >= 90%: Success, ready to use
+   - If completeness 70-89%: Warning, some optional features missing
+   - If completeness < 70%: Failure, critical features missing
+
+6. **Offer remediation** if completeness < 90%:
+   ```
+   Missing deliverables detected:
+   - RBAC authorization policies: src/auth/rbac/ is empty
+   - cert-manager configuration: k8s/cert-manager/ missing
+
+   Would you like me to:
+   a) Generate missing components now
+   b) Continue with current setup (you can add these later)
+   c) Review what was generated
+
+   Your choice (a/b/c): _____
+   ```
+
+### Security-Specific Validation
+
+Additional security checks performed after generation:
+
+```yaml
+security_checks:
+  critical:
+    - name: "No secrets in code"
+      check: "gitleaks detect --no-git"
+      fail_on: "any leaked secrets found"
+
+    - name: "TLS 1.3 enforced"
+      check: "grep -r 'TLSv1.3' config/"
+      fail_on: "TLS 1.3 not configured"
+
+    - name: "MFA enabled"
+      check: "grep -r 'mfa_required.*true' policies/"
+      fail_on: "MFA not enforced"
+
+    - name: "Audit logging enabled"
+      check: "grep -r 'retention.*7.*years' audit/"
+      fail_on: "7-year retention not configured"
+
+  warnings:
+    - name: "Security scanning in CI"
+      check: "ls .github/workflows/security-scan.yml"
+      warn_on: "security scanning workflow missing"
+
+    - name: "Network policies exist"
+      check: "ls k8s/network-policies/default-deny.yaml"
+      warn_on: "default-deny network policy missing"
+
+    - name: "RBAC configured"
+      check: "ls src/auth/rbac/policies.json"
+      warn_on: "RBAC policies missing"
+
+  informational:
+    - name: "Dynamic secrets configured"
+      check: "ls secrets/vault/database-config.hcl"
+      info_on: "dynamic secrets not configured (advanced feature)"
+
+    - name: "Evidence collection automated"
+      check: "ls compliance/evidence/evidence_collector.py"
+      info_on: "automated evidence collection not configured (advanced feature)"
+```
+
+### Framework Compliance Validation
+
+Per-framework compliance checks:
+
+```yaml
+compliance_validation:
+  soc2:
+    required_controls:
+      - "CC6.1 - Encryption (ENC-001, ENC-002)"
+      - "CC6.1 - MFA (MFA-001)"
+      - "CC6.1 - RBAC (RBAC-001)"
+      - "CC7.2 - Audit Logging (LOG-001)"
+      - "CC7.3 - Incident Response (IR-001)"
+    validation:
+      - "grep 'AES-256' terraform/encryption/"
+      - "grep 'TLS 1.3' config/tls/"
+      - "grep 'mfa_required' policies/"
+      - "grep '7.*years' audit/"
+
+  hipaa:
+    required_controls:
+      - "164.312(a)(2)(iv) - Encryption at Rest"
+      - "164.312(e)(1) - Encryption in Transit"
+      - "164.312(d) - MFA"
+      - "164.312(b) - Audit Logging"
+    validation:
+      - "grep 'encrypted.*true' terraform/"
+      - "grep 'TLS' config/"
+      - "ls compliance/frameworks/hipaa-baa-template.md"
+
+  pci_dss:
+    required_controls:
+      - "Req 3.4 - Encryption at Rest"
+      - "Req 4.1 - Encryption in Transit"
+      - "Req 8.3 - MFA"
+      - "Req 10.2 - Audit Logging"
+    validation:
+      - "grep 'encryption' terraform/"
+      - "grep 'TLS 1.2' config/"
+      - "grep 'mfa' policies/"
+```
+
+### Post-Generation Security Report
+
+Generate comprehensive security report after validation:
+
+```markdown
+## Security Hardening Blueprint - Generation Report
+
+### Summary
+- **Status**: SUCCESS
+- **Maturity Level**: Intermediate
+- **Completeness**: 95% (19/20 deliverables)
+- **Security Posture**: STRONG
+
+### Deliverables Status
+✓ OS and container hardening (COMPLETE)
+✓ Network security policies (COMPLETE)
+✓ OAuth2/OIDC authentication (COMPLETE)
+✓ RBAC authorization policies (COMPLETE)
+✓ HashiCorp Vault configuration (COMPLETE)
+✓ External Secrets Operator integration (COMPLETE)
+✓ SIEM detection rules (COMPLETE)
+✓ Log aggregation pipeline (COMPLETE)
+✓ Security scanning pipeline (COMPLETE)
+✓ Firewall rules configuration (COMPLETE)
+✓ Kubernetes network policies (COMPLETE)
+✓ TLS configuration (COMPLETE)
+✓ cert-manager configuration (COMPLETE)
+✓ Compliance controls mapping (COMPLETE)
+✓ Encryption infrastructure (COMPLETE)
+✓ Policy-as-code enforcement (COMPLETE)
+✓ Audit logging configuration (COMPLETE)
+⚠ Dynamic database credentials (SKIPPED - Advanced feature)
+⚠ Evidence collection automation (SKIPPED - Advanced feature)
+
+### Security Checks
+✓ No secrets in code (PASS)
+✓ TLS 1.3 enforced (PASS)
+✓ MFA enabled (PASS)
+✓ Audit logging enabled (PASS)
+✓ Security scanning in CI (PASS)
+✓ Network policies exist (PASS)
+✓ RBAC configured (PASS)
+
+### Compliance Status
+✓ SOC2 Type II: 90% (9/10 controls)
+✓ ISO 27001: 85% (17/20 controls)
+⚠ HIPAA: 80% (8/10 controls) - Need BAA templates
+⚠ PCI-DSS: 75% (9/12 controls) - Need enhanced monitoring
+
+### Recommendations
+1. Add BAA templates for HIPAA compliance (compliance/frameworks/hipaa-baa-template.md)
+2. Enable enhanced monitoring for PCI-DSS (monitoring/pci-dss-alerts.yaml)
+3. Consider upgrading to Advanced maturity for dynamic secrets
+4. Schedule quarterly access reviews
+5. Perform annual penetration testing
+
+### Next Steps
+1. Review generated security configurations
+2. Update environment variables in .env (copy from .env.example)
+3. Generate JWT keys: python scripts/generate_jwt_keys.py
+4. Initialize Vault: ./scripts/init-vault.sh
+5. Deploy to staging and test security controls
+6. Document security procedures for team
+7. Schedule security training for developers
+
+### Resources
+- Security documentation: docs/security/
+- Compliance documentation: compliance/
+- Runbooks: docs/runbooks/
+- Security policies: policies/
+```
+
+---
+
 **Blueprint Complete**

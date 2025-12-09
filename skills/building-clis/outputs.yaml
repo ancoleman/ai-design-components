@@ -1,0 +1,338 @@
+skill: "building-clis"
+version: "1.0"
+domain: "developer"
+
+base_outputs:
+  # CLI entry point and main application logic
+  - path: "cli/"
+    must_contain:
+      - "argument parsing"
+      - "command registration"
+      - "help text"
+
+  # Package configuration for distribution
+  - path: "pyproject.toml|Cargo.toml|go.mod"
+    must_contain:
+      - "cli entry point configuration"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Basic CLI with simple command structure
+      - path: "cli/main.{py,go,rs}"
+        must_contain:
+          - "argument parsing"
+          - "basic command"
+          - "help text"
+
+      # Simple configuration file
+      - path: "config.{yaml,toml,json}"
+        must_contain:
+          - "default settings"
+
+    intermediate:
+      # Subcommand structure
+      - path: "cli/commands/"
+        must_contain:
+          - "subcommand implementations"
+          - "command groups"
+
+      # Configuration management with precedence
+      - path: "cli/config.{py,go,rs}"
+        must_contain:
+          - "config file loading"
+          - "environment variable handling"
+          - "precedence logic"
+
+      # Output formatting
+      - path: "cli/output.{py,go,rs}"
+        must_contain:
+          - "format selection (json, yaml, table)"
+          - "colored output"
+          - "TTY detection"
+
+      # Shell completion generation
+      - path: "cli/completion.{py,go,rs}|completions/"
+        must_contain:
+          - "bash completion"
+          - "zsh completion"
+
+    advanced:
+      # Complex subcommand hierarchy
+      - path: "cli/commands/{group}/{subcommand}.{py,go,rs}"
+        must_contain:
+          - "nested command structure"
+          - "command inheritance"
+
+      # Interactive features
+      - path: "cli/interactive.{py,go,rs}"
+        must_contain:
+          - "progress indicators"
+          - "prompts and confirmations"
+          - "spinner or progress bar"
+
+      # Advanced configuration
+      - path: "cli/config/"
+        must_contain:
+          - "config validation"
+          - "multi-environment support"
+          - "config merging logic"
+
+      # Comprehensive shell completions
+      - path: "completions/"
+        must_contain:
+          - "bash completion script"
+          - "zsh completion script"
+          - "fish completion script"
+          - "powershell completion script"
+
+      # Testing infrastructure
+      - path: "tests/cli/"
+        must_contain:
+          - "CLI integration tests"
+          - "mock fixtures"
+          - "command execution tests"
+
+      # Distribution packaging
+      - path: ".goreleaser.{yml,yaml}|.github/workflows/release.yml|setup.py"
+        must_contain:
+          - "multi-platform builds"
+          - "release automation"
+
+  backend_framework:
+    python:
+      # Python-specific CLI structure
+      - path: "cli/main.py|{package}/cli.py"
+        must_contain:
+          - "typer.Typer() or click.group()"
+          - "command decorators"
+          - "type annotations"
+
+      # Python packaging
+      - path: "pyproject.toml"
+        must_contain:
+          - "[project.scripts]"
+          - "console_scripts entry point"
+
+      # Dependencies
+      - path: "requirements.txt|pyproject.toml"
+        must_contain:
+          - "typer or click"
+          - "rich (for colored output)"
+
+    node:
+      # Node.js CLI structure
+      - path: "cli/index.js|bin/cli.js"
+        must_contain:
+          - "#!/usr/bin/env node"
+          - "commander or yargs"
+          - "command definitions"
+
+      # Node packaging
+      - path: "package.json"
+        must_contain:
+          - '"bin": { "cli-name": "path/to/cli.js" }'
+          - "commander or yargs dependency"
+
+    go:
+      # Go CLI structure
+      - path: "cmd/main.go|main.go"
+        must_contain:
+          - "cobra.Command"
+          - "rootCmd.Execute()"
+
+      # Go subcommands
+      - path: "cmd/{command}.go|internal/cmd/"
+        must_contain:
+          - "cobra.Command definitions"
+          - "flags and arguments"
+
+      # Go configuration (optional)
+      - path: "internal/config/config.go"
+        must_contain:
+          - "viper configuration"
+          - "config struct"
+
+      # Go module
+      - path: "go.mod"
+        must_contain:
+          - "github.com/spf13/cobra"
+
+    rust:
+      # Rust CLI structure
+      - path: "src/main.rs|src/cli.rs"
+        must_contain:
+          - "clap::Parser or clap::Command"
+          - "parse() or get_matches()"
+
+      # Rust subcommands
+      - path: "src/commands/"
+        must_contain:
+          - "clap subcommand definitions"
+          - "command handlers"
+
+      # Rust dependencies
+      - path: "Cargo.toml"
+        must_contain:
+          - 'clap = { version = "4'
+          - "features = [\"derive\"]"
+
+scaffolding:
+  # Project initialization structure
+  - type: "directory"
+    path: "cli/"
+    description: "Main CLI application code"
+
+  - type: "directory"
+    path: "cli/commands/"
+    description: "Subcommand implementations (for intermediate/advanced)"
+
+  - type: "directory"
+    path: "tests/cli/"
+    description: "CLI integration tests"
+
+  - type: "directory"
+    path: "completions/"
+    description: "Shell completion scripts (for advanced)"
+
+  # Python-specific
+  - type: "file"
+    path: "cli/__init__.py"
+    template: "python_cli_init"
+    condition: "backend_framework == python"
+
+  - type: "file"
+    path: "cli/main.py"
+    template: "typer_basic_cli"
+    condition: "backend_framework == python"
+
+  - type: "file"
+    path: "pyproject.toml"
+    template: "python_cli_pyproject"
+    condition: "backend_framework == python"
+
+  # Go-specific
+  - type: "file"
+    path: "cmd/main.go"
+    template: "cobra_basic_cli"
+    condition: "backend_framework == go"
+
+  - type: "file"
+    path: "go.mod"
+    template: "go_cli_module"
+    condition: "backend_framework == go"
+
+  # Rust-specific
+  - type: "file"
+    path: "src/main.rs"
+    template: "clap_derive_cli"
+    condition: "backend_framework == rust"
+
+  - type: "file"
+    path: "Cargo.toml"
+    template: "rust_cli_cargo"
+    condition: "backend_framework == rust"
+
+  # Universal files
+  - type: "file"
+    path: "README.md"
+    template: "cli_readme"
+    description: "CLI usage documentation with installation and examples"
+
+  - type: "file"
+    path: "config.example.yaml"
+    template: "cli_config_example"
+    description: "Example configuration file"
+
+metadata:
+  primary_blueprints: []
+  contributes_to:
+    - "CLI tools"
+    - "Developer tooling"
+    - "Automation scripts"
+    - "Infrastructure management"
+    - "API clients"
+
+  file_patterns:
+    entry_points:
+      - "cli/main.{py,go,rs}"
+      - "cmd/main.go"
+      - "src/main.rs"
+      - "bin/cli.js"
+
+    commands:
+      - "cli/commands/**/*.{py,go,rs}"
+      - "cmd/**/*.go"
+      - "src/commands/**/*.rs"
+
+    configuration:
+      - "cli/config.{py,go,rs}"
+      - "internal/config/**/*.go"
+      - "config.{yaml,toml,json}"
+
+    completions:
+      - "completions/**/*"
+      - "shell-completions/**/*"
+
+    tests:
+      - "tests/cli/**/*"
+      - "**/*_test.{py,go,rs}"
+
+  framework_indicators:
+    python:
+      - "import typer"
+      - "import click"
+      - "@app.command()"
+
+    go:
+      - "github.com/spf13/cobra"
+      - "cobra.Command"
+      - "rootCmd.Execute()"
+
+    rust:
+      - "use clap::"
+      - "#[derive(Parser)]"
+      - "clap::Parser"
+
+    node:
+      - "require('commander')"
+      - "require('yargs')"
+      - "#!/usr/bin/env node"
+
+  output_characteristics:
+    # What this skill produces
+    - "Argument and option parsing"
+    - "Subcommand hierarchies"
+    - "Help text and usage information"
+    - "Configuration file loading with precedence"
+    - "Shell completions (bash, zsh, fish, powershell)"
+    - "Output formatting (human-readable, JSON, YAML)"
+    - "Progress indicators and interactive prompts"
+    - "Exit codes and error handling"
+    - "Distribution packaging (PyPI, Cargo, Homebrew, binaries)"
+
+  integration_points:
+    # Skills that work well with this one
+    testing-strategies:
+      - "CLI integration tests"
+      - "Mock fixtures for commands"
+
+    building-ci-pipelines:
+      - "Multi-platform binary builds"
+      - "Automated releases"
+      - "Package publishing"
+
+    api-patterns:
+      - "API client CLIs"
+      - "Authentication handling"
+      - "Response formatting"
+
+    secret-management:
+      - "Credential storage"
+      - "Environment variables"
+      - "Secrets manager integration"
+
+    implementing-logging:
+      - "Structured logging"
+      - "Log levels (--verbose, --quiet)"
+      - "Log output formatting"

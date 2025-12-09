@@ -1,0 +1,156 @@
+skill: "managing-vulnerabilities"
+version: "1.0"
+domain: "security"
+
+base_outputs:
+  - path: ".github/dependabot.yml"
+    must_contain: ["version: 2", "updates:", "package-ecosystem"]
+    description: "Dependabot configuration for automated dependency scanning and updates"
+
+  - path: ".trivy.yaml"
+    must_contain: ["severity:", "exit-code:", "vuln-type:"]
+    description: "Trivy scanner configuration with severity thresholds and scan settings"
+
+  - path: ".trivyignore"
+    must_contain: ["# False positive", "# Risk accepted", "CVE-"]
+    description: "Trivy ignore file for managing false positives and accepted risks with justifications"
+
+  - path: "security/VULNERABILITY_MANAGEMENT.md"
+    must_contain: ["Prioritization", "SLA", "Remediation"]
+    description: "Vulnerability management process documentation including prioritization framework and SLAs"
+
+  - path: "security/sbom/"
+    must_contain: ["cyclonedx", "spdx"]
+    description: "SBOM storage directory for CycloneDX and SPDX formats"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: ".github/workflows/security-scan.yml"
+        must_contain: ["trivy-action", "severity: HIGH,CRITICAL", "exit-code: 1"]
+        description: "Basic security scanning workflow with Trivy for HIGH and CRITICAL vulnerabilities"
+
+      - path: "security/false-positives.md"
+        must_contain: ["CVE-", "Justification", "Review Date"]
+        description: "False positive tracking document with justifications and review dates"
+
+    intermediate:
+      - path: ".github/workflows/security-multi-stage.yml"
+        must_contain: ["secrets-scan", "sast-scan", "container-scan", "needs:"]
+        description: "Multi-stage security pipeline with secrets, SAST, and container scanning"
+
+      - path: "security/policies/vulnerability-policy.rego"
+        must_contain: ["package trivy", "deny[", "severity"]
+        description: "OPA policy for automated vulnerability enforcement using policy-as-code"
+
+      - path: ".gitleaks.toml"
+        must_contain: ["[allowlist]", "[[rules]]", "description"]
+        description: "Gitleaks configuration for secret scanning with custom rules and allowlist"
+
+      - path: "security/reports/vulnerability-dashboard.json"
+        must_contain: ["vulnerabilities", "sla_status", "remediation_progress"]
+        description: "Vulnerability dashboard data for tracking remediation progress against SLAs"
+
+    advanced:
+      - path: ".github/workflows/security-advanced.yml"
+        must_contain: ["secrets-scan", "sast-scan", "container-scan", "dast-scan", "sbom"]
+        description: "Advanced security pipeline with SAST, DAST, container scanning, SBOM generation, and EPSS integration"
+
+      - path: "security/policies/admission-control.rego"
+        must_contain: ["package kubernetes.admission", "deny[", "vulnerability"]
+        description: "Kubernetes admission controller policy for blocking vulnerable container deployments"
+
+      - path: "security/automation/remediation-workflow.yml"
+        must_contain: ["schedule:", "trivy", "pull_request", "automated"]
+        description: "Automated remediation workflow that creates PRs for fixable vulnerabilities"
+
+      - path: "security/reports/executive-summary.json"
+        must_contain: ["cvss", "epss", "kev", "priority_score", "sla_compliance"]
+        description: "Executive security report with CVSS, EPSS, KEV data, and SLA compliance metrics"
+
+      - path: "security/integrations/epss-checker.py"
+        must_contain: ["FIRST.org", "EPSS", "probability"]
+        description: "EPSS integration script for calculating exploitation probability scores"
+
+      - path: "security/integrations/kev-checker.py"
+        must_contain: ["CISA", "KEV", "catalog"]
+        description: "KEV catalog integration for identifying actively exploited vulnerabilities"
+
+  ci_cd:
+    github_actions:
+      - path: ".github/workflows/container-scan.yml"
+        must_contain: ["aquasecurity/trivy-action", "upload-sarif", "github/codeql-action"]
+        description: "GitHub Actions workflow for container scanning with SARIF upload to Security tab"
+
+      - path: ".github/workflows/sbom-generation.yml"
+        must_contain: ["trivy image", "cyclonedx", "upload-artifact"]
+        description: "GitHub Actions workflow for SBOM generation and artifact storage"
+
+    gitlab_ci:
+      - path: ".gitlab-ci.yml"
+        must_contain: ["trivy:latest", "artifacts:", "security_scan"]
+        description: "GitLab CI pipeline with Trivy scanning and artifact management"
+
+    jenkins:
+      - path: "Jenkinsfile"
+        must_contain: ["stage('Security Scan')", "trivy", "archiveArtifacts"]
+        description: "Jenkins pipeline with security scanning stages and SBOM artifact archiving"
+
+    azure_pipelines:
+      - path: "azure-pipelines.yml"
+        must_contain: ["- task: Docker", "trivy", "PublishBuildArtifacts"]
+        description: "Azure Pipelines configuration with container scanning and SBOM publishing"
+
+scaffolding:
+  - path: "security/"
+    description: "Security directory for vulnerability management artifacts, policies, and reports"
+
+  - path: "security/policies/"
+    description: "Policy-as-code directory for OPA policies and security gates"
+
+  - path: "security/reports/"
+    description: "Vulnerability reports directory for tracking scan results and metrics"
+
+  - path: "security/sbom/"
+    description: "SBOM storage directory for Software Bills of Materials (CycloneDX and SPDX)"
+
+  - path: "security/integrations/"
+    description: "Security integrations directory for EPSS, KEV, and external security tools"
+
+  - path: "security/automation/"
+    description: "Automation scripts directory for vulnerability remediation and reporting"
+
+  - path: ".github/workflows/"
+    description: "GitHub Actions workflows directory for CI/CD security pipelines"
+
+metadata:
+  primary_blueprints:
+    - "security"
+  contributes_to:
+    - "Vulnerability management"
+    - "DevSecOps workflows"
+    - "SBOM generation and compliance"
+    - "Security scanning automation"
+    - "Risk-based prioritization"
+  related_skills:
+    - "building-ci-pipelines"
+    - "secret-management"
+    - "infrastructure-as-code"
+    - "security-hardening"
+    - "compliance-frameworks"
+  key_tools:
+    - "Trivy"
+    - "Grype"
+    - "Syft"
+    - "Semgrep"
+    - "Gitleaks"
+    - "OWASP ZAP"
+    - "Dependabot"
+    - "OPA (Open Policy Agent)"
+  standards:
+    - "CycloneDX (SBOM)"
+    - "SPDX (SBOM)"
+    - "CVSS (Severity)"
+    - "EPSS (Exploitation Probability)"
+    - "CISA KEV Catalog"
+    - "SARIF (Security Analysis)"

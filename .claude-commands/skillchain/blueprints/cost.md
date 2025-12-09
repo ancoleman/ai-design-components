@@ -1289,3 +1289,571 @@ All additions will integrate with existing tagging and cost allocation infrastru
 ---
 
 **Blueprint Complete**
+
+---
+
+## Deliverables Specification
+
+This section defines concrete validation checks for blueprint promises, ensuring skills produce what users expect for FinOps/cost optimization.
+
+### Deliverables
+
+```yaml
+deliverables:
+  "Design tokens with FinOps color scheme":
+    primary_skill: theming-components
+    required_files:
+      - tokens/global/colors.json
+      - build/css/variables.css
+    content_checks:
+      - pattern: "green-600|#059669"
+        in: tokens/global/colors.json
+        description: "FinOps green color for savings/under budget"
+      - pattern: "red-500|#EF4444"
+        in: tokens/global/colors.json
+        description: "Red color for over budget/critical alerts"
+      - pattern: "--color-primary|--color-success|--color-danger"
+        in: build/css/variables.css
+        description: "CSS custom properties for cost status colors"
+    maturity_required: [starter, intermediate, advanced]
+
+  "Light and dark theme support":
+    primary_skill: theming-components
+    required_files:
+      - tokens/themes/light.json
+      - tokens/themes/dark.json
+      - build/css/variables-dark.css
+    content_checks:
+      - pattern: "color"
+        in: tokens/themes/
+        description: "Theme overrides for light and dark modes"
+    maturity_required: [starter, intermediate, advanced]
+
+  "Theme provider with system preference":
+    primary_skill: theming-components
+    required_files:
+      - examples/ThemeProvider.tsx
+    content_checks:
+      - pattern: "createContext|localStorage|prefers-color-scheme"
+        in: examples/ThemeProvider.tsx
+        description: "React theme provider with persistence and system preference detection"
+    maturity_required: [intermediate, advanced]
+
+  "Tagging policy specifications":
+    primary_skill: resource-tagging
+    required_files:
+      - policies/required-tags.yaml
+      - policies/tag-naming-convention.yaml
+      - docs/tagging-standards.md
+    content_checks:
+      - pattern: "Environment|Owner|CostCenter|Project"
+        in: policies/required-tags.yaml
+        description: "Big Six required tags defined"
+      - pattern: "case_format|PascalCase|kebab-case"
+        in: policies/tag-naming-convention.yaml
+        description: "Tag naming convention specification"
+      - pattern: "required tags|enforcement"
+        in: docs/tagging-standards.md
+        description: "Organization-wide tagging standards document"
+    maturity_required: [starter, intermediate, advanced]
+
+  "Terraform tag enforcement":
+    primary_skill: resource-tagging
+    required_files:
+      - terraform/default-tags.tf
+    content_checks:
+      - pattern: "default_tags|required"
+        in: terraform/default-tags.tf
+        description: "Provider-level default tags for required tags"
+    maturity_required: [starter, intermediate, advanced]
+
+  "Tag compliance audit automation":
+    primary_skill: resource-tagging
+    required_files:
+      - scripts/audit-tags.py
+      - reports/tag-compliance-dashboard.md
+    content_checks:
+      - pattern: "compliance check|missing tags|report"
+        in: scripts/audit-tags.py
+        description: "Automated tag compliance audit script"
+      - pattern: "compliance rate|untagged resources"
+        in: reports/tag-compliance-dashboard.md
+        description: "Tag compliance dashboard specification"
+    maturity_required: [intermediate, advanced]
+
+  "Cloud provider cost allocation tags":
+    primary_skill: resource-tagging
+    required_files:
+      - terraform/aws-cost-allocation-tags.tf
+    content_checks:
+      - pattern: "aws_ce_cost_allocation_tag|Active"
+        in: terraform/aws-cost-allocation-tags.tf
+        description: "AWS Cost Explorer cost allocation tag activation"
+    maturity_required: [intermediate, advanced]
+    cloud_provider: [aws]
+
+  "Organization-level tag policies":
+    primary_skill: resource-tagging
+    required_files:
+      - terraform/tag-policies-org.tf
+      - scripts/auto-remediate-tags.py
+    content_checks:
+      - pattern: "aws_organizations_policy|tag_policy|inheritance"
+        in: terraform/tag-policies-org.tf
+        description: "Organization-level tag policies with enforcement"
+      - pattern: "auto-fix|tag propagation"
+        in: scripts/auto-remediate-tags.py
+        description: "Automated tag remediation script"
+    maturity_required: [advanced]
+    cloud_provider: [aws]
+
+  "Cost metrics collection configuration":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/prometheus.yml
+      - observability/alerts/
+    content_checks:
+      - pattern: "scrape_configs:|job_name:"
+        in: observability/prometheus.yml
+        description: "Prometheus configuration for cost metrics scraping"
+      - pattern: "alert:|expr:|groups:"
+        in: observability/alerts/
+        description: "Cost anomaly and budget alert rules"
+    maturity_required: [intermediate, advanced]
+
+  "Grafana cost dashboards":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/grafana/dashboards/overview.json
+      - observability/grafana/datasources.yaml
+    content_checks:
+      - pattern: "dashboard|panels"
+        in: observability/grafana/dashboards/overview.json
+        description: "Cost monitoring dashboard definitions"
+      - pattern: "datasources:|prometheus"
+        in: observability/grafana/datasources.yaml
+        description: "Data source configuration for cost metrics"
+    maturity_required: [intermediate, advanced]
+
+  "LGTM stack for cost observability":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/lgtm/docker-compose.yml
+      - observability/lgtm/alloy/config.alloy
+    content_checks:
+      - pattern: "loki:|grafana:|tempo:|mimir:"
+        in: observability/lgtm/docker-compose.yml
+        description: "Complete LGTM stack configuration"
+      - pattern: "otelcol.receiver|prometheus.remote_write"
+        in: observability/lgtm/alloy/config.alloy
+        description: "Grafana Alloy collector configuration"
+    maturity_required: [intermediate, advanced]
+
+  "Budget alert monitoring":
+    primary_skill: implementing-observability
+    required_files:
+      - observability/alerts/prometheus-rules.yml
+    content_checks:
+      - pattern: "alert:|expr:|budget|threshold"
+        in: observability/alerts/prometheus-rules.yml
+        description: "Budget threshold alert rules (50%, 80%, 100%)"
+    maturity_required: [intermediate, advanced]
+
+  "FinOps dashboard layout":
+    primary_skill: creating-dashboards
+    required_files:
+      - components/DashboardGrid.tsx
+      - pages/Dashboard.tsx
+    content_checks:
+      - pattern: "Grid|Layout|Widget"
+        in: components/DashboardGrid.tsx
+        description: "Dashboard grid layout component"
+      - pattern: "KPICard|Chart|Filter"
+        in: pages/Dashboard.tsx
+        description: "Main FinOps dashboard page with widgets"
+    maturity_required: [starter, intermediate, advanced]
+
+  "KPI cards for cost metrics":
+    primary_skill: creating-dashboards
+    required_files:
+      - components/widgets/KPICard.tsx
+    content_checks:
+      - pattern: "value|trend|comparison"
+        in: components/widgets/KPICard.tsx
+        description: "KPI card with value, trend, and comparison"
+    maturity_required: [starter, intermediate, advanced]
+
+  "Cost visualization charts":
+    primary_skill: creating-dashboards
+    required_files:
+      - components/widgets/ChartWidget.tsx
+    content_checks:
+      - pattern: "AreaChart|BarChart|LineChart|loading|error"
+        in: components/widgets/ChartWidget.tsx
+        description: "Chart widget with multiple visualization types"
+    maturity_required: [intermediate, advanced]
+
+  "Cost allocation filters":
+    primary_skill: creating-dashboards
+    required_files:
+      - components/filters/FilterPanel.tsx
+      - context/DashboardContext.tsx
+    content_checks:
+      - pattern: "DateRangePicker|onChange"
+        in: components/filters/FilterPanel.tsx
+        description: "Filter panel with date range and dimension filters"
+      - pattern: "createContext|filters|setFilters"
+        in: context/DashboardContext.tsx
+        description: "Dashboard context for coordinating filters across widgets"
+    maturity_required: [intermediate, advanced]
+
+  "Real-time cost updates":
+    primary_skill: creating-dashboards
+    required_files:
+      - hooks/useSSEUpdates.ts
+    content_checks:
+      - pattern: "EventSource|useEffect"
+        in: hooks/useSSEUpdates.ts
+        description: "Server-sent events hook for real-time cost updates"
+    maturity_required: [intermediate, advanced]
+
+  "Customizable cost dashboard":
+    primary_skill: creating-dashboards
+    required_files:
+      - components/layouts/CustomizableGrid.tsx
+      - components/layouts/WidgetCatalog.tsx
+    content_checks:
+      - pattern: "react-grid-layout|onLayoutChange|localStorage"
+        in: components/layouts/CustomizableGrid.tsx
+        description: "Drag-and-drop customizable grid with persistence"
+      - pattern: "AVAILABLE_WIDGETS|addWidget|removeWidget"
+        in: components/layouts/WidgetCatalog.tsx
+        description: "Widget catalog for dashboard customization"
+    maturity_required: [advanced]
+
+  "Cost dashboard export capabilities":
+    primary_skill: creating-dashboards
+    required_files:
+      - utils/exportDashboard.ts
+    content_checks:
+      - pattern: "exportToPDF|exportToImage|exportToCSV"
+        in: utils/exportDashboard.ts
+        description: "Dashboard export utilities for multiple formats"
+    maturity_required: [advanced]
+
+  "Application entry point with theme":
+    primary_skill: assembling-components
+    required_files:
+      - src/main.tsx
+      - src/App.tsx
+    content_checks:
+      - pattern: "ThemeProvider|import.*tokens.css"
+        in: src/main.tsx
+        description: "React entry point with theme provider and token imports"
+      - pattern: "export default|function App"
+        in: src/App.tsx
+        description: "Main application component"
+    maturity_required: [starter, intermediate, advanced]
+
+  "Design token integration":
+    primary_skill: assembling-components
+    required_files:
+      - src/styles/tokens.css
+      - src/styles/globals.css
+    content_checks:
+      - pattern: "--color-primary|--spacing-|--font-size-"
+        in: src/styles/tokens.css
+        description: "Design token definitions imported from theming-components"
+      - pattern: "box-sizing: border-box"
+        in: src/styles/globals.css
+        description: "Global CSS resets and base styles"
+    maturity_required: [starter, intermediate, advanced]
+
+  "TypeScript configuration":
+    primary_skill: assembling-components
+    required_files:
+      - tsconfig.json
+      - vite.config.ts
+    content_checks:
+      - pattern: "@/\\*|baseUrl|paths"
+        in: tsconfig.json
+        description: "TypeScript path mapping for clean imports"
+      - pattern: "@vitejs/plugin-react|resolve|alias"
+        in: vite.config.ts
+        description: "Vite build configuration with path aliases"
+    maturity_required: [starter, intermediate, advanced]
+
+  "Barrel exports for components":
+    primary_skill: assembling-components
+    required_files:
+      - src/components/ui/index.ts
+      - src/components/features/dashboard/index.ts
+    content_checks:
+      - pattern: "export \\{|\\} from"
+        in: src/components/
+        description: "Barrel exports for clean component imports"
+    maturity_required: [intermediate, advanced]
+
+  "Environment configuration":
+    primary_skill: assembling-components
+    required_files:
+      - .env.example
+    content_checks:
+      - pattern: "VITE_"
+        in: .env.example
+        description: "Environment variable template for configuration"
+    maturity_required: [intermediate, advanced]
+
+  "Token validation automation":
+    primary_skill: assembling-components
+    required_files:
+      - .github/workflows/validate.yml
+    content_checks:
+      - pattern: "validate_tokens.py|python"
+        in: .github/workflows/validate.yml
+        description: "CI/CD workflow for token validation"
+    maturity_required: [advanced]
+
+  "Component testing setup":
+    primary_skill: assembling-components
+    required_files:
+      - vitest.config.ts
+    content_checks:
+      - pattern: "vitest|test"
+        in: vitest.config.ts
+        description: "Vitest configuration for component testing"
+    maturity_required: [advanced]
+```
+
+### Maturity Profiles
+
+```yaml
+maturity_profiles:
+  starter:
+    description: "Startup-focused with manual tagging, basic dashboards, local observability (Docker Compose)"
+
+    require_additionally:
+      - "Design tokens with FinOps color scheme"
+      - "Light and dark theme support"
+      - "Tagging policy specifications"
+      - "Terraform tag enforcement"
+      - "FinOps dashboard layout"
+      - "KPI cards for cost metrics"
+      - "Application entry point with theme"
+      - "Design token integration"
+      - "TypeScript configuration"
+
+    skip_deliverables:
+      - "Theme provider with system preference"
+      - "Tag compliance audit automation"
+      - "Cloud provider cost allocation tags"
+      - "Organization-level tag policies"
+      - "Cost metrics collection configuration"
+      - "Grafana cost dashboards"
+      - "LGTM stack for cost observability"
+      - "Budget alert monitoring"
+      - "Cost visualization charts"
+      - "Cost allocation filters"
+      - "Real-time cost updates"
+      - "Customizable cost dashboard"
+      - "Cost dashboard export capabilities"
+      - "Barrel exports for components"
+      - "Environment configuration"
+      - "Token validation automation"
+      - "Component testing setup"
+
+    empty_dirs_allowed:
+      - observability/kubernetes/
+      - observability/grafana/dashboards/
+      - observability/prometheus/
+      - terraform/aws-config-rules.tf
+      - scripts/auto-remediate-tags.py
+      - ci-cd/
+
+    generation_adjustments:
+      - Use Docker Compose for observability (no Kubernetes)
+      - Manual tagging guide instead of automation
+      - Static KPI cards without real-time updates
+      - Basic 3-column grid layout (not customizable)
+      - Include README with step-by-step setup
+      - Focus on single cloud provider (AWS)
+      - 6 essential KPI cards: Current spend, Budget remaining, MoM change, Forecast, Savings, Cost per unit
+
+  intermediate:
+    description: "Growth company-focused with automated tagging compliance, real-time dashboards, LGTM stack monitoring"
+
+    require_additionally:
+      - "Tag compliance audit automation"
+      - "Cloud provider cost allocation tags"
+      - "Cost metrics collection configuration"
+      - "Grafana cost dashboards"
+      - "LGTM stack for cost observability"
+      - "Budget alert monitoring"
+      - "Cost visualization charts"
+      - "Cost allocation filters"
+      - "Real-time cost updates"
+      - "Barrel exports for components"
+      - "Environment configuration"
+
+    skip_deliverables:
+      - "Organization-level tag policies"
+      - "Customizable cost dashboard"
+      - "Cost dashboard export capabilities"
+      - "Token validation automation"
+      - "Component testing setup"
+
+    empty_dirs_allowed:
+      - observability/kubernetes/
+      - tests/
+      - .github/workflows/
+
+    generation_adjustments:
+      - Include automated tag compliance scanner
+      - Activate AWS Cost Explorer cost allocation tags
+      - Deploy LGTM stack with Docker Compose
+      - Real-time updates via Server-Sent Events
+      - 7 cost allocation views (service, team, project, environment, region, account, tag)
+      - ML-based anomaly detection (medium sensitivity)
+      - Budget alerts at 50%, 80%, 100% thresholds
+      - Support multi-cloud (AWS + GCP or AWS + Azure)
+
+  advanced:
+    description: "Enterprise-focused with org-level tag policies, auto-remediation, Kubernetes deployment, full customization"
+
+    require_additionally:
+      - "Organization-level tag policies"
+      - "Customizable cost dashboard"
+      - "Cost dashboard export capabilities"
+      - "Token validation automation"
+      - "Component testing setup"
+      - "Theme provider with system preference"
+
+    skip_deliverables: []
+
+    empty_dirs_allowed:
+      - data/raw/
+      - data/processed/
+
+    generation_adjustments:
+      - Deploy to Kubernetes with Prometheus Operator
+      - Organization-level tag policies with inheritance
+      - Automated tag remediation script
+      - Drag-and-drop customizable dashboard
+      - Export to PDF/CSV/Excel
+      - CI/CD pipeline for token validation
+      - WebSocket for real-time updates (not just SSE)
+      - Multi-cloud support (AWS + GCP + Azure)
+      - Advanced anomaly detection (configurable sensitivity)
+      - Chargeback/showback reporting automation
+      - Reserved instance and Savings Plans recommendations
+      - Carbon emissions tracking integration
+```
+
+### Validation Process
+
+After all skills complete, the skillchain orchestrator validates deliverables:
+
+1. **File existence checks**: Verify all required files exist for the maturity level
+2. **Content pattern matching**: Ensure files contain expected patterns (imports, configs, code)
+3. **Skill output verification**: Confirm each skill produced its promised artifacts
+4. **Integration checks**: Verify cross-skill integration (tokens imported, components wired)
+5. **Maturity compliance**: Ensure maturity-specific requirements are met
+
+### Validation Report Format
+
+```yaml
+validation_report:
+  blueprint: "cost"
+  maturity: "intermediate"
+  cloud_provider: "aws"
+  timestamp: "2025-12-09T10:30:00Z"
+
+  summary:
+    total_deliverables: 28
+    passed: 26
+    failed: 2
+    skipped: 12
+    pass_rate: 92.9%
+
+  results:
+    - deliverable: "Tagging policy specifications"
+      status: "passed"
+      checks:
+        - file: "policies/required-tags.yaml"
+          exists: true
+          pattern_match: true
+        - file: "policies/tag-naming-convention.yaml"
+          exists: true
+          pattern_match: true
+        - file: "docs/tagging-standards.md"
+          exists: true
+          pattern_match: true
+
+    - deliverable: "Budget alert monitoring"
+      status: "failed"
+      checks:
+        - file: "observability/alerts/prometheus-rules.yml"
+          exists: true
+          pattern_match: false
+          reason: "Missing budget threshold patterns"
+      remediation: "Add budget alert rules with 50%, 80%, 100% thresholds"
+
+    - deliverable: "Customizable cost dashboard"
+      status: "skipped"
+      reason: "Not required for intermediate maturity"
+
+  recommendations:
+    - "Fix budget alert patterns in prometheus-rules.yml"
+    - "Consider upgrading to advanced maturity for dashboard customization"
+```
+
+### Cloud Provider Variations
+
+```yaml
+cloud_provider_checks:
+  aws:
+    additional_required:
+      - "terraform/aws-cost-allocation-tags.tf"
+      - "terraform/aws-config-rules.tf"
+      - "queries/aws-untagged-resources.sql"
+
+  gcp:
+    additional_required:
+      - "terraform/gcp-org-policies.tf"
+      - "bigquery/cost-by-label.sql"
+      - "queries/gcp-asset-inventory.sh"
+
+  azure:
+    additional_required:
+      - "terraform/azure-policy-tags.tf"
+      - "queries/azure-resource-graph.kql"
+      - "scripts/azure-cost-by-tag.sh"
+
+  multi_cloud:
+    additional_required:
+      - "scripts/multi-cloud-consolidator.py"
+      - "services/aggregator/multiCloudCosts.ts"
+      - "services/aggregator/normalizer.ts"
+```
+
+### Success Criteria
+
+A blueprint execution is considered successful when:
+
+1. **All required deliverables pass** (100% of non-skipped)
+2. **Content patterns match** (imports, configs, code structure)
+3. **Skills integrate correctly** (tokens imported, components wired)
+4. **Maturity requirements met** (appropriate complexity for level)
+5. **Cloud provider requirements satisfied** (provider-specific configs present)
+
+### Failure Remediation
+
+If validation fails:
+
+1. **Identify root cause**: Which skill failed to produce expected output?
+2. **Re-run failed skill**: Execute skill with debug logging enabled
+3. **Manual verification**: Inspect generated files for correctness
+4. **Update skill prompt**: If systematic issue, update skill SKILL.md
+5. **Report to user**: Provide clear remediation steps
+
+---

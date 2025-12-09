@@ -1,0 +1,197 @@
+skill: "optimizing-costs"
+version: "1.0"
+domain: "finops"
+
+base_outputs:
+  # Cost visibility and tagging
+  - path: "finops/cost_allocation_tags.yaml"
+    must_contain: ["Owner", "Project", "Environment", "CostCenter"]
+    description: "Cost allocation tagging schema for multi-cloud resources"
+
+  # Budget and alert configuration
+  - path: "finops/budget_alerts.yaml"
+    must_contain: ["threshold", "notification"]
+    description: "Budget alerts at 50%, 75%, 90%, 100% thresholds"
+
+  # Cost analysis and reporting
+  - path: "finops/cost_analysis_dashboard.yaml"
+    must_contain: ["metrics", "visualization"]
+    description: "Real-time cost dashboard configuration (Grafana/CloudWatch/native)"
+
+  # Cleanup automation
+  - path: "scripts/cleanup_idle_resources.py"
+    must_contain: ["unattached_volumes", "old_snapshots", "stopped_instances"]
+    description: "Automated cleanup script for idle cloud resources"
+
+  # Right-sizing recommendations
+  - path: "finops/rightsizing_report.md"
+    must_contain: ["utilization", "recommendation", "savings_estimate"]
+    description: "Detailed right-sizing analysis for compute, storage, and databases"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Basic visibility and quick wins
+      - path: "finops/quick_wins_checklist.md"
+        must_contain: ["idle resources", "tagging", "budget alerts"]
+        description: "Quick wins for immediate cost savings (Phase 1-3)"
+
+      - path: "scripts/generate_cost_report.py"
+        must_contain: ["export", "group_by"]
+        description: "Basic cost reporting script for weekly reviews"
+
+    intermediate:
+      # Commitment discounts and automation
+      - path: "finops/commitment_analysis.md"
+        must_contain: ["reserved_instances", "savings_plans", "coverage"]
+        description: "Reserved Instance/Savings Plan coverage and recommendation analysis"
+
+      - path: "finops/showback_report.yaml"
+        must_contain: ["team", "project", "allocation"]
+        description: "Showback/chargeback model configuration for internal cost allocation"
+
+      - path: "ci-cd/infracost_config.yaml"
+        must_contain: ["terraform", "cost_estimation"]
+        description: "Infracost CI/CD integration for infrastructure cost estimation"
+
+    advanced:
+      # Advanced FinOps automation and optimization
+      - path: "finops/unit_cost_tracking.yaml"
+        must_contain: ["cost_per_customer", "cost_per_transaction"]
+        description: "Unit cost economics tracking configuration"
+
+      - path: "finops/anomaly_detection_rules.yaml"
+        must_contain: ["threshold", "spike_detection", "alert"]
+        description: "ML-based anomaly detection for cost spikes"
+
+      - path: "finops/automated_optimization_policy.yaml"
+        must_contain: ["spot_orchestration", "auto_rightsizing"]
+        description: "Automated cost optimization policies (ML-based tools)"
+
+      - path: "finops/finops_maturity_assessment.md"
+        must_contain: ["crawl", "walk", "run"]
+        description: "Annual FinOps maturity assessment report"
+
+  cloud_provider:
+    aws:
+      # AWS-specific cost optimization
+      - path: "terraform/aws_cost_budgets.tf"
+        must_contain: ["aws_budgets_budget", "aws_sns_topic"]
+        description: "AWS Budgets and SNS notification setup"
+
+      - path: "terraform/aws_savings_plan.tf"
+        must_contain: ["aws_savingsplans_plan"]
+        description: "AWS Savings Plans configuration for compute workloads"
+
+      - path: "scripts/aws_compute_optimizer_report.py"
+        must_contain: ["boto3", "compute_optimizer"]
+        description: "AWS Compute Optimizer recommendations export"
+
+      - path: "terraform/aws_s3_lifecycle.tf"
+        must_contain: ["aws_s3_bucket_lifecycle_configuration", "intelligent_tiering"]
+        description: "S3 Intelligent-Tiering and lifecycle policies"
+
+      - path: "finops/aws_cur_export.yaml"
+        must_contain: ["cost_and_usage_report", "s3_bucket"]
+        description: "AWS Cost and Usage Report export configuration"
+
+    azure:
+      # Azure-specific cost optimization
+      - path: "terraform/azure_cost_management.tf"
+        must_contain: ["azurerm_consumption_budget", "azurerm_monitor_action_group"]
+        description: "Azure Cost Management budgets and alerts"
+
+      - path: "terraform/azure_advisor.tf"
+        must_contain: ["azurerm_advisor_recommendations"]
+        description: "Azure Advisor VM rightsizing configuration"
+
+      - path: "scripts/azure_hybrid_benefit_analysis.py"
+        must_contain: ["azure.mgmt.compute", "hybrid_benefit"]
+        description: "Azure Hybrid Benefit opportunity analysis"
+
+      - path: "terraform/azure_spot_vms.tf"
+        must_contain: ["azurerm_linux_virtual_machine", "priority", "Spot"]
+        description: "Azure Spot VM configuration for fault-tolerant workloads"
+
+      - path: "terraform/azure_storage_lifecycle.tf"
+        must_contain: ["azurerm_storage_management_policy"]
+        description: "Azure Blob Storage lifecycle management (Cool/Archive tiers)"
+
+    gcp:
+      # GCP-specific cost optimization
+      - path: "terraform/gcp_billing_budget.tf"
+        must_contain: ["google_billing_budget", "google_monitoring_notification_channel"]
+        description: "GCP billing budgets and Cloud Monitoring alerts"
+
+      - path: "terraform/gcp_committed_use_discounts.tf"
+        must_contain: ["google_compute_commitment"]
+        description: "GCP Committed Use Discounts (CUDs) configuration"
+
+      - path: "scripts/gcp_recommender_export.py"
+        must_contain: ["google.cloud.recommender", "insights"]
+        description: "GCP Recommender idle VM and rightsizing insights export"
+
+      - path: "terraform/gcp_preemptible_instances.tf"
+        must_contain: ["google_compute_instance", "scheduling", "preemptible"]
+        description: "GCP Preemptible VM configuration for batch workloads"
+
+      - path: "sql/gcp_billing_export_queries.sql"
+        must_contain: ["bigquery", "billing_export"]
+        description: "BigQuery queries for GCP billing data analysis"
+
+  # Kubernetes-specific outputs (if applicable)
+  platform:
+    kubernetes:
+      - path: "kubernetes/kubecost-deployment.yaml"
+        must_contain: ["kubecost", "namespace", "cost-analyzer"]
+        description: "Kubecost deployment for namespace-level cost visibility"
+
+      - path: "kubernetes/resource-quotas.yaml"
+        must_contain: ["ResourceQuota", "LimitRange"]
+        description: "Namespace resource quotas and limit ranges to prevent runaway costs"
+
+      - path: "kubernetes/vpa-configuration.yaml"
+        must_contain: ["VerticalPodAutoscaler", "updateMode"]
+        description: "Vertical Pod Autoscaler for automated resource request recommendations"
+
+      - path: "kubernetes/priority-classes.yaml"
+        must_contain: ["PriorityClass", "value", "globalDefault"]
+        description: "Priority classes to ensure critical pods get resources"
+
+      - path: "kubernetes/spot-node-pool.yaml"
+        must_contain: ["node_pool", "spot", "taint"]
+        description: "Spot/preemptible instance node pool configuration (70% spot + 30% on-demand)"
+
+      - path: "scripts/k8s_cost_allocation_report.py"
+        must_contain: ["kubernetes", "cost_by_namespace", "labels"]
+        description: "Kubernetes cost allocation report by team/project/environment labels"
+
+scaffolding:
+  - path: "finops/README.md"
+    reason: "Documentation of FinOps implementation, tagging strategy, and optimization roadmap"
+
+  - path: "scripts/README.md"
+    reason: "Instructions for running cost analysis and cleanup scripts"
+
+  - path: "dashboards/README.md"
+    reason: "Documentation for cost dashboards and visualization setup"
+
+  - path: "terraform/.terraform-version"
+    reason: "Terraform version pinning for reproducible IaC deployments"
+
+  - path: "finops/cost_optimization_roadmap.md"
+    reason: "6-phase implementation roadmap with weekly/monthly milestones"
+
+metadata:
+  primary_blueprints: ["cost"]
+  contributes_to:
+    - "Cost visibility dashboards and real-time monitoring"
+    - "Budget alerts with cascading notifications (50%, 75%, 90%, 100%)"
+    - "Commitment-based discounts (Reserved Instances, Savings Plans, CUDs)"
+    - "Right-sizing recommendations for compute, storage, and databases"
+    - "Kubernetes cost optimization (Kubecost, VPA, resource quotas)"
+    - "Automated idle resource cleanup and governance"
+    - "Showback/chargeback models for internal cost allocation"
+    - "CI/CD cost estimation with Infracost"
+    - "Spot/preemptible instance orchestration for fault-tolerant workloads"
+    - "Multi-cloud cost aggregation and anomaly detection"

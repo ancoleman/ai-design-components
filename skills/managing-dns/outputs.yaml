@@ -1,0 +1,255 @@
+skill: "managing-dns"
+version: "1.0"
+domain: "infrastructure"
+
+base_outputs:
+  - path: "dns-records.tf"
+    must_contain:
+      - "resource \"aws_route53_record\""
+      - "zone_id"
+      - "type"
+    description: "DNS record definitions (IaC format - Terraform, Pulumi, or CDK)"
+
+  - path: "dns-config.yaml"
+    must_contain:
+      - "providers:"
+      - "zones:"
+    description: "DNS-as-code configuration (OctoDNS or DNSControl format)"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "dns-records.yaml"
+        must_contain:
+          - "type: A"
+          - "ttl:"
+        description: "Simple DNS record definitions in YAML format"
+
+      - path: "README.md"
+        must_contain:
+          - "DNS Configuration"
+          - "Record Types"
+        description: "Documentation for DNS setup and record management"
+
+    intermediate:
+      - path: "external-dns-values.yaml"
+        must_contain:
+          - "provider:"
+          - "domainFilters:"
+          - "policy:"
+        description: "External-DNS Helm values for Kubernetes DNS automation"
+
+      - path: "octodns-config.yaml"
+        must_contain:
+          - "providers:"
+          - "zones:"
+          - "targets:"
+        description: "OctoDNS configuration for multi-provider DNS management"
+
+      - path: "zone-records.yaml"
+        must_contain:
+          - "ttl:"
+        description: "DNS zone records in OctoDNS YAML format"
+
+    advanced:
+      - path: "dns-failover.tf"
+        must_contain:
+          - "aws_route53_health_check"
+          - "failover_routing_policy"
+          - "health_check_id"
+        description: "DNS-based failover configuration with health checks"
+
+      - path: "geodns-routing.tf"
+        must_contain:
+          - "geolocation_routing_policy"
+          - "location"
+        description: "Geographic DNS routing for multi-region deployments"
+
+      - path: "weighted-routing.tf"
+        must_contain:
+          - "weighted_routing_policy"
+          - "weight"
+        description: "Weighted DNS routing for canary/blue-green deployments"
+
+  cloud_provider:
+    aws:
+      - path: "route53.tf"
+        must_contain:
+          - "aws_route53_zone"
+          - "aws_route53_record"
+        description: "AWS Route53 DNS configuration"
+
+      - path: "route53-health-checks.tf"
+        must_contain:
+          - "aws_route53_health_check"
+        description: "Route53 health checks for failover"
+
+    gcp:
+      - path: "cloud-dns.tf"
+        must_contain:
+          - "google_dns_managed_zone"
+          - "google_dns_record_set"
+        description: "GCP Cloud DNS configuration"
+
+      - path: "cloud-dns-dnssec.tf"
+        must_contain:
+          - "dnssec_config"
+        description: "Cloud DNS with DNSSEC enabled"
+
+    azure:
+      - path: "azure-dns.tf"
+        must_contain:
+          - "azurerm_dns_zone"
+          - "azurerm_dns_a_record"
+        description: "Azure DNS zone configuration"
+
+      - path: "azure-private-dns.tf"
+        must_contain:
+          - "azurerm_private_dns_zone"
+        description: "Azure Private DNS for internal resolution"
+
+    cloudflare:
+      - path: "cloudflare-dns.tf"
+        must_contain:
+          - "cloudflare_zone"
+          - "cloudflare_record"
+        description: "Cloudflare DNS configuration"
+
+      - path: "cloudflare-proxied.tf"
+        must_contain:
+          - "proxied = true"
+        description: "Cloudflare DNS with CDN proxy enabled"
+
+  iac_tool:
+    terraform:
+      - path: "dns.tf"
+        must_contain:
+          - "resource"
+          - "zone_id"
+        description: "Terraform DNS resource definitions"
+
+      - path: "variables.tf"
+        must_contain:
+          - "variable \"domain_name\""
+          - "variable \"ttl\""
+        description: "Variables for DNS configuration"
+
+      - path: "outputs.tf"
+        must_contain:
+          - "output \"nameservers\""
+        description: "DNS outputs (nameservers, zone IDs)"
+
+    pulumi:
+      - path: "dns.py"
+        must_contain:
+          - "import pulumi"
+          - "ManagedZone"
+        description: "Pulumi DNS resource definitions (Python)"
+
+      - path: "__main__.py"
+        must_contain:
+          - "pulumi.export"
+        description: "Pulumi program entry point with DNS exports"
+
+    cdk:
+      - path: "dns-stack.ts"
+        must_contain:
+          - "import * as route53"
+          - "new route53.HostedZone"
+        description: "AWS CDK DNS stack definition"
+
+    ansible:
+      - path: "dns-playbook.yaml"
+        must_contain:
+          - "community.dns"
+        description: "Ansible playbook for DNS management"
+
+infrastructure:
+  kubernetes:
+    - path: "external-dns-deployment.yaml"
+      must_contain:
+        - "kind: Deployment"
+        - "external-dns"
+        - "--provider="
+      description: "External-DNS Kubernetes deployment manifest"
+
+    - path: "service-with-dns.yaml"
+      must_contain:
+        - "kind: Service"
+        - "external-dns.alpha.kubernetes.io/hostname"
+      description: "Kubernetes Service with external-dns annotations"
+
+    - path: "ingress-with-dns.yaml"
+      must_contain:
+        - "kind: Ingress"
+        - "external-dns.alpha.kubernetes.io/hostname"
+      description: "Kubernetes Ingress with external-dns annotations"
+
+  docker:
+    - path: "octodns-dockerfile"
+      must_contain:
+        - "FROM python"
+        - "octodns"
+      description: "Dockerfile for running OctoDNS"
+
+scaffolding:
+  - path: "scripts/check-dns-propagation.sh"
+    reason: "Utility script to verify DNS propagation across multiple resolvers"
+
+  - path: "scripts/calculate-ttl-propagation.py"
+    reason: "Calculate DNS propagation time based on TTL values"
+
+  - path: "scripts/validate-dns-config.py"
+    reason: "Validate DNS configuration files before applying"
+
+  - path: "scripts/export-dns-records.sh"
+    reason: "Export existing DNS records from provider for migration"
+
+  - path: ".github/workflows/dns-sync.yaml"
+    reason: "CI/CD workflow for automated DNS synchronization"
+
+  - path: "dns-records/"
+    reason: "Directory structure for organizing DNS record definitions by zone"
+
+  - path: "config/"
+    reason: "Configuration directory for OctoDNS zone files"
+
+metadata:
+  primary_blueprints:
+    - "cloud"
+    - "infrastructure"
+
+  contributes_to:
+    - "DNS configuration and record management"
+    - "Domain resolution automation"
+    - "DNS-based load balancing and failover"
+    - "Kubernetes DNS automation with external-dns"
+    - "Multi-provider DNS synchronization"
+    - "GeoDNS and geographic routing"
+    - "DNS health checks and monitoring"
+    - "TTL optimization and propagation strategy"
+    - "DNS-as-code implementation"
+    - "DNSSEC and security hardening"
+
+  output_patterns:
+    - "DNS provider-specific configurations (Route53, Cloud DNS, Azure DNS, Cloudflare)"
+    - "Infrastructure-as-code for DNS (Terraform, Pulumi, CDK, Ansible)"
+    - "DNS automation tools (external-dns, OctoDNS, DNSControl)"
+    - "Health checks and failover configurations"
+    - "Load balancing patterns (GeoDNS, weighted, latency-based)"
+    - "Validation and troubleshooting scripts"
+    - "Multi-zone and multi-provider setups"
+
+  related_skills:
+    - "infrastructure-as-code"
+    - "kubernetes-operations"
+    - "load-balancing-patterns"
+    - "security-hardening"
+    - "secret-management"
+    - "monitoring-observability"
+
+  common_combinations:
+    - "infrastructure-as-code + managing-dns: DNS in Terraform/Pulumi alongside other resources"
+    - "kubernetes-operations + managing-dns: Automated DNS for K8s workloads with external-dns"
+    - "load-balancing-patterns + managing-dns: DNS-based load balancing and failover"
+    - "security-hardening + managing-dns: DNSSEC, CAA records, DDoS protection"

@@ -1,0 +1,265 @@
+skill: "managing-git-workflows"
+version: "1.0"
+domain: "developer"
+
+base_outputs:
+  # Git hooks configuration
+  - path: ".husky/pre-commit"
+    must_contain: ["lint-staged", "#!/usr/bin/env sh"]
+
+  - path: ".husky/commit-msg"
+    must_contain: ["commitlint", "--edit"]
+
+  - path: ".husky/pre-push"
+    must_contain: ["npm test", "branch"]
+
+  # Commit message validation
+  - path: "commitlint.config.js"
+    must_contain: ["@commitlint/config-conventional", "type-enum"]
+
+  # Code formatting and linting
+  - path: ".prettierrc"
+    must_contain: ["singleQuote", "printWidth"]
+
+  - path: ".eslintrc.js"
+    must_contain: ["extends", "rules"]
+
+  - path: "package.json"
+    must_contain: ["lint-staged", "husky", "prepare"]
+
+  # Pull request templates
+  - path: ".github/PULL_REQUEST_TEMPLATE.md"
+    must_contain: ["## Description", "## Type of Change", "## Checklist"]
+
+  # Basic gitignore
+  - path: ".gitignore"
+    must_contain: ["node_modules", ".env"]
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Minimal setup for small teams
+      - path: ".github/CODEOWNERS"
+        must_contain: ["* @"]
+
+      - path: ".github/workflows/pr-checks.yml"
+        must_contain: ["pull_request", "build", "test"]
+
+    intermediate:
+      # Enhanced setup with multiple templates
+      - path: ".github/PULL_REQUEST_TEMPLATE/feature.md"
+        must_contain: ["## Feature Description", "## Testing", "## Documentation"]
+
+      - path: ".github/PULL_REQUEST_TEMPLATE/bugfix.md"
+        must_contain: ["## Bug Description", "## Root Cause", "## Solution"]
+
+      - path: ".github/labeler.yml"
+        must_contain: ["frontend", "backend", "documentation"]
+
+      - path: ".github/workflows/pr-validation.yml"
+        must_contain: ["validate-pr-title", "check-pr-size", "label-pr"]
+
+      # Monorepo setup
+      - path: "nx.json"
+        must_contain: ["targetDefaults", "affected"]
+
+      - path: ".github/CODEOWNERS"
+        must_contain: ["/apps/", "/libs/", "@org/"]
+
+    advanced:
+      # Full enterprise setup with automated releases
+      - path: ".releaserc.json"
+        must_contain: ["@semantic-release", "branches", "plugins"]
+
+      - path: ".github/workflows/release.yml"
+        must_contain: ["semantic-release", "GITHUB_TOKEN", "npm publish"]
+
+      - path: ".github/workflows/require-issue.yml"
+        must_contain: ["issue reference", "Closes", "Fixes"]
+
+      - path: ".github/workflows/pr-size.yml"
+        must_contain: ["pr-size-labeler", "size/"]
+
+      # Advanced branch protection (documented in README/CONTRIBUTING)
+      - path: "CONTRIBUTING.md"
+        must_contain: ["branch protection", "code review", "conventional commits"]
+
+      # Git LFS configuration
+      - path: ".gitattributes"
+        must_contain: ["filter=lfs", "diff=lfs"]
+
+      # Turborepo/Nx advanced config
+      - path: "turbo.json"
+        must_contain: ["pipeline", "cache", "dependsOn"]
+
+  ci_cd:
+    github_actions:
+      - path: ".github/workflows/pr-checks.yml"
+        must_contain: ["pull_request", "branches", "jobs"]
+
+      - path: ".github/workflows/pr-validation.yml"
+        must_contain: ["validate-pr-title", "amannn/action-semantic-pull-request"]
+
+    gitlab_ci:
+      - path: ".gitlab-ci.yml"
+        must_contain: ["stages", "test", "merge_request"]
+
+      - path: ".gitlab/merge_request_templates/Default.md"
+        must_contain: ["## Description", "## Changes"]
+
+    jenkins:
+      - path: "Jenkinsfile"
+        must_contain: ["pipeline", "stage", "git"]
+
+      - path: ".github/PULL_REQUEST_TEMPLATE.md"
+        must_contain: ["## Description", "## Checklist"]
+
+scaffolding:
+  # Directory structure for GitHub workflows
+  - ".github/"
+  - ".github/workflows/"
+  - ".github/PULL_REQUEST_TEMPLATE/"
+  - ".husky/"
+
+  # Common documentation structure
+  - "docs/"
+
+  # Monorepo structure (if applicable)
+  - "apps/"
+  - "libs/"
+  - "packages/"
+
+metadata:
+  primary_blueprints: ["ci-cd"]
+  secondary_blueprints: ["security", "developer-productivity"]
+  contributes_to:
+    - "Git workflow automation"
+    - "Code quality gates"
+    - "Pull request workflows"
+    - "Automated versioning"
+    - "Monorepo management"
+    - "Branch protection"
+    - "Code review processes"
+
+  common_file_patterns:
+    git_hooks:
+      - ".husky/*"
+      - ".git/hooks/*"
+
+    github:
+      - ".github/PULL_REQUEST_TEMPLATE.md"
+      - ".github/PULL_REQUEST_TEMPLATE/*.md"
+      - ".github/CODEOWNERS"
+      - ".github/workflows/*.yml"
+      - ".github/labeler.yml"
+
+    commit_validation:
+      - "commitlint.config.js"
+      - ".commitlintrc.json"
+
+    code_quality:
+      - ".eslintrc.js"
+      - ".eslintrc.json"
+      - ".prettierrc"
+      - ".prettierrc.json"
+      - ".editorconfig"
+
+    monorepo:
+      - "nx.json"
+      - "workspace.json"
+      - "turbo.json"
+      - "lerna.json"
+
+    release:
+      - ".releaserc.json"
+      - ".releaserc.js"
+      - "release.config.js"
+
+    git_config:
+      - ".gitignore"
+      - ".gitattributes"
+      - ".git-blame-ignore-revs"
+
+  integration_points:
+    building_ci_pipelines:
+      description: "Git workflows trigger CI/CD pipelines, branch protection enforces CI checks"
+      shared_files: [".github/workflows/pr-checks.yml", ".github/workflows/release.yml"]
+
+    writing_github_actions:
+      description: "GitHub Actions automate workflow steps (releases, PR checks)"
+      shared_files: [".github/workflows/*.yml"]
+
+    infrastructure_as_code:
+      description: "IaC repos need structured workflows, GitOps uses Git as source of truth"
+      shared_files: [".github/CODEOWNERS", ".github/workflows/deploy.yml"]
+
+    testing_strategies:
+      description: "Git hooks enforce test requirements, pre-push runs test suites"
+      shared_files: [".husky/pre-push", ".husky/pre-commit"]
+
+    security_hardening:
+      description: "Git hooks prevent secrets, signed commits verify identity, CODEOWNERS enforce security reviews"
+      shared_files: [".github/CODEOWNERS", ".husky/pre-commit"]
+
+  tool_ecosystem:
+    git_hooks:
+      - name: "Husky"
+        purpose: "Simplify Git hooks management"
+        config_files: [".husky/*", "package.json"]
+
+      - name: "lint-staged"
+        purpose: "Run linters only on staged files"
+        config_files: ["package.json", ".lintstagedrc.json"]
+
+    commit_validation:
+      - name: "Commitlint"
+        purpose: "Enforce conventional commits"
+        config_files: ["commitlint.config.js", ".commitlintrc.json"]
+
+      - name: "Semantic Release"
+        purpose: "Automated versioning and releases"
+        config_files: [".releaserc.json", "release.config.js"]
+
+    monorepo_tools:
+      - name: "Nx"
+        purpose: "TypeScript/JavaScript monorepo build system"
+        config_files: ["nx.json", "workspace.json"]
+
+      - name: "Turborepo"
+        purpose: "Next.js/React monorepo build system"
+        config_files: ["turbo.json"]
+
+    large_files:
+      - name: "Git LFS"
+        purpose: "Store large binary files"
+        config_files: [".gitattributes"]
+
+  branching_strategies:
+    trunk_based:
+      description: "High-velocity teams with strong CI/CD, feature flags, <1 day branches"
+      files: [".github/workflows/deploy.yml", ".husky/pre-push"]
+      maturity: "advanced"
+
+    github_flow:
+      description: "Web apps with continuous deployment, main = production"
+      files: [".github/PULL_REQUEST_TEMPLATE.md", ".github/workflows/pr-checks.yml"]
+      maturity: "starter"
+
+    gitflow:
+      description: "Multiple production versions, formal QA cycles, scheduled releases"
+      files: [".github/workflows/release.yml", "CONTRIBUTING.md"]
+      maturity: "intermediate"
+
+validation:
+  required_sections:
+    - "base_outputs"
+    - "conditional_outputs"
+    - "metadata"
+
+  file_path_format: "unix"  # Forward slashes only
+
+  must_document:
+    - "Branching strategy choice rationale"
+    - "Commit message conventions"
+    - "Code review requirements"
+    - "Merge strategies"

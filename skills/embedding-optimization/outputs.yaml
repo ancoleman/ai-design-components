@@ -1,0 +1,164 @@
+skill: "embedding-optimization"
+version: "1.0"
+domain: "ai-ml"
+
+base_outputs:
+  # Core embedding implementation - always produced
+  - path: "src/embeddings/embedder.py"
+    must_contain: ["embed", "batch", "cache"]
+    description: "Core embedding generation implementation with caching support"
+
+  - path: "src/embeddings/chunker.py"
+    must_contain: ["chunk", "split", "overlap"]
+    description: "Content-aware document chunking implementation"
+
+  - path: "src/embeddings/config.py"
+    must_contain: ["model", "chunk_size", "dimensions"]
+    description: "Embedding configuration and model selection"
+
+  # Cache implementation
+  - path: "src/embeddings/cache.py"
+    must_contain: ["cache", "hash", "get", "set"]
+    description: "Content-addressable caching layer (Redis/in-memory)"
+
+  # Performance monitoring
+  - path: "src/embeddings/monitor.py"
+    must_contain: ["metrics", "latency", "cost", "throughput"]
+    description: "Performance and cost monitoring for embedding operations"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Minimal implementation - local models, in-memory cache
+      - path: "src/embeddings/local_embedder.py"
+        must_contain: ["sentence-transformers", "local", "gpu"]
+        description: "Local embedding model (sentence-transformers) for zero API costs"
+
+      - path: "src/embeddings/simple_cache.py"
+        must_contain: ["lru_cache", "memory"]
+        description: "Simple in-memory LRU cache for low-volume applications"
+
+      - path: "requirements.txt"
+        must_contain: ["sentence-transformers", "torch"]
+        description: "Python dependencies for local embedding setup"
+
+    intermediate:
+      # Production-ready with API + Redis
+      - path: "src/embeddings/api_embedder.py"
+        must_contain: ["openai", "api_key", "text-embedding"]
+        description: "OpenAI API embedder with rate limiting and retry logic"
+
+      - path: "src/embeddings/redis_cache.py"
+        must_contain: ["redis", "ttl", "expire"]
+        description: "Redis-based caching for production workloads"
+
+      - path: "src/embeddings/batch_processor.py"
+        must_contain: ["batch", "parallel", "rate_limit"]
+        description: "Batch processing with rate limiting and parallel execution"
+
+      - path: "docker-compose.yml"
+        must_contain: ["redis", "6379"]
+        description: "Docker Compose setup with Redis cache"
+
+      - path: ".env.example"
+        must_contain: ["OPENAI_API_KEY", "REDIS_HOST"]
+        description: "Environment configuration template"
+
+    advanced:
+      # Multi-tier caching, monitoring, optimization
+      - path: "src/embeddings/multi_tier_cache.py"
+        must_contain: ["redis", "postgresql", "warm", "hot"]
+        description: "Multi-tier cache (Redis hot + PostgreSQL warm) for high volume"
+
+      - path: "src/embeddings/adaptive_chunker.py"
+        must_contain: ["content_type", "recursive", "semantic"]
+        description: "Adaptive chunking with content-type detection and semantic boundaries"
+
+      - path: "src/embeddings/cost_optimizer.py"
+        must_contain: ["cost", "dimensions", "rerank", "multi-stage"]
+        description: "Multi-stage retrieval for 70% cost reduction"
+
+      - path: "src/embeddings/benchmark.py"
+        must_contain: ["benchmark", "quality", "latency", "compare"]
+        description: "Embedding model benchmarking and comparison tool"
+
+      - path: "monitoring/grafana_dashboard.json"
+        must_contain: ["cache_hit_rate", "latency", "cost"]
+        description: "Grafana dashboard for embedding performance metrics"
+
+      - path: "scripts/migrate_embeddings.py"
+        must_contain: ["migrate", "vector", "batch"]
+        description: "Batch migration script for re-embedding with new models"
+
+  model_type:
+    local:
+      - path: "src/embeddings/local_embedder.py"
+        must_contain: ["sentence-transformers", "device", "gpu"]
+        description: "Local embedding using sentence-transformers (MiniLM, BGE, E5)"
+
+      - path: "scripts/download_models.py"
+        must_contain: ["download", "model", "cache_dir"]
+        description: "Script to download and cache local embedding models"
+
+    api:
+      - path: "src/embeddings/api_embedder.py"
+        must_contain: ["openai", "cohere", "api_key"]
+        description: "API-based embedding (OpenAI, Cohere, Voyage AI)"
+
+      - path: "src/embeddings/rate_limiter.py"
+        must_contain: ["rate_limit", "retry", "backoff"]
+        description: "Rate limiting and retry logic for API calls"
+
+scaffolding:
+  - path: "src/embeddings/__init__.py"
+    reason: "Python package initialization"
+
+  - path: "tests/test_embedder.py"
+    reason: "Unit tests for embedding generation"
+
+  - path: "tests/test_chunker.py"
+    reason: "Unit tests for chunking strategies"
+
+  - path: "tests/test_cache.py"
+    reason: "Unit tests for caching layer"
+
+  - path: "README.md"
+    reason: "Documentation with setup and usage instructions"
+
+  - path: ".gitignore"
+    reason: "Ignore cache files, models, and credentials"
+
+metadata:
+  primary_blueprints: ["rag-pipeline"]
+  contributes_to:
+    - "Embedding generation"
+    - "Vector optimization"
+    - "Semantic search"
+    - "Document chunking"
+    - "Cost optimization"
+    - "Performance monitoring"
+
+  typical_file_patterns:
+    - "src/embeddings/*.py"
+    - "tests/test_*.py"
+    - "scripts/*.py"
+    - "monitoring/*.json"
+    - "docker-compose.yml"
+    - ".env.example"
+
+  integration_points:
+    upstream:
+      - "Vector databases (Pinecone, Weaviate, Qdrant, pgvector)"
+      - "RAG retrieval systems"
+      - "Semantic search engines"
+
+    downstream:
+      - "Document processing pipelines"
+      - "Data ingestion systems"
+
+  key_metrics:
+    - "Embedding latency (p50, p95, p99)"
+    - "Cache hit rate percentage"
+    - "Cost per 1K/1M tokens"
+    - "Throughput (embeddings/second)"
+    - "Storage size (GB per 1M vectors)"

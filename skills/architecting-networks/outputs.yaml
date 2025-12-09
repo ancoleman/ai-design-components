@@ -1,0 +1,187 @@
+skill: "architecting-networks"
+version: "1.0"
+domain: "infrastructure"
+
+base_outputs:
+  # Network architecture design document
+  - path: "docs/network-architecture.md"
+    must_contain: ["VPC", "subnet", "CIDR"]
+    description: "Network architecture design document describing VPC topology, subnet strategy, and connectivity patterns"
+
+  # CIDR block planning
+  - path: "docs/cidr-plan.md"
+    must_contain: ["CIDR", "subnet", "IP"]
+    description: "CIDR block allocation plan showing IP addressing scheme and subnet distribution"
+
+  # Security group architecture
+  - path: "docs/security-groups.md"
+    must_contain: ["security group", "ingress", "egress"]
+    description: "Security group design showing service-to-service access patterns"
+
+conditional_outputs:
+  maturity:
+    starter:
+      # Single VPC flat architecture
+      - path: "infrastructure/network/vpc.tf"
+        must_contain: ["resource \"aws_vpc\"", "public_subnet", "private_subnet"]
+        description: "Basic flat VPC with public/private subnet tiers"
+
+      - path: "infrastructure/network/security-groups.tf"
+        must_contain: ["resource \"aws_security_group\""]
+        description: "Basic security group definitions"
+
+    intermediate:
+      # Multi-VPC or hub-spoke architecture
+      - path: "infrastructure/network/vpc-*.tf"
+        description: "Multiple VPC configurations (e.g., vpc-prod.tf, vpc-dev.tf)"
+
+      - path: "infrastructure/network/peering.tf"
+        must_contain: ["aws_vpc_peering_connection|google_compute_network_peering|azurerm_virtual_network_peering"]
+        description: "VPC peering or Transit Gateway configuration"
+
+      - path: "infrastructure/network/nat-gateway.tf"
+        must_contain: ["nat_gateway|nat", "elastic_ip"]
+        description: "NAT Gateway configuration for outbound connectivity"
+
+      - path: "infrastructure/network/flow-logs.tf"
+        must_contain: ["flow_log"]
+        description: "VPC Flow Logs configuration for observability"
+
+    advanced:
+      # Hub-spoke with Transit Gateway
+      - path: "infrastructure/network/transit-gateway.tf"
+        must_contain: ["transit_gateway|cloud_router|virtual_wan"]
+        description: "Transit Gateway/Cloud Router/Virtual WAN configuration"
+
+      - path: "infrastructure/network/transit-gateway-attachments.tf"
+        must_contain: ["attachment"]
+        description: "Transit Gateway attachments to VPCs"
+
+      - path: "infrastructure/network/hybrid-connectivity.tf"
+        must_contain: ["vpn|direct_connect|interconnect|expressroute"]
+        description: "Hybrid connectivity (VPN or Direct Connect/Interconnect/ExpressRoute)"
+
+      - path: "infrastructure/network/private-endpoints.tf"
+        must_contain: ["endpoint|privatelink"]
+        description: "VPC Endpoints/PrivateLink for AWS services"
+
+      - path: "infrastructure/network/network-firewall.tf"
+        description: "Network firewall or inspection VPC configuration"
+
+      - path: "docs/zero-trust-design.md"
+        must_contain: ["zero trust", "microsegmentation"]
+        description: "Zero trust network architecture design"
+
+      - path: "docs/disaster-recovery-network.md"
+        must_contain: ["failover", "multi-region"]
+        description: "Multi-region network failover plan"
+
+  cloud_provider:
+    aws:
+      - path: "infrastructure/network/vpc.tf"
+        must_contain: ["resource \"aws_vpc\"", "aws_subnet"]
+        description: "AWS VPC configuration"
+
+      - path: "infrastructure/network/security-groups.tf"
+        must_contain: ["resource \"aws_security_group\""]
+        description: "AWS security groups"
+
+      - path: "infrastructure/network/route-tables.tf"
+        must_contain: ["aws_route_table"]
+        description: "AWS route table configuration"
+
+      - path: "infrastructure/network/internet-gateway.tf"
+        must_contain: ["aws_internet_gateway"]
+        description: "AWS Internet Gateway configuration"
+
+    gcp:
+      - path: "infrastructure/network/vpc.tf"
+        must_contain: ["resource \"google_compute_network\"", "google_compute_subnetwork"]
+        description: "GCP VPC configuration (custom mode)"
+
+      - path: "infrastructure/network/firewall-rules.tf"
+        must_contain: ["google_compute_firewall"]
+        description: "GCP firewall rules"
+
+      - path: "infrastructure/network/cloud-nat.tf"
+        must_contain: ["google_compute_router_nat"]
+        description: "GCP Cloud NAT configuration"
+
+    azure:
+      - path: "infrastructure/network/vnet.tf"
+        must_contain: ["resource \"azurerm_virtual_network\"", "azurerm_subnet"]
+        description: "Azure Virtual Network configuration"
+
+      - path: "infrastructure/network/nsg.tf"
+        must_contain: ["azurerm_network_security_group"]
+        description: "Azure Network Security Groups"
+
+      - path: "infrastructure/network/nat-gateway.tf"
+        must_contain: ["azurerm_nat_gateway"]
+        description: "Azure NAT Gateway configuration"
+
+  iac_tool:
+    terraform:
+      - path: "infrastructure/network/main.tf"
+        must_contain: ["terraform", "provider"]
+        description: "Terraform configuration with provider setup"
+
+      - path: "infrastructure/network/variables.tf"
+        must_contain: ["variable"]
+        description: "Terraform variables for network configuration"
+
+      - path: "infrastructure/network/outputs.tf"
+        must_contain: ["output"]
+        description: "Terraform outputs exposing network IDs and values"
+
+      - path: "infrastructure/network/versions.tf"
+        must_contain: ["required_version", "required_providers"]
+        description: "Terraform version constraints"
+
+    pulumi:
+      - path: "infrastructure/network/__main__.py"
+        must_contain: ["import pulumi", "vpc|network"]
+        description: "Pulumi network stack (Python)"
+
+      - path: "infrastructure/network/Pulumi.yaml"
+        must_contain: ["name:", "runtime:"]
+        description: "Pulumi project configuration"
+
+      - path: "infrastructure/network/requirements.txt"
+        must_contain: ["pulumi"]
+        description: "Python dependencies for Pulumi"
+
+    cloudformation:
+      - path: "infrastructure/network/vpc.yaml"
+        must_contain: ["Resources:", "AWS::EC2::VPC"]
+        description: "CloudFormation VPC template"
+
+      - path: "infrastructure/network/parameters.yaml"
+        must_contain: ["Parameters:"]
+        description: "CloudFormation parameters file"
+
+scaffolding:
+  - path: "infrastructure/network/"
+    reason: "Directory for network infrastructure code (should contain VPC/VNet definitions)"
+
+  - path: "docs/diagrams/"
+    reason: "Directory for network architecture diagrams (can be generated with tools like draw.io or Lucidchart)"
+
+  - path: "scripts/network-validation/"
+    reason: "Directory for network testing and validation scripts"
+
+metadata:
+  primary_blueprints: ["cloud", "infrastructure", "k8s"]
+  contributes_to:
+    - "Network architecture design"
+    - "VPC/VNet topology and configuration"
+    - "Subnet planning and CIDR allocation"
+    - "Security group and firewall rule definitions"
+    - "NAT Gateway configuration"
+    - "VPC peering and Transit Gateway setup"
+    - "Hybrid connectivity (VPN, Direct Connect)"
+    - "Network observability (Flow Logs)"
+    - "Zero trust network implementation"
+    - "Multi-region network failover"
+    - "Private endpoints and PrivateLink"
+    - "Cost-optimized network architecture"

@@ -1,0 +1,271 @@
+skill: "providing-feedback"
+version: "1.0"
+domain: "frontend"
+
+base_outputs:
+  - path: "components/Toast.tsx"
+    must_contain: ["toast", "notification", "Toaster"]
+    description: "Toast notification component using Sonner or react-hot-toast with positioning and timing"
+
+  - path: "components/Modal.tsx"
+    must_contain: ["Dialog", "modal", "aria-modal"]
+    description: "Modal dialog component with focus management and accessibility using Radix UI or Headless UI"
+
+  - path: "components/Alert.tsx"
+    must_contain: ["alert", "role=\"alert\"", "aria-live"]
+    description: "Alert banner component for important non-blocking messages with ARIA live regions"
+
+conditional_outputs:
+  maturity:
+    starter:
+      - path: "components/Toast.tsx"
+        must_contain: ["toast.success", "toast.error"]
+        description: "Basic toast notifications with success/error states"
+
+      - path: "components/ConfirmDialog.tsx"
+        must_contain: ["Dialog", "confirm", "cancel"]
+        description: "Simple confirmation dialog for delete actions"
+
+      - path: "components/LoadingSpinner.tsx"
+        must_contain: ["spinner", "loading", "aria-busy"]
+        description: "Basic loading spinner with accessibility"
+
+    intermediate:
+      - path: "components/Toast.tsx"
+        must_contain: ["toast.promise", "action", "undo"]
+        description: "Advanced toast with promise handling, actions, and undo functionality"
+
+      - path: "components/Modal.tsx"
+        must_contain: ["focus trap", "previousFocus", "ESC"]
+        description: "Modal with complete focus management and keyboard interactions"
+
+      - path: "components/ProgressBar.tsx"
+        must_contain: ["progress", "aria-valuenow", "percentage"]
+        description: "Determinate progress bar for operations 5-30 seconds"
+
+      - path: "components/EmptyState.tsx"
+        must_contain: ["illustration", "CTA", "empty"]
+        description: "Empty state component with illustration and call-to-action"
+
+      - path: "components/InlineMessage.tsx"
+        must_contain: ["inline", "contextual", "help"]
+        description: "Inline contextual messages for form validation and help"
+
+    advanced:
+      - path: "components/ToastManager.tsx"
+        must_contain: ["stack", "limit", "position", "queue"]
+        description: "Toast management system with stacking, limits, and queuing"
+
+      - path: "components/Modal.tsx"
+        must_contain: ["portal", "backdrop", "nested modals", "focus scope"]
+        description: "Advanced modal with portal rendering, backdrop control, and nested modal support"
+
+      - path: "components/ProgressIndicator.tsx"
+        must_contain: ["determinate", "indeterminate", "time estimate", "cancel"]
+        description: "Intelligent progress indicator with auto-selection based on operation duration"
+
+      - path: "components/SkeletonScreen.tsx"
+        must_contain: ["skeleton", "shimmer", "placeholder"]
+        description: "Skeleton screens for content loading states"
+
+      - path: "hooks/useToast.ts"
+        must_contain: ["hook", "context", "provider"]
+        description: "Custom toast hook with context for app-wide notifications"
+
+      - path: "utils/messageFormatter.ts"
+        must_contain: ["format", "template", "error catalog"]
+        description: "Message formatting utilities with templates and error catalogs"
+
+  frontend_framework:
+    react:
+      - path: "components/Toast.tsx"
+        must_contain: ["import { toast } from 'sonner'", "Toaster"]
+        description: "React toast implementation using Sonner"
+
+      - path: "components/Modal.tsx"
+        must_contain: ["import * as Dialog from '@radix-ui/react-dialog'", "Dialog.Root"]
+        description: "React modal using Radix UI Dialog"
+
+      - path: "hooks/useModal.ts"
+        must_contain: ["useState", "useRef", "useEffect"]
+        description: "React hooks for modal state and focus management"
+
+    vue:
+      - path: "components/Toast.vue"
+        must_contain: ["<template>", "ref", "provide/inject"]
+        description: "Vue toast component with composition API"
+
+      - path: "components/Modal.vue"
+        must_contain: ["<Teleport>", "onMounted", "onUnmounted"]
+        description: "Vue modal using Teleport and lifecycle hooks"
+
+      - path: "composables/useToast.ts"
+        must_contain: ["ref", "computed", "provide"]
+        description: "Vue composable for toast notifications"
+
+    svelte:
+      - path: "components/Toast.svelte"
+        must_contain: ["<script>", "writable", "onMount"]
+        description: "Svelte toast component with stores"
+
+      - path: "components/Modal.svelte"
+        must_contain: ["transition:", "bind:this", "onDestroy"]
+        description: "Svelte modal with transitions and actions"
+
+  styling:
+    tailwind:
+      - path: "components/Toast.tsx"
+        must_contain: ["className", "bg-", "rounded-", "shadow-"]
+        description: "Toast styled with Tailwind utility classes"
+
+      - path: "components/Modal.tsx"
+        must_contain: ["fixed inset-0", "bg-opacity-", "transform"]
+        description: "Modal with Tailwind backdrop and positioning"
+
+    css_modules:
+      - path: "components/Toast.module.css"
+        must_contain: [".toast", "animation", "@keyframes"]
+        description: "CSS modules for toast animations and styles"
+
+      - path: "components/Modal.module.css"
+        must_contain: [".overlay", ".content", "@media (prefers-reduced-motion)"]
+        description: "CSS modules for modal with reduced motion support"
+
+    styled_components:
+      - path: "components/Toast.styled.ts"
+        must_contain: ["styled", "keyframes", "css"]
+        description: "Styled-components for toast with theme tokens"
+
+      - path: "components/Modal.styled.ts"
+        must_contain: ["styled.div", "createPortal", "theme"]
+        description: "Styled-components for modal with theme integration"
+
+scaffolding:
+  - path: "components/feedback/index.ts"
+    reason: "Barrel export for all feedback components"
+
+  - path: "types/feedback.ts"
+    reason: "TypeScript types for toast options, modal props, and alert variants"
+
+  - path: "constants/timing.ts"
+    reason: "Timing constants for auto-dismiss durations and thresholds"
+
+  - path: "utils/aria.ts"
+    reason: "ARIA utilities for live regions and focus management"
+
+  - path: "contexts/ToastContext.tsx"
+    reason: "React context for app-wide toast management (intermediate+)"
+
+  - path: "assets/message-templates.json"
+    reason: "Reusable message templates for common scenarios"
+
+metadata:
+  primary_blueprints: ["dashboard", "frontend"]
+  contributes_to:
+    - "Toast notifications"
+    - "Alert components"
+    - "Loading states"
+    - "Modal dialogs"
+    - "Progress indicators"
+    - "Empty states"
+    - "Form validation feedback"
+    - "Confirmation dialogs"
+    - "Success/error messaging"
+    - "Inline help and tooltips"
+
+  libraries:
+    toast:
+      - name: "sonner"
+        reason: "Modern React 18+ with best-in-class accessibility"
+        maturity: ["starter", "intermediate", "advanced"]
+
+      - name: "react-hot-toast"
+        reason: "Minimal bundle size (<5KB) for simple use cases"
+        maturity: ["starter", "intermediate"]
+
+      - name: "react-toastify"
+        reason: "RTL support and mobile optimization"
+        maturity: ["intermediate", "advanced"]
+
+    modal:
+      - name: "@radix-ui/react-dialog"
+        reason: "Headless, accessible, design system friendly"
+        maturity: ["intermediate", "advanced"]
+
+      - name: "@headlessui/react"
+        reason: "Tailwind integration with transitions"
+        maturity: ["intermediate", "advanced"]
+
+    progress:
+      - name: "nprogress"
+        reason: "Page-level loading bar"
+        maturity: ["starter", "intermediate"]
+
+  design_tokens_used:
+    - "color.toast.bg"
+    - "color.toast.text"
+    - "color.toast.border"
+    - "color.alert.success"
+    - "color.alert.error"
+    - "color.alert.warning"
+    - "color.alert.info"
+    - "color.modal.overlay"
+    - "color.modal.bg"
+    - "spacing.toast.padding"
+    - "spacing.modal.padding"
+    - "shadow.toast"
+    - "shadow.modal"
+    - "radius.toast"
+    - "radius.modal"
+    - "motion.toast.enter-duration"
+    - "motion.toast.exit-duration"
+    - "motion.modal.enter-duration"
+    - "motion.modal.exit-duration"
+    - "z-index.toast"
+    - "z-index.modal"
+
+  accessibility_features:
+    - "ARIA live regions (polite/assertive)"
+    - "Focus trap in modals"
+    - "Focus restoration after modal close"
+    - "ESC key to close modals"
+    - "Keyboard navigation"
+    - "Screen reader announcements"
+    - "Reduced motion support"
+    - "Proper ARIA labels and descriptions"
+
+  timing_guidelines:
+    success: "3-4 seconds"
+    info: "4-5 seconds"
+    warning: "5-7 seconds"
+    error: "7-10 seconds or manual dismiss"
+    with_action: "10+ seconds or no auto-dismiss"
+    no_indicator: "<100ms"
+    spinner: "100ms-5s"
+    progress_bar: "5s-30s"
+    progress_with_cancel: ">30s"
+
+  cross_skill_integration:
+    - skill: "building-forms"
+      integration: "Form validation feedback and success messages"
+
+    - skill: "visualizing-data"
+      integration: "Chart loading states and error messages"
+
+    - skill: "building-tables"
+      integration: "Bulk operation confirmations and action feedback"
+
+    - skill: "implementing-ai-chat"
+      integration: "Streaming indicators and rate limit warnings"
+
+    - skill: "building-dashboards"
+      integration: "Widget loading states and system status alerts"
+
+    - skill: "implementing-search-filter"
+      integration: "Zero results empty states and search progress"
+
+    - skill: "handling-media"
+      integration: "Upload progress and processing status"
+
+    - skill: "theming-components"
+      integration: "All visual styling via design token system"
