@@ -93,7 +93,7 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 Invoke the skill using the Skill tool with the exact invocation string from registry:
 
 ```
-Use the Skill tool with: skill: "devops-skills:theming-components"
+Use the Skill tool with: skill: "ui-foundation-skills:theming-components"
 ```
 
 The skill will load and provide you with instructions. Follow those instructions, then proceed to the next skill.
@@ -102,21 +102,21 @@ The skill will load and provide you with instructions. Follow those instructions
 
 | Order | Skill | Tool Invocation | When |
 |-------|-------|-----------------|------|
-| 1 | theming-components | `Skill: devops-skills:theming-components` | ALWAYS FIRST |
-| 2 | designing-layouts | `Skill: devops-skills:designing-layouts` | If layout needed |
-| 3 | implementing-navigation | `Skill: devops-skills:implementing-navigation` | If navigation needed |
-| 4 | visualizing-data | `Skill: devops-skills:visualizing-data` | If charts needed |
-| 5 | building-tables | `Skill: devops-skills:building-tables` | If tables needed |
-| 6 | creating-dashboards | `Skill: devops-skills:creating-dashboards` | If dashboard needed |
-| 7 | building-forms | `Skill: devops-skills:building-forms` | If forms needed |
-| 8 | implementing-search-filter | `Skill: devops-skills:implementing-search-filter` | If search needed |
-| 9 | building-ai-chat | `Skill: devops-skills:building-ai-chat` | If chat needed |
-| 10 | implementing-drag-drop | `Skill: devops-skills:implementing-drag-drop` | If drag-drop needed |
-| 11 | providing-feedback | `Skill: devops-skills:providing-feedback` | If feedback needed |
-| 12 | displaying-timelines | `Skill: devops-skills:displaying-timelines` | If timeline needed |
-| 13 | managing-media | `Skill: devops-skills:managing-media` | If media needed |
-| 14 | guiding-users | `Skill: devops-skills:guiding-users` | If onboarding needed |
-| 99 | assembling-components | `Skill: devops-skills:assembling-components` | ALWAYS LAST |
+| 1 | theming-components | `Skill: ui-foundation-skills:theming-components` | ALWAYS FIRST |
+| 2 | designing-layouts | `Skill: ui-structure-skills:designing-layouts` | If layout needed |
+| 3 | implementing-navigation | `Skill: ui-structure-skills:implementing-navigation` | If navigation needed |
+| 4 | visualizing-data | `Skill: ui-data-skills:visualizing-data` | If charts needed |
+| 5 | building-tables | `Skill: ui-data-skills:building-tables` | If tables needed |
+| 6 | creating-dashboards | `Skill: ui-data-skills:creating-dashboards` | If dashboard needed |
+| 7 | building-forms | `Skill: ui-input-skills:building-forms` | If forms needed |
+| 8 | implementing-search-filter | `Skill: ui-input-skills:implementing-search-filter` | If search needed |
+| 9 | building-ai-chat | `Skill: ui-interaction-skills:building-ai-chat` | If chat needed |
+| 10 | implementing-drag-drop | `Skill: ui-interaction-skills:implementing-drag-drop` | If drag-drop needed |
+| 11 | providing-feedback | `Skill: ui-interaction-skills:providing-feedback` | If feedback needed |
+| 12 | displaying-timelines | `Skill: ui-structure-skills:displaying-timelines` | If timeline needed |
+| 13 | managing-media | `Skill: ui-content-skills:managing-media` | If media needed |
+| 14 | guiding-users | `Skill: ui-content-skills:guiding-users` | If onboarding needed |
+| 99 | assembling-components | `Skill: ui-assembly-skills:assembling-components` | ALWAYS LAST |
 
 ### Execution Loop
 

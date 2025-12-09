@@ -80,18 +80,18 @@ Use the Skill tool with the exact plugin-prefixed skill name:
 
 | Skill Name | Tool Invocation |
 |------------|----------------|
-| operating-kubernetes | `Skill({ skill: "devops-skills:operating-kubernetes" })` |
-| writing-infrastructure-code | `Skill({ skill: "devops-skills:writing-infrastructure-code" })` |
-| administering-linux | `Skill({ skill: "devops-skills:administering-linux" })` |
-| architecting-networks | `Skill({ skill: "devops-skills:architecting-networks" })` |
-| load-balancing-patterns | `Skill({ skill: "devops-skills:load-balancing-patterns" })` |
-| planning-disaster-recovery | `Skill({ skill: "devops-skills:planning-disaster-recovery" })` |
-| configuring-nginx | `Skill({ skill: "devops-skills:configuring-nginx" })` |
-| shell-scripting | `Skill({ skill: "devops-skills:shell-scripting" })` |
-| managing-dns | `Skill({ skill: "devops-skills:managing-dns" })` |
-| implementing-service-mesh | `Skill({ skill: "devops-skills:implementing-service-mesh" })` |
-| managing-configuration | `Skill({ skill: "devops-skills:managing-configuration" })` |
-| designing-distributed-systems | `Skill({ skill: "devops-skills:designing-distributed-systems" })` |
+| operating-kubernetes | `Skill({ skill: "infrastructure-skills:operating-kubernetes" })` |
+| writing-infrastructure-code | `Skill({ skill: "infrastructure-skills:writing-infrastructure-code" })` |
+| administering-linux | `Skill({ skill: "infrastructure-skills:administering-linux" })` |
+| architecting-networks | `Skill({ skill: "infrastructure-skills:architecting-networks" })` |
+| load-balancing-patterns | `Skill({ skill: "infrastructure-skills:load-balancing-patterns" })` |
+| planning-disaster-recovery | `Skill({ skill: "infrastructure-skills:planning-disaster-recovery" })` |
+| configuring-nginx | `Skill({ skill: "infrastructure-skills:configuring-nginx" })` |
+| shell-scripting | `Skill({ skill: "infrastructure-skills:shell-scripting" })` |
+| managing-dns | `Skill({ skill: "infrastructure-skills:managing-dns" })` |
+| implementing-service-mesh | `Skill({ skill: "infrastructure-skills:implementing-service-mesh" })` |
+| managing-configuration | `Skill({ skill: "infrastructure-skills:managing-configuration" })` |
+| designing-distributed-systems | `Skill({ skill: "infrastructure-skills:designing-distributed-systems" })` |
 
 **EXECUTION SEQUENCE (MANDATORY):**
 
@@ -106,11 +106,11 @@ Use the Skill tool with the exact plugin-prefixed skill name:
 Step 1/3: ANNOUNCE
 ┌─────────────────────────────────────────────┐
 │ STEP 1/3: operating-kubernetes              │
-│ Namespace: devops-skills:operating-kubernetes│
+│ Namespace: infrastructure-skills:operating-kubernetes│
 └─────────────────────────────────────────────┘
 
 Step 2/3: INVOKE
-Skill({ skill: "devops-skills:operating-kubernetes" })
+Skill({ skill: "infrastructure-skills:operating-kubernetes" })
 
 Step 3/3: FOLLOW
 [Execute all instructions from skill's SKILL.md]

@@ -263,8 +263,8 @@ Multi-domain combines skills from 3+ domains. Use the correct plugin prefix for 
 - `devops-skills:building-ci-pipelines`
 - `devops-skills:deploying-containers`
 - `devops-skills:managing-infrastructure`
-- `devops-skills:operating-kubernetes`
-- `devops-skills:theming-components` (if frontend involved)
+- `infrastructure-skills:operating-kubernetes`
+- `ui-foundation-skills:theming-components` (if frontend involved)
 
 **Security Domain:**
 - `security-skills:architecting-security`
@@ -285,7 +285,7 @@ Multi-domain combines skills from 3+ domains. Use the correct plugin prefix for 
 - `data-engineering-skills:managing-databases`
 
 **AI/ML Domain:**
-- `ai-ml-skills:ai-data-engineering`
+- `backend-ai-skills:ai-data-engineering`
 - `ai-ml-skills:building-rag-systems`
 - `ai-ml-skills:deploying-models`
 - `ai-ml-skills:monitoring-ml`
@@ -307,11 +307,11 @@ Phase 1: Infrastructure Foundation
 ─────────────────────────────────────────────────────────
 ▸ DOMAIN: devops
 
-⚙️ Invoking skill: devops-skills:operating-kubernetes
+⚙️ Invoking skill: infrastructure-skills:operating-kubernetes
 Purpose: Configure Kubernetes cluster orchestration
 
 [ACTUAL SKILL TOOL CALL HAPPENS HERE - REQUIRED]
-Skill({ skill: "devops-skills:operating-kubernetes" })
+Skill({ skill: "infrastructure-skills:operating-kubernetes" })
 
 [Skill loads, you follow its instructions, ask questions, generate configs]
 
