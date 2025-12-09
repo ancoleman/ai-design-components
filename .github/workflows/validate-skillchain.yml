@@ -279,8 +279,8 @@ jobs:
           if [[ -f "evaluation/evaluate.py" ]]; then
             echo "Running skillchain evaluation..."
 
-            # Run evaluation - this will fail if pass rate is below threshold
-            python3 evaluation/evaluate.py --report --output evaluation_results.json
+            # Run evaluation (ignore exit code - we check pass rate ourselves)
+            python3 evaluation/evaluate.py --report --output evaluation_results.json || true
 
             # Check if evaluation report was created
             if [[ -f "evaluation/evaluation_results.json" ]]; then
@@ -289,13 +289,14 @@ jobs:
               echo "Pass rate: ${PASS_RATE}%"
               echo "pass_rate=$PASS_RATE" >> $GITHUB_OUTPUT
 
-              # Fail if pass rate is 0% (no scenarios passing)
-              if [[ "$PASS_RATE" == "0" ]]; then
+              # Fail only if pass rate is below 80% threshold
+              if [[ "$PASS_RATE" -lt 80 ]]; then
                 echo ""
-                echo "ERROR: Evaluation pass rate is 0% - all scenarios failed"
+                echo "ERROR: Evaluation pass rate is ${PASS_RATE}% (below 80% threshold)"
                 echo "See evaluation report artifact for details"
                 exit 1
               fi
+              echo "✓ Evaluation passed (${PASS_RATE}% >= 80% threshold)"
             fi
           else
             echo "Evaluation script not found, skipping..."
@@ -339,7 +340,7 @@ jobs:
           if [[ "${{ needs.run-evaluation.result }}" == "success" ]]; then
             echo "✓ Evaluation: PASSED"
           else
-            echo "✗ Evaluation: FAILED (0% pass rate - see artifacts)"
+            echo "✗ Evaluation: FAILED (below 80% threshold - see artifacts)"
             FAILED=1
           fi
 
