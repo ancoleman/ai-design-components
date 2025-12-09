@@ -25,7 +25,7 @@ skills:
       secondary: [orm, prisma, drizzle, sqlalchemy, rds]
       exclusions: []
 
-    invocation: "backend-skills:using-relational-databases"
+    invocation: "backend-data-skills:using-relational-databases"
     dependencies: []
 
     questions:
@@ -46,7 +46,7 @@ skills:
       secondary: [rag, semantic search, pinecone]
       requires_any: [database, search, ai, rag]
 
-    invocation: "backend-skills:using-vector-databases"
+    invocation: "backend-data-skills:using-vector-databases"
     dependencies: ["ingesting-data"]
 
     questions:
@@ -67,7 +67,7 @@ skills:
       secondary: [collection, json, bson]
       exclusions: []
 
-    invocation: "backend-skills:using-document-databases"
+    invocation: "backend-data-skills:using-document-databases"
     dependencies: []
 
     questions:
@@ -88,7 +88,7 @@ skills:
       secondary: [memgraph, knowledge graph]
       exclusions: []
 
-    invocation: "backend-skills:using-graph-databases"
+    invocation: "backend-data-skills:using-graph-databases"
     dependencies: []
 
     questions:
@@ -109,7 +109,7 @@ skills:
       secondary: [prometheus, grafana, tsdb]
       exclusions: []
 
-    invocation: "backend-skills:using-timeseries-databases"
+    invocation: "backend-data-skills:using-timeseries-databases"
     dependencies: []
 
     questions:
@@ -132,7 +132,7 @@ skills:
       secondary: [fastapi, hono, axum, endpoints]
       exclusions: []
 
-    invocation: "backend-skills:implementing-api-patterns"
+    invocation: "backend-api-skills:implementing-api-patterns"
     dependencies: []
 
     questions:
@@ -153,7 +153,7 @@ skills:
       secondary: [temporal, celery, pub-sub]
       exclusions: []
 
-    invocation: "backend-skills:using-message-queues"
+    invocation: "backend-api-skills:using-message-queues"
     dependencies: ["implementing-api-patterns"]
 
     questions:
@@ -174,7 +174,7 @@ skills:
       secondary: [yjs, presence, live]
       exclusions: []
 
-    invocation: "backend-skills:implementing-realtime-sync"
+    invocation: "backend-api-skills:implementing-realtime-sync"
     dependencies: ["implementing-api-patterns"]
 
     questions:
@@ -197,7 +197,7 @@ skills:
       secondary: [passkeys, webauthn, rbac, permissions]
       exclusions: []
 
-    invocation: "backend-skills:securing-authentication"
+    invocation: "backend-platform-skills:securing-authentication"
     dependencies: ["implementing-api-patterns"]
 
     questions:
@@ -218,7 +218,7 @@ skills:
       secondary: [otel, lgtm, metrics, prometheus]
       exclusions: []
 
-    invocation: "backend-skills:implementing-observability"
+    invocation: "backend-platform-skills:implementing-observability"
     dependencies: []
 
     questions:
@@ -239,7 +239,7 @@ skills:
       secondary: [lambda, vercel, cloudflare, docker]
       exclusions: []
 
-    invocation: "backend-skills:deploying-applications"
+    invocation: "backend-platform-skills:deploying-applications"
     dependencies: []
 
     questions:
@@ -262,7 +262,7 @@ skills:
       secondary: [s3, bucket, cdc, dlt, pipeline]
       exclusions: []
 
-    invocation: "backend-skills:ingesting-data"
+    invocation: "backend-data-skills:ingesting-data"
     dependencies: []
 
     questions:
@@ -285,7 +285,7 @@ skills:
       secondary: [vector, indexing, semantic]
       requires_any: [ai, rag, llm, search]
 
-    invocation: "backend-skills:ai-data-engineering"
+    invocation: "backend-ai-skills:ai-data-engineering"
     dependencies: ["using-vector-databases"]
 
     questions:
@@ -306,7 +306,7 @@ skills:
       secondary: [bentoml, ollama, mlops]
       requires_any: [ai, llm, model]
 
-    invocation: "backend-skills:model-serving"
+    invocation: "backend-ai-skills:model-serving"
     dependencies: ["ai-data-engineering"]
 
     questions:

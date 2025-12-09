@@ -26,7 +26,7 @@ skills:
       secondary: [palette, design system, css variables]
       exclusions: [api, database, backend]
 
-    invocation: "frontend-skills:theming-components"
+    invocation: "ui-foundation-skills:theming-components"
     dependencies: []
 
     questions:
@@ -52,7 +52,7 @@ skills:
       secondary: [flexbox, css grid, container]
       exclusions: []
 
-    invocation: "frontend-skills:designing-layouts"
+    invocation: "ui-structure-skills:designing-layouts"
     dependencies: ["theming-components"]
 
     questions:
@@ -76,7 +76,7 @@ skills:
       secondary: [sidebar, breadcrumb, links]
       exclusions: []
 
-    invocation: "frontend-skills:implementing-navigation"
+    invocation: "ui-structure-skills:implementing-navigation"
     dependencies: ["theming-components"]
 
     questions:
@@ -99,7 +99,7 @@ skills:
       secondary: [chronological, audit]
       exclusions: []
 
-    invocation: "frontend-skills:displaying-timelines"
+    invocation: "ui-structure-skills:displaying-timelines"
     dependencies: ["theming-components"]
 
     questions:
@@ -124,7 +124,7 @@ skills:
       secondary: [bar, line, pie, donut, scatter, area, heatmap]
       exclusions: []
 
-    invocation: "frontend-skills:visualizing-data"
+    invocation: "ui-data-skills:visualizing-data"
     dependencies: ["theming-components"]
 
     questions:
@@ -145,7 +145,7 @@ skills:
       secondary: [data grid, list, pagination, sorting, filtering]
       exclusions: []
 
-    invocation: "frontend-skills:building-tables"
+    invocation: "ui-data-skills:building-tables"
     dependencies: ["theming-components"]
 
     questions:
@@ -166,7 +166,7 @@ skills:
       secondary: [kpi, cards, widgets]
       exclusions: []
 
-    invocation: "frontend-skills:creating-dashboards"
+    invocation: "ui-data-skills:creating-dashboards"
     dependencies: ["theming-components", "designing-layouts"]
 
     questions:
@@ -192,7 +192,7 @@ skills:
       secondary: [fields, submit, textarea, select, checkbox]
       exclusions: []
 
-    invocation: "frontend-skills:building-forms"
+    invocation: "ui-input-skills:building-forms"
     dependencies: ["theming-components"]
 
     questions:
@@ -213,7 +213,7 @@ skills:
       secondary: [faceted, autocomplete, typeahead]
       exclusions: []
 
-    invocation: "frontend-skills:implementing-search-filter"
+    invocation: "ui-input-skills:implementing-search-filter"
     dependencies: ["theming-components"]
 
     questions:
@@ -239,7 +239,7 @@ skills:
       secondary: [streaming, messages, llm]
       exclusions: []
 
-    invocation: "frontend-skills:building-ai-chat"
+    invocation: "ui-interaction-skills:building-ai-chat"
     dependencies: ["theming-components", "building-forms"]
 
     questions:
@@ -260,7 +260,7 @@ skills:
       secondary: [kanban, dnd, draggable]
       exclusions: []
 
-    invocation: "frontend-skills:implementing-drag-drop"
+    invocation: "ui-interaction-skills:implementing-drag-drop"
     dependencies: ["theming-components"]
 
     questions:
@@ -283,7 +283,7 @@ skills:
       secondary: [feedback, skeleton, progress]
       exclusions: []
 
-    invocation: "frontend-skills:providing-feedback"
+    invocation: "ui-interaction-skills:providing-feedback"
     dependencies: ["theming-components"]
 
     questions:
@@ -308,7 +308,7 @@ skills:
       secondary: [attachment, dropzone]
       exclusions: []
 
-    invocation: "frontend-skills:managing-media"
+    invocation: "ui-content-skills:managing-media"
     dependencies: ["theming-components"]
 
     questions:
@@ -329,7 +329,7 @@ skills:
       secondary: [walkthrough, hints]
       exclusions: []
 
-    invocation: "frontend-skills:guiding-users"
+    invocation: "ui-content-skills:guiding-users"
     dependencies: ["theming-components"]
 
     questions:
@@ -354,7 +354,7 @@ skills:
       secondary: [validate, combine]
       exclusions: []
 
-    invocation: "frontend-skills:assembling-components"
+    invocation: "ui-assembly-skills:assembling-components"
     dependencies: ["*"]  # Depends on all previous skills
 
     questions:

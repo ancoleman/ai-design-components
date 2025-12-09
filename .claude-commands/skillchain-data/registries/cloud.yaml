@@ -24,7 +24,7 @@ skills:
       secondary: [elastic beanstalk, ecs, eks, fargate, route53, cloudfront]
       exclusions: [gcp, azure, google cloud, microsoft azure]
 
-    invocation: "cloud-skills:deploying-on-aws"
+    invocation: "cloud-provider-skills:deploying-on-aws"
     dependencies: []
 
     questions:
@@ -46,7 +46,7 @@ skills:
       secondary: [gke, app engine, cloud storage, firebase, cloud sql]
       exclusions: [aws, azure, amazon, microsoft azure]
 
-    invocation: "cloud-skills:deploying-on-gcp"
+    invocation: "cloud-provider-skills:deploying-on-gcp"
     dependencies: []
 
     questions:
@@ -68,7 +68,7 @@ skills:
       secondary: [aks, app service, azure devops, active directory, key vault]
       exclusions: [aws, gcp, amazon, google cloud]
 
-    invocation: "cloud-skills:deploying-on-azure"
+    invocation: "cloud-provider-skills:deploying-on-azure"
     dependencies: []
 
     questions:
