@@ -471,6 +471,12 @@ install_commands() {
         # Count registries
         local registry_count=$(ls -1 "$data_dir/registries"/*.yaml 2>/dev/null | wc -l)
         echo -e "  - ${registry_count} domain registries"
+
+        # Sync registry invocations with marketplace.json (ensure consistency)
+        if [[ -f "$SCRIPT_DIR/scripts/sync_registry_invocations.py" ]]; then
+            echo -e "${CYAN}Syncing registry invocations with marketplace.json...${NC}"
+            python3 "$SCRIPT_DIR/scripts/sync_registry_invocations.py" 2>/dev/null || true
+        fi
     else
         echo -e "${YELLOW}Warning: skillchain-data directory not found${NC}"
     fi

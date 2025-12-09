@@ -6,19 +6,23 @@ on:
     paths:
       - '.claude-commands/skillchain/**'
       - '.claude-commands/skillchain-data/**'
+      - '.claude-plugin/marketplace.json'
       - '.github/workflows/validate-skillchain.yml'
       - 'evaluation/**'
       - 'scripts/validation/**'
       - 'scripts/runtime/**'
+      - 'scripts/sync_registry_invocations.py'
   pull_request:
     branches: [main]
     paths:
       - '.claude-commands/skillchain/**'
       - '.claude-commands/skillchain-data/**'
+      - '.claude-plugin/marketplace.json'
       - '.github/workflows/validate-skillchain.yml'
       - 'evaluation/**'
       - 'scripts/validation/**'
       - 'scripts/runtime/**'
+      - 'scripts/sync_registry_invocations.py'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -102,6 +106,64 @@ jobs:
               sys.exit(1)
 
           print("\nAll registries validated successfully!")
+          EOF
+
+      - name: Validate registry invocations match marketplace.json
+        run: |
+          echo "Checking registry invocations match marketplace.json..."
+
+          python3 << 'EOF'
+          import json
+          import yaml
+          import re
+          import sys
+          from pathlib import Path
+
+          # Load marketplace.json mappings
+          marketplace_path = Path(".claude-plugin/marketplace.json")
+          if not marketplace_path.exists():
+              print("WARNING: marketplace.json not found, skipping invocation check")
+              sys.exit(0)
+
+          with open(marketplace_path) as f:
+              data = json.load(f)
+
+          expected = {}
+          for plugin in data.get('plugins', []):
+              plugin_name = plugin['name']
+              for skill_path in plugin.get('skills', []):
+                  skill_name = skill_path.replace('./skills/', '')
+                  expected[skill_name] = f"{plugin_name}:{skill_name}"
+
+          print(f"Loaded {len(expected)} skill mappings from marketplace.json")
+
+          # Check all registry invocations
+          registries_dir = Path(".claude-commands/skillchain-data/registries")
+          errors = []
+
+          for registry_file in registries_dir.glob('*.yaml'):
+              if registry_file.name == '_index.yaml':
+                  continue
+
+              with open(registry_file) as f:
+                  content = f.read()
+
+              # Find all invocation fields
+              for match in re.finditer(r'invocation: ["\']([^"\']+)["\']', content):
+                  invocation = match.group(1)
+                  if ':' in invocation:
+                      skill_name = invocation.split(':')[1]
+                      if skill_name in expected and expected[skill_name] != invocation:
+                          errors.append(f"{registry_file.name}: {invocation} should be {expected[skill_name]}")
+
+          if errors:
+              print(f"\n{len(errors)} registry invocations don't match marketplace.json:")
+              for error in errors:
+                  print(f"  - {error}")
+              print("\nRun: python scripts/sync_registry_invocations.py")
+              sys.exit(1)
+
+          print("All registry invocations match marketplace.json!")
           EOF
 
   validate-blueprints:
