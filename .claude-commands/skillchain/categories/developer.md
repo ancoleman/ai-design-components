@@ -52,6 +52,24 @@ Wait for user response:
 
 ## Step 3: Skill Invocation Loop
 
+**CRITICAL: You MUST use the Skill tool to invoke each skill. This is a REQUIRED ACTION, not documentation.**
+
+### 3.0 Developer Productivity Skills Reference
+
+| Order | Skill | Tool Invocation | When |
+|-------|-------|----------------|------|
+| 1st | API Design | `Skill({ skill: "developer-productivity-skills:designing-apis" })` | Building APIs or SDKs |
+| 2nd | SDK Design | `Skill({ skill: "developer-productivity-skills:designing-sdks" })` | Creating client libraries (depends on API) |
+| 3rd | CLI Building | `Skill({ skill: "developer-productivity-skills:building-clis" })` | Command-line tools |
+| 4th | GitHub Actions | `Skill({ skill: "developer-productivity-skills:writing-github-actions" })` | CI/CD automation |
+| 5th | Git Workflows | `Skill({ skill: "developer-productivity-skills:managing-git-workflows" })` | Team collaboration processes |
+| 6th | Debugging | `Skill({ skill: "developer-productivity-skills:debugging-techniques" })` | Development tooling |
+| 7th | Documentation | `Skill({ skill: "developer-productivity-skills:generating-documentation" })` | Reference docs (run last) |
+
+**THIS IS A REQUIRED ACTION, NOT DOCUMENTATION.** You must invoke each matched skill using the Skill tool.
+
+### Execution Loop Pattern
+
 Initialize:
 ```
 skill_configs = {}
@@ -61,7 +79,7 @@ total_skills = len(confirmed_skills)
 
 For each skill in confirmed_skills:
 
-### 3.1 Announce Skill
+### 3.1 ANNOUNCE → Skill Starting
 
 ```
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
@@ -70,59 +88,38 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 ```
 
-### 3.2 Invoke Skill
+### 3.2 INVOKE → Execute Skill Tool
+
+**CRITICAL: YOU MUST NOW USE THE SKILL TOOL:**
 
 ```
 Skill({ skill: "{skill.invocation}" })
 ```
 
-**Developer skill invocation strings:**
-- `developer-productivity-skills:designing-apis`
-- `developer-productivity-skills:building-clis`
-- `developer-productivity-skills:designing-sdks`
-- `developer-productivity-skills:generating-documentation`
-- `developer-productivity-skills:debugging-techniques`
-- `developer-productivity-skills:managing-git-workflows`
-- `developer-productivity-skills:writing-github-actions`
-
-### 3.3 Load Questions
-
-All developer skills use `questions.source: "skill"` format.
-
-```python
-# Read from SKILL.md in the plugin
-skill_md_path = f"/mnt/skills/public/{skill.invocation.replace(':', '/')}/SKILL.md"
-skill_md = Read(skill_md_path)
-
-# Extract section specified in registry
-section_name = skill.questions.section  # "## Skillchain Configuration"
-section_content = extract_section(skill_md, section_name)
-
-# Parse questions from markdown
-questions = parse_questions(section_content)
+Example invocations:
+```
+Skill({ skill: "developer-productivity-skills:designing-apis" })
+Skill({ skill: "developer-productivity-skills:building-clis" })
+Skill({ skill: "developer-productivity-skills:designing-sdks" })
 ```
 
-### 3.4 Ask User (unless skip_all_questions)
+**Wait for skill to load before proceeding.**
 
-If skip_all_questions:
-  Use defaults for all questions
-Else:
-  For each question in questions:
-    Present question with:
-      - Context from previous skills
-      - Smart defaults based on goal keywords
-      - Current answer if revisiting (for "back" command)
-      - Dependency information if applicable
+### 3.3 FOLLOW → Execute Skill Instructions
 
-    Wait for answer or workflow command:
-      - Answer → Store and continue
-      - "skip" → Use default for this question
-      - "back" → Return to previous skill
-      - "status" → Show progress, re-ask question
-      - "done" → Break loop, proceed to assembly
-      - "restart" → Go back to Step 2
+**After invoking the skill, you will receive expanded instructions from the skill's SKILL.md file.**
 
-### 3.5 Store Configuration
+Follow all instructions provided by the loaded skill. The skill will guide you through:
+- Configuration questions to ask the user
+- Decisions to make based on the goal
+- Files to generate or modify
+- Integration points with other skills
+
+All developer skills use `questions.source: "skill"` format - questions come from the skill's SKILL.md.
+
+### 3.4 TRACK → Store Configuration
+
+After completing the skill's instructions, store the configuration:
 
 ```
 skill_configs[skill.name] = {
@@ -130,11 +127,30 @@ skill_configs[skill.name] = {
   invocation: skill.invocation,
   priority: skill.priority,
   plugin: skill.plugin_namespace,
-  dependencies: skill.dependencies
+  dependencies: skill.dependencies,
+  outputs: files_generated
 }
+```
 
+### 3.5 PROCEED → Next Skill
+
+```
 current_skill_index += 1
 ```
+
+If more skills remain, return to Step 3.1 (ANNOUNCE).
+
+---
+
+### Workflow Commands During Skill Execution
+
+While executing any skill, user can respond with:
+- Answer → Store and continue with skill
+- "skip" → Use default for current question
+- "back" → Return to previous skill
+- "status" → Show progress, continue current skill
+- "done" → Break loop, proceed to Step 4
+- "restart" → Go back to Step 2
 
 ---
 

@@ -121,7 +121,9 @@ Phase 4: devops (CI/CD, deployment), finops (cost optimization, tagging)
 
 ---
 
-## Step 4: Confirm Multi-Domain Chain
+## Step 4: Confirm Multi-Domain Chain and Prepare Skill Invocations
+
+**CRITICAL: This step prepares you to INVOKE skills using the Skill tool. You MUST actually call the Skill tool for each skill - this is not documentation, it's a required action.**
 
 Present the detected domains and execution order to the user:
 
@@ -158,6 +160,9 @@ Total Skills: {N}
 Estimated Questions: {X}
 Estimated Time: {Y} minutes
 ───────────────────────────────────────────────────────────
+
+⚠️  IMPORTANT: Each skill listed above will be INVOKED using the Skill tool.
+You will call Skill({ skill: "plugin-prefix:skill-name" }) for each one.
 
 Options:
   • Type "confirm" to proceed
@@ -212,21 +217,122 @@ For each domain in current phase:
 
 #### 5.2.2 Invoke Each Skill in Domain
 
-For each skill in domain:
+**CRITICAL: You MUST use the Skill tool to invoke each skill. THIS IS A REQUIRED ACTION, NOT DOCUMENTATION.**
+
+**Skill Invocation Protocol (MANDATORY EXECUTION LOOP):**
+
+For each skill in domain, execute this REQUIRED loop:
+
+1. **ANNOUNCE** - Tell user which skill you're about to invoke:
+   ```
+   ⚙️ Invoking skill: {plugin-prefix:skill-name}
+   Purpose: {brief_description}
+   ```
+
+2. **INVOKE** - Actually call the Skill tool (THIS IS REQUIRED):
+   ```
+   Skill({ skill: "{plugin-prefix:skill-name}" })
+   ```
+
+   **THIS IS NOT OPTIONAL. You MUST call the Skill tool with the exact format above.**
+
+3. **FOLLOW** - After invoking, the skill's SKILL.md content will load into context:
+   - Read the expanded skill instructions carefully
+   - Follow ALL instructions in the loaded skill content
+   - Execute any scripts or tools the skill directs you to use
+   - Ask configuration questions if defined in "## Skillchain Configuration"
+
+4. **TRACK** - Store the configuration and outputs:
+   ```
+   skill_configs[skill.name] = {
+     answers: user_answers,
+     invocation: skill.invocation,
+     domain: domain.name,
+     phase: current_phase,
+     outputs_generated: [list of files created]
+   }
+   ```
+
+5. **PROCEED** - Move to next skill in domain or next domain in phase
+
+**Domain-Specific Skill Prefixes (USE THESE EXACT FORMATS):**
+
+Multi-domain combines skills from 3+ domains. Use the correct plugin prefix for each domain:
+
+**DevOps Domain:**
+- `devops-skills:building-ci-pipelines`
+- `devops-skills:deploying-containers`
+- `devops-skills:managing-infrastructure`
+- `devops-skills:operating-kubernetes`
+- `devops-skills:theming-components` (if frontend involved)
+
+**Security Domain:**
+- `security-skills:architecting-security`
+- `security-skills:managing-secrets`
+- `security-skills:securing-apis`
+- `security-skills:implementing-compliance`
+
+**Cloud Domain:**
+- `cloud-provider-skills:deploying-on-aws`
+- `cloud-provider-skills:deploying-on-azure`
+- `cloud-provider-skills:deploying-on-gcp`
+- `cloud-provider-skills:managing-cloud-resources`
+
+**Data Domain:**
+- `data-engineering-skills:streaming-data`
+- `data-engineering-skills:transforming-data`
+- `data-engineering-skills:orchestrating-workflows`
+- `data-engineering-skills:managing-databases`
+
+**AI/ML Domain:**
+- `ai-ml-skills:ai-data-engineering`
+- `ai-ml-skills:building-rag-systems`
+- `ai-ml-skills:deploying-models`
+- `ai-ml-skills:monitoring-ml`
+
+**Developer Domain:**
+- `developer-productivity-skills:configuring-development`
+- `developer-productivity-skills:testing-strategies`
+- `developer-productivity-skills:debugging-applications`
+
+**FinOps Domain:**
+- `finops-skills:optimizing-costs`
+- `finops-skills:tracking-budgets`
+- `finops-skills:implementing-tagging`
+
+**Example of Complete Invocation Sequence:**
 
 ```
-Skill({ skill: "{skill.invocation}" })
+Phase 1: Infrastructure Foundation
+─────────────────────────────────────────────────────────
+▸ DOMAIN: devops
+
+⚙️ Invoking skill: devops-skills:operating-kubernetes
+Purpose: Configure Kubernetes cluster orchestration
+
+[ACTUAL SKILL TOOL CALL HAPPENS HERE - REQUIRED]
+Skill({ skill: "devops-skills:operating-kubernetes" })
+
+[Skill loads, you follow its instructions, ask questions, generate configs]
+
+✓ Skill complete. Generated:
+  - k8s/cluster-config.yaml
+  - k8s/namespaces.yaml
+
+[Move to next skill]
+
+▸ DOMAIN: cloud
+
+⚙️ Invoking skill: cloud-provider-skills:deploying-on-aws
+Purpose: Provision AWS infrastructure
+
+[ACTUAL SKILL TOOL CALL HAPPENS HERE - REQUIRED]
+Skill({ skill: "cloud-provider-skills:deploying-on-aws" })
+
+[Skill loads, you follow its instructions...]
 ```
 
-**Example invocations across domains:**
-- Infrastructure: `infrastructure-skills:kubernetes-orchestration`
-- Security: `security-skills:managing-secrets`
-- DevOps: `devops-skills:ci-cd-pipelines`
-- Cloud: `cloud-skills:aws-services`, `cloud-skills:azure-services`
-- Backend: `backend-api-skills:api-patterns`
-- Frontend: `ui-foundation-skills:theming-components`
-- FinOps: `finops-skills:optimizing-costs`
-- AI/ML: `backend-ai-skills:ai-data-engineering`
+**REMEMBER: The Skill tool call is MANDATORY. You are not documenting skills, you are EXECUTING them.**
 
 #### 5.2.3 Load Questions
 

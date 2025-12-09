@@ -52,12 +52,30 @@ Wait for user response:
 
 ## Step 3: Skill Invocation Loop
 
+**CRITICAL: You MUST use the Skill tool to invoke each skill.**
+
+This is NOT documentation about skills. This is a REQUIRED ACTION.
+You MUST execute: `Skill({ skill: "data-engineering-skills:{skill-name}" })`
+
 Initialize:
 ```
 skill_configs = {}
 current_skill_index = 1
 total_skills = len(confirmed_skills)
 ```
+
+### Available Data Engineering Skills
+
+**THIS IS A REQUIRED ACTION, NOT DOCUMENTATION.**
+
+| Order | Skill Name | Tool Invocation | When |
+|-------|------------|----------------|------|
+| 1 | Architecting Data | `Skill({ skill: "data-engineering-skills:architecting-data" })` | Data warehouse/lake design |
+| 2 | Streaming Data | `Skill({ skill: "data-engineering-skills:streaming-data" })` | Kafka, Kinesis, real-time pipelines |
+| 3 | Transforming Data | `Skill({ skill: "data-engineering-skills:transforming-data" })` | ETL/ELT, dbt, Airflow |
+| 4 | Optimizing SQL | `Skill({ skill: "data-engineering-skills:optimizing-sql" })` | Query tuning, indexes |
+| 5 | Secret Management | `Skill({ skill: "data-engineering-skills:secret-management" })` | Vault, credentials |
+| 6 | Performance Engineering | `Skill({ skill: "data-engineering-skills:performance-engineering" })` | Monitoring, scaling |
 
 For each skill in confirmed_skills:
 
@@ -70,25 +88,31 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 ```
 
-### 3.2 Invoke Skill
+### 3.2 Invoke Skill (REQUIRED ACTION)
+
+**YOU MUST EXECUTE THE SKILL TOOL NOW:**
 
 ```
 Skill({ skill: "data-engineering-skills:{skill.name}" })
 ```
 
-**Data engineering skill invocation format:**
-- `data-engineering-skills:architecting-data`
-- `data-engineering-skills:streaming-data`
-- `data-engineering-skills:transforming-data`
-- `data-engineering-skills:optimizing-sql`
-- `data-engineering-skills:secret-management`
-- `data-engineering-skills:performance-engineering`
+**Example invocations (pick the correct one for current skill):**
+- `Skill({ skill: "data-engineering-skills:architecting-data" })`
+- `Skill({ skill: "data-engineering-skills:streaming-data" })`
+- `Skill({ skill: "data-engineering-skills:transforming-data" })`
+- `Skill({ skill: "data-engineering-skills:optimizing-sql" })`
+- `Skill({ skill: "data-engineering-skills:secret-management" })`
+- `Skill({ skill: "data-engineering-skills:performance-engineering" })`
 
-### 3.3 Load Questions
+**THIS IS NOT OPTIONAL. You must invoke the Skill tool before proceeding.**
 
-All data engineering skills use `questions.source: "skill"` format.
+### 3.3 Follow Skill Instructions
 
-Extract questions from the skill's "## Skillchain Configuration" section.
+After invoking the skill:
+1. **Read** the loaded skill content carefully
+2. **Extract** questions from "## Skillchain Configuration" section
+3. **Follow** any skill-specific instructions
+4. **Use** skill-provided references/scripts as directed
 
 ### 3.4 Ask User (unless skip_all_questions)
 
@@ -123,6 +147,20 @@ skill_configs[skill.name] = {
 
 current_skill_index += 1
 ```
+
+---
+
+### Execution Loop Summary
+
+For each skill, follow this pattern:
+
+1. **ANNOUNCE** the skill (Step 3.1)
+2. **INVOKE** using Skill tool (Step 3.2) ← **REQUIRED ACTION**
+3. **FOLLOW** the loaded skill instructions (Step 3.3)
+4. **TRACK** configuration answers (Step 3.4-3.5)
+5. **PROCEED** to next skill
+
+**Remember:** The Skill tool invocation is NOT documentation. It is a REQUIRED ACTION that loads the skill into context.
 
 ---
 

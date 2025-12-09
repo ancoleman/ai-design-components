@@ -125,54 +125,109 @@ current_skill_index += 1
 
 ---
 
-## Step 4: Generate DevOps Output
+## Step 4: Execute Skills to Generate DevOps Output
 
-**IMPORTANT:** DevOps workflows DO NOT use `assembling-components` skill (frontend-only).
+**CRITICAL: You MUST use the Skill tool to invoke each skill. THIS IS A REQUIRED ACTION, NOT DOCUMENTATION.**
 
-Instead, generate DevOps artifacts directly:
+DevOps workflows DO NOT use `assembling-components` skill (frontend-only). Instead, each DevOps skill generates its own artifacts directly.
 
-### 4.1 Analyze Collected Configurations
+### 4.1 Skill Execution Table
 
-Review all `skill_configs` to identify:
-- Containerization requirements (Dockerfile patterns)
-- Testing frameworks and coverage targets
-- CI/CD pipeline structure and tools
-- GitOps deployment approach
-- Platform engineering components
-- Incident management processes
+**YOU MUST INVOKE EACH SKILL USING THE Skill TOOL:**
 
-### 4.2 Identify Integration Points
+| Order | Skill Name | Tool Invocation | When to Execute |
+|-------|-----------|----------------|-----------------|
+| 1 | writing-dockerfiles | `Skill({ skill: "devops-skills:writing-dockerfiles" })` | If containerization needed |
+| 2 | testing-strategies | `Skill({ skill: "devops-skills:testing-strategies" })` | If test framework configured |
+| 3 | building-ci-pipelines | `Skill({ skill: "devops-skills:building-ci-pipelines" })` | If CI/CD pipeline needed |
+| 4 | implementing-gitops | `Skill({ skill: "devops-skills:implementing-gitops" })` | If GitOps deployment configured |
+| 5 | platform-engineering | `Skill({ skill: "devops-skills:platform-engineering" })` | If IDP/platform configured |
+| 6 | managing-incidents | `Skill({ skill: "devops-skills:managing-incidents" })` | If incident management configured |
 
-Detect where skills need to interact:
-- Docker builds in CI pipelines
-- Testing stages in pipeline workflow
-- GitOps syncing with CI/CD outputs
-- Platform portal integrating all components
-- Incident runbooks referencing deployment processes
+### 4.2 Execution Loop
 
-### 4.3 Generate Production-Ready Artifacts
+**FOR EACH skill in skill_configs (from Step 3):**
 
-Create complete DevOps implementation:
+```
+ANNOUNCE:
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+ EXECUTING SKILL: {skill.name}
+ Generating artifacts based on your configuration...
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+
+INVOKE SKILL (REQUIRED ACTION):
+Use the Skill tool with the exact invocation string from table above.
+
+Example for testing-strategies:
+Skill({ skill: "devops-skills:testing-strategies" })
+
+WAIT for skill to complete and generate its artifacts.
+
+CONTINUE to next skill in skill_configs.
+```
+
+**IMPORTANT:** Each skill will:
+1. Load its own SKILL.md content
+2. Reference its bundled resources (scripts, templates, examples)
+3. Generate production-ready artifacts based on user answers from Step 3
+4. Output files directly to the project directory
+
+### 4.3 Monitor Artifact Generation
+
+As each skill executes, it will generate:
+
+**writing-dockerfiles:**
+- `Dockerfile` - Optimized multi-stage build
+- `.dockerignore` - Build context filtering
+- `docker-compose.yml` - Local development setup
+
+**testing-strategies:**
+- Test framework configurations (jest.config.js, pytest.ini, etc.)
+- Coverage configs
+- Test directory structure
+- Example test files
+
+**building-ci-pipelines:**
+- `.github/workflows/*.yml` (GitHub Actions)
+- `.gitlab-ci.yml` (GitLab CI)
+- `Jenkinsfile` (Jenkins)
+- Pipeline validation scripts
+
+**implementing-gitops:**
+- `gitops/base/*.yaml` - Base manifests
+- `gitops/overlays/*/` - Environment overlays
+- ArgoCD/Flux sync configs
+- Deployment policies
+
+**platform-engineering:**
+- `backstage/catalog-info.yaml` - Service catalog
+- Platform templates
+- Developer portal configs
+- Self-service workflows
+
+**managing-incidents:**
+- `runbooks/incident-response.md` - Response procedures
+- `runbooks/on-call-guide.md` - On-call handbook
+- `runbooks/rollback-procedure.md` - Rollback steps
+- Alert configurations
+
+### 4.4 Announce Completion
+
+After ALL skills have been invoked and executed:
 
 ```
 TPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPW
-Q  GENERATING DEVOPS ARTIFACTS FOR: "{original_goal}"      Q
+Q  🚀 DEVOPS IMPLEMENTATION COMPLETE                       Q
 `PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPc
-Q  Based on configurations:                                Q
+Q  Generated artifacts for: "{original_goal}"              Q
+`PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPc
+Q  Skills executed:                                        Q
 {for each skill in skill_configs:}
-Q    ⚙️ {skill.name}: {summary of choices}                  Q
+Q    ⚙️ {skill.name}: {summary of generated artifacts}      Q
 ZPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP]
-
-Generating:
-  1. Dockerfiles and container configurations
-  2. Test suites and coverage configs
-  3. CI pipeline definitions
-  4. GitOps manifests and sync configs
-  5. Platform engineering templates
-  6. Incident response runbooks
 ```
 
-### 4.4 Output Organization
+### 4.5 Output Organization
 
 Organize artifacts by DevOps domain:
 
@@ -207,7 +262,7 @@ devops/
 └── README.md
 ```
 
-### 4.5 Validation Checklist
+### 4.6 Validation Checklist
 
 Verify generated artifacts include:
 - [ ] Dockerfiles optimized (multi-stage, layer caching)
@@ -220,7 +275,7 @@ Verify generated artifacts include:
 - [ ] README with setup and usage instructions
 - [ ] Version control ignores (.gitignore, .dockerignore)
 
-### 4.6 Present Output
+### 4.7 Present Output
 
 Display generated files with explanations:
 

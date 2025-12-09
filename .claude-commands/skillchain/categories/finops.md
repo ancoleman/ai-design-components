@@ -104,6 +104,8 @@ Wait for user response:
 
 ## Step 4: Execute Skills
 
+**CRITICAL: You MUST use the Skill tool to invoke each skill. This is NOT documentation - you MUST execute these tool calls.**
+
 Initialize:
 ```
 skill_configs = {}
@@ -111,6 +113,15 @@ current_skill_index = 1
 total_skills = len(confirmed_skills)
 skip_all_questions = false
 ```
+
+### FinOps Skills Reference
+
+| Order | Skill | Tool Invocation | When |
+|-------|-------|-----------------|------|
+| 1 | Optimizing Costs | `Skill({ skill: "finops-skills:optimizing-costs" })` | Cost reduction, right-sizing, RI/Spot, waste |
+| 2 | Resource Tagging | `Skill({ skill: "finops-skills:resource-tagging" })` | Cost allocation, chargeback, tag enforcement |
+
+**THIS IS A REQUIRED ACTION, NOT DOCUMENTATION. You MUST invoke each skill using the Skill tool.**
 
 For each skill in confirmed_skills:
 
@@ -123,13 +134,40 @@ For each skill in confirmed_skills:
 ═══════════════════════════════════════════════════════════
 ```
 
-### 4.2 Invoke Skill
+### 4.2 Invoke Skill (REQUIRED ACTION)
 
+**YOU MUST USE THE SKILL TOOL NOW. This is the execution phase.**
+
+For each skill, follow this execution loop:
+
+1. **ANNOUNCE**: Print the skill step header (Step 4.1)
+2. **INVOKE**: Use the Skill tool with the exact invocation from the table above
+3. **FOLLOW**: Process the skill's instructions when they load
+4. **TRACK**: Store configuration in skill_configs
+5. **PROCEED**: Move to next skill
+
+**Example execution for optimizing-costs:**
 ```
-Skill({ skill: "{skill.invocation}" })
+Step 1 - ANNOUNCE:
+═══════════════════════════════════════════════════════════
+ FINOPS STEP 1/2: OPTIMIZING COSTS
+ Plugin: finops-skills:optimizing-costs
+═══════════════════════════════════════════════════════════
+
+Step 2 - INVOKE (USE THE SKILL TOOL):
+Skill({ skill: "finops-skills:optimizing-costs" })
+
+Step 3 - FOLLOW:
+[Process the skill's loaded instructions]
+
+Step 4 - TRACK:
+skill_configs["optimizing-costs"] = {...}
+
+Step 5 - PROCEED:
+Move to finops-skills:resource-tagging
 ```
 
-**FinOps skill invocation format:**
+**FinOps skill invocations (copy exactly):**
 - `finops-skills:optimizing-costs`
 - `finops-skills:resource-tagging`
 

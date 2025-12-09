@@ -68,6 +68,8 @@ If "no" � Prompt user to select primary cloud provider
 
 ## Step 3: Skill Invocation Loop
 
+**CRITICAL: You MUST use the Skill tool to invoke each skill. This is not documentation - it is a required action.**
+
 Initialize:
 ```
 skill_configs = {}
@@ -82,20 +84,33 @@ For each skill in confirmed_skills:
 ```
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
  STEP {current_skill_index}/{total_skills}: {SKILL.NAME}
- Plugin: cloud-skills:{skill.name}
+ Plugin: cloud-provider-skills:{skill.name}
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 ```
 
-### 3.2 Invoke Skill
+### 3.2 Invoke Skill Using the Skill Tool
 
-```
-Skill({ skill: "cloud-skills:{skill.name}" })
-```
+**THIS IS A REQUIRED ACTION, NOT DOCUMENTATION.**
 
-**Cloud skill invocation format:**
-- `cloud-skills:deploying-on-aws`
-- `cloud-skills:deploying-on-gcp`
-- `cloud-skills:deploying-on-azure`
+You MUST call the Skill tool for each cloud skill:
+
+| Order | Skill | Tool Invocation | When |
+|-------|-------|----------------|------|
+| 1 | AWS Deployment | `Skill({ skill: "cloud-provider-skills:deploying-on-aws" })` | For AWS infrastructure |
+| 2 | GCP Deployment | `Skill({ skill: "cloud-provider-skills:deploying-on-gcp" })` | For Google Cloud infrastructure |
+| 3 | Azure Deployment | `Skill({ skill: "cloud-provider-skills:deploying-on-azure" })` | For Microsoft Azure infrastructure |
+
+**Cloud skill invocation format (use plugin prefix `cloud-provider-skills:`):**
+- `cloud-provider-skills:deploying-on-aws`
+- `cloud-provider-skills:deploying-on-gcp`
+- `cloud-provider-skills:deploying-on-azure`
+
+**Execution Loop:**
+1. **ANNOUNCE** the skill (print box above)
+2. **INVOKE** using `Skill({ skill: "cloud-provider-skills:{skill.name}" })`
+3. **FOLLOW** the skill's instructions when it loads
+4. **TRACK** configuration answers in `skill_configs`
+5. **PROCEED** to next skill
 
 ### 3.3 Load Questions
 

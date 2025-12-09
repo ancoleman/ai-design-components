@@ -52,6 +52,12 @@ Wait for user response:
 
 ## Step 3: Skill Invocation Loop
 
+**CRITICAL: You MUST use the Skill tool to invoke each skill.**
+
+**THIS IS A REQUIRED ACTION, NOT DOCUMENTATION.**
+
+Each skill invocation loads specialized security knowledge and capabilities. You must actively call the Skill tool for each matched skill in the chain.
+
 Initialize:
 ```
 skill_configs = {}
@@ -59,9 +65,23 @@ current_skill_index = 1
 total_skills = len(confirmed_skills)
 ```
 
+### Security Skills Execution Table
+
+| Order | Skill | Tool Invocation | When |
+|-------|-------|-----------------|------|
+| 1 | Architecting Security | `Skill({ skill: "security-skills:architecting-security" })` | Zero trust, defense-in-depth, security principles |
+| 2 | Implementing Compliance | `Skill({ skill: "security-skills:implementing-compliance" })` | SOC 2, HIPAA, GDPR, PCI-DSS requirements |
+| 3 | Managing Vulnerabilities | `Skill({ skill: "security-skills:managing-vulnerabilities" })` | Scanning, patching, disclosure processes |
+| 4 | Implementing TLS | `Skill({ skill: "security-skills:implementing-tls" })` | Certificate management, SSL/TLS configuration |
+| 5 | Configuring Firewalls | `Skill({ skill: "security-skills:configuring-firewalls" })` | Network policies, security groups, iptables |
+| 6 | SIEM Logging | `Skill({ skill: "security-skills:siem-logging" })` | Log aggregation, monitoring, alerting |
+| 7 | Security Hardening | `Skill({ skill: "security-skills:security-hardening" })` | CIS benchmarks, system hardening, baseline configs |
+
+### Execution Loop for Each Skill
+
 For each skill in confirmed_skills:
 
-### 3.1 Announce Skill
+#### 3.1 ANNOUNCE - Display Current Skill
 
 ```
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
@@ -70,71 +90,70 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 ```
 
-### 3.2 Invoke Skill
+#### 3.2 INVOKE - Call the Skill Tool
+
+**YOU MUST EXECUTE THIS TOOL CALL:**
 
 ```
 Skill({ skill: "{skill.invocation}" })
 ```
 
-**Security skill invocation format:**
-- `security-skills:architecting-security`
-- `security-skills:implementing-compliance`
-- `security-skills:managing-vulnerabilities`
-- `security-skills:implementing-tls`
-- `security-skills:configuring-firewalls`
-- `security-skills:siem-logging`
-- `security-skills:security-hardening`
-
-### 3.3 Load Questions
-
-All security skills use `questions.source: "skill"` format.
-
+Example actual invocations:
 ```python
-# Read from SKILL.md in the plugin
-skill_md_path = f"/mnt/skills/public/{skill.invocation.replace(':', '/')}/SKILL.md"
-skill_md = Read(skill_md_path)
+# For architecting security
+Skill({ skill: "security-skills:architecting-security" })
 
-# Extract section specified in registry
-section_name = skill.questions.section  # "## Skillchain Configuration"
-section_content = extract_section(skill_md, section_name)
+# For implementing compliance
+Skill({ skill: "security-skills:implementing-compliance" })
 
-# Parse questions from markdown
-questions = parse_questions(section_content)
+# For managing vulnerabilities
+Skill({ skill: "security-skills:managing-vulnerabilities" })
+
+# For implementing TLS
+Skill({ skill: "security-skills:implementing-tls" })
+
+# For configuring firewalls
+Skill({ skill: "security-skills:configuring-firewalls" })
+
+# For SIEM logging
+Skill({ skill: "security-skills:siem-logging" })
+
+# For security hardening
+Skill({ skill: "security-skills:security-hardening" })
 ```
 
-### 3.4 Ask User (unless skip_all_questions)
+**This is not documentation - you must actually invoke the Skill tool using the exact format above.**
 
-If skip_all_questions:
-  Use defaults for all questions
-Else:
-  For each question in questions:
-    Present question with:
-      - Context from previous skills
-      - Smart defaults based on goal keywords
-      - Current answer if revisiting (for "back" command)
-      - Dependency information if applicable
+#### 3.3 FOLLOW - Process Skill Instructions
 
-    Wait for answer or workflow command:
-      - Answer � Store and continue
-      - "skip" � Use default for this question
-      - "back" � Return to previous skill
-      - "status" � Show progress, re-ask question
-      - "done" � Break loop, proceed to output
-      - "restart" � Go back to Step 2
+After invoking the skill:
+1. Read the skill's expanded instructions
+2. Follow the skill's workflow (usually asking configuration questions)
+3. Collect answers and generate outputs as directed by the skill
 
-### 3.5 Store Configuration
+#### 3.4 TRACK - Store Configuration
 
+After skill completes:
 ```
 skill_configs[skill.name] = {
   answers: user_answers,
   invocation: skill.invocation,
   priority: skill.priority,
   plugin: skill.plugin_namespace,
-  dependencies: skill.dependencies
+  dependencies: skill.dependencies,
+  outputs: generated_files
 }
 
 current_skill_index += 1
 ```
+
+#### 3.5 PROCEED - Continue to Next Skill
+
+Move to next skill in confirmed_skills list and repeat: ANNOUNCE → INVOKE → FOLLOW → TRACK → PROCEED
+
+---
+
+**Note:** The skill invocation process above (ANNOUNCE → INVOKE → FOLLOW → TRACK → PROCEED) must be executed for EVERY skill in the confirmed chain. Do not skip skill invocations.
 
 ---
 

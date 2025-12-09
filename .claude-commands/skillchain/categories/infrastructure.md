@@ -72,23 +72,59 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 ### 3.2 Invoke Skill
 
+**CRITICAL: YOU MUST USE THE SKILL TOOL TO INVOKE EACH SKILL.**
+
+**THIS IS A REQUIRED ACTION, NOT DOCUMENTATION.**
+
+Use the Skill tool with the exact plugin-prefixed skill name:
+
+| Skill Name | Tool Invocation |
+|------------|----------------|
+| operating-kubernetes | `Skill({ skill: "devops-skills:operating-kubernetes" })` |
+| writing-infrastructure-code | `Skill({ skill: "devops-skills:writing-infrastructure-code" })` |
+| administering-linux | `Skill({ skill: "devops-skills:administering-linux" })` |
+| architecting-networks | `Skill({ skill: "devops-skills:architecting-networks" })` |
+| load-balancing-patterns | `Skill({ skill: "devops-skills:load-balancing-patterns" })` |
+| planning-disaster-recovery | `Skill({ skill: "devops-skills:planning-disaster-recovery" })` |
+| configuring-nginx | `Skill({ skill: "devops-skills:configuring-nginx" })` |
+| shell-scripting | `Skill({ skill: "devops-skills:shell-scripting" })` |
+| managing-dns | `Skill({ skill: "devops-skills:managing-dns" })` |
+| implementing-service-mesh | `Skill({ skill: "devops-skills:implementing-service-mesh" })` |
+| managing-configuration | `Skill({ skill: "devops-skills:managing-configuration" })` |
+| designing-distributed-systems | `Skill({ skill: "devops-skills:designing-distributed-systems" })` |
+
+**EXECUTION SEQUENCE (MANDATORY):**
+
+1. **ANNOUNCE** - Display skill header box (3.1)
+2. **INVOKE** - Call Skill tool with "devops-skills:{skill-name}"
+3. **FOLLOW** - Execute ALL instructions from loaded skill
+4. **TRACK** - Store configuration in skill_configs (3.5)
+5. **PROCEED** - Move to next skill or Step 4
+
+**Example for operating-kubernetes:**
 ```
-Skill({ skill: "{skill.invocation}" })
+Step 1/3: ANNOUNCE
+┌─────────────────────────────────────────────┐
+│ STEP 1/3: operating-kubernetes              │
+│ Namespace: devops-skills:operating-kubernetes│
+└─────────────────────────────────────────────┘
+
+Step 2/3: INVOKE
+Skill({ skill: "devops-skills:operating-kubernetes" })
+
+Step 3/3: FOLLOW
+[Execute all instructions from skill's SKILL.md]
+[Ask configuration questions if not skip_all_questions]
+
+Step 4/3: TRACK
+skill_configs["operating-kubernetes"] = { ... }
+
+Step 5/3: PROCEED
+current_skill_index = 2
+[Move to next skill]
 ```
 
-**Infrastructure skill invocation format:**
-- `infrastructure-skills:operating-kubernetes`
-- `infrastructure-skills:writing-infrastructure-code`
-- `infrastructure-skills:administering-linux`
-- `infrastructure-skills:architecting-networks`
-- `infrastructure-skills:load-balancing-patterns`
-- `infrastructure-skills:planning-disaster-recovery`
-- `infrastructure-skills:configuring-nginx`
-- `infrastructure-skills:shell-scripting`
-- `infrastructure-skills:managing-dns`
-- `infrastructure-skills:implementing-service-mesh`
-- `infrastructure-skills:managing-configuration`
-- `infrastructure-skills:designing-distributed-systems`
+**FAILURE TO INVOKE = WORKFLOW FAILURE**
 
 ### 3.3 Load Questions
 

@@ -86,28 +86,56 @@ PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
 ### 3.2 Invoke Skill
 
+**CRITICAL: You MUST use the Skill tool to invoke each skill.** Do not skip this step. Do not just describe what skills to use - actually invoke them.
+
+**THIS IS A REQUIRED ACTION, NOT DOCUMENTATION.**
+
 Invoke the skill using the Skill tool with the exact invocation string from registry:
 
 ```
-Skill({ skill: "{skill.invocation}" })
+Use the Skill tool with: skill: "devops-skills:theming-components"
 ```
 
+The skill will load and provide you with instructions. Follow those instructions, then proceed to the next skill.
+
 **Invocation strings for frontend skills:**
-- theming-components: `ui-foundation-skills:theming-components`
-- visualizing-data: `ui-data-skills:visualizing-data`
-- building-tables: `ui-data-skills:building-tables`
-- creating-dashboards: `ui-data-skills:creating-dashboards`
-- building-forms: `ui-input-skills:building-forms`
-- implementing-search-filter: `ui-input-skills:implementing-search-filter`
-- building-ai-chat: `ui-interaction-skills:building-ai-chat`
-- implementing-drag-drop: `ui-interaction-skills:implementing-drag-drop`
-- providing-feedback: `ui-interaction-skills:providing-feedback`
-- implementing-navigation: `ui-structure-skills:implementing-navigation`
-- designing-layouts: `ui-structure-skills:designing-layouts`
-- displaying-timelines: `ui-structure-skills:displaying-timelines`
-- managing-media: `ui-content-skills:managing-media`
-- guiding-users: `ui-content-skills:guiding-users`
-- assembling-components: `ui-assembly-skills:assembling-components`
+
+| Order | Skill | Tool Invocation | When |
+|-------|-------|-----------------|------|
+| 1 | theming-components | `Skill: devops-skills:theming-components` | ALWAYS FIRST |
+| 2 | designing-layouts | `Skill: devops-skills:designing-layouts` | If layout needed |
+| 3 | implementing-navigation | `Skill: devops-skills:implementing-navigation` | If navigation needed |
+| 4 | visualizing-data | `Skill: devops-skills:visualizing-data` | If charts needed |
+| 5 | building-tables | `Skill: devops-skills:building-tables` | If tables needed |
+| 6 | creating-dashboards | `Skill: devops-skills:creating-dashboards` | If dashboard needed |
+| 7 | building-forms | `Skill: devops-skills:building-forms` | If forms needed |
+| 8 | implementing-search-filter | `Skill: devops-skills:implementing-search-filter` | If search needed |
+| 9 | building-ai-chat | `Skill: devops-skills:building-ai-chat` | If chat needed |
+| 10 | implementing-drag-drop | `Skill: devops-skills:implementing-drag-drop` | If drag-drop needed |
+| 11 | providing-feedback | `Skill: devops-skills:providing-feedback` | If feedback needed |
+| 12 | displaying-timelines | `Skill: devops-skills:displaying-timelines` | If timeline needed |
+| 13 | managing-media | `Skill: devops-skills:managing-media` | If media needed |
+| 14 | guiding-users | `Skill: devops-skills:guiding-users` | If onboarding needed |
+| 99 | assembling-components | `Skill: devops-skills:assembling-components` | ALWAYS LAST |
+
+### Execution Loop
+
+```
+FOR EACH skill in matched_skills (sorted by priority):
+  1. ANNOUNCE: "Now invoking skill: {skill_name}"
+  2. INVOKE: Use the Skill tool with the skill name
+  3. FOLLOW: Complete the skill's instructions
+  4. TRACK: Record what files were created
+  5. PROCEED: Move to the next skill
+END FOR
+```
+
+### Output Tracking
+
+After each skill completes, track what it created:
+- Note files mentioned in the skill output (lines starting with "Created:", "Generated:", "✓")
+- Update chain_context.skill_outputs with files_created
+- Match files against blueprint deliverables
 
 ### 3.3 Load Questions
 
