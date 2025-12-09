@@ -184,16 +184,26 @@ jobs:
 
       - name: Install skillchain commands
         run: |
-          # Install skillchain to ~/.claude/commands for validation
-          if [[ -f "commands/install-skillchain.sh" ]]; then
-            bash commands/install-skillchain.sh
-          elif [[ -f "install.sh" ]]; then
-            bash install.sh
-          else
-            # Manual copy if no install script
-            mkdir -p ~/.claude/commands/skillchain
-            cp -r .claude-commands/skillchain/* ~/.claude/commands/skillchain/ 2>/dev/null || true
+          # Install skillchain to ~/.claude/commands for validation (CI mode)
+          # Note: install.sh requires interactive mode or CLI args, so we do manual copy for CI
+          echo "Installing skillchain commands for CI validation..."
+
+          mkdir -p ~/.claude/commands/skillchain
+          mkdir -p ~/.claude/skillchain-data
+
+          # Copy commands
+          if [[ -d ".claude-commands/skillchain" ]]; then
+            cp -r .claude-commands/skillchain/* ~/.claude/commands/skillchain/
+            echo "✓ Copied skillchain commands"
           fi
+
+          # Copy data (registries, etc.)
+          if [[ -d ".claude-commands/skillchain-data" ]]; then
+            cp -r .claude-commands/skillchain-data/* ~/.claude/skillchain-data/
+            echo "✓ Copied skillchain data"
+          fi
+
+          echo "Installation complete for CI"
 
       - name: Validate blueprint structure (basic checks)
         run: |
