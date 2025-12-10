@@ -17,8 +17,13 @@ Usage:
 
 Requirements:
     - Claude Code CLI installed and accessible in PATH
-    - ANTHROPIC_API_KEY environment variable set (or authenticated via 'claude login')
+    - Authenticated via 'claude login' (OAuth - preferred for Claude Code subscriptions)
     - PyYAML: pip install pyyaml
+
+Note:
+    This tester removes ANTHROPIC_API_KEY from the subprocess environment to ensure
+    OAuth authentication is used. An invalid API key in the environment would override
+    OAuth and cause authentication failures.
 
 Reference:
     - CLI Reference: https://code.claude.com/docs/en/cli-reference
@@ -144,11 +149,15 @@ def check_authentication() -> Tuple[bool, Optional[str]]:
     """
     Check if Claude Code is authenticated.
 
+    Priority: OAuth (claude login) > Bedrock > Vertex > API Key
+
     Returns:
         Tuple of (authenticated: bool, error: Optional[str])
     """
-    # Check for API key in environment
-    if os.environ.get('ANTHROPIC_API_KEY'):
+    # Check for Claude login session (OAuth - preferred method)
+    claude_config = Path.home() / '.claude'
+    if claude_config.exists():
+        # Claude Code stores OAuth auth in ~/.claude
         return True, None
 
     # Check for Bedrock auth
@@ -160,19 +169,17 @@ def check_authentication() -> Tuple[bool, Optional[str]]:
     if os.environ.get('CLAUDE_CODE_USE_VERTEX') == '1':
         return True, None
 
-    # Check for Claude login session (presence of config files)
-    claude_config = Path.home() / '.claude'
-    if claude_config.exists():
-        # Claude Code stores auth in ~/.claude
-        return True, None
+    # Note: We don't check ANTHROPIC_API_KEY here because:
+    # 1. OAuth is the preferred method for Claude Code subscriptions
+    # 2. An invalid API key in environment will override OAuth and cause failures
+    # 3. The tester removes ANTHROPIC_API_KEY from subprocess env anyway
 
     return False, (
         "Claude Code authentication not detected.\n"
         "Options:\n"
-        "  1. Set ANTHROPIC_API_KEY environment variable\n"
-        "  2. Run 'claude login' to authenticate interactively\n"
-        "  3. For AWS Bedrock: set CLAUDE_CODE_USE_BEDROCK=1 and AWS credentials\n"
-        "  4. For Vertex AI: set CLAUDE_CODE_USE_VERTEX=1"
+        "  1. Run 'claude login' to authenticate with your Claude Code subscription\n"
+        "  2. For AWS Bedrock: set CLAUDE_CODE_USE_BEDROCK=1 and AWS credentials\n"
+        "  3. For Vertex AI: set CLAUDE_CODE_USE_VERTEX=1"
     )
 
 
@@ -253,8 +260,16 @@ class SubagentTester:
         self.claude_available, self.claude_path, self.claude_error = detect_claude_binary()
 
         # Build environment with expanded PATH
+        # IMPORTANT: Remove ANTHROPIC_API_KEY to allow OAuth authentication
+        # An invalid API key in the environment will override OAuth and cause failures
         self.env = os.environ.copy()
         self.env['PATH'] = get_expanded_path()
+
+        # Remove API key to prefer OAuth authentication
+        if 'ANTHROPIC_API_KEY' in self.env:
+            del self.env['ANTHROPIC_API_KEY']
+            if self.verbose:
+                self.log("Removed ANTHROPIC_API_KEY from environment to use OAuth", "INFO")
 
     def log(self, message: str, level: str = "INFO") -> None:
         """Log a message with optional color coding"""
@@ -1048,7 +1063,7 @@ Examples:
 
 Requirements:
   - Claude Code CLI installed: npm install -g @anthropic-ai/claude-code
-  - Authenticated: claude login OR set ANTHROPIC_API_KEY
+  - Authenticated: claude login (OAuth preferred for Claude Code subscriptions)
   - PyYAML: pip install pyyaml
 
 Documentation:
