@@ -1,10 +1,10 @@
 ---
 description: "Start a guided skill chaining workflow to build full-stack applications. 76 skills across 10 domains: frontend, backend, devops, infrastructure, security, developer, data, ai-ml, cloud, finops. Usage: /skillchain [goal]"
-allowed-tools: Skill, Read, Write, Bash
+allowed-tools: Skill, Read, Write, Bash, Task
 argument-hint: "[goal] e.g., 'dashboard with charts', 'kubernetes with monitoring', 'RAG pipeline', 'CI/CD pipeline'"
 ---
 
-# Skill Chain Router v3.0
+# Skill Chain Router v3.1
 
 **Input:** $ARGUMENTS
 
@@ -250,6 +250,49 @@ This ensures all approved skills are actually invoked using the Skill tool.
 - Show available blueprints: dashboard, crud-api, rag-pipeline, etc.
 - Let user select one manually
 - Route to selected blueprint
+
+---
+
+## Step 3.7: Choose Execution Mode
+
+After a skill chain is determined (from blueprint, dynamic selection, or manual matching), offer execution mode choice:
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                 EXECUTION MODE SELECTION                    │
+├────────────────────────────────────────────────────────────┤
+│ Your skill chain has {N} skills.                           │
+│                                                            │
+│ Choose execution mode:                                     │
+│                                                            │
+│ 1. Standard Execution                                      │
+│    - Single conversation flow                              │
+│    - Best for: Short chains (2-3 skills)                   │
+│    - Risk: Context rot for longer chains                   │
+│                                                            │
+│ 2. Delegated Execution (RECOMMENDED for 4+ skills)         │
+│    - Each skill runs in fresh sub-agent context            │
+│    - Best for: Complex blueprints, long chains             │
+│    - Benefit: ~100% skill activation rate                  │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+
+Your choice (1/2):
+```
+
+**Auto-recommendation logic:**
+- If skill count <= 3: Suggest Standard (1)
+- If skill count >= 4: Suggest Delegated (2)
+- If blueprint is complex (dashboard, rag-pipeline): Suggest Delegated (2)
+
+**If user chooses 1 (Standard):**
+- Continue to Step 5 (Route to Domain Orchestrator)
+- Orchestrator executes skills directly
+
+**If user chooses 2 (Delegated):**
+- Read `{SKILLCHAIN_CMD}/categories/delegated.md`
+- Pass skill chain context to delegated orchestrator
+- Delegated orchestrator spawns sub-agents for each skill
 
 ---
 

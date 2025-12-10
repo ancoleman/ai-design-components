@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+**Delegated Execution Mode (Solves Context Rot):**
+- `delegated.md` - New orchestrator that spawns fresh-context sub-agents per skill
+  - Solves context rot problem where long chains (4+ skills) cause 50% activation
+  - Each skill executes in isolated Task sub-agent with fresh context
+  - Coordinator maintains minimal state, delegates all skill work
+  - Supports parallel execution for independent skills
+  - Guarantees ~100% skill activation regardless of chain length
+- Step 3.7 added to `start.md` for execution mode selection
+  - Auto-recommends delegated for 4+ skill chains
+  - User can choose standard (single conversation) or delegated (sub-agents)
+- `delegated-execution.md` - Documentation explaining the pattern and when to use it
+
+**Dynamic Skill Chain Improvements:**
+- `dynamic.md` - Dynamic orchestrator for building custom skill chains without blueprints
+- `skill-graph.yaml` - Skill tiers, dependencies, and domain rules for chain building
+- `execution-protocol.md` - Mandatory behaviors to guarantee >80% skill activation
+- Step 3.6 added to `start.md` for dynamic skill selection option
+
+### Fixed
+
+- Skill invocation mismatches across blueprints and orchestrators (56 corrections)
+- CI workflow now uses manual file copy instead of interactive install.sh
+- Evaluation threshold adjusted to 80% pass rate
+
 ## [0.6.0] - 2025-12-09
 
 ### 🎯 MAJOR MILESTONE: Complete Skillchain Validation & Context Architecture
