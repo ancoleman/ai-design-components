@@ -2,26 +2,41 @@
 """
 Subagent Test Framework
 
-Tests skill-executor and other subagents by spawning Claude Code CLI sessions
+Tests skills and subagent behaviors by spawning Claude Code CLI sessions
 and validating outputs against expected results.
+
+Claude Code CLI Integration:
+    - Uses headless mode with --print flag for non-interactive execution
+    - Parses stream-json output for structured response handling
+    - Skills are triggered via prompts that activate SKILL.md files in context
 
 Usage:
     python evaluation/subagent_tester.py [test_file.yaml]
     python evaluation/subagent_tester.py --all
     python evaluation/subagent_tester.py --subagent skill-executor
+
+Requirements:
+    - Claude Code CLI installed and accessible in PATH
+    - ANTHROPIC_API_KEY environment variable set (or authenticated via 'claude login')
+    - PyYAML: pip install pyyaml
+
+Reference:
+    - CLI Reference: https://code.claude.com/docs/en/cli-reference
+    - SDK Overview: https://platform.claude.com/docs/en/agent-sdk/overview
 """
 
 import argparse
 import json
 import subprocess
 import yaml
+import shutil
 from pathlib import Path
 from datetime import datetime
 import tempfile
 import os
 import sys
 import re
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, field
 
 
@@ -34,6 +49,131 @@ class Colors:
     CYAN = '\033[96m'
     RESET = '\033[0m'
     BOLD = '\033[1m'
+
+
+def get_expanded_path() -> str:
+    """
+    Build an expanded PATH that includes common Claude Code installation locations.
+
+    Packaged apps and certain environments may not inherit the full shell PATH,
+    so we explicitly add common binary locations.
+
+    Returns:
+        Expanded PATH string with additional binary directories
+    """
+    home = os.path.expanduser("~")
+    additional_paths = [
+        '/opt/homebrew/bin',           # Homebrew Apple Silicon
+        '/opt/homebrew/sbin',
+        '/usr/local/bin',              # Homebrew Intel / common
+        '/usr/local/sbin',
+        f'{home}/.local/bin',          # pip, poetry, etc.
+        f'{home}/.npm-global/bin',     # npm global
+        f'{home}/bin',                 # User bin
+        f'{home}/.claude/local',       # Claude local install
+        '/usr/bin', '/bin', '/usr/sbin', '/sbin'
+    ]
+
+    current_path = os.environ.get('PATH', '')
+    existing = set(current_path.split(':'))
+
+    # Prepend additional paths that aren't already present
+    new_paths = [p for p in additional_paths if p not in existing and os.path.isdir(p)]
+
+    return ':'.join(new_paths + list(existing))
+
+
+def detect_claude_binary() -> Tuple[bool, Optional[str], Optional[str]]:
+    """
+    Detect if Claude Code CLI is available and get its path.
+
+    Returns:
+        Tuple of (available: bool, path: Optional[str], error: Optional[str])
+    """
+    # First try shutil.which with current PATH
+    claude_path = shutil.which('claude')
+
+    if claude_path:
+        return True, claude_path, None
+
+    # Try with expanded PATH
+    expanded_env = os.environ.copy()
+    expanded_env['PATH'] = get_expanded_path()
+
+    try:
+        result = subprocess.run(
+            ['which', 'claude'],
+            capture_output=True,
+            text=True,
+            env=expanded_env,
+            timeout=5
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            return True, result.stdout.strip().split('\n')[0], None
+    except subprocess.TimeoutExpired:
+        pass
+    except Exception as e:
+        pass
+
+    # Check common locations directly
+    home = os.path.expanduser("~")
+    common_locations = [
+        '/opt/homebrew/bin/claude',
+        '/usr/local/bin/claude',
+        f'{home}/.local/bin/claude',
+        f'{home}/.npm-global/bin/claude',
+        f'{home}/.claude/local/claude',
+    ]
+
+    for location in common_locations:
+        if os.path.isfile(location) and os.access(location, os.X_OK):
+            return True, location, None
+
+    return False, None, (
+        "Claude Code CLI not found. Please install it:\n"
+        "  npm install -g @anthropic-ai/claude-code\n"
+        "  # or\n"
+        "  brew install claude-code\n"
+        "\n"
+        "Then authenticate:\n"
+        "  claude login"
+    )
+
+
+def check_authentication() -> Tuple[bool, Optional[str]]:
+    """
+    Check if Claude Code is authenticated.
+
+    Returns:
+        Tuple of (authenticated: bool, error: Optional[str])
+    """
+    # Check for API key in environment
+    if os.environ.get('ANTHROPIC_API_KEY'):
+        return True, None
+
+    # Check for Bedrock auth
+    if os.environ.get('CLAUDE_CODE_USE_BEDROCK') == '1':
+        if os.environ.get('AWS_ACCESS_KEY_ID') or os.environ.get('AWS_PROFILE'):
+            return True, None
+
+    # Check for Vertex AI auth
+    if os.environ.get('CLAUDE_CODE_USE_VERTEX') == '1':
+        return True, None
+
+    # Check for Claude login session (presence of config files)
+    claude_config = Path.home() / '.claude'
+    if claude_config.exists():
+        # Claude Code stores auth in ~/.claude
+        return True, None
+
+    return False, (
+        "Claude Code authentication not detected.\n"
+        "Options:\n"
+        "  1. Set ANTHROPIC_API_KEY environment variable\n"
+        "  2. Run 'claude login' to authenticate interactively\n"
+        "  3. For AWS Bedrock: set CLAUDE_CODE_USE_BEDROCK=1 and AWS credentials\n"
+        "  4. For Vertex AI: set CLAUDE_CODE_USE_VERTEX=1"
+    )
 
 
 @dataclass
@@ -69,19 +209,52 @@ class AggregateReport:
 
 
 class SubagentTester:
-    """Test subagents using Claude Code CLI"""
+    """
+    Test skills and subagent behaviors using Claude Code CLI.
 
-    def __init__(self, project_path: str, verbose: bool = False):
+    This tester spawns Claude Code in headless mode (--print) with stream-json
+    output format for structured response parsing.
+
+    Claude Code CLI Reference:
+        --print / -p       : Execute query and exit (headless mode)
+        --output-format    : text | json | stream-json
+        --verbose          : Enable detailed output
+        --dangerously-skip-permissions : Skip permission prompts (automation)
+        --max-turns        : Limit agentic turns
+        --model            : Specify model version
+    """
+
+    def __init__(
+        self,
+        project_path: str,
+        verbose: bool = False,
+        model: Optional[str] = None,
+        max_turns: Optional[int] = None,
+        skip_permissions: bool = True
+    ):
         """
         Initialize the subagent tester.
 
         Args:
-            project_path: Root path of the project
-            verbose: Enable verbose output
+            project_path: Root path of the project (used as cwd for Claude)
+            verbose: Enable verbose output for debugging
+            model: Override default model (e.g., 'claude-sonnet-4-20250514')
+            max_turns: Limit number of agentic turns
+            skip_permissions: Skip permission prompts (default True for automation)
         """
         self.project_path = Path(project_path).resolve()
         self.verbose = verbose
+        self.model = model
+        self.max_turns = max_turns
+        self.skip_permissions = skip_permissions
         self.results: List[TestResult] = []
+
+        # Detect Claude binary
+        self.claude_available, self.claude_path, self.claude_error = detect_claude_binary()
+
+        # Build environment with expanded PATH
+        self.env = os.environ.copy()
+        self.env['PATH'] = get_expanded_path()
 
     def log(self, message: str, level: str = "INFO") -> None:
         """Log a message with optional color coding"""
@@ -126,13 +299,89 @@ class SubagentTester:
             self.log(f"Test file not found: {test_file}", "ERROR")
             raise
 
+    def _build_cli_args(
+        self,
+        prompt: str,
+        test_case: Dict[str, Any]
+    ) -> List[str]:
+        """
+        Build Claude Code CLI arguments.
+
+        Args:
+            prompt: The user prompt to send
+            test_case: Test case configuration for additional options
+
+        Returns:
+            List of CLI arguments
+        """
+        args = [
+            '--print', prompt,           # Headless mode with prompt
+            '--output-format', 'stream-json',  # Structured output for parsing
+        ]
+
+        # Add verbose flag if enabled
+        if self.verbose:
+            args.append('--verbose')
+
+        # Skip permission prompts for automation
+        if self.skip_permissions:
+            args.append('--dangerously-skip-permissions')
+
+        # Override model if specified
+        model = test_case.get('model') or self.model
+        if model:
+            args.extend(['--model', model])
+
+        # Limit agentic turns if specified
+        max_turns = test_case.get('max_turns') or self.max_turns
+        if max_turns:
+            args.extend(['--max-turns', str(max_turns)])
+
+        # Add system prompt if specified in test case
+        system_prompt = test_case.get('system_prompt')
+        if system_prompt:
+            args.extend(['--system-prompt', system_prompt])
+
+        # Add allowed/disallowed tools if specified
+        allowed_tools = test_case.get('allowed_tools')
+        if allowed_tools:
+            args.extend(['--allowedTools', ','.join(allowed_tools)])
+
+        disallowed_tools = test_case.get('disallowed_tools')
+        if disallowed_tools:
+            args.extend(['--disallowedTools', ','.join(disallowed_tools)])
+
+        # Resume session if specified
+        session_id = test_case.get('resume_session')
+        if session_id:
+            args.extend(['--resume', session_id])
+
+        return args
+
     def run_test(self, test_case: Dict[str, Any], subagent: str) -> TestResult:
         """
         Run a single test case via Claude Code CLI.
 
+        The 'subagent' parameter is used for categorization and reporting.
+        Skills are triggered via the prompt content and SKILL.md files
+        present in the working directory context.
+
         Args:
-            test_case: Test case configuration
-            subagent: Subagent name to test
+            test_case: Test case configuration with keys:
+                - name: Test name
+                - prompt: User prompt to send
+                - timeout: Timeout in seconds (default 120)
+                - cwd: Working directory (default: project_path)
+                - setup: List of setup shell commands
+                - teardown: List of teardown shell commands
+                - expected: Validation expectations
+                - model: Override model
+                - max_turns: Limit agentic turns
+                - system_prompt: Custom system prompt
+                - allowed_tools: List of allowed tools
+                - disallowed_tools: List of disallowed tools
+                - resume_session: Session ID to resume
+            subagent: Subagent/skill category for reporting
 
         Returns:
             TestResult object with validation results
@@ -143,7 +392,19 @@ class SubagentTester:
         cwd = test_case.get('cwd', None)
 
         self.log(f"\n{Colors.BOLD}Running test: {test_name}{Colors.RESET}")
-        self.log(f"Subagent: {subagent}", "DEBUG")
+        self.log(f"Skill/Subagent Category: {subagent}", "DEBUG")
+
+        # Check if Claude CLI is available
+        if not self.claude_available:
+            self.log(f"Claude CLI not available: {self.claude_error}", "ERROR")
+            return TestResult(
+                name=test_name,
+                subagent=subagent,
+                passed=False,
+                duration_seconds=0.0,
+                activation=False,
+                errors=[f"Claude CLI not available: {self.claude_error}"]
+            )
 
         # Run setup commands if specified
         setup_commands = test_case.get('setup', [])
@@ -151,40 +412,48 @@ class SubagentTester:
             self.log("Running setup commands...", "DEBUG")
             for cmd in setup_commands:
                 try:
-                    subprocess.run(cmd, shell=True, check=True, capture_output=True)
+                    subprocess.run(
+                        cmd,
+                        shell=True,
+                        check=True,
+                        capture_output=True,
+                        env=self.env
+                    )
                 except subprocess.CalledProcessError as e:
                     self.log(f"Setup command failed: {cmd}", "WARNING")
 
         # Build Claude Code CLI command
-        cmd = [
-            'claude',
-            '--print',
-            '--verbose',
-            '--output-format', 'stream-json',
-            '--dangerously-skip-permissions',
-            '--agent', subagent,
-            '--', prompt
-        ]
+        cli_args = self._build_cli_args(prompt, test_case)
+        cmd = [self.claude_path] + cli_args
 
         work_dir = cwd if cwd else str(self.project_path)
 
         self.log(f"Spawning Claude Code CLI (timeout: {timeout}s)...", "DEBUG")
+        self.log(f"Command: {' '.join(cmd[:5])}...", "DEBUG")  # Log partial command
         start_time = datetime.now()
 
         try:
             # Execute Claude Code CLI
+            # Note: Using stdin=subprocess.DEVNULL to prevent stdin issues
+            # that can cause hangs (similar to Node.js spawn issue)
             result = subprocess.run(
                 cmd,
                 cwd=work_dir,
                 capture_output=True,
                 text=True,
-                timeout=timeout
+                timeout=timeout,
+                env=self.env,
+                stdin=subprocess.DEVNULL  # Prevent stdin blocking
             )
 
             duration = (datetime.now() - start_time).total_seconds()
 
-            # Parse JSONL output
-            parsed_output = self._parse_output(result.stdout)
+            # Log exit code for debugging
+            if result.returncode != 0:
+                self.log(f"CLI exited with code {result.returncode}", "DEBUG")
+
+            # Parse JSONL output (pass stderr for error logging)
+            parsed_output = self._parse_output(result.stdout, result.stderr)
 
             # Check if subagent activated (received output)
             activation = bool(parsed_output.get('text', '').strip())
@@ -217,7 +486,13 @@ class SubagentTester:
                 self.log("Running teardown commands...", "DEBUG")
                 for cmd in teardown_commands:
                     try:
-                        subprocess.run(cmd, shell=True, check=True, capture_output=True)
+                        subprocess.run(
+                            cmd,
+                            shell=True,
+                            check=True,
+                            capture_output=True,
+                            env=self.env
+                        )
                     except subprocess.CalledProcessError:
                         self.log(f"Teardown command failed: {cmd}", "WARNING")
 
@@ -256,22 +531,45 @@ class SubagentTester:
                 errors=[str(e)]
             )
 
-    def _parse_output(self, stdout: str) -> Dict[str, Any]:
+    def _parse_output(self, stdout: str, stderr: str = '') -> Dict[str, Any]:
         """
         Parse JSONL output from Claude Code CLI.
 
+        Stream-JSON output format includes several message types:
+        - system:init - Contains session_id and slash_commands
+        - assistant - Streaming partial responses (skip these)
+        - result - Final complete response with session_id, result text, usage
+
         Args:
             stdout: Raw stdout from Claude CLI
+            stderr: Raw stderr from Claude CLI (for error logging)
 
         Returns:
-            Parsed output dictionary
+            Parsed output dictionary with keys:
+            - session_id: Session identifier
+            - text: Final response text
+            - cost: Total cost in USD
+            - tokens: Token usage breakdown
+            - slash_commands: Available slash commands (if present)
+            - errors: Any error messages from stderr
         """
         result = {
             'session_id': None,
             'text': '',
             'cost': 0.0,
-            'tokens': {}
+            'tokens': {},
+            'slash_commands': [],
+            'errors': []
         }
+
+        # Log stderr if present
+        if stderr and stderr.strip():
+            self.log(f"CLI stderr: {stderr[:200]}", "DEBUG")
+            result['errors'].append(stderr.strip())
+
+        if not stdout or not stdout.strip():
+            self.log("No stdout received from Claude CLI", "DEBUG")
+            return result
 
         for line in stdout.strip().split('\n'):
             if not line.strip():
@@ -279,18 +577,33 @@ class SubagentTester:
 
             try:
                 msg = json.loads(line)
+                msg_type = msg.get('type', '')
 
-                # Extract session ID
+                # Handle system:init message (first message)
+                if msg_type == 'system' and msg.get('subtype') == 'init':
+                    if msg.get('session_id') and not result['session_id']:
+                        result['session_id'] = msg['session_id']
+                        self.log(f"Session ID (init): {result['session_id']}", "DEBUG")
+                    if msg.get('slash_commands'):
+                        result['slash_commands'] = msg['slash_commands']
+                    continue
+
+                # Extract session ID from any message that has it
                 if msg.get('session_id') and not result['session_id']:
                     result['session_id'] = msg['session_id']
                     self.log(f"Session ID: {result['session_id']}", "DEBUG")
 
                 # Extract result text (prefer 'result' over streaming 'assistant')
-                if msg.get('type') == 'result' and msg.get('result'):
+                # The 'result' message is the final complete response
+                if msg_type == 'result' and msg.get('result'):
                     result['text'] = msg['result']
                     self.log(f"Got result text ({len(result['text'])} chars)", "DEBUG")
 
-                # Extract cost and usage
+                # Skip streaming assistant messages - they are partial responses
+                if msg_type == 'assistant':
+                    continue
+
+                # Extract cost and usage (usually in the result message)
                 if msg.get('total_cost_usd') is not None:
                     result['cost'] = msg['total_cost_usd']
                     self.log(f"Cost: ${result['cost']:.4f}", "DEBUG")
@@ -316,9 +629,15 @@ class SubagentTester:
                     self.log(f"Tokens: {input_tokens} in, {output_tokens} out", "DEBUG")
 
             except json.JSONDecodeError:
-                # Non-JSON line, could be raw output
+                # Non-JSON line, could be raw output or error
                 self.log(f"Non-JSON line: {line[:100]}", "DEBUG")
-                pass
+                # If we haven't gotten structured output, accumulate raw text
+                if not result['text']:
+                    result['text'] += line + '\n'
+
+        # Trim accumulated raw text
+        if result['text']:
+            result['text'] = result['text'].strip()
 
         return result
 
@@ -708,21 +1027,36 @@ def find_test_files(
 def main():
     """Main entry point for the subagent tester"""
     parser = argparse.ArgumentParser(
-        description='Test subagents using Claude Code CLI',
+        description='Test skills and subagent behaviors using Claude Code CLI',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
+  # Check Claude Code CLI setup
+  python evaluation/subagent_tester.py --check
+
   # Run a specific test file
   python evaluation/subagent_tester.py evaluation/subagent-tests/skill-executor/basic.yaml
 
-  # Run all tests for a specific subagent
+  # Run all tests for a specific subagent/skill category
   python evaluation/subagent_tester.py --subagent skill-executor
 
-  # Run all tests
-  python evaluation/subagent_tester.py --all
+  # Run all tests with a specific model
+  python evaluation/subagent_tester.py --all --model claude-sonnet-4-20250514
 
-  # Export results to JSON
-  python evaluation/subagent_tester.py --all --report test-results.json
+  # Run all tests with verbose output and export to JSON
+  python evaluation/subagent_tester.py --all -v --report test-results.json
+
+  # Run with limited turns to control cost
+  python evaluation/subagent_tester.py --all --max-turns 3
+
+Requirements:
+  - Claude Code CLI installed: npm install -g @anthropic-ai/claude-code
+  - Authenticated: claude login OR set ANTHROPIC_API_KEY
+  - PyYAML: pip install pyyaml
+
+Documentation:
+  - CLI Reference: https://code.claude.com/docs/en/cli-reference
+  - SDK Overview: https://platform.claude.com/docs/en/agent-sdk/overview
         """
     )
 
@@ -739,17 +1073,36 @@ Examples:
     )
     parser.add_argument(
         '--subagent',
-        help='Test specific subagent (e.g., skill-executor)'
+        help='Test specific subagent/skill category (e.g., skill-executor)'
     )
     parser.add_argument(
         '--verbose', '-v',
         action='store_true',
-        help='Enable verbose output'
+        help='Enable verbose output for debugging'
     )
     parser.add_argument(
         '--report',
         type=Path,
         help='Export results to JSON file'
+    )
+    parser.add_argument(
+        '--check',
+        action='store_true',
+        help='Check Claude Code CLI setup and exit (no tests run)'
+    )
+    parser.add_argument(
+        '--model',
+        help='Override model (e.g., claude-sonnet-4-20250514, claude-opus-4-20250514)'
+    )
+    parser.add_argument(
+        '--max-turns',
+        type=int,
+        help='Limit number of agentic turns (helps control costs)'
+    )
+    parser.add_argument(
+        '--allow-permissions',
+        action='store_true',
+        help='Allow permission prompts (default: skip for automation)'
     )
 
     args = parser.parse_args()
@@ -759,8 +1112,73 @@ Examples:
     project_path = script_dir.parent
     tests_dir = script_dir / 'subagent-tests'
 
+    # Check mode: verify Claude Code CLI setup
+    if args.check:
+        print(f"{Colors.BOLD}Claude Code CLI Setup Check{Colors.RESET}")
+        print("=" * 50)
+
+        # Check binary
+        available, path, error = detect_claude_binary()
+        if available:
+            print(f"{Colors.GREEN}[PASS]{Colors.RESET} Claude CLI found: {path}")
+        else:
+            print(f"{Colors.RED}[FAIL]{Colors.RESET} Claude CLI not found")
+            print(f"       {error}")
+            sys.exit(1)
+
+        # Check authentication
+        authed, auth_error = check_authentication()
+        if authed:
+            print(f"{Colors.GREEN}[PASS]{Colors.RESET} Authentication detected")
+        else:
+            print(f"{Colors.YELLOW}[WARN]{Colors.RESET} Authentication may be required")
+            print(f"       {auth_error}")
+
+        # Check test files directory
+        if tests_dir.exists():
+            test_count = len(list(tests_dir.glob("**/*.yaml"))) + len(list(tests_dir.glob("**/*.yml")))
+            print(f"{Colors.GREEN}[PASS]{Colors.RESET} Tests directory found: {tests_dir}")
+            print(f"       Found {test_count} test file(s)")
+        else:
+            print(f"{Colors.YELLOW}[WARN]{Colors.RESET} Tests directory not found: {tests_dir}")
+
+        # Try a simple CLI invocation
+        print(f"\n{Colors.BOLD}Quick CLI Test{Colors.RESET}")
+        print("-" * 50)
+        try:
+            result = subprocess.run(
+                [path, '--version'],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            if result.returncode == 0:
+                version = result.stdout.strip() or result.stderr.strip()
+                print(f"{Colors.GREEN}[PASS]{Colors.RESET} CLI responds: {version[:60]}")
+            else:
+                print(f"{Colors.YELLOW}[WARN]{Colors.RESET} CLI returned exit code {result.returncode}")
+        except Exception as e:
+            print(f"{Colors.RED}[FAIL]{Colors.RESET} CLI test failed: {e}")
+
+        print("\n" + "=" * 50)
+        print(f"{Colors.GREEN}Setup check complete. Ready to run tests.{Colors.RESET}")
+        sys.exit(0)
+
     # Create tester instance
-    tester = SubagentTester(str(project_path), verbose=args.verbose)
+    tester = SubagentTester(
+        str(project_path),
+        verbose=args.verbose,
+        model=args.model,
+        max_turns=args.max_turns,
+        skip_permissions=not args.allow_permissions
+    )
+
+    # Verify Claude CLI is available before proceeding
+    if not tester.claude_available:
+        tester.log(f"{Colors.RED}Claude Code CLI not available.{Colors.RESET}", "ERROR")
+        tester.log(tester.claude_error, "ERROR")
+        tester.log("\nRun with --check to diagnose setup issues.", "INFO")
+        sys.exit(1)
 
     # Determine which tests to run
     test_files = []
