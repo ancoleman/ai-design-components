@@ -16,7 +16,9 @@
 #   ./install.sh commands               # Install /skillchain globally
 #   ./install.sh commands update        # Update /skillchain to latest
 #   ./install.sh commands uninstall     # Remove /skillchain and data
-#   ./install.sh uninstall-all          # Remove everything
+#   ./install.sh agents                 # Install subagents
+#   ./install.sh agents uninstall       # Remove subagents
+#   ./install.sh uninstall-all          # Remove everything (skillchain + agents + plugins + marketplace)
 #   ./install.sh validate               # Validate marketplace
 #   ./install.sh --help                 # Show help
 #
@@ -106,9 +108,13 @@ print_usage() {
     echo "    commands update         Update /skillchain to latest version"
     echo "    commands uninstall      Remove /skillchain commands and data"
     echo ""
+    echo -e "  ${BOLD}Subagent Management:${NC}"
+    echo "    agents                  Install subagents"
+    echo "    agents uninstall        Remove subagents"
+    echo ""
     echo -e "  ${BOLD}Other:${NC}"
     echo "    validate                Validate marketplace manifest"
-    echo "    uninstall-all           Remove everything (skillchain + plugins + marketplace)"
+    echo "    uninstall-all           Remove everything (skillchain + agents + plugins + marketplace)"
     echo "    help                    Show this help message"
     echo ""
     echo "Interactive mode (no arguments) provides guided setup."
@@ -498,6 +504,114 @@ install_commands() {
 }
 
 #######################################
+# Install subagents
+# Pass "update" as first arg for update messaging
+#######################################
+install_agents() {
+    local mode="${1:-install}"
+    local claude_dir="$HOME/.claude"
+    local agents_dir="$claude_dir/agents"
+
+    # Check if already installed (for messaging)
+    local is_update=false
+    if [[ -d "$agents_dir" ]] && [[ "$(ls -A "$agents_dir" 2>/dev/null)" ]]; then
+        is_update=true
+    fi
+
+    if [[ "$mode" == "update" ]] || [[ "$is_update" == true ]]; then
+        echo -e "${CYAN}Updating subagents...${NC}"
+    else
+        echo -e "${CYAN}Installing subagents...${NC}"
+    fi
+    echo ""
+
+    # Create agents directory
+    mkdir -p "$agents_dir"
+
+    # Copy agent definitions
+    if [[ -d "$SCRIPT_DIR/.claude-commands/agents" ]]; then
+        # Copy all .md files from agents directory
+        local agent_count=0
+        for agent_file in "$SCRIPT_DIR/.claude-commands/agents"/*.md; do
+            if [[ -f "$agent_file" ]]; then
+                cp "$agent_file" "$agents_dir/"
+                ((agent_count++))
+            fi
+        done
+
+        if [[ $agent_count -gt 0 ]]; then
+            echo -e "${GREEN}✓${NC} Installed $agent_count subagents to $agents_dir"
+            echo ""
+            echo "Available subagents:"
+            for agent_file in "$agents_dir"/*.md; do
+                if [[ -f "$agent_file" ]]; then
+                    local agent_name=$(basename "$agent_file" .md)
+                    echo "  - ${agent_name}"
+                fi
+            done
+        else
+            echo -e "${YELLOW}⚠${NC} No agent files found to install"
+        fi
+    else
+        echo -e "${RED}Error: .claude-commands/agents directory not found${NC}"
+        exit 1
+    fi
+
+    echo ""
+    if [[ "$is_update" == true ]]; then
+        echo -e "${GREEN}✓ Subagents updated successfully${NC}"
+    else
+        echo -e "${GREEN}✓ Subagents installed successfully${NC}"
+    fi
+    echo -e "  Location: ${agents_dir}"
+    echo ""
+    echo "These subagents support skillchain execution:"
+    echo "  - skill-executor: Executes individual skills"
+    echo "  - skillchain-validator: Validates outputs"
+    echo "  - skillchain-planner: Plans skill chains"
+}
+
+#######################################
+# Uninstall subagents
+#######################################
+uninstall_agents() {
+    local claude_dir="$HOME/.claude"
+    local agents_dir="$claude_dir/agents"
+
+    echo -e "${CYAN}Removing subagents...${NC}"
+    echo ""
+
+    if [[ -d "$agents_dir" ]] && [[ "$(ls -A "$agents_dir" 2>/dev/null)" ]]; then
+        # List what will be removed
+        echo "Removing these subagents:"
+        for agent_file in "$agents_dir"/*.md; do
+            if [[ -f "$agent_file" ]]; then
+                local agent_name=$(basename "$agent_file" .md)
+                echo "  - ${agent_name}"
+            fi
+        done
+        echo ""
+
+        # Remove agent files
+        rm -f "$agents_dir"/*.md
+        echo -e "${GREEN}✓${NC} Removed subagents from $agents_dir"
+
+        # Remove directory if empty
+        if [[ ! "$(ls -A "$agents_dir" 2>/dev/null)" ]]; then
+            rmdir "$agents_dir" 2>/dev/null || true
+            echo -e "${GREEN}✓${NC} Removed empty agents directory"
+        fi
+
+        echo ""
+        echo -e "${GREEN}✓ Subagents uninstalled successfully${NC}"
+    else
+        echo -e "${YELLOW}○${NC} Subagents directory not found or empty at $agents_dir"
+        echo ""
+        echo -e "${YELLOW}Nothing to remove - subagents were not installed${NC}"
+    fi
+}
+
+#######################################
 # Uninstall /skillchain commands
 #######################################
 uninstall_commands() {
@@ -546,35 +660,40 @@ interactive_mode() {
     echo -e "${CYAN}What would you like to do?${NC}"
     echo ""
     echo -e "  ${BOLD}Install:${NC}"
-    echo -e "    ${BOLD}1)${NC} ${GREEN}Full Install${NC} - Marketplace + all plugins + /skillchain command"
+    echo -e "    ${BOLD}1)${NC} ${GREEN}Full Install${NC} - Marketplace + all plugins + /skillchain + subagents"
     echo -e "    ${BOLD}2)${NC} ${MAGENTA}Install Skillchain${NC} - Install /skillchain:start command globally"
-    echo -e "    ${BOLD}3)${NC} ${YELLOW}Marketplace + Plugins${NC} - Add marketplace + install all plugins"
-    echo -e "    ${BOLD}4)${NC} ${CYAN}Marketplace Only${NC} - Just add the marketplace"
-    echo -e "    ${BOLD}5)${NC} ${BLUE}Select Plugins${NC} - Choose which plugins to install"
+    echo -e "    ${BOLD}3)${NC} ${MAGENTA}Install Subagents${NC} - Install subagents for skillchain execution"
+    echo -e "    ${BOLD}4)${NC} ${YELLOW}Marketplace + Plugins${NC} - Add marketplace + install all plugins"
+    echo -e "    ${BOLD}5)${NC} ${CYAN}Marketplace Only${NC} - Just add the marketplace"
+    echo -e "    ${BOLD}6)${NC} ${BLUE}Select Plugins${NC} - Choose which plugins to install"
     echo ""
     echo -e "  ${BOLD}Update:${NC}"
-    echo -e "    ${BOLD}6)${NC} Update Skillchain - Refresh /skillchain to latest version"
-    echo -e "    ${BOLD}7)${NC} Update Marketplace - Refresh marketplace plugins"
+    echo -e "    ${BOLD}7)${NC} Update Skillchain - Refresh /skillchain to latest version"
+    echo -e "    ${BOLD}8)${NC} Update Subagents - Refresh subagents to latest version"
+    echo -e "    ${BOLD}9)${NC} Update Marketplace - Refresh marketplace plugins"
     echo ""
     echo -e "  ${BOLD}Uninstall:${NC}"
-    echo -e "    ${BOLD}8)${NC} ${RED}Uninstall Skillchain${NC} - Remove /skillchain commands and data"
-    echo -e "    ${BOLD}9)${NC} Uninstall Plugins - Remove marketplace and all plugins"
-    echo -e "    ${BOLD}10)${NC} ${RED}Uninstall Everything${NC} - Remove all (skillchain + plugins + marketplace)"
+    echo -e "    ${BOLD}10)${NC} ${RED}Uninstall Skillchain${NC} - Remove /skillchain commands and data"
+    echo -e "    ${BOLD}11)${NC} ${RED}Uninstall Subagents${NC} - Remove subagents"
+    echo -e "    ${BOLD}12)${NC} Uninstall Plugins - Remove marketplace and all plugins"
+    echo -e "    ${BOLD}13)${NC} ${RED}Uninstall Everything${NC} - Remove all (skillchain + subagents + plugins + marketplace)"
     echo ""
     echo -e "  ${BOLD}Info:${NC}"
-    echo -e "    ${BOLD}11)${NC} List Plugins - Show available plugins"
+    echo -e "    ${BOLD}14)${NC} List Plugins - Show available plugins"
     echo -e "    ${BOLD}0)${NC} Help - Show all commands"
     echo ""
-    read -p "Enter choice [0-11]: " choice
+    read -p "Enter choice [0-14]: " choice
 
     case $choice in
         1)
-            # Full install: marketplace + plugins + skillchain
+            # Full install: marketplace + plugins + skillchain + agents
             marketplace_add
             echo ""
             plugins_install_all
             echo ""
             install_commands
+            echo ""
+            install_agents
             echo ""
             echo -e "${GREEN}═══════════════════════════════════════════════════════════════════${NC}"
             echo -e "${GREEN}  Full Installation Complete!${NC}"
@@ -589,12 +708,16 @@ interactive_mode() {
             install_commands
             ;;
         3)
-            # Marketplace + plugins (no skillchain)
+            # Install subagents only
+            install_agents
+            ;;
+        4)
+            # Marketplace + plugins (no skillchain or agents)
             marketplace_add
             echo ""
             plugins_install_all
             ;;
-        4)
+        5)
             # Marketplace only
             marketplace_add
             echo ""
@@ -602,23 +725,28 @@ interactive_mode() {
             echo "  ./install.sh plugins install-all    # Install all plugins"
             echo "  ./install.sh plugins install NAME   # Install specific plugin"
             echo "  ./install.sh commands               # Install /skillchain command"
+            echo "  ./install.sh agents                 # Install subagents"
             ;;
-        5)
+        6)
             # Select plugins
             plugins_list
             echo ""
             echo -e "${CYAN}To install specific plugins:${NC}"
             echo "  ./install.sh plugins install PLUGIN_NAME"
             ;;
-        6)
+        7)
             # Update skillchain
             install_commands "update"
             ;;
-        7)
+        8)
+            # Update subagents
+            install_agents "update"
+            ;;
+        9)
             # Update marketplace
             marketplace_update
             ;;
-        8)
+        10)
             # Uninstall skillchain only
             echo -e "${YELLOW}This will remove the /skillchain commands and data.${NC}"
             read -p "Continue? [y/N]: " confirm
@@ -626,7 +754,15 @@ interactive_mode() {
                 uninstall_commands
             fi
             ;;
-        9)
+        11)
+            # Uninstall subagents only
+            echo -e "${YELLOW}This will remove the subagents.${NC}"
+            read -p "Continue? [y/N]: " confirm
+            if [[ "$confirm" =~ ^[Yy]$ ]]; then
+                uninstall_agents
+            fi
+            ;;
+        12)
             # Uninstall plugins and marketplace
             echo -e "${YELLOW}This will remove all plugins and the marketplace.${NC}"
             read -p "Continue? [y/N]: " confirm
@@ -636,12 +772,14 @@ interactive_mode() {
                 marketplace_remove
             fi
             ;;
-        10)
+        13)
             # Uninstall everything
-            echo -e "${RED}This will remove EVERYTHING: skillchain, all plugins, and the marketplace.${NC}"
+            echo -e "${RED}This will remove EVERYTHING: skillchain, subagents, all plugins, and the marketplace.${NC}"
             read -p "Are you sure? [y/N]: " confirm
             if [[ "$confirm" =~ ^[Yy]$ ]]; then
                 uninstall_commands
+                echo ""
+                uninstall_agents
                 echo ""
                 plugins_uninstall_all
                 echo ""
@@ -650,7 +788,7 @@ interactive_mode() {
                 echo -e "${GREEN}✓ All AI Design Components have been removed${NC}"
             fi
             ;;
-        11)
+        14)
             # List plugins
             plugins_list
             ;;
@@ -757,11 +895,33 @@ main() {
                     ;;
             esac
             ;;
+        agents)
+            local subcommand="${1:-install}"
+            shift || true
+            case "$subcommand" in
+                install|"")
+                    install_agents
+                    ;;
+                update|refresh)
+                    install_agents "update"
+                    ;;
+                uninstall|remove)
+                    uninstall_agents
+                    ;;
+                *)
+                    echo -e "${RED}Unknown agents subcommand: ${subcommand}${NC}"
+                    echo "Available: install (default), update, uninstall"
+                    exit 1
+                    ;;
+            esac
+            ;;
         uninstall-all)
-            echo -e "${RED}This will remove EVERYTHING: skillchain, all plugins, and the marketplace.${NC}"
+            echo -e "${RED}This will remove EVERYTHING: skillchain, subagents, all plugins, and the marketplace.${NC}"
             read -p "Are you sure? [y/N]: " confirm
             if [[ "$confirm" =~ ^[Yy]$ ]]; then
                 uninstall_commands
+                echo ""
+                uninstall_agents
                 echo ""
                 plugins_uninstall_all
                 echo ""
