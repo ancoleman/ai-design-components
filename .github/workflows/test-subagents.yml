@@ -1,0 +1,259 @@
+name: Test Subagents
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.claude-commands/agents/**'
+      - 'evaluation/subagent-tests/**'
+      - 'evaluation/subagent_tester.py'
+      - '.github/workflows/test-subagents.yml'
+  pull_request:
+    paths:
+      - '.claude-commands/agents/**'
+      - 'evaluation/subagent-tests/**'
+      - 'evaluation/subagent_tester.py'
+      - '.github/workflows/test-subagents.yml'
+  workflow_dispatch:
+    inputs:
+      subagent:
+        description: 'Specific subagent to test (or "all")'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - skill-executor
+          - frontend-skill-executor
+          - backend-skill-executor
+          - infra-skill-executor
+          - skillchain-validator
+          - skillchain-planner
+
+jobs:
+  validate-infrastructure:
+    name: Validate Test Infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml
+
+      - name: Validate test files
+        run: |
+          echo "Validating test YAML files..."
+
+          python3 << 'EOF'
+          import yaml
+          import sys
+          from pathlib import Path
+
+          test_dir = Path('evaluation/subagent-tests')
+          errors = []
+
+          if not test_dir.exists():
+              print(f"Test directory not found: {test_dir}")
+              print("This is expected if subagent tests haven't been created yet")
+              sys.exit(0)
+
+          yaml_files = list(test_dir.rglob('*.yaml')) + list(test_dir.rglob('*.yml'))
+
+          if not yaml_files:
+              print("No test files found yet (expected during initial development)")
+              sys.exit(0)
+
+          print(f"Found {len(yaml_files)} test file(s)")
+
+          for yaml_file in yaml_files:
+              try:
+                  with open(yaml_file) as f:
+                      data = yaml.safe_load(f)
+
+                  # Check for required top-level fields
+                  if not data:
+                      errors.append(f'{yaml_file.relative_to(test_dir)}: Empty YAML file')
+                      continue
+
+                  if 'name' not in data:
+                      errors.append(f'{yaml_file.relative_to(test_dir)}: Missing "name" field')
+
+                  if 'subagent' not in data:
+                      errors.append(f'{yaml_file.relative_to(test_dir)}: Missing "subagent" field')
+
+                  if 'test_cases' not in data:
+                      errors.append(f'{yaml_file.relative_to(test_dir)}: Missing "test_cases" field')
+                  elif not isinstance(data['test_cases'], list):
+                      errors.append(f'{yaml_file.relative_to(test_dir)}: "test_cases" must be a list')
+                  else:
+                      # Validate each test case
+                      for i, test_case in enumerate(data['test_cases']):
+                          if 'name' not in test_case:
+                              errors.append(f'{yaml_file.relative_to(test_dir)}: test_cases[{i}] missing "name"')
+                          if 'prompt' not in test_case:
+                              errors.append(f'{yaml_file.relative_to(test_dir)}: test_cases[{i}] missing "prompt"')
+
+                  print(f'✓ {yaml_file.relative_to(test_dir)}: {len(data.get("test_cases", []))} test case(s)')
+
+              except yaml.YAMLError as e:
+                  errors.append(f'{yaml_file.relative_to(test_dir)}: YAML syntax error - {e}')
+              except Exception as e:
+                  errors.append(f'{yaml_file.relative_to(test_dir)}: {e}')
+
+          if errors:
+              print(f'\n{len(errors)} validation error(s):')
+              for error in errors:
+                  print(f'  - {error}')
+              sys.exit(1)
+
+          print('\nAll test files valid!')
+          EOF
+
+      - name: Validate agent definitions
+        run: |
+          echo "Validating agent definition files..."
+
+          python3 << 'EOF'
+          import sys
+          import re
+          from pathlib import Path
+
+          agents_dir = Path('.claude-commands/agents')
+          errors = []
+
+          if not agents_dir.exists():
+              print(f"ERROR: Agents directory not found: {agents_dir}")
+              sys.exit(1)
+
+          md_files = list(agents_dir.glob('*.md'))
+
+          if not md_files:
+              print("ERROR: No agent definition files found")
+              sys.exit(1)
+
+          print(f"Found {len(md_files)} agent definition(s)")
+
+          for md_file in md_files:
+              content = md_file.read_text()
+
+              # Check for YAML frontmatter
+              if not content.startswith('---'):
+                  errors.append(f'{md_file.name}: Missing YAML frontmatter (should start with "---")')
+                  continue
+
+              # Extract frontmatter
+              frontmatter_match = re.search(r'^---\n(.*?)\n---', content, re.DOTALL)
+              if not frontmatter_match:
+                  errors.append(f'{md_file.name}: Invalid YAML frontmatter format')
+                  continue
+
+              frontmatter = frontmatter_match.group(1)
+
+              # Check for required fields in frontmatter
+              required_fields = {
+                  'name:': 'name',
+                  'description:': 'description',
+                  'tools:': 'tools'
+              }
+
+              for pattern, field_name in required_fields.items():
+                  if pattern not in frontmatter:
+                      errors.append(f'{md_file.name}: Missing required field in frontmatter: {field_name}')
+
+              # Check if agent has instructions section
+              if '## Instructions' not in content and '## Protocol' not in content:
+                  errors.append(f'{md_file.name}: Missing instructions/protocol section')
+
+              print(f'✓ {md_file.name}')
+
+          if errors:
+              print(f'\n{len(errors)} agent definition error(s):')
+              for error in errors:
+                  print(f'  - {error}')
+              sys.exit(1)
+
+          print('\nAll agent definitions valid!')
+          EOF
+
+      - name: Check test runner syntax
+        run: |
+          echo "Validating test runner script..."
+
+          if [[ ! -f "evaluation/subagent_tester.py" ]]; then
+              echo "ERROR: Test runner not found: evaluation/subagent_tester.py"
+              exit 1
+          fi
+
+          python -m py_compile evaluation/subagent_tester.py
+          echo "✓ Test runner syntax valid"
+
+      - name: Verify test runner imports
+        run: |
+          echo "Checking test runner dependencies..."
+
+          python3 << 'EOF'
+          import sys
+
+          # Check if test runner can import its dependencies
+          try:
+              import yaml
+              import json
+              import subprocess
+              from pathlib import Path
+              from datetime import datetime
+              from dataclasses import dataclass
+              print("✓ All required modules available")
+          except ImportError as e:
+              print(f"ERROR: Missing dependency: {e}")
+              sys.exit(1)
+          EOF
+
+  # NOTE: Actual subagent testing requires Claude Code CLI and ANTHROPIC_API_KEY
+  # This workflow validates the testing infrastructure only
+  # To run actual tests locally:
+  #   python evaluation/subagent_tester.py --subagent skill-executor
+
+  summary:
+    name: Validation Summary
+    runs-on: ubuntu-latest
+    needs: [validate-infrastructure]
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          echo "=== Subagent Test Infrastructure Validation ==="
+          echo ""
+          echo "IMPORTANT: This workflow validates test infrastructure only."
+          echo "Actual subagent execution requires Claude Code CLI + API key."
+          echo ""
+          echo "To run tests locally:"
+          echo "  python evaluation/subagent_tester.py --subagent skill-executor"
+          echo ""
+
+          FAILED=0
+
+          if [[ "${{ needs.validate-infrastructure.result }}" == "success" ]]; then
+            echo "✓ Test Infrastructure: PASSED"
+          else
+            echo "✗ Test Infrastructure: FAILED"
+            FAILED=1
+          fi
+
+          echo ""
+          echo "=== End Summary ==="
+
+          if [[ $FAILED -eq 1 ]]; then
+            echo ""
+            echo "Validation failed. See job details above."
+            exit 1
+          fi
+
+          echo ""
+          echo "All validations passed!"

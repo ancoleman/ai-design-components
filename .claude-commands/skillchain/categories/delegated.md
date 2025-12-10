@@ -90,6 +90,56 @@ completed: 0
 failed: 0
 ```
 
+### 2.1 Create Progress File (Persistence)
+
+After user confirms execution, create `.skillchain-progress.json` in the project root:
+
+```json
+{
+  "version": "1.0",
+  "session_id": "{generate UUID v4}",
+  "goal": "{original_goal}",
+  "blueprint": "{blueprint_name or null}",
+  "maturity": "{maturity_level}",
+  "started_at": "{ISO8601 timestamp}",
+  "updated_at": "{ISO8601 timestamp}",
+
+  "skills": [
+    {
+      "name": "{skill_name}",
+      "invocation": "{plugin:skill}",
+      "status": "pending",
+      "executor": "{skill-executor|frontend-skill-executor|backend-skill-executor|infra-skill-executor}",
+      "agent_id": null,
+      "outputs": null
+    }
+  ],
+
+  "accumulated_context": {
+    "project_path": "{project_path}"
+  },
+
+  "validation": null,
+
+  "execution": {
+    "mode": "delegated",
+    "total_skills": {N},
+    "completed_count": 0,
+    "failed_count": 0,
+    "skipped_count": 0,
+    "current_index": 0,
+    "activation_rate": 0.0
+  }
+}
+```
+
+**Write to:** `{project_path}/.skillchain-progress.json`
+
+This enables:
+- Resume via `/skillchain resume` if interrupted
+- Progress tracking across context boundaries
+- Post-mortem analysis of skillchain execution
+
 ---
 
 ## Step 3: Present Execution Plan
@@ -142,7 +192,29 @@ Invocation: {invocation}
 
 ### 4.2 Spawn Sub-Agent Using Task Tool
 
-Use the Task tool to spawn the skill-executor subagent:
+**Before spawning skill-executor, update progress file:**
+
+Update `.skillchain-progress.json`:
+
+```json
+{
+  "skills": [
+    {
+      "name": "{current_skill_name}",
+      "status": "in_progress",
+      "started_at": "{ISO8601 timestamp}",
+      ...
+    }
+  ],
+  "execution": {
+    "current_index": {current_index},
+    ...
+  },
+  "updated_at": "{ISO8601 timestamp}"
+}
+```
+
+Then use the Task tool to spawn the skill-executor subagent:
 
 ```
 Task tool parameters:
@@ -179,6 +251,61 @@ execution[current_index]:
 current_index: current_index + 1
 completed: completed + 1
 ```
+
+**After skill-executor returns, update progress file:**
+
+Update `.skillchain-progress.json`:
+
+```json
+{
+  "skills": [
+    {
+      "name": "{skill_name}",
+      "status": "complete",
+      "completed_at": "{ISO8601 timestamp}",
+      "outputs": {
+        "files_created": ["{absolute paths from sub-agent}"],
+        "decisions": {
+          "{key}": "{value}"
+        },
+        "exports": {
+          "{export_key}": "{export_value}"
+        }
+      },
+      ...
+    }
+  ],
+  "accumulated_context": {
+    "{domain}": {
+      "{merged outputs from skill.outputs.exports}"
+    }
+  },
+  "execution": {
+    "current_index": {current_index + 1},
+    "completed_count": {completed_count + 1},
+    "activation_rate": {(completed_count / total_skills) * 100},
+    ...
+  },
+  "updated_at": "{ISO8601 timestamp}"
+}
+```
+
+**Status variations:**
+- If skill succeeded: `"status": "complete"`
+- If skill failed: `"status": "failed"` and include `"error": "{error_message}"`
+- If skill skipped: `"status": "skipped"`
+
+**Merging outputs into accumulated_context:**
+
+Use the skill's `outputs.exports` to update the appropriate domain in `accumulated_context`:
+
+Examples:
+- Theme skill exports → `accumulated_context.theme`
+- API skill exports → `accumulated_context.api`
+- Database skill exports → `accumulated_context.database`
+- Frontend skill exports → `accumulated_context.frontend`
+- AI skill exports → `accumulated_context.ai`
+- Infrastructure skill exports → `accumulated_context.infrastructure`
 
 ### 4.4 Progress Report
 
@@ -244,6 +371,34 @@ Task tool parameters:
     {summary of what each skill created}
 ```
 
+**After skillchain-validator returns, update progress file:**
+
+Update `.skillchain-progress.json`:
+
+```json
+{
+  "validation": {
+    "last_run": "{ISO8601 timestamp}",
+    "completeness": {0-100},
+    "status": "PASS|PARTIAL|FAIL",
+    "deliverables": [
+      {
+        "name": "{deliverable_name}",
+        "status": "verified|missing|partial|skipped",
+        "details": "{details}"
+      }
+    ],
+    "missing": ["{list of missing items}"],
+    "warnings": ["{list of warnings}"]
+  },
+  "execution": {
+    "activation_rate": {final activation rate percentage},
+    ...
+  },
+  "updated_at": "{ISO8601 timestamp}"
+}
+```
+
 ---
 
 ## Step 7: Final Report
@@ -302,6 +457,108 @@ Your choice (1/2/3):
 ```
 
 If user chooses 1, spawn skill-executor subagents for the identified missing skills.
+
+---
+
+## Step 8.5: Cleanup Progress File
+
+After successful completion (or user-requested abort), offer cleanup options:
+
+```
+Skillchain execution complete.
+
+Progress file: {project_path}/.skillchain-progress.json
+
+This file contains:
+- Complete execution history
+- All skill outputs and decisions
+- Validation results
+- Activation rate: {activation_rate}%
+
+Options:
+1. Keep progress file for reference
+2. Delete progress file (clean workspace)
+3. Export as execution report (.md format)
+
+Your choice (1/2/3):
+```
+
+**If user chooses 1:** Leave `.skillchain-progress.json` in place
+
+**If user chooses 2:** Delete `.skillchain-progress.json`
+
+**If user chooses 3:**
+
+Generate execution report at `{project_path}/.skillchain-execution-report.md`:
+
+```markdown
+# Skillchain Execution Report
+
+**Session ID:** {session_id}
+**Goal:** {goal}
+**Blueprint:** {blueprint or "Custom Chain"}
+**Maturity Level:** {maturity}
+**Executed:** {started_at} to {updated_at}
+
+---
+
+## Execution Summary
+
+- Total Skills: {total_skills}
+- Completed: {completed_count}
+- Failed: {failed_count}
+- Skipped: {skipped_count}
+- Activation Rate: {activation_rate}%
+
+---
+
+## Skills Executed
+
+{for each skill in skills array}
+
+### {skill.name}
+
+- Status: {skill.status}
+- Executor: {skill.executor}
+- Duration: {skill.completed_at - skill.started_at}
+
+**Files Created:**
+{skill.outputs.files_created}
+
+**Key Decisions:**
+{skill.outputs.decisions}
+
+**Exports:**
+{skill.outputs.exports}
+
+---
+
+## Validation Results
+
+- Completeness: {validation.completeness}%
+- Status: {validation.status}
+
+**Deliverables:**
+{validation.deliverables}
+
+**Missing Items:**
+{validation.missing}
+
+**Warnings:**
+{validation.warnings}
+
+---
+
+## Accumulated Context
+
+{accumulated_context formatted as YAML or JSON}
+
+---
+
+Generated by Skillchain Delegated Execution
+```
+
+Then optionally delete `.skillchain-progress.json`.
 
 ---
 

@@ -1,0 +1,247 @@
+name: skillchain-validator-basic
+description: Validates that skillchain-validator correctly verifies file existence, reports in standardized format, and operates in read-only mode
+subagent: skillchain-validator
+
+test_cases:
+  - name: validates-existing-files
+    description: Verify validator correctly identifies existing files
+    prompt: |
+      Validate the following files exist in the project:
+
+      Project path: /tmp/test-validator-existing
+
+      Expected files:
+      - src/components/Button.tsx
+      - src/components/Card.tsx
+      - src/styles/tokens.css
+
+      Check if these files exist and report validation status.
+
+    expected:
+      files_created: []  # Validator should not create files
+
+      report_contains:
+        - "VALIDATION REPORT"
+        - "DELIVERABLES:"
+        - "FILE COVERAGE:"
+
+      report_matches:
+        - pattern: "✓|✗|○|⚠"
+          description: "Uses validation symbols"
+
+    timeout: 120
+
+    setup:
+      - "mkdir -p /tmp/test-validator-existing/src/components"
+      - "mkdir -p /tmp/test-validator-existing/src/styles"
+      - "echo 'export const Button = () => {};' > /tmp/test-validator-existing/src/components/Button.tsx"
+      - "echo 'export const Card = () => {};' > /tmp/test-validator-existing/src/components/Card.tsx"
+      - "echo ':root { --color-primary: blue; }' > /tmp/test-validator-existing/src/styles/tokens.css"
+
+    teardown:
+      - "rm -rf /tmp/test-validator-existing"
+
+  - name: reports-missing-files
+    description: Verify validator correctly identifies missing files
+    prompt: |
+      Validate the following files exist in the project:
+
+      Project path: /tmp/test-validator-missing
+
+      Expected files:
+      - src/components/Form.tsx (should exist)
+      - src/components/Table.tsx (missing)
+      - src/styles/global.css (missing)
+
+      Check if these files exist and report validation status.
+
+    expected:
+      files_created: []  # Validator should not create files
+
+      report_contains:
+        - "VALIDATION REPORT"
+        - "✗"
+        - "MISSING"
+
+      report_matches:
+        - pattern: "Expected:\\s+\\d+\\s+files"
+          description: "Reports expected file count"
+        - pattern: "Found:\\s+\\d+\\s+files"
+          description: "Reports found file count"
+
+    timeout: 120
+
+    setup:
+      - "mkdir -p /tmp/test-validator-missing/src/components"
+      - "mkdir -p /tmp/test-validator-missing/src/styles"
+      - "echo 'export const Form = () => {};' > /tmp/test-validator-missing/src/components/Form.tsx"
+
+    teardown:
+      - "rm -rf /tmp/test-validator-missing"
+
+  - name: reports-completeness-percentage
+    description: Verify validator calculates and reports completeness percentage
+    prompt: |
+      Validate the project at /tmp/test-validator-completeness.
+
+      Expected deliverables:
+      - src/components/Header.tsx
+      - src/components/Footer.tsx
+      - src/components/Sidebar.tsx
+      - src/styles/main.css
+
+      Calculate completeness percentage based on files present.
+
+    expected:
+      files_created: []  # Validator should not create files
+
+      report_contains:
+        - "COMPLETENESS:"
+
+      report_matches:
+        - pattern: "COMPLETENESS:\\s+\\d+%"
+          description: "Reports completeness as percentage"
+
+    timeout: 120
+
+    setup:
+      - "mkdir -p /tmp/test-validator-completeness/src/components"
+      - "mkdir -p /tmp/test-validator-completeness/src/styles"
+      - "echo 'export const Header = () => {};' > /tmp/test-validator-completeness/src/components/Header.tsx"
+      - "echo 'export const Footer = () => {};' > /tmp/test-validator-completeness/src/components/Footer.tsx"
+      - "echo 'body { margin: 0; }' > /tmp/test-validator-completeness/src/styles/main.css"
+
+    teardown:
+      - "rm -rf /tmp/test-validator-completeness"
+
+  - name: never-modifies-files
+    description: Verify validator operates in read-only mode and never creates or modifies files
+    prompt: |
+      Validate the project at /tmp/test-validator-readonly.
+
+      Expected files:
+      - src/index.ts
+      - src/utils/helper.ts
+
+      Perform validation but do not modify, create, or delete any files.
+
+    expected:
+      files_created: []  # Critical: validator must not create files
+
+      report_contains:
+        - "VALIDATION REPORT"
+
+      report_excludes:
+        - "Created file"
+        - "Modified file"
+        - "Wrote to"
+
+    timeout: 120
+
+    setup:
+      - "mkdir -p /tmp/test-validator-readonly/src/utils"
+      - "echo 'export const version = \"1.0.0\";' > /tmp/test-validator-readonly/src/index.ts"
+      - "echo 'export const helper = () => {};' > /tmp/test-validator-readonly/src/utils/helper.ts"
+
+    teardown:
+      - "rm -rf /tmp/test-validator-readonly"
+
+  - name: reports-status-pass-or-fail
+    description: Verify validator reports overall STATUS as PASS, PARTIAL, or FAIL
+    prompt: |
+      Validate the project at /tmp/test-validator-status.
+
+      Expected deliverables (all should be present):
+      - README.md
+      - package.json
+      - src/main.ts
+
+      Determine overall validation status.
+
+    expected:
+      files_created: []
+
+      report_contains:
+        - "STATUS:"
+
+      report_matches:
+        - pattern: "STATUS:\\s+(PASS|PARTIAL|FAIL)"
+          description: "Reports status as PASS, PARTIAL, or FAIL"
+
+    timeout: 120
+
+    setup:
+      - "mkdir -p /tmp/test-validator-status/src"
+      - "echo '# Test Project' > /tmp/test-validator-status/README.md"
+      - "echo '{ \"name\": \"test\" }' > /tmp/test-validator-status/package.json"
+      - "echo 'console.log(\"hello\");' > /tmp/test-validator-status/src/main.ts"
+
+    teardown:
+      - "rm -rf /tmp/test-validator-status"
+
+  - name: uses-validation-symbols
+    description: Verify validator uses standardized symbols (✓ ✗ ○ ⚠) consistently
+    prompt: |
+      Validate the following mixed scenario:
+
+      Project: /tmp/test-validator-symbols
+
+      Expected:
+      - src/complete.ts (exists and complete)
+      - src/missing.ts (missing)
+      - src/incomplete.ts (exists but empty - warning)
+
+      Use standardized validation symbols in the report.
+
+    expected:
+      files_created: []
+
+      report_contains:
+        - "VALIDATION REPORT"
+
+      report_matches:
+        - pattern: "✓"
+          description: "Uses checkmark for verified items"
+        - pattern: "✗"
+          description: "Uses X for missing/failed items"
+
+    timeout: 120
+
+    setup:
+      - "mkdir -p /tmp/test-validator-symbols/src"
+      - "echo 'export const complete = true;' > /tmp/test-validator-symbols/src/complete.ts"
+      - "touch /tmp/test-validator-symbols/src/incomplete.ts"
+
+    teardown:
+      - "rm -rf /tmp/test-validator-symbols"
+
+  - name: provides-recommendations
+    description: Verify validator provides actionable recommendations in report
+    prompt: |
+      Validate the project at /tmp/test-validator-recommendations.
+
+      Expected files:
+      - src/app.ts (present)
+      - src/config.ts (missing)
+      - tests/app.test.ts (missing)
+
+      Provide recommendations for completing the project.
+
+    expected:
+      files_created: []
+
+      report_contains:
+        - "RECOMMENDATIONS:"
+
+      report_matches:
+        - pattern: "RECOMMENDATIONS:\\s*\\n(-\\s+.+\\n)+"
+          description: "Includes recommendations section with bullet points"
+
+    timeout: 120
+
+    setup:
+      - "mkdir -p /tmp/test-validator-recommendations/src"
+      - "echo 'export const app = {};' > /tmp/test-validator-recommendations/src/app.ts"
+
+    teardown:
+      - "rm -rf /tmp/test-validator-recommendations"

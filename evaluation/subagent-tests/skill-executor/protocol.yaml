@@ -1,0 +1,213 @@
+name: skill-executor-protocol-adherence
+description: Validates that skill-executor follows its defined execution protocol including skill announcement, invocation, and standardized reporting format
+subagent: skill-executor
+
+test_cases:
+  - name: announces-before-invocation
+    description: Verify skill-executor announces skill before invoking it
+    prompt: |
+      Execute the theming-components skill for a React dashboard project.
+
+      Project context:
+      - Path: /tmp/test-executor-announce
+      - Framework: React with TypeScript
+      - Build tool: Vite
+
+      User preferences:
+      - Color scheme: blue-gray
+      - Modes: light and dark
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      report_contains:
+        - "Now invoking skill:"
+        - "theming-components"
+        - "Purpose:"
+
+      report_excludes:
+        - "Error:"
+        - "failed"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-executor-announce/src/styles"
+
+    teardown:
+      - "rm -rf /tmp/test-executor-announce"
+
+  - name: uses-skill-tool
+    description: Verify skill-executor actually uses Skill tool for invocation
+    prompt: |
+      Execute the building-forms skill.
+
+      Project context:
+      - Path: /tmp/test-executor-skill-tool
+      - Framework: React with TypeScript
+
+      Requirements:
+      - Use React Hook Form
+      - Validation: Zod
+      - Include email and password fields
+
+    expected:
+      skill_invoked: "ui-input-skills:building-forms"
+
+      report_contains:
+        - "Skill:"
+        - "building-forms"
+
+      report_excludes:
+        - "would invoke"
+        - "will invoke"
+        - "should invoke"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-executor-skill-tool/src/components"
+
+    teardown:
+      - "rm -rf /tmp/test-executor-skill-tool"
+
+  - name: reports-skill-complete-format
+    description: Verify skill-executor uses standardized SKILL COMPLETE report format
+    prompt: |
+      Execute the theming-components skill for a simple web app.
+
+      Project: /tmp/test-executor-format
+      Framework: React
+      Theme: Modern, clean design with light/dark modes
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      report_contains:
+        - "SKILL COMPLETE:"
+        - "theming-components"
+
+      report_matches:
+        - pattern: "SKILL COMPLETE:\\s+theming-components"
+          description: "SKILL COMPLETE header with skill name"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-executor-format/src"
+
+    teardown:
+      - "rm -rf /tmp/test-executor-format"
+
+  - name: includes-files-created-section
+    description: Verify report includes FILES CREATED section with absolute paths
+    prompt: |
+      Execute the theming-components skill.
+
+      Project: /tmp/test-executor-files
+      Framework: React with TypeScript
+      Preferences: Blue theme, light and dark modes
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      files_created:
+        - pattern: "src/styles/*.css"
+          min_count: 1
+
+      report_contains:
+        - "FILES CREATED:"
+        - "/tmp/test-executor-files/"
+
+      report_matches:
+        - pattern: "FILES CREATED:\\s*\\n(-\\s+/[^\\s]+\\n)+"
+          description: "FILES CREATED section with absolute paths in bullet format"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-executor-files/src/styles"
+
+    teardown:
+      - "rm -rf /tmp/test-executor-files"
+
+  - name: includes-key-decisions-section
+    description: Verify report includes KEY DECISIONS section documenting choices made
+    prompt: |
+      Execute the theming-components skill.
+
+      Project: /tmp/test-executor-decisions
+      Framework: React
+      Let the executor make decisions about color scheme and theme approach.
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      report_contains:
+        - "KEY DECISIONS:"
+
+      report_matches:
+        - pattern: "KEY DECISIONS:\\s*\\n(-\\s+[^:]+:\\s+.+\\n)+"
+          description: "KEY DECISIONS section with category: choice format"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-executor-decisions/src"
+
+    teardown:
+      - "rm -rf /tmp/test-executor-decisions"
+
+  - name: includes-outputs-for-next-skill
+    description: Verify report includes OUTPUTS FOR NEXT SKILL section for skillchain context passing
+    prompt: |
+      Execute the theming-components skill for a dashboard.
+
+      Project: /tmp/test-executor-outputs
+      Framework: React with TypeScript
+      Theme: Professional dashboard with dark mode
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      report_contains:
+        - "OUTPUTS FOR NEXT SKILL:"
+
+      report_matches:
+        - pattern: "OUTPUTS FOR NEXT SKILL:\\s*\\n(-\\s+[^:]+:\\s+.+\\n)+"
+          description: "OUTPUTS FOR NEXT SKILL section with key: value format"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-executor-outputs/src"
+
+    teardown:
+      - "rm -rf /tmp/test-executor-outputs"
+
+  - name: includes-warnings-section
+    description: Verify report includes WARNINGS section even if none
+    prompt: |
+      Execute the theming-components skill.
+
+      Project: /tmp/test-executor-warnings
+      Framework: React
+      Preferences: Standard setup with no special requirements
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      report_contains:
+        - "WARNINGS:"
+
+      report_matches:
+        - pattern: "WARNINGS:\\s*\\n(None|-.+)"
+          description: "WARNINGS section with 'None' or warning items"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-executor-warnings/src"
+
+    teardown:
+      - "rm -rf /tmp/test-executor-warnings"
