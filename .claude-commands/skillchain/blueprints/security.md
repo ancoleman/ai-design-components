@@ -50,8 +50,8 @@ This blueprint invokes 7 skills in the following order:
 
 ```
 1. hardening-security            (core security hardening)
-2. implementing-auth-security    (authentication/authorization)
-3. managing-secrets              (secret management & rotation)
+2. implementing-securing-authentication    (authentication/authorization)
+3. secret-management              (secret management & rotation)
 4. implementing-siem             (security monitoring & logging)
 5. building-ci-pipelines         (security scanning in CI/CD)
 6. configuring-networking        (network security & firewall)
@@ -110,7 +110,7 @@ cors_policy: "restrictive"
   # Preflight caching enabled
 ```
 
-### 2. implementing-auth-security
+### 2. implementing-securing-authentication
 ```yaml
 auth_method: "oauth2_oidc"
   # OAuth 2.0 with OpenID Connect
@@ -154,7 +154,7 @@ password_policy:
   # Bcrypt with cost factor 12
 ```
 
-### 3. managing-secrets
+### 3. secret-management
 ```yaml
 secret_storage: "vault"
   # HashiCorp Vault (recommended)
@@ -1344,7 +1344,7 @@ deliverables:
     maturity_required: [starter, intermediate, advanced]
 
   "OAuth2/OIDC authentication":
-    primary_skill: implementing-auth-security
+    primary_skill: implementing-securing-authentication
     required_files:
       - src/auth/config.ts
       - src/middleware/auth.ts
@@ -1359,7 +1359,7 @@ deliverables:
     maturity_required: [starter, intermediate, advanced]
 
   "RBAC authorization policies":
-    primary_skill: implementing-auth-security
+    primary_skill: implementing-securing-authentication
     required_files:
       - src/auth/rbac/policies.json
       - src/auth/rbac/enforcer.ts
@@ -1371,7 +1371,7 @@ deliverables:
     maturity_required: [intermediate, advanced]
 
   "HashiCorp Vault configuration":
-    primary_skill: managing-secrets
+    primary_skill: secret-management
     required_files:
       - secrets/vault/kv-config.hcl
       - secrets/vault/policies/app-policy.hcl
@@ -1383,7 +1383,7 @@ deliverables:
     maturity_required: [starter, intermediate, advanced]
 
   "External Secrets Operator integration":
-    primary_skill: managing-secrets
+    primary_skill: secret-management
     required_files:
       - k8s/external-secrets/secret-store.yaml
       - k8s/external-secrets/external-secret.yaml
@@ -1395,7 +1395,7 @@ deliverables:
     maturity_required: [intermediate, advanced]
 
   "Dynamic database credentials":
-    primary_skill: managing-secrets
+    primary_skill: secret-management
     required_files:
       - secrets/vault/database-config.hcl
       - secrets/vault/policies/dynamic-db-policy.hcl

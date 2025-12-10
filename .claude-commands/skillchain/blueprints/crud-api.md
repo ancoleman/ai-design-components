@@ -38,25 +38,25 @@ The blueprint automatically selects these skills in order:
 
 ### Core Skills (Always Included)
 
-1. **api-patterns** (Priority: 5)
-   - Plugin: `backend-api-skills:api-patterns`
+1. **implementing-api-patterns** (Priority: 5)
+   - Plugin: `backend-api-skills:implementing-api-patterns`
    - Purpose: REST API framework and endpoint patterns
    - Pre-configured defaults (see below)
 
-2. **databases-relational** (Priority: 10)
-   - Plugin: `backend-data-skills:databases-relational`
+2. **using-relational-databases** (Priority: 10)
+   - Plugin: `backend-data-skills:using-relational-databases`
    - Purpose: PostgreSQL/MySQL/SQLite with ORM
    - Pre-configured defaults (see below)
 
-3. **auth-security** (Priority: 8)
-   - Plugin: `backend-platform-skills:auth-security`
+3. **securing-authentication** (Priority: 8)
+   - Plugin: `backend-platform-skills:securing-authentication`
    - Purpose: JWT authentication and RBAC
    - Pre-configured defaults (see below)
 
 ### Optional Skills (Offered to User)
 
 4. **observability** (Priority: 20, Optional)
-   - Plugin: `backend-platform-skills:observability`
+   - Plugin: `backend-platform-skills:implementing-observability`
    - Purpose: OpenTelemetry, metrics, logging
    - Only included if user confirms monitoring needs
 
@@ -69,7 +69,7 @@ The blueprint automatically selects these skills in order:
 
 ## Pre-configured Defaults
 
-### api-patterns
+### implementing-api-patterns
 
 ```yaml
 api_style: "REST"
@@ -93,7 +93,7 @@ pagination: "offset-based"
 response_format: "JSON"
 ```
 
-### databases-relational
+### using-relational-databases
 
 ```yaml
 database:
@@ -120,7 +120,7 @@ indexes:
   - unique_constraints: true
 ```
 
-### auth-security
+### securing-authentication
 
 ```yaml
 method: "JWT"
@@ -236,7 +236,7 @@ Choice (1/2/3): _
 **Impact:**
 
 **If [1] Yes (Full auth):**
-- Includes `auth-security` skill
+- Includes `securing-authentication` skill
 - Creates User model with password hashing
 - Generates /auth/login, /auth/register endpoints
 - Protects all CRUD endpoints with JWT middleware
@@ -244,7 +244,7 @@ Choice (1/2/3): _
 - Adds audit fields (created_by, updated_by) to all models
 
 **If [2] No:**
-- Skips `auth-security` skill
+- Skips `securing-authentication` skill
 - All endpoints public
 - No User model (unless explicitly listed in Q2)
 - No audit fields
@@ -890,9 +890,9 @@ MIT
 
 ### Without Optional Skills
 ```
-api-patterns:           ~450 tokens
-databases-relational:   ~450 tokens
-auth-security:          ~450 tokens
+implementing-api-patterns:           ~450 tokens
+using-relational-databases:   ~450 tokens
+securing-authentication:          ~450 tokens
 -----------------------------------------
 Total:                  ~1,350 tokens
 ```
@@ -955,9 +955,9 @@ When blueprint is detected:
 │ Goal: "Build a REST API with PostgreSQL"                    │
 │                                                              │
 │ Pre-configured skills:                                      │
-│   1. api-patterns        (REST, FastAPI/Hono)               │
-│   2. databases-relational (PostgreSQL, SQLAlchemy/Drizzle)  │
-│   3. auth-security       (JWT, RBAC)                        │
+│   1. implementing-api-patterns        (REST, FastAPI/Hono)               │
+│   2. using-relational-databases (PostgreSQL, SQLAlchemy/Drizzle)  │
+│   3. securing-authentication       (JWT, RBAC)                        │
 │                                                              │
 │ Optional:                                                   │
 │   4. observability       (OpenTelemetry)                    │
@@ -998,7 +998,7 @@ Blueprint is considered successful if:
 
 Potential additions for v2.1:
 
-- **GraphQL variant** (same blueprint, different api-patterns default)
+- **GraphQL variant** (same blueprint, different implementing-api-patterns default)
 - **Pagination strategies** (cursor-based vs offset-based choice)
 - **Caching layer** (Redis integration for read-heavy APIs)
 - **File upload** (S3/MinIO integration for media)

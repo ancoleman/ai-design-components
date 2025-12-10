@@ -47,7 +47,7 @@ Pre-configured skill chain optimized for building production-grade data pipeline
 This blueprint invokes 6 skills in the following order:
 
 ```
-1. designing-databases-relational   (data modeling - source/destination schemas)
+1. designing-using-relational-databases   (data modeling - source/destination schemas)
 2. streaming-data                   (real-time processing architecture)
 3. optimizing-sql                   (query performance and transformations)
 4. testing-strategies               (data quality and validation tests)
@@ -62,7 +62,7 @@ This blueprint invokes 6 skills in the following order:
 
 ## Pre-configured Defaults
 
-### 1. designing-databases-relational
+### 1. designing-using-relational-databases
 ```yaml
 schema_design: "star-schema"
   # Optimized for analytics workloads

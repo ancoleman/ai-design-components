@@ -48,8 +48,8 @@ This blueprint invokes 6 skills in the following order:
 
 ```
 1. designing-apis                (core API design & patterns)
-2. implementing-auth-security    (authentication & authorization)
-3. designing-databases-relational (data layer & persistence)
+2. implementing-securing-authentication    (authentication & authorization)
+3. designing-using-relational-databases (data layer & persistence)
 4. testing-strategies            (API testing & validation)
 5. implementing-observability    (monitoring, logging, metrics)
 6. building-clis                 (optional - API client generation)
@@ -117,7 +117,7 @@ cors: "permissive-dev"
   # Credentials support optional
 ```
 
-### 2. implementing-auth-security
+### 2. implementing-securing-authentication
 ```yaml
 auth_type: "jwt"
   # JWT (JSON Web Tokens) for stateless auth
@@ -166,7 +166,7 @@ https_only: true
   # Secure cookie flags
 ```
 
-### 3. designing-databases-relational
+### 3. designing-using-relational-databases
 ```yaml
 database: "postgresql"
   # PostgreSQL for relational data
@@ -1485,7 +1485,7 @@ deliverables:
     maturity_required: [starter, intermediate, advanced]
 
   "JWT token management":
-    primary_skill: implementing-auth-security
+    primary_skill: implementing-securing-authentication
     required_files:
       - src/auth/jwt.py
     content_checks:
@@ -1498,7 +1498,7 @@ deliverables:
     maturity_required: [starter, intermediate, advanced]
 
   "Password hashing":
-    primary_skill: implementing-auth-security
+    primary_skill: implementing-securing-authentication
     required_files:
       - src/auth/password.py
     content_checks:
@@ -1509,7 +1509,7 @@ deliverables:
     maturity_required: [starter, intermediate, advanced]
 
   "RBAC authorization":
-    primary_skill: implementing-auth-security
+    primary_skill: implementing-securing-authentication
     required_files:
       - src/auth/rbac.py
     content_checks:
@@ -1520,7 +1520,7 @@ deliverables:
     maturity_required: [intermediate, advanced]
 
   "Security headers middleware":
-    primary_skill: implementing-auth-security
+    primary_skill: implementing-securing-authentication
     required_files:
       - src/api/middleware.py
     content_checks:
@@ -1531,7 +1531,7 @@ deliverables:
     maturity_required: [intermediate, advanced]
 
   "Database models":
-    primary_skill: designing-databases-relational
+    primary_skill: designing-using-relational-databases
     required_files:
       - src/database/models/user.py
     content_checks:
@@ -1542,7 +1542,7 @@ deliverables:
     maturity_required: [starter, intermediate, advanced]
 
   "Database migrations":
-    primary_skill: designing-databases-relational
+    primary_skill: designing-using-relational-databases
     required_files:
       - src/database/migrations/
       - alembic.ini
@@ -1554,7 +1554,7 @@ deliverables:
     maturity_required: [starter, intermediate, advanced]
 
   "Database session management":
-    primary_skill: designing-databases-relational
+    primary_skill: designing-using-relational-databases
     required_files:
       - src/database/session.py
     content_checks:
@@ -1565,7 +1565,7 @@ deliverables:
     maturity_required: [starter, intermediate, advanced]
 
   "Connection pooling":
-    primary_skill: designing-databases-relational
+    primary_skill: designing-using-relational-databases
     required_files:
       - src/database/session.py
     content_checks:
@@ -1586,7 +1586,7 @@ deliverables:
     maturity_required: [starter, intermediate, advanced]
 
   "Input validation schemas":
-    primary_skill: implementing-auth-security
+    primary_skill: implementing-securing-authentication
     required_files:
       - src/api/v1/schemas/validators.py
     content_checks:
@@ -1609,7 +1609,7 @@ deliverables:
     maturity_required: [intermediate, advanced]
 
   "Rate limiting":
-    primary_skill: implementing-auth-security
+    primary_skill: implementing-securing-authentication
     required_files:
       - src/core/rate_limit.py
     content_checks:
@@ -1620,7 +1620,7 @@ deliverables:
     maturity_required: [intermediate, advanced]
 
   "CORS configuration":
-    primary_skill: implementing-auth-security
+    primary_skill: implementing-securing-authentication
     required_files:
       - src/core/security.py
     content_checks:
@@ -1929,11 +1929,11 @@ After all skills complete, the skillchain orchestrator validates deliverables:
 ✓ API versioning implementation (designing-apis)
 ✓ User CRUD endpoints (designing-apis)
 ✓ Authentication endpoints (designing-apis)
-✓ JWT token management (implementing-auth-security)
-✓ Password hashing (implementing-auth-security)
+✓ JWT token management (implementing-securing-authentication)
+✓ Password hashing (implementing-securing-authentication)
 ✗ RBAC authorization - SKIPPED (starter maturity)
-✓ Database models (designing-databases-relational)
-✓ Database migrations (designing-databases-relational)
+✓ Database models (designing-using-relational-databases)
+✓ Database migrations (designing-using-relational-databases)
 ...
 
 Blueprint validation: 18/18 required deliverables present

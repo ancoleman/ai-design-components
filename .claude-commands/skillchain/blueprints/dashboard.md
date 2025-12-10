@@ -721,7 +721,7 @@ After blueprint generation, users can easily customize:
 If user starts with blueprint but needs custom features later:
 
 1. **Add new chart type:** Run `/skillchain visualizing-data` again
-2. **Add authentication:** Run `/skillchain auth-security`
+2. **Add authentication:** Run `/skillchain securing-authentication`
 3. **Add real-time updates:** Run `/skillchain realtime-sync`
 4. **Add advanced filters:** Run `/skillchain implementing-search-filter`
 

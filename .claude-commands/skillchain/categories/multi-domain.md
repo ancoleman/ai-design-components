@@ -261,44 +261,44 @@ Multi-domain combines skills from 3+ domains. Use the correct plugin prefix for 
 
 **DevOps Domain:**
 - `devops-skills:building-ci-pipelines`
-- `devops-skills:deploying-containers`
-- `devops-skills:managing-infrastructure`
+- `devops-skills:writing-dockerfiles`
+- `infrastructure-skills:writing-infrastructure-code`
 - `infrastructure-skills:operating-kubernetes`
 - `ui-foundation-skills:theming-components` (if frontend involved)
 
 **Security Domain:**
 - `security-skills:architecting-security`
-- `security-skills:managing-secrets`
-- `security-skills:securing-apis`
+- `data-engineering-skills:secret-management`
+- `security-skills:architecting-security`
 - `security-skills:implementing-compliance`
 
 **Cloud Domain:**
 - `cloud-provider-skills:deploying-on-aws`
 - `cloud-provider-skills:deploying-on-azure`
 - `cloud-provider-skills:deploying-on-gcp`
-- `cloud-provider-skills:managing-cloud-resources`
+- `cloud-provider-skills:deploying-on-aws`
 
 **Data Domain:**
 - `data-engineering-skills:streaming-data`
 - `data-engineering-skills:transforming-data`
-- `data-engineering-skills:orchestrating-workflows`
-- `data-engineering-skills:managing-databases`
+- `data-engineering-skills:transforming-data`
+- `backend-data-skills:using-relational-databases`
 
 **AI/ML Domain:**
 - `backend-ai-skills:ai-data-engineering`
-- `ai-ml-skills:building-rag-systems`
-- `ai-ml-skills:deploying-models`
-- `ai-ml-skills:monitoring-ml`
+- `backend-ai-skills:ai-data-engineering`
+- `backend-ai-skills:model-serving`
+- `ai-ml-skills:implementing-mlops`
 
 **Developer Domain:**
-- `developer-productivity-skills:configuring-development`
-- `developer-productivity-skills:testing-strategies`
-- `developer-productivity-skills:debugging-applications`
+- `developer-productivity-skills:debugging-techniques`
+- `devops-skills:testing-strategies`
+- `developer-productivity-skills:debugging-techniques`
 
 **FinOps Domain:**
 - `finops-skills:optimizing-costs`
-- `finops-skills:tracking-budgets`
-- `finops-skills:implementing-tagging`
+- `finops-skills:optimizing-costs`
+- `finops-skills:resource-tagging`
 
 **Example of Complete Invocation Sequence:**
 

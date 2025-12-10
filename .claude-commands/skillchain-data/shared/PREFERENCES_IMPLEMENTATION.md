@@ -242,7 +242,7 @@ skills:
     default_library: "recharts"
     responsive: true
 
-  databases-relational:
+  using-relational-databases:
     preferred_db: "postgresql"
     orm: "prisma"
 

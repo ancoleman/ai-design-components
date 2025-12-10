@@ -46,8 +46,8 @@ theming-components (MUST BE FIRST - foundation)
 ```
 Independent Entry Points:
 ├── ingesting-data
-├── api-patterns
-├── databases-relational
+├── implementing-api-patterns
+├── using-relational-databases
 ├── databases-timeseries
 ├── databases-document
 ├── databases-graph
@@ -55,9 +55,9 @@ Independent Entry Points:
 
 Dependent Skills:
 ├── databases-vector ──────► ingesting-data
-├── message-queues ────────► api-patterns
-├── realtime-sync ─────────► api-patterns
-├── auth-security ─────────► api-patterns
+├── message-queues ────────► implementing-api-patterns
+├── realtime-sync ─────────► implementing-api-patterns
+├── securing-authentication ─────────► implementing-api-patterns
 ├── ai-data-engineering ───► databases-vector
 ├── model-serving ─────────► ai-data-engineering
 └── deploying-applications (independent, no deps)
@@ -100,19 +100,19 @@ Dependent Skills:
 
 **Group 1: Data Layer (Can be parallel)**
 - ingesting-data
-- databases-relational
+- using-relational-databases
 - databases-timeseries
 - databases-document
 - databases-graph
 
 **Group 2: Vector + API (Can be parallel after relevant Group 1)**
 - databases-vector (after ingesting-data)
-- api-patterns
+- implementing-api-patterns
 
-**Group 3: API Extensions (Can be parallel after api-patterns)**
+**Group 3: API Extensions (Can be parallel after implementing-api-patterns)**
 - message-queues
 - realtime-sync
-- auth-security
+- securing-authentication
 
 **Group 4: AI/ML (Sequential)**
 - ai-data-engineering (after databases-vector)

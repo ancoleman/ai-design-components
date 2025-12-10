@@ -53,7 +53,7 @@ This blueprint invokes 6-8 skills in the following order:
 4. building-ci-pipelines         (CI/CD for automated deployment)
 5. implementing-observability    (monitoring, logging, tracing)
 6. hardening-security            (RBAC, network policies, secrets)
-7. managing-databases            (optional - if stateful workloads)
+7. using-relational-databases            (optional - if stateful workloads)
 8. assembling-infrastructure     (final validation - always required)
 ```
 
@@ -331,7 +331,7 @@ image_pull_policy: "Always"
   # Private registry authentication configured
 ```
 
-### 7. managing-databases (optional)
+### 7. using-relational-databases (optional)
 ```yaml
 database_type: "postgresql"
   # Managed database recommended (RDS, Cloud SQL)

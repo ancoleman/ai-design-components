@@ -28,16 +28,16 @@
 | databases-vector | ingesting-data | 1.0.0 |
 | ai-data-engineering | databases-vector | 1.0.0 |
 | model-serving | ai-data-engineering | 1.0.0 |
-| message-queues | api-patterns | 1.0.0 |
-| realtime-sync | api-patterns | 1.0.0 |
-| auth-security | api-patterns | 1.0.0 |
+| message-queues | implementing-api-patterns | 1.0.0 |
+| realtime-sync | implementing-api-patterns | 1.0.0 |
+| securing-authentication | implementing-api-patterns | 1.0.0 |
 
 ### Blueprint Compatibility
 
 | Blueprint | Min Registry Version | Required Skills |
 |-----------|---------------------|-----------------|
 | dashboard | 2.0.0 | theming-components@1.0.0, visualizing-data@1.0.0 |
-| crud-api | 2.0.0 | api-patterns@1.0.0, databases-relational@1.0.0 |
+| crud-api | 2.0.0 | implementing-api-patterns@1.0.0, using-relational-databases@1.0.0 |
 | rag-pipeline | 2.0.0 | databases-vector@1.0.0, ai-data-engineering@1.0.0 |
 
 ## Upgrade Path

@@ -382,7 +382,7 @@ Common skills and their invocations:
 | implementing-api-patterns | backend-api-skills:implementing-api-patterns | API, REST, endpoints |
 | using-relational-databases | backend-data-skills:using-relational-databases | database, SQL, postgres |
 | using-vector-databases | backend-data-skills:using-vector-databases | vector, embeddings, RAG |
-| implementing-auth | backend-platform-skills:implementing-auth | auth, login, JWT |
+| securing-authentication | backend-platform-skills:securing-authentication | auth, login, JWT |
 | implementing-observability | backend-platform-skills:implementing-observability | logging, metrics, tracing |
 
 ### Infrastructure Skills

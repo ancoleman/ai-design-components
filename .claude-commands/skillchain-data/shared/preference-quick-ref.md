@@ -121,7 +121,7 @@ user_prefs.blueprints.rag-pipeline.last_used # "2024-11-30"
 user_prefs.skills.theming-components        # Theme config
 user_prefs.skills.building-forms            # Form config
 user_prefs.skills.visualizing-data          # Viz config
-user_prefs.skills.databases-relational      # DB config
+user_prefs.skills.using-relational-databases      # DB config
 # ... etc for any skill
 ```
 

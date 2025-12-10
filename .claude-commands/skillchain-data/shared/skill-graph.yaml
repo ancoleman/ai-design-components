@@ -288,10 +288,10 @@ skills:
   # ---------------------------------------------------------------------------
   # BACKEND - Platform
   # ---------------------------------------------------------------------------
-  implementing-auth:
+  securing-authentication:
     tier: component
     domain: backend
-    invocation: "backend-platform-skills:implementing-auth"
+    invocation: "backend-platform-skills:securing-authentication"
     provides:
       - authentication
       - authorization
@@ -354,7 +354,7 @@ skills:
   testing-strategies:
     tier: integration
     domain: backend
-    invocation: "developer-productivity-skills:testing-strategies"
+    invocation: "devops-skills:testing-strategies"
     provides:
       - unit-tests
       - integration-tests
@@ -454,7 +454,7 @@ patterns:
     description: "AI chat interface with RAG"
 
   crud_api:
-    skills: [implementing-api-patterns, using-relational-databases, implementing-auth]
+    skills: [implementing-api-patterns, using-relational-databases, securing-authentication]
     description: "Basic CRUD API with auth"
 
   full_stack:

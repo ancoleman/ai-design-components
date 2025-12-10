@@ -40,9 +40,9 @@
 1. ingesting-data          # Document loading and processing
 2. databases-vector        # Vector store (Qdrant/pgvector)
 3. ai-data-engineering     # RAG pipeline, chunking, embeddings
-4. api-patterns            # REST/GraphQL endpoints
+4. implementing-api-patterns            # REST/GraphQL endpoints
 5. [OPTIONAL] model-serving          # Self-hosted LLM inference
-6. [OPTIONAL] auth-security          # API authentication
+6. [OPTIONAL] securing-authentication          # API authentication
 7. [OPTIONAL] observability          # Monitoring and logging
 ```
 
@@ -52,11 +52,11 @@
 1. theming-components      # Design tokens and theming
 2. building-ai-chat        # Chat interface with streaming
 3. building-forms          # Additional input components
-4. api-patterns            # Backend API
+4. implementing-api-patterns            # Backend API
 5. databases-vector        # Vector store
 6. ai-data-engineering     # RAG pipeline
 7. [OPTIONAL] model-serving          # Self-hosted LLM
-8. [OPTIONAL] auth-security          # Authentication
+8. [OPTIONAL] securing-authentication          # Authentication
 9. assembling-components   # Wire frontend + backend
 ```
 
@@ -144,7 +144,7 @@ top_k: 5
 reranking: true
 ```
 
-### api-patterns
+### implementing-api-patterns
 
 **Streaming-enabled API:**
 
@@ -715,7 +715,7 @@ deliverables:
     maturity_required: [intermediate, advanced]
 
   "Streaming API endpoints":
-    primary_skill: api-patterns
+    primary_skill: implementing-api-patterns
     required_files:
       - src/api/main.py
       - src/api/routes/chat.py
@@ -829,7 +829,7 @@ deliverables:
     maturity_required: [starter, intermediate, advanced]
 
   "API request/response models":
-    primary_skill: api-patterns
+    primary_skill: implementing-api-patterns
     required_files:
       - src/api/models.py
     content_checks:

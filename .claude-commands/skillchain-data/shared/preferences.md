@@ -87,7 +87,7 @@ skills:
     responsive: true
     accessibility: "wcag-aa"
 
-  databases-relational:
+  using-relational-databases:
     preferred_db: "postgresql"
     orm: "prisma"
     migration_tool: "prisma-migrate"
@@ -96,12 +96,12 @@ skills:
     provider: "qdrant"
     embedding_model: "openai-ada-002"
 
-  api-patterns:
+  implementing-api-patterns:
     api_style: "rest"
     framework: "fastapi"
     validation: "pydantic"
 
-  auth-security:
+  securing-authentication:
     strategy: "jwt"
     provider: "managed"  # managed | self-hosted
     include_rbac: true
