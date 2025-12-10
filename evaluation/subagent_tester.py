@@ -268,8 +268,10 @@ class SubagentTester:
         # Remove API key to prefer OAuth authentication
         if 'ANTHROPIC_API_KEY' in self.env:
             del self.env['ANTHROPIC_API_KEY']
-            if self.verbose:
-                self.log("Removed ANTHROPIC_API_KEY from environment to use OAuth", "INFO")
+            self.log("Removed ANTHROPIC_API_KEY from environment to use OAuth", "INFO")
+
+        # Log authentication status at startup
+        self._log_auth_status()
 
     def log(self, message: str, level: str = "INFO") -> None:
         """Log a message with optional color coding"""
@@ -281,8 +283,81 @@ class SubagentTester:
             print(f"{Colors.YELLOW}{message}{Colors.RESET}")
         elif level == "DEBUG" and self.verbose:
             print(f"{Colors.CYAN}[DEBUG] {message}{Colors.RESET}")
+        elif level == "AUTH":
+            print(f"{Colors.BLUE}[AUTH] {message}{Colors.RESET}")
         else:
             print(message)
+
+    def _log_auth_status(self) -> None:
+        """Log authentication status and detected auth method."""
+        print(f"\n{Colors.BOLD}=== Authentication Status ==={Colors.RESET}")
+
+        # Check environment variables
+        original_has_key = 'ANTHROPIC_API_KEY' in os.environ
+        subprocess_has_key = 'ANTHROPIC_API_KEY' in self.env
+
+        if original_has_key:
+            key_preview = os.environ['ANTHROPIC_API_KEY'][:12] + '...'
+            self.log(f"ANTHROPIC_API_KEY in shell: {key_preview}", "AUTH")
+        else:
+            self.log("ANTHROPIC_API_KEY in shell: NOT SET", "AUTH")
+
+        if subprocess_has_key:
+            self.log("ANTHROPIC_API_KEY in subprocess env: PRESENT (unexpected!)", "WARNING")
+        else:
+            self.log("ANTHROPIC_API_KEY in subprocess env: REMOVED (using OAuth)", "AUTH")
+
+        # Check for OAuth/Claude login
+        claude_config = Path.home() / '.claude'
+        if claude_config.exists():
+            self.log(f"Claude config directory: {claude_config} (exists)", "AUTH")
+
+            # Check for credentials file (Linux)
+            creds_file = claude_config / '.credentials.json'
+            if creds_file.exists():
+                self.log("OAuth credentials file: Found (.credentials.json)", "AUTH")
+            else:
+                self.log("OAuth credentials: Using macOS Keychain (no .credentials.json)", "AUTH")
+        else:
+            self.log("Claude config directory: NOT FOUND", "WARNING")
+
+        # Check for Bedrock/Vertex
+        if os.environ.get('CLAUDE_CODE_USE_BEDROCK') == '1':
+            self.log("Using: AWS Bedrock", "AUTH")
+        elif os.environ.get('CLAUDE_CODE_USE_VERTEX') == '1':
+            self.log("Using: Google Vertex AI", "AUTH")
+        else:
+            self.log("Expected auth: OAuth (claude login)", "AUTH")
+
+        # Log CLI path
+        if self.claude_available:
+            self.log(f"Claude CLI: {self.claude_path}", "AUTH")
+        else:
+            self.log(f"Claude CLI: NOT FOUND - {self.claude_error}", "ERROR")
+
+        print(f"{Colors.BOLD}=============================={Colors.RESET}\n")
+
+    def _detect_auth_error(self, text: str) -> Optional[str]:
+        """
+        Detect authentication-related errors in output.
+
+        Returns error type if detected, None otherwise.
+        """
+        auth_errors = {
+            'Invalid API key': 'INVALID_API_KEY',
+            'Fix external API key': 'EXTERNAL_API_KEY',
+            'Authentication required': 'AUTH_REQUIRED',
+            'Unauthorized': 'UNAUTHORIZED',
+            'API key expired': 'EXPIRED_KEY',
+            'rate limit': 'RATE_LIMITED',
+            'quota exceeded': 'QUOTA_EXCEEDED',
+        }
+
+        text_lower = text.lower()
+        for pattern, error_type in auth_errors.items():
+            if pattern.lower() in text_lower:
+                return error_type
+        return None
 
     def load_test_cases(self, test_file: Path) -> Dict[str, Any]:
         """
@@ -460,12 +535,28 @@ class SubagentTester:
 
             duration = (datetime.now() - start_time).total_seconds()
 
-            # Log exit code for debugging
+            # Log detailed CLI output information
+            self.log(f"CLI exit code: {result.returncode}", "DEBUG")
+            self.log(f"CLI stdout: {len(result.stdout)} bytes", "DEBUG")
+            self.log(f"CLI stderr: {len(result.stderr)} bytes", "DEBUG")
+
+            # Log exit code warning for non-zero
             if result.returncode != 0:
-                self.log(f"CLI exited with code {result.returncode}", "DEBUG")
+                self.log(f"CLI exited with non-zero code {result.returncode}", "WARNING")
+
+                # Quick check for auth error in raw output
+                if 'Invalid API key' in result.stdout or 'Invalid API key' in result.stderr:
+                    self.log("*** AUTHENTICATION ERROR: Invalid API key detected ***", "ERROR")
+                    self.log("The Claude CLI found an invalid API key.", "ERROR")
+                    self.log("This may be stored in macOS Keychain or config.", "ERROR")
+                    self.log("Try: 'claude logout && claude login' to re-authenticate", "ERROR")
 
             # Parse JSONL output (pass stderr for error logging)
             parsed_output = self._parse_output(result.stdout, result.stderr)
+
+            # Log if auth error was detected during parsing
+            if parsed_output.get('auth_error'):
+                self.log(f"Auth error type: {parsed_output['auth_error']}", "ERROR")
 
             # Check if subagent activated (received output)
             activation = bool(parsed_output.get('text', '').strip())
@@ -610,6 +701,14 @@ class SubagentTester:
                 if msg_type == 'result' and msg.get('result'):
                     result['text'] = msg['result']
                     self.log(f"Got result text ({len(result['text'])} chars)", "DEBUG")
+
+                    # Check for authentication errors in result
+                    auth_error = self._detect_auth_error(result['text'])
+                    if auth_error:
+                        self.log(f"AUTHENTICATION ERROR DETECTED: {auth_error}", "ERROR")
+                        self.log(f"Response text: {result['text']}", "ERROR")
+                        result['auth_error'] = auth_error
+                        result['errors'].append(f"Auth error ({auth_error}): {result['text']}")
 
                 # Skip streaming assistant messages - they are partial responses
                 if msg_type == 'assistant':
