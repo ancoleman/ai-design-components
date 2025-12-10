@@ -316,12 +316,9 @@ class SubagentTester:
         """
         args = [
             '--print', prompt,           # Headless mode with prompt
+            '--verbose',                 # Required when using stream-json with --print
             '--output-format', 'stream-json',  # Structured output for parsing
         ]
-
-        # Add verbose flag if enabled
-        if self.verbose:
-            args.append('--verbose')
 
         # Skip permission prompts for automation
         if self.skip_permissions:
