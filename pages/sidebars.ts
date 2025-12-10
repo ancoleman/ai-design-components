@@ -205,6 +205,7 @@ const sidebars: SidebarsConfig = {
     'skillchain/installation',
     'skillchain/usage',
     'skillchain/blueprints',
+    'skillchain/dynamic-chains',
     'skillchain/architecture',
     'skillchain/architecture-diagram',
     'skillchain/chain-context',

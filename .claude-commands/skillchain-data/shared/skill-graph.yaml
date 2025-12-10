@@ -1,0 +1,462 @@
+# Skill Dependency Graph
+# Defines skill tiers, dependencies, and domain rules for dynamic chain building
+
+version: "1.0"
+description: "Skill ordering and dependency metadata for dynamic skillchain generation"
+
+# =============================================================================
+# SKILL TIERS
+# =============================================================================
+# Skills are executed in tier order: foundation -> component -> integration -> assembly
+
+tiers:
+  foundation:
+    order: 1
+    description: "Base capabilities that other skills build upon"
+    execute_first: true
+
+  component:
+    order: 2
+    description: "Individual feature implementations"
+
+  integration:
+    order: 3
+    description: "Cross-cutting concerns and connections"
+
+  assembly:
+    order: 4
+    description: "Final wiring and composition"
+    execute_last: true
+
+# =============================================================================
+# SKILL DEFINITIONS
+# =============================================================================
+# Each skill with its tier, dependencies, and what it provides
+
+skills:
+  # ---------------------------------------------------------------------------
+  # FRONTEND - Foundation
+  # ---------------------------------------------------------------------------
+  theming-components:
+    tier: foundation
+    domain: frontend
+    invocation: "ui-foundation-skills:theming-components"
+    provides:
+      - design-tokens
+      - css-variables
+      - theme-switching
+    required_by:
+      - building-forms
+      - building-tables
+      - creating-dashboards
+      - visualizing-data
+      - building-ai-chat
+      - implementing-navigation
+      - designing-layouts
+      - providing-feedback
+      - implementing-search-filter
+      - managing-media
+      - implementing-drag-drop
+      - implementing-onboarding
+      - implementing-timeline
+
+  # ---------------------------------------------------------------------------
+  # FRONTEND - Components
+  # ---------------------------------------------------------------------------
+  building-forms:
+    tier: component
+    domain: frontend
+    invocation: "ui-input-skills:building-forms"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - form-components
+      - validation
+      - input-handling
+
+  building-tables:
+    tier: component
+    domain: frontend
+    invocation: "ui-data-skills:building-tables"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - data-tables
+      - sorting
+      - filtering
+      - pagination
+
+  visualizing-data:
+    tier: component
+    domain: frontend
+    invocation: "ui-data-skills:visualizing-data"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - charts
+      - graphs
+      - data-visualization
+
+  creating-dashboards:
+    tier: component
+    domain: frontend
+    invocation: "ui-data-skills:creating-dashboards"
+    depends_on:
+      soft: [theming-components]
+      optional: [visualizing-data, building-tables]
+    provides:
+      - dashboard-layout
+      - metric-cards
+      - dashboard-composition
+
+  building-ai-chat:
+    tier: component
+    domain: frontend
+    invocation: "ui-interaction-skills:building-ai-chat"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - chat-interface
+      - message-components
+      - streaming-ui
+
+  implementing-navigation:
+    tier: component
+    domain: frontend
+    invocation: "ui-structure-skills:implementing-navigation"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - navigation-menus
+      - routing
+      - breadcrumbs
+
+  designing-layouts:
+    tier: component
+    domain: frontend
+    invocation: "ui-structure-skills:designing-layouts"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - layout-systems
+      - responsive-design
+      - grid-layouts
+
+  providing-feedback:
+    tier: component
+    domain: frontend
+    invocation: "ui-interaction-skills:providing-feedback"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - notifications
+      - toasts
+      - loading-states
+      - error-displays
+
+  implementing-search-filter:
+    tier: component
+    domain: frontend
+    invocation: "ui-input-skills:implementing-search-filter"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - search-components
+      - filter-ui
+      - faceted-search
+
+  managing-media:
+    tier: component
+    domain: frontend
+    invocation: "ui-content-skills:managing-media"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - image-handling
+      - file-upload
+      - media-display
+
+  implementing-drag-drop:
+    tier: component
+    domain: frontend
+    invocation: "ui-interaction-skills:implementing-drag-drop"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - drag-drop
+      - sortable-lists
+      - reordering
+
+  implementing-onboarding:
+    tier: component
+    domain: frontend
+    invocation: "ui-content-skills:implementing-onboarding"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - onboarding-flows
+      - tooltips
+      - guided-tours
+
+  implementing-timeline:
+    tier: component
+    domain: frontend
+    invocation: "ui-structure-skills:implementing-timeline"
+    depends_on:
+      soft: [theming-components]
+    provides:
+      - timeline-components
+      - activity-feeds
+      - history-displays
+
+  # ---------------------------------------------------------------------------
+  # FRONTEND - Assembly
+  # ---------------------------------------------------------------------------
+  assembling-components:
+    tier: assembly
+    domain: frontend
+    invocation: "ui-assembly-skills:assembling-components"
+    depends_on:
+      requires_any:
+        - building-forms
+        - building-tables
+        - visualizing-data
+        - creating-dashboards
+        - building-ai-chat
+    provides:
+      - component-composition
+      - page-assembly
+      - integration
+
+  # ---------------------------------------------------------------------------
+  # BACKEND - Foundation
+  # ---------------------------------------------------------------------------
+  implementing-api-patterns:
+    tier: foundation
+    domain: backend
+    invocation: "backend-api-skills:implementing-api-patterns"
+    provides:
+      - api-endpoints
+      - route-handlers
+      - request-validation
+
+  # ---------------------------------------------------------------------------
+  # BACKEND - Data
+  # ---------------------------------------------------------------------------
+  using-relational-databases:
+    tier: component
+    domain: backend
+    invocation: "backend-data-skills:using-relational-databases"
+    provides:
+      - database-schema
+      - queries
+      - migrations
+
+  using-vector-databases:
+    tier: component
+    domain: backend
+    invocation: "backend-data-skills:using-vector-databases"
+    provides:
+      - vector-storage
+      - embeddings
+      - similarity-search
+
+  using-document-databases:
+    tier: component
+    domain: backend
+    invocation: "backend-data-skills:using-document-databases"
+    provides:
+      - document-storage
+      - nosql-queries
+
+  using-timeseries-databases:
+    tier: component
+    domain: backend
+    invocation: "backend-data-skills:using-timeseries-databases"
+    provides:
+      - timeseries-storage
+      - time-queries
+
+  ingesting-data:
+    tier: component
+    domain: backend
+    invocation: "backend-data-skills:ingesting-data"
+    provides:
+      - data-pipelines
+      - etl-processes
+
+  # ---------------------------------------------------------------------------
+  # BACKEND - Platform
+  # ---------------------------------------------------------------------------
+  implementing-auth:
+    tier: component
+    domain: backend
+    invocation: "backend-platform-skills:implementing-auth"
+    provides:
+      - authentication
+      - authorization
+      - session-management
+
+  implementing-realtime:
+    tier: component
+    domain: backend
+    invocation: "backend-platform-skills:implementing-realtime"
+    provides:
+      - websockets
+      - real-time-updates
+      - subscriptions
+
+  implementing-message-queues:
+    tier: component
+    domain: backend
+    invocation: "backend-platform-skills:implementing-message-queues"
+    provides:
+      - message-queues
+      - async-processing
+      - job-scheduling
+
+  # ---------------------------------------------------------------------------
+  # BACKEND - AI
+  # ---------------------------------------------------------------------------
+  ai-data-engineering:
+    tier: component
+    domain: backend
+    invocation: "backend-ai-skills:ai-data-engineering"
+    depends_on:
+      optional: [using-vector-databases]
+    provides:
+      - rag-pipelines
+      - chunking
+      - embedding-generation
+
+  model-serving:
+    tier: component
+    domain: backend
+    invocation: "backend-ai-skills:model-serving"
+    provides:
+      - llm-inference
+      - model-deployment
+      - streaming-responses
+
+  # ---------------------------------------------------------------------------
+  # BACKEND - Integration
+  # ---------------------------------------------------------------------------
+  implementing-observability:
+    tier: integration
+    domain: backend
+    invocation: "backend-platform-skills:implementing-observability"
+    provides:
+      - logging
+      - metrics
+      - tracing
+      - monitoring
+
+  testing-strategies:
+    tier: integration
+    domain: backend
+    invocation: "developer-productivity-skills:testing-strategies"
+    provides:
+      - unit-tests
+      - integration-tests
+      - test-coverage
+
+  # ---------------------------------------------------------------------------
+  # INFRASTRUCTURE
+  # ---------------------------------------------------------------------------
+  kubernetes-operations:
+    tier: component
+    domain: infrastructure
+    invocation: "infrastructure-skills:kubernetes-operations"
+    provides:
+      - k8s-deployments
+      - services
+      - ingress
+
+  infrastructure-as-code:
+    tier: component
+    domain: infrastructure
+    invocation: "infrastructure-skills:infrastructure-as-code"
+    provides:
+      - terraform
+      - cloud-resources
+      - iac
+
+  security-hardening:
+    tier: component
+    domain: infrastructure
+    invocation: "infrastructure-skills:security-hardening"
+    provides:
+      - security-config
+      - hardening
+      - compliance
+
+  # ---------------------------------------------------------------------------
+  # DEVOPS
+  # ---------------------------------------------------------------------------
+  building-ci-pipelines:
+    tier: component
+    domain: devops
+    invocation: "devops-skills:building-ci-pipelines"
+    provides:
+      - ci-cd
+      - pipelines
+      - automation
+
+  implementing-gitops:
+    tier: component
+    domain: devops
+    invocation: "devops-skills:implementing-gitops"
+    provides:
+      - gitops
+      - argocd
+      - flux
+
+# =============================================================================
+# DOMAIN RULES
+# =============================================================================
+# Default behaviors for each domain
+
+domain_rules:
+  frontend:
+    always_start_with: theming-components
+    always_end_with: assembling-components
+    description: "UI chains must establish theming first and assemble last"
+
+  backend:
+    optional_start_with: implementing-api-patterns
+    optional_end_with: implementing-observability
+    description: "Backend chains benefit from API foundation and observability"
+
+  infrastructure:
+    optional_end_with: security-hardening
+    description: "Infrastructure should consider security hardening"
+
+  devops:
+    typical_start: building-ci-pipelines
+    description: "DevOps usually starts with CI/CD setup"
+
+# =============================================================================
+# CHAIN PATTERNS
+# =============================================================================
+# Common skill combinations
+
+patterns:
+  basic_ui:
+    skills: [theming-components, building-forms, assembling-components]
+    description: "Simple form-based UI"
+
+  data_dashboard:
+    skills: [theming-components, visualizing-data, building-tables, creating-dashboards, assembling-components]
+    description: "Data visualization dashboard"
+
+  ai_chat:
+    skills: [theming-components, building-ai-chat, implementing-api-patterns, ai-data-engineering, model-serving, assembling-components]
+    description: "AI chat interface with RAG"
+
+  crud_api:
+    skills: [implementing-api-patterns, using-relational-databases, implementing-auth]
+    description: "Basic CRUD API with auth"
+
+  full_stack:
+    skills: [theming-components, building-forms, implementing-api-patterns, using-relational-databases, assembling-components]
+    description: "Full-stack application skeleton"

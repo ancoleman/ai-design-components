@@ -193,7 +193,63 @@ Would you like to use the {blueprint} blueprint? (yes/no/customize)"
 - "customize" → Load blueprint but allow modifications
 
 **If No Blueprint Matched:**
-- Continue directly to Step 4
+- Check if user wants dynamic skill selection (Step 3.6)
+- Otherwise continue to Step 4
+
+---
+
+## Step 3.6: Dynamic Skill Chain Option
+
+When no blueprint matches the user's goal, offer dynamic skill selection:
+
+```
+No pre-defined blueprint matched your goal: "{goal}"
+
+Options:
+1. Dynamic Selection - I'll analyze your goal and build a custom skill chain
+2. Manual Matching - Continue with standard keyword matching
+3. List Blueprints - Show available blueprints to choose from
+
+Recommended: Option 1 (Dynamic Selection) for novel or complex goals
+
+Your choice (1/2/3):
+```
+
+**If user chooses 1 (Dynamic Selection):**
+
+Route to the dynamic orchestrator:
+
+```
+Read {SKILLCHAIN_CMD}/categories/dynamic.md
+```
+
+Pass context:
+- original_goal: "$ARGUMENTS"
+- detected_domains: [from Step 3]
+- SKILLCHAIN_CMD: commands directory path
+- SKILLCHAIN_DATA: data directory path
+
+The dynamic orchestrator will:
+1. Load all skill registries
+2. Score skills against the goal
+3. Resolve dependencies using skill-graph.yaml
+4. Build and present a custom skill chain
+5. Execute with high-activation guarantees (>80% skill invocation rate)
+
+**IMPORTANT:** The dynamic orchestrator follows the execution protocol defined in:
+```
+{SKILLCHAIN_DATA}/shared/execution-protocol.md
+```
+
+This ensures all approved skills are actually invoked using the Skill tool.
+
+**If user chooses 2 (Manual Matching):**
+- Continue to Step 4
+
+**If user chooses 3 (List Blueprints):**
+- Show available blueprints: dashboard, crud-api, rag-pipeline, etc.
+- Let user select one manually
+- Route to selected blueprint
 
 ---
 
