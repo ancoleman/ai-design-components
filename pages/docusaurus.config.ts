@@ -124,6 +124,12 @@ const config: Config = {
           position: 'left',
           label: 'Skillchain',
         },
+        {
+          type: 'docSidebar',
+          sidebarId: 'agentsSidebar',
+          position: 'left',
+          label: 'Agents',
+        },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
           to: '/llm-ecosystem',
@@ -163,6 +169,10 @@ const config: Config = {
             {
               label: 'Skillchain',
               to: '/docs/skillchain/overview',
+            },
+            {
+              label: 'Agents',
+              to: '/docs/agents/overview',
             },
             {
               label: 'Guides',

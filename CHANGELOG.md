@@ -5,9 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.7.0] - 2025-12-10
 
 ### Added
+
+**Claude Agent Manager Package (`claude_agent_manager`):**
+A complete Python library for programmatic Claude Code CLI orchestration:
+
+- **Core Module** (~1,200 lines):
+  - `AgentDetector` - 3-tier CLI binary detection with PATH expansion
+  - `EventEmitter` - Async event system with 16 event types
+  - `StreamJsonParser` - JSONL stream parsing with usage tracking
+  - `ProcessManager` - Async subprocess management with streaming I/O
+  - Fixed: Session ID parsing now correctly handles `type: "system"` + `subtype: "init"` format
+
+- **Session Module** (~1,200 lines):
+  - `SessionManager` - Session lifecycle with auto-resume via `--resume` flag
+  - `SessionWatcher` - Poll-based file monitoring for `~/.claude/projects/`
+  - `SessionStorage` - JSON persistence to `~/.claude_agent_manager/sessions/`
+  - Session state machine: IDLE → BUSY → (Processing) → IDLE/ERROR/CLOSED
+
+- **Orchestration Module** (~1,400 lines):
+  - `AgentCoordinator` - Multi-agent coordination with semaphore for concurrency
+  - `TaskQueue` - Priority queue (heapq) with CRITICAL/HIGH/NORMAL/LOW/BACKGROUND
+  - `CircuitBreaker` - State machine (CLOSED→OPEN→HALF_OPEN) for fault tolerance
+  - Pipeline execution with `{prev_result}` context substitution
+
+- **Skillchain Integration Module** (~600 lines):
+  - `SkillchainExecutor` - Programmatic skill chain execution
+  - `RegistryManager` - Load skills from `.claude-commands/skillchain-data/registries/`
+  - `ProgressManager` - Manage `.skillchain-progress.json` for resumable sessions
+  - Goal routing with blueprint detection and dependency sorting
+
+- **CLI** (`claude-agent` command):
+  - `claude-agent check` - Verify Claude CLI installation
+  - `claude-agent run` - Execute single prompts with streaming support
+  - `claude-agent sessions list/show/delete` - Session management
+  - `claude-agent watch` - Real-time session file monitoring
+  - `claude-agent skillchain run/route/status/resume/blueprints` - Skillchain commands
+
+- **Tests**: 122 tests across 3 test files (pytest + pytest-asyncio)
+- **Documentation**: 6 comprehensive docs in `pages/docs/agents/`:
+  - Architecture diagrams (Mermaid)
+  - Skillchain integration patterns
+  - Real-world usage examples
+  - CLI reference
+
+Package location: `packages/claude_agent_manager/`
+Install: `pip install -e "./packages/claude_agent_manager[skillchain]"`
 
 **Subagent Architecture (Specialized Skill Executors):**
 - 6 custom subagent definitions in `.claude-commands/agents/`:

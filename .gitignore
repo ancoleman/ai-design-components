@@ -46,6 +46,14 @@ venv/
 env/
 ENV/
 .venv
+*.egg-info/
+*.egg
+.eggs/
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.mypy_cache/
 
 # Build and temporary files
 dist/
