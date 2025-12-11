@@ -32,7 +32,7 @@ graph TB
         subgraph "Core Layer"
             DET[AgentDetector]
             EVT[EventEmitter]
-            PAR[StreamJsonParser]
+            PARSER[StreamJsonParser]
             PM[ProcessManager]
         end
 
@@ -84,7 +84,7 @@ graph TB
 
     PM --> DET
     PM --> EVT
-    PM --> PAR
+    PM --> PARSER
     PM --> SM
 
     SM --> SS
@@ -105,14 +105,14 @@ sequenceDiagram
     participant App as Application
     participant PM as ProcessManager
     participant DET as AgentDetector
-    participant PAR as StreamJsonParser
+    participant Parser as StreamJsonParser
     participant EVT as EventEmitter
     participant CC as Claude Code CLI
     participant AI as Claude AI
 
     App->>PM: execute(ProcessConfig)
     PM->>DET: detect()
-    DET-->>PM: DetectionResult{path, version}
+    DET-->>PM: DetectionResult
 
     PM->>PM: build_args()
     PM->>PM: build_env()
@@ -124,17 +124,17 @@ sequenceDiagram
 
     loop Streaming Response
         AI-->>CC: response chunk
-        CC-->>PM: stdout (stream-json)
-        PM->>PAR: process_chunk(data)
+        CC-->>PM: stdout stream-json
+        PM->>Parser: process_chunk(data)
 
         alt system init
-            PAR->>EVT: emit(SESSION_STARTED)
+            Parser->>EVT: emit(SESSION_STARTED)
         else assistant message
-            PAR->>EVT: emit(MESSAGE_CHUNK)
+            Parser->>EVT: emit(MESSAGE_CHUNK)
         else tool use
-            PAR->>EVT: emit(TOOL_CALLED)
+            Parser->>EVT: emit(TOOL_CALLED)
         else result
-            PAR->>EVT: emit(MESSAGE_RECEIVED)
+            Parser->>EVT: emit(MESSAGE_RECEIVED)
         end
     end
 
@@ -585,18 +585,18 @@ graph TB
 stateDiagram-v2
     [*] --> Idle
 
-    Idle --> Spawning: execute()
-    Spawning --> Initializing: process started
-    Initializing --> Processing: system:init received
+    Idle --> Spawning : execute()
+    Spawning --> Initializing : process started
+    Initializing --> Processing : init received
 
-    Processing --> Streaming: assistant message
-    Processing --> ToolCalling: tool_use detected
-    Processing --> Complete: result received
+    Processing --> Streaming : assistant message
+    Processing --> ToolCalling : tool_use detected
+    Processing --> Complete : result received
 
-    Streaming --> Processing: chunk processed
-    ToolCalling --> Processing: tool result
+    Streaming --> Processing : chunk processed
+    ToolCalling --> Processing : tool result
 
-    Complete --> Idle: cleanup
+    Complete --> Idle : cleanup
 
     state Processing {
         [*] --> Parsing
