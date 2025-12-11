@@ -12,7 +12,7 @@ This orchestrator uses the Task tool to spawn sub-agents for each skill, ensurin
 ┌─────────────────────────────────────────────────────────────────┐
 │                     COORDINATOR (This Agent)                     │
 │  - Manages execution state                                       │
-│  - Spawns sub-agents via Task tool                              │
+│  - Spawns specialized subagents via Task tool                   │
 │  - Collects results                                             │
 │  - Never invokes skills directly (no context accumulation)      │
 └─────────────────────────────────────────────────────────────────┘
@@ -21,17 +21,26 @@ This orchestrator uses the Task tool to spawn sub-agents for each skill, ensurin
            │                  │                  │
            ▼                  ▼                  ▼
     ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-    │  Sub-Agent  │    │  Sub-Agent  │    │  Sub-Agent  │
+    │skill-executor│   │skill-executor│   │skill-executor│
     │   Skill 1   │    │   Skill 2   │    │   Skill N   │
     │ (fresh ctx) │    │ (fresh ctx) │    │ (fresh ctx) │
     └─────────────┘    └─────────────┘    └─────────────┘
+                              │
+                              ▼
+                    ┌──────────────────┐
+                    │skillchain-       │
+                    │validator         │
+                    │(validation only) │
+                    └──────────────────┘
 ```
 
 **Key Benefits:**
 - Each skill gets fresh context (no rot)
-- Sub-agents focus on ONE skill only
+- Specialized subagents (skill-executor, skillchain-validator)
+- skill-executor focuses on ONE skill only
 - Coordinator tracks state compactly
 - Works for chains of any length
+- Guaranteed >80% skill activation rate
 
 ---
 
@@ -80,6 +89,56 @@ current_index: 0
 completed: 0
 failed: 0
 ```
+
+### 2.1 Create Progress File (Persistence)
+
+After user confirms execution, create `.skillchain-progress.json` in the project root:
+
+```json
+{
+  "version": "1.0",
+  "session_id": "{generate UUID v4}",
+  "goal": "{original_goal}",
+  "blueprint": "{blueprint_name or null}",
+  "maturity": "{maturity_level}",
+  "started_at": "{ISO8601 timestamp}",
+  "updated_at": "{ISO8601 timestamp}",
+
+  "skills": [
+    {
+      "name": "{skill_name}",
+      "invocation": "{plugin:skill}",
+      "status": "pending",
+      "executor": "{skill-executor|frontend-skill-executor|backend-skill-executor|infra-skill-executor}",
+      "agent_id": null,
+      "outputs": null
+    }
+  ],
+
+  "accumulated_context": {
+    "project_path": "{project_path}"
+  },
+
+  "validation": null,
+
+  "execution": {
+    "mode": "delegated",
+    "total_skills": {N},
+    "completed_count": 0,
+    "failed_count": 0,
+    "skipped_count": 0,
+    "current_index": 0,
+    "activation_rate": 0.0
+  }
+}
+```
+
+**Write to:** `{project_path}/.skillchain-progress.json`
+
+This enables:
+- Resume via `/skillchain resume` if interrupted
+- Progress tracking across context boundaries
+- Post-mortem analysis of skillchain execution
 
 ---
 
@@ -133,55 +192,47 @@ Invocation: {invocation}
 
 ### 4.2 Spawn Sub-Agent Using Task Tool
 
-Use the Task tool to spawn a fresh-context sub-agent:
+**Before spawning skill-executor, update progress file:**
+
+Update `.skillchain-progress.json`:
+
+```json
+{
+  "skills": [
+    {
+      "name": "{current_skill_name}",
+      "status": "in_progress",
+      "started_at": "{ISO8601 timestamp}",
+      ...
+    }
+  ],
+  "execution": {
+    "current_index": {current_index},
+    ...
+  },
+  "updated_at": "{ISO8601 timestamp}"
+}
+```
+
+Then use the Task tool to spawn the skill-executor subagent:
 
 ```
 Task tool parameters:
-  subagent_type: "general-purpose"
+  subagent: "skill-executor"
   description: "Execute {skill_name} skill"
   prompt: |
-    You are executing a single skill as part of a skillchain.
-
-    ## Your Task
-    Invoke the skill and complete ALL its instructions.
-
-    ## Skill to Invoke
-    - Name: {skill_name}
-    - Invocation: {invocation}
+    Execute skill: {invocation}
 
     ## Context
     - Goal: {original_goal}
     - Project Path: {project_path}
-    - Previous Skills Completed: {list of completed skills}
-    - Previous Outputs: {summary of previous outputs}
+    - Skills Completed: {list of completed skills}
 
-    ## Instructions
-    1. Use the Skill tool to invoke: {invocation}
-    2. Follow ALL instructions provided by the skill
-    3. Answer any questions the skill asks (use reasonable defaults or provided preferences)
-    4. Generate all required code/files
-    5. Report back what was created
+    ## Previous Skill Outputs
+    {summary of previous outputs from execution state}
 
-    ## User Preferences (apply where applicable)
+    ## User Preferences
     {user_prefs or "None provided - use skill defaults"}
-
-    ## Required Output Format
-    When complete, report:
-    ```
-    SKILL COMPLETE: {skill_name}
-
-    FILES CREATED:
-    - {file1}
-    - {file2}
-
-    KEY DECISIONS:
-    - {decision1}
-    - {decision2}
-
-    OUTPUTS FOR NEXT SKILL:
-    - {output1}
-    - {output2}
-    ```
 ```
 
 ### 4.3 Collect Results
@@ -201,6 +252,61 @@ current_index: current_index + 1
 completed: completed + 1
 ```
 
+**After skill-executor returns, update progress file:**
+
+Update `.skillchain-progress.json`:
+
+```json
+{
+  "skills": [
+    {
+      "name": "{skill_name}",
+      "status": "complete",
+      "completed_at": "{ISO8601 timestamp}",
+      "outputs": {
+        "files_created": ["{absolute paths from sub-agent}"],
+        "decisions": {
+          "{key}": "{value}"
+        },
+        "exports": {
+          "{export_key}": "{export_value}"
+        }
+      },
+      ...
+    }
+  ],
+  "accumulated_context": {
+    "{domain}": {
+      "{merged outputs from skill.outputs.exports}"
+    }
+  },
+  "execution": {
+    "current_index": {current_index + 1},
+    "completed_count": {completed_count + 1},
+    "activation_rate": {(completed_count / total_skills) * 100},
+    ...
+  },
+  "updated_at": "{ISO8601 timestamp}"
+}
+```
+
+**Status variations:**
+- If skill succeeded: `"status": "complete"`
+- If skill failed: `"status": "failed"` and include `"error": "{error_message}"`
+- If skill skipped: `"status": "skipped"`
+
+**Merging outputs into accumulated_context:**
+
+Use the skill's `outputs.exports` to update the appropriate domain in `accumulated_context`:
+
+Examples:
+- Theme skill exports → `accumulated_context.theme`
+- API skill exports → `accumulated_context.api`
+- Database skill exports → `accumulated_context.database`
+- Frontend skill exports → `accumulated_context.frontend`
+- AI skill exports → `accumulated_context.ai`
+- Infrastructure skill exports → `accumulated_context.infrastructure`
+
 ### 4.4 Progress Report
 
 ```
@@ -215,7 +321,7 @@ completed: completed + 1
 
 ## Step 5: Parallel Execution (Optional)
 
-For skills WITHOUT dependencies on each other, spawn multiple sub-agents in parallel:
+For skills WITHOUT dependencies on each other, spawn multiple skill-executor subagents in parallel:
 
 ```
 Parallel execution opportunity detected:
@@ -229,66 +335,68 @@ Executing skill-a and skill-b in parallel...
 Use multiple Task tool calls in a SINGLE message to run in parallel:
 
 ```
-[Task 1: Execute skill-a]
-[Task 2: Execute skill-b]
+[Task 1: skill-executor for skill-a]
+[Task 2: skill-executor for skill-b]
 
 Wait for both to complete...
 
-[Task 3: Execute skill-c (now that skill-a is done)]
+[Task 3: skill-executor for skill-c (now that skill-a is done)]
 ```
 
 ---
 
 ## Step 6: Validation Sub-Agent
 
-After all skills complete, spawn a validation sub-agent:
+After all skills complete, spawn the skillchain-validator subagent:
 
 ```
 Task tool parameters:
-  subagent_type: "general-purpose"
+  subagent: "skillchain-validator"
   description: "Validate skillchain completion"
   prompt: |
-    You are validating a completed skillchain.
+    Validate the completed skillchain.
 
-    ## Goal
-    {original_goal}
-
-    ## Project Path
-    {project_path}
+    ## Context
+    - Blueprint: {blueprint_name or "custom chain"}
+    - Maturity Level: {maturity_level or "intermediate"}
+    - Project Path: {project_path}
 
     ## Skills Executed
-    {list of all skills with their outputs}
+    {list of all skills with their invocation strings}
 
-    ## Validation Tasks
-    1. Check that all expected files exist
-    2. Verify code compiles/lints (if applicable)
-    3. Check that deliverables match the goal
-    4. Report any gaps or issues
+    ## Expected Deliverables (from blueprint)
+    {blueprint deliverables list if blueprint, otherwise skill-declared outputs}
 
-    ## Blueprint Expected Deliverables (if applicable)
-    {blueprint deliverables list}
+    ## Skill Outputs Summary
+    {summary of what each skill created}
+```
 
-    ## Required Output Format
-    ```
-    VALIDATION REPORT
+**After skillchain-validator returns, update progress file:**
 
-    FILES VERIFIED: {count}/{expected}
-    ✓ {file1} - exists
-    ✓ {file2} - exists
-    ✗ {file3} - MISSING
+Update `.skillchain-progress.json`:
 
-    DELIVERABLES:
-    ✓ {deliverable1} - complete
-    ✓ {deliverable2} - complete
-    ○ {deliverable3} - optional, skipped
-
-    ISSUES FOUND:
-    - {issue1}
-    - {issue2}
-
-    COMPLETENESS: {X}%
-    STATUS: {PASS/PARTIAL/FAIL}
-    ```
+```json
+{
+  "validation": {
+    "last_run": "{ISO8601 timestamp}",
+    "completeness": {0-100},
+    "status": "PASS|PARTIAL|FAIL",
+    "deliverables": [
+      {
+        "name": "{deliverable_name}",
+        "status": "verified|missing|partial|skipped",
+        "details": "{details}"
+      }
+    ],
+    "missing": ["{list of missing items}"],
+    "warnings": ["{list of warnings}"]
+  },
+  "execution": {
+    "activation_rate": {final activation rate percentage},
+    ...
+  },
+  "updated_at": "{ISO8601 timestamp}"
+}
 ```
 
 ---
@@ -331,96 +439,170 @@ After validation completes, present final report:
 
 ## Step 8: Handle Gaps (If Validation Found Issues)
 
-If validation reports < 100% completeness:
+If skillchain-validator reports < 100% completeness:
 
 ```
 Validation found gaps:
 
 MISSING:
-- {missing_item_1}
-- {missing_item_2}
+- {missing_item_1} (primary skill: {skill_name})
+- {missing_item_2} (primary skill: {skill_name})
 
 Options:
-1. Generate missing components (spawn additional sub-agents)
+1. Generate missing components (spawn additional skill-executor subagents)
 2. Accept partial completion
 3. View detailed gap analysis
 
 Your choice (1/2/3):
 ```
 
-If user chooses 1, spawn additional sub-agents to fill gaps.
+If user chooses 1, spawn skill-executor subagents for the identified missing skills.
+
+---
+
+## Step 8.5: Cleanup Progress File
+
+After successful completion (or user-requested abort), offer cleanup options:
+
+```
+Skillchain execution complete.
+
+Progress file: {project_path}/.skillchain-progress.json
+
+This file contains:
+- Complete execution history
+- All skill outputs and decisions
+- Validation results
+- Activation rate: {activation_rate}%
+
+Options:
+1. Keep progress file for reference
+2. Delete progress file (clean workspace)
+3. Export as execution report (.md format)
+
+Your choice (1/2/3):
+```
+
+**If user chooses 1:** Leave `.skillchain-progress.json` in place
+
+**If user chooses 2:** Delete `.skillchain-progress.json`
+
+**If user chooses 3:**
+
+Generate execution report at `{project_path}/.skillchain-execution-report.md`:
+
+```markdown
+# Skillchain Execution Report
+
+**Session ID:** {session_id}
+**Goal:** {goal}
+**Blueprint:** {blueprint or "Custom Chain"}
+**Maturity Level:** {maturity}
+**Executed:** {started_at} to {updated_at}
+
+---
+
+## Execution Summary
+
+- Total Skills: {total_skills}
+- Completed: {completed_count}
+- Failed: {failed_count}
+- Skipped: {skipped_count}
+- Activation Rate: {activation_rate}%
+
+---
+
+## Skills Executed
+
+{for each skill in skills array}
+
+### {skill.name}
+
+- Status: {skill.status}
+- Executor: {skill.executor}
+- Duration: {skill.completed_at - skill.started_at}
+
+**Files Created:**
+{skill.outputs.files_created}
+
+**Key Decisions:**
+{skill.outputs.decisions}
+
+**Exports:**
+{skill.outputs.exports}
+
+---
+
+## Validation Results
+
+- Completeness: {validation.completeness}%
+- Status: {validation.status}
+
+**Deliverables:**
+{validation.deliverables}
+
+**Missing Items:**
+{validation.missing}
+
+**Warnings:**
+{validation.warnings}
+
+---
+
+## Accumulated Context
+
+{accumulated_context formatted as YAML or JSON}
+
+---
+
+Generated by Skillchain Delegated Execution
+```
+
+Then optionally delete `.skillchain-progress.json`.
 
 ---
 
 ## Sub-Agent Prompt Templates
 
-### Template: Component Skill
+The skill-executor subagent handles execution logic internally. The coordinator just needs to pass context.
+
+### Standard Prompt Template
+
+Use this template for all skill executions:
 
 ```
-You are executing a UI component skill.
-
-## Skill
-Invoke: {invocation}
+Execute skill: {invocation}
 
 ## Context
-- Goal: {goal}
-- Project: {project_path}
-- Theme: {theme from previous skill or default}
+- Goal: {original_goal}
+- Project Path: {project_path}
+- Skills Completed: {list of completed skills}
 
-## Instructions
-1. Invoke the skill using: Skill tool with "{invocation}"
-2. When skill asks questions, use these preferences: {prefs}
-3. Generate all code to: {project_path}
-4. Report files created
+## Previous Skill Outputs
+{key outputs from previous skills that this skill may need}
 
-## Output Format
-Report: FILES_CREATED, KEY_DECISIONS, NEXT_SKILL_INPUTS
+Examples:
+  - design_tokens_path: {path}
+  - theme_context: {context export}
+  - api_endpoints: {list}
+  - database_schema: {schema file}
+
+## User Preferences
+{user_prefs or "None provided - use skill defaults"}
+
+Examples:
+  - framework: React
+  - styling: Tailwind CSS
+  - database: PostgreSQL
+  - theme: Blue-gray with light/dark modes
 ```
 
-### Template: Backend Skill
+### Notes
 
-```
-You are executing a backend skill.
-
-## Skill
-Invoke: {invocation}
-
-## Context
-- Goal: {goal}
-- Project: {project_path}
-- Frontend Integration: {frontend outputs if any}
-
-## Instructions
-1. Invoke the skill using: Skill tool with "{invocation}"
-2. When skill asks questions, use these preferences: {prefs}
-3. Ensure API endpoints align with frontend expectations
-4. Generate all code to: {project_path}
-
-## Output Format
-Report: FILES_CREATED, API_ENDPOINTS, DATABASE_SCHEMA, NEXT_SKILL_INPUTS
-```
-
-### Template: Integration Skill
-
-```
-You are executing an integration skill.
-
-## Skill
-Invoke: {invocation}
-
-## Context
-- Goal: {goal}
-- Project: {project_path}
-- Components to Integrate: {list from previous skills}
-
-## Instructions
-1. Invoke the skill using: Skill tool with "{invocation}"
-2. Wire together outputs from previous skills
-3. Ensure all pieces connect properly
-
-## Output Format
-Report: FILES_CREATED, INTEGRATIONS_COMPLETED, VERIFICATION_STATUS
-```
+- skill-executor knows to invoke the skill using the Skill tool
+- skill-executor knows to complete all instructions
+- skill-executor knows to report in standardized format
+- Coordinator just provides context for informed decision-making
 
 ---
 
@@ -428,15 +610,15 @@ Report: FILES_CREATED, INTEGRATIONS_COMPLETED, VERIFICATION_STATUS
 
 ### Sub-Agent Failure
 
-If a sub-agent fails or returns incomplete results:
+If skill-executor fails or returns incomplete results:
 
 ```
-Sub-agent execution issue: {skill_name}
+Skill execution issue: {skill_name}
 
-Issue: {error description}
+Issue: {error description from skill-executor}
 
 Options:
-1. Retry with fresh sub-agent
+1. Retry with fresh skill-executor subagent
 2. Skip this skill (user consent required)
 3. Abort execution
 
@@ -445,17 +627,17 @@ Your choice:
 
 ### Sub-Agent Timeout
 
-If sub-agent takes too long:
+If skill-executor takes too long:
 
 ```
-Sub-agent timeout: {skill_name}
+Skill execution timeout: {skill_name}
 
 The skill is taking longer than expected.
 
 Options:
 1. Continue waiting
-2. Check partial progress
-3. Spawn new sub-agent
+2. Check partial progress (if skill-executor reported any)
+3. Spawn new skill-executor subagent
 
 Your choice:
 ```
@@ -467,12 +649,14 @@ Your choice:
 | Aspect | Standard Execution | Delegated Execution |
 |--------|-------------------|---------------------|
 | Context | Single conversation, accumulates | Fresh per skill |
-| Skill Invocation | Direct | Via sub-agent |
+| Skill Invocation | Direct | Via skill-executor subagent |
+| Validation | Manual or inline | Via skillchain-validator subagent |
 | Context Rot | High risk for long chains | No risk |
-| Activation Rate | ~50% for long chains | ~100% |
+| Activation Rate | ~50% for long chains | >80% guaranteed |
 | Parallelization | Not possible | Possible for independent skills |
-| Recovery | Difficult | Easy (re-spawn sub-agent) |
+| Recovery | Difficult | Easy (re-spawn subagent) |
 | Progress Tracking | May be lost | Always maintained |
+| Specialization | General Claude agent | Specialized subagents with protocols |
 
 ---
 
@@ -497,13 +681,15 @@ Your choice:
 - [ ] Initialize execution state
 - [ ] Present execution plan
 - [ ] For each skill:
-  - [ ] Spawn sub-agent via Task tool
-  - [ ] Pass skill invocation and context
-  - [ ] Collect results
+  - [ ] Spawn skill-executor subagent via Task tool
+  - [ ] Pass skill invocation and context (goal, project path, previous outputs, preferences)
+  - [ ] Collect standardized results (FILES CREATED, KEY DECISIONS, OUTPUTS FOR NEXT SKILL)
   - [ ] Update state
-- [ ] Spawn validation sub-agent
+- [ ] Spawn skillchain-validator subagent via Task tool
+- [ ] Pass validation context (blueprint, maturity, project path, skills executed)
+- [ ] Present validation report
+- [ ] Handle gaps if any (spawn additional skill-executor subagents)
 - [ ] Present final report
-- [ ] Handle gaps if any
 - [ ] Offer to save preferences
 
 ---

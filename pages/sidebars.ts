@@ -212,6 +212,16 @@ const sidebars: SidebarsConfig = {
     'skillchain/chain-context',
   ],
 
+  // Agents documentation
+  agentsSidebar: [
+    'agents/overview',
+    'agents/manager-overview',
+    'agents/architecture',
+    'agents/skillchain-integration',
+    'agents/real-world-usage',
+    'agents/cli-reference',
+  ],
+
   // Master plans sidebar
   masterPlansSidebar: [
     'master-plans/overview',

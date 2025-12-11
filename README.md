@@ -4,9 +4,10 @@
 
 > Full-stack development skills for AI-assisted development with Claude
 
-[![Version](https://img.shields.io/badge/version-0.5.0-blue.svg)](./VERSION)
+[![Version](https://img.shields.io/badge/version-0.7.0-blue.svg)](./VERSION)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 [![Skills](https://img.shields.io/badge/skills-76-purple.svg)](https://ancoleman.github.io/ai-design-components/docs/skills/overview)
+[![Agents](https://img.shields.io/badge/agents-programmatic-green.svg)](https://ancoleman.github.io/ai-design-components/docs/agents/overview)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-orange.svg)](https://ancoleman.github.io/ai-design-components/)
 
 ## What is this?
@@ -23,6 +24,7 @@ A collection of **76 production-ready Claude Skills** covering frontend, backend
 | [Installation](https://ancoleman.github.io/ai-design-components/docs/installation) | Setup instructions |
 | [Skills Reference](https://ancoleman.github.io/ai-design-components/docs/skills/overview) | All 76 skills documented |
 | [Skillchain Guide](https://ancoleman.github.io/ai-design-components/docs/skillchain/overview) | Guided workflow system |
+| [Agents](https://ancoleman.github.io/ai-design-components/docs/agents/overview) | Programmatic agent orchestration |
 
 ## Quick Start
 
@@ -139,6 +141,55 @@ Once installed, use the `/skillchain:start` command for guided workflows:
 
 See [Skills Overview](https://ancoleman.github.io/ai-design-components/docs/skills/overview) for the complete list.
 
+## Agent Manager
+
+The **Claude Agent Manager** (`claude_agent_manager`) provides programmatic control over Claude agents:
+
+```bash
+# Install the agent manager package
+pip install -e "./packages/claude_agent_manager[skillchain]"
+
+# Verify installation
+claude-agent check
+```
+
+### Features
+
+- **Real-time streaming** - Stream Claude's responses with event callbacks
+- **Session management** - Track and resume conversations
+- **Multi-agent orchestration** - Coordinate multiple agents with priority queues
+- **Skillchain integration** - Execute skill chains programmatically
+- **CLI interface** - `claude-agent` command for automation
+
+### Quick Example
+
+```python
+import asyncio
+from claude_agent_manager import ProcessManager, ProcessConfig
+
+async def main():
+    manager = ProcessManager()
+    result = await manager.execute(ProcessConfig(
+        prompt="Write a hello world function",
+        cwd="/my/project"
+    ))
+    print(result.text)
+    print(f"Cost: ${result.usage.total_cost_usd:.4f}")
+
+asyncio.run(main())
+```
+
+### CLI Commands
+
+```bash
+claude-agent run "Explain recursion" --cwd /project
+claude-agent skillchain route "dashboard with charts"
+claude-agent skillchain run "Build API" --blueprint crud-api
+claude-agent sessions list --cwd /project
+```
+
+See [Agents Documentation](https://ancoleman.github.io/ai-design-components/docs/agents/overview) for complete guides on architecture, skillchain integration, and real-world usage patterns.
+
 ## Prerequisites
 
 - **Claude Code CLI** - [Install Claude Code](https://docs.anthropic.com/en/docs/claude-code)
@@ -146,6 +197,7 @@ See [Skills Overview](https://ancoleman.github.io/ai-design-components/docs/skil
 
 ## Resources
 
+- [Agents Documentation](https://ancoleman.github.io/ai-design-components/docs/agents/overview) - Programmatic agent orchestration and skillchain integration
 - [Plugin Commands Reference](https://ancoleman.github.io/ai-design-components/docs/guides/plugin-commands) - Complete CLI reference for marketplace/plugin management
 - [Anthropic Skills Documentation](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
 - [Skills Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)

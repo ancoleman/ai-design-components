@@ -1,0 +1,167 @@
+# Basic Skill Executor Tests
+# Tests fundamental skill invocation and reporting capabilities
+
+name: skill-executor-basic
+description: Validates basic skill invocation, protocol adherence, and reporting for skill-executor subagent
+subagent: skill-executor
+
+test_cases:
+  # =============================================================================
+  # Test 1: Foundation Skill (Theming)
+  # =============================================================================
+
+  - name: invoke-theming-components
+    description: Execute theming-components skill with user preferences
+
+    prompt: |
+      Execute the theming-components skill for a React dashboard project.
+
+      Project context:
+      - Path: /tmp/test-theming
+      - Framework: React with TypeScript
+      - Build tool: Vite
+
+      User preferences:
+      - Color scheme: blue-gray
+      - Theme modes: light and dark
+      - Typography: Inter font family
+      - Design system: Material-inspired with custom tokens
+
+    expected:
+      # Verify correct skill was invoked
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      # Check expected files were created
+      files_created:
+        - pattern: "src/styles/tokens.css"
+          min_count: 1
+        - pattern: "src/styles/*-theme.css"
+          min_count: 2  # light-theme.css, dark-theme.css
+
+      # Validate report structure and content
+      report_contains:
+        - "SKILL COMPLETE: theming-components"
+        - "FILES CREATED:"
+        - "src/styles/tokens.css"
+        - "KEY DECISIONS:"
+        - "blue-gray"
+        - "OUTPUTS FOR NEXT SKILL:"
+        - "theme_tokens"
+
+      # Ensure no errors or warnings
+      report_excludes:
+        - "Error:"
+        - "Failed"
+        - "WARNINGS:"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-theming/src/styles"
+      - "cd /tmp/test-theming && npm init -y"
+
+    teardown:
+      - "rm -rf /tmp/test-theming"
+
+  # =============================================================================
+  # Test 2: Component Skill (Forms)
+  # =============================================================================
+
+  - name: invoke-building-forms
+    description: Execute building-forms skill with validation library preferences
+
+    prompt: |
+      Execute the building-forms skill.
+
+      Project context:
+      - Path: /tmp/test-forms
+      - Framework: React with TypeScript
+      - Already has: Design tokens from theming-components
+
+      Requirements:
+      - Use React Hook Form for form management
+      - Validation: Zod schema validation
+      - Fields needed: email, password, name, terms checkbox
+      - Accessibility: WCAG 2.1 AA compliance
+      - Error handling: Inline validation messages
+
+    expected:
+      skill_invoked: "ui-input-skills:building-forms"
+
+      files_created:
+        - pattern: "src/components/**/*.tsx"
+          min_count: 1
+        - pattern: "src/validation/**/*.ts"
+          min_count: 1
+
+      report_contains:
+        - "SKILL COMPLETE: building-forms"
+        - "FILES CREATED:"
+        - "React Hook Form"
+        - "Zod"
+        - "KEY DECISIONS:"
+        - "OUTPUTS FOR NEXT SKILL:"
+
+      report_excludes:
+        - "Error:"
+        - "skipped"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-forms/src/{components,validation,styles}"
+      - "echo '/* Design tokens */' > /tmp/test-forms/src/styles/tokens.css"
+
+    teardown:
+      - "rm -rf /tmp/test-forms"
+
+  # =============================================================================
+  # Test 3: Data Visualization Skill
+  # =============================================================================
+
+  - name: invoke-visualizing-data
+    description: Execute visualizing-data skill for chart generation
+
+    prompt: |
+      Execute the visualizing-data skill.
+
+      Project context:
+      - Path: /tmp/test-charts
+      - Framework: React with TypeScript
+      - Use case: Sales analytics dashboard
+
+      Chart requirements:
+      - Line chart: Revenue over time (monthly)
+      - Bar chart: Sales by product category
+      - Pie chart: Market share distribution
+      - Library: Recharts (React-friendly)
+      - Responsive design: Mobile and desktop
+      - Accessibility: Screen reader support
+
+    expected:
+      skill_invoked: "ui-data-skills:visualizing-data"
+
+      files_created:
+        - pattern: "src/components/charts/**/*.tsx"
+          min_count: 3  # At least 3 chart components
+
+      report_contains:
+        - "SKILL COMPLETE: visualizing-data"
+        - "FILES CREATED:"
+        - "Recharts"
+        - "Line chart"
+        - "Bar chart"
+        - "Pie chart"
+        - "OUTPUTS FOR NEXT SKILL:"
+
+      report_matches:
+        - pattern: "FILES CREATED:\n(- .+\n)+"
+          description: "Files listed in bullet format"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-charts/src/components/charts"
+
+    teardown:
+      - "rm -rf /tmp/test-charts"

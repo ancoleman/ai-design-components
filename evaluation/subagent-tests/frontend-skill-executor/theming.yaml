@@ -1,0 +1,238 @@
+name: frontend-skill-executor-theming
+description: Validates that frontend-skill-executor correctly executes theming-components skill, creates CSS/token files, respects tool restrictions, and reports theme decisions
+subagent: frontend-skill-executor
+
+test_cases:
+  - name: invokes-theming-components
+    description: Verify frontend executor invokes theming-components skill correctly
+    prompt: |
+      Execute the theming-components skill for a React dashboard application.
+
+      Project context:
+      - Path: /tmp/test-frontend-theming
+      - Framework: React with TypeScript
+      - Build tool: Vite
+
+      User preferences:
+      - Color scheme: blue-gray
+      - Modes: light and dark
+      - Typography: Inter font family
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      report_contains:
+        - "SKILL COMPLETE:"
+        - "theming-components"
+        - "Now invoking skill:"
+
+      report_excludes:
+        - "Error:"
+        - "failed"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-frontend-theming/src/styles"
+
+    teardown:
+      - "rm -rf /tmp/test-frontend-theming"
+
+  - name: creates-design-tokens
+    description: Verify frontend executor creates design token files
+    prompt: |
+      Execute the theming-components skill.
+
+      Project: /tmp/test-frontend-tokens
+      Framework: React + TypeScript
+      Theme: Modern design with comprehensive design tokens
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      files_created:
+        - pattern: "src/styles/tokens.css"
+          min_count: 1
+
+      report_contains:
+        - "FILES CREATED:"
+        - "tokens.css"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-frontend-tokens/src/styles"
+
+    teardown:
+      - "rm -rf /tmp/test-frontend-tokens"
+
+  - name: creates-theme-files
+    description: Verify frontend executor creates theme definition files for light/dark modes
+    prompt: |
+      Execute the theming-components skill.
+
+      Project: /tmp/test-frontend-themes
+      Framework: React
+      Requirements: Light and dark theme support
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      files_created:
+        - pattern: "src/styles/*.css"
+          min_count: 2
+
+      report_contains:
+        - "light"
+        - "dark"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-frontend-themes/src/styles"
+
+    teardown:
+      - "rm -rf /tmp/test-frontend-themes"
+
+  - name: reports-theme-decisions
+    description: Verify frontend executor documents theme-related decisions in KEY DECISIONS
+    prompt: |
+      Execute the theming-components skill.
+
+      Project: /tmp/test-frontend-decisions
+      Framework: React with TypeScript
+      Let the executor make decisions about color palette and theme approach.
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      report_contains:
+        - "KEY DECISIONS:"
+        - "color"
+        - "theme"
+
+      report_matches:
+        - pattern: "KEY DECISIONS:.*color|theme"
+          description: "Documents color or theme decisions"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-frontend-decisions/src"
+
+    teardown:
+      - "rm -rf /tmp/test-frontend-decisions"
+
+  - name: creates-typescript-components
+    description: Verify frontend executor creates TypeScript files with proper types
+    prompt: |
+      Execute the theming-components skill.
+
+      Project: /tmp/test-frontend-typescript
+      Framework: React with TypeScript
+      Requirements: Type-safe theme context and hooks
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      files_created:
+        - pattern: "src/**/*.tsx"
+          min_count: 1
+
+      report_contains:
+        - "TypeScript"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-frontend-typescript/src/contexts"
+      - "mkdir -p /tmp/test-frontend-typescript/src/hooks"
+
+    teardown:
+      - "rm -rf /tmp/test-frontend-typescript"
+
+  - name: outputs-for-next-skill
+    description: Verify frontend executor provides theme context for subsequent skills
+    prompt: |
+      Execute the theming-components skill.
+
+      Project: /tmp/test-frontend-outputs
+      Framework: React
+      This is the first skill in a skillchain. Other UI skills will need the theme context.
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      report_contains:
+        - "OUTPUTS FOR NEXT SKILL:"
+        - "design_tokens"
+        - "theme"
+
+      report_matches:
+        - pattern: "OUTPUTS FOR NEXT SKILL:.*tokens|theme"
+          description: "Provides theme-related outputs for next skill"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-frontend-outputs/src"
+
+    teardown:
+      - "rm -rf /tmp/test-frontend-outputs"
+
+  - name: follows-frontend-file-structure
+    description: Verify frontend executor follows proper React project structure
+    prompt: |
+      Execute the theming-components skill.
+
+      Project: /tmp/test-frontend-structure
+      Framework: React with TypeScript
+      Requirements: Proper separation of styles, contexts, and hooks
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      files_created:
+        - pattern: "src/styles/*"
+          min_count: 1
+
+      report_contains:
+        - "src/"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-frontend-structure/src/styles"
+      - "mkdir -p /tmp/test-frontend-structure/src/contexts"
+      - "mkdir -p /tmp/test-frontend-structure/src/hooks"
+
+    teardown:
+      - "rm -rf /tmp/test-frontend-structure"
+
+  - name: uses-css-custom-properties
+    description: Verify frontend executor uses CSS custom properties for theme tokens
+    prompt: |
+      Execute the theming-components skill.
+
+      Project: /tmp/test-frontend-css-vars
+      Framework: React
+      Requirements: CSS custom properties for runtime theme switching
+
+    expected:
+      skill_invoked: "ui-foundation-skills:theming-components"
+
+      files_created:
+        - pattern: "src/styles/*.css"
+          min_count: 1
+
+      report_contains:
+        - "CSS"
+        - "custom properties"
+
+    timeout: 180
+
+    setup:
+      - "mkdir -p /tmp/test-frontend-css-vars/src/styles"
+
+    teardown:
+      - "rm -rf /tmp/test-frontend-css-vars"

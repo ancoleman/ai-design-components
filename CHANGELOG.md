@@ -5,9 +5,86 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.7.0] - 2025-12-10
 
 ### Added
+
+**Claude Agent Manager Package (`claude_agent_manager`):**
+A complete Python library for programmatic Claude Code CLI orchestration:
+
+- **Core Module** (~1,200 lines):
+  - `AgentDetector` - 3-tier CLI binary detection with PATH expansion
+  - `EventEmitter` - Async event system with 16 event types
+  - `StreamJsonParser` - JSONL stream parsing with usage tracking
+  - `ProcessManager` - Async subprocess management with streaming I/O
+  - Fixed: Session ID parsing now correctly handles `type: "system"` + `subtype: "init"` format
+
+- **Session Module** (~1,200 lines):
+  - `SessionManager` - Session lifecycle with auto-resume via `--resume` flag
+  - `SessionWatcher` - Poll-based file monitoring for `~/.claude/projects/`
+  - `SessionStorage` - JSON persistence to `~/.claude_agent_manager/sessions/`
+  - Session state machine: IDLE → BUSY → (Processing) → IDLE/ERROR/CLOSED
+
+- **Orchestration Module** (~1,400 lines):
+  - `AgentCoordinator` - Multi-agent coordination with semaphore for concurrency
+  - `TaskQueue` - Priority queue (heapq) with CRITICAL/HIGH/NORMAL/LOW/BACKGROUND
+  - `CircuitBreaker` - State machine (CLOSED→OPEN→HALF_OPEN) for fault tolerance
+  - Pipeline execution with `{prev_result}` context substitution
+
+- **Skillchain Integration Module** (~600 lines):
+  - `SkillchainExecutor` - Programmatic skill chain execution
+  - `RegistryManager` - Load skills from `.claude-commands/skillchain-data/registries/`
+  - `ProgressManager` - Manage `.skillchain-progress.json` for resumable sessions
+  - Goal routing with blueprint detection and dependency sorting
+
+- **CLI** (`claude-agent` command):
+  - `claude-agent check` - Verify Claude CLI installation
+  - `claude-agent run` - Execute single prompts with streaming support
+  - `claude-agent sessions list/show/delete` - Session management
+  - `claude-agent watch` - Real-time session file monitoring
+  - `claude-agent skillchain run/route/status/resume/blueprints` - Skillchain commands
+
+- **Tests**: 122 tests across 3 test files (pytest + pytest-asyncio)
+- **Documentation**: 6 comprehensive docs in `pages/docs/agents/`:
+  - Architecture diagrams (Mermaid)
+  - Skillchain integration patterns
+  - Real-world usage examples
+  - CLI reference
+
+Package location: `packages/claude_agent_manager/`
+Install: `pip install -e "./packages/claude_agent_manager[skillchain]"`
+
+**Subagent Architecture (Specialized Skill Executors):**
+- 6 custom subagent definitions in `.claude-commands/agents/`:
+  - `skill-executor.md` - Base skill execution specialist with 4-step protocol
+  - `skillchain-validator.md` - Read-only validation specialist (permissionMode: plan)
+  - `skillchain-planner.md` - Dynamic skill chain planner
+  - `frontend-skill-executor.md` - UI skills specialist (no Bash tool, theme-aware)
+  - `backend-skill-executor.md` - API/database specialist (security-first)
+  - `infra-skill-executor.md` - Infrastructure/DevOps specialist (safety guardrails)
+- Tool restriction matrix: different agents get different tool access
+- Standardized SKILL COMPLETE report format across all executors
+- Install via `./install.sh agents install`
+
+**Resumable Skillchain Sessions:**
+- `progress-schema.yaml` - Complete JSON schema for `.skillchain-progress.json`
+- `resume.md` - New `/skillchain resume` command to continue interrupted sessions
+- Progress file I/O in `delegated.md` - Creates, updates, and manages progress files
+- Accumulated context merging across skill executions
+- 6 resume scenarios documented with test fixtures
+
+**Subagent Testing Framework:**
+- `evaluation/subagent_tester.py` - Python CLI test framework (825 lines)
+  - Claude Code CLI integration with JSONL parsing
+  - Test case loading from YAML files
+  - Result validation (skill_invoked, files_created, report_contains)
+  - Color-coded console output and JSON export
+- 22 test cases across 3 test files:
+  - `skill-executor/protocol.yaml` (7 tests)
+  - `skillchain-validator/basic.yaml` (7 tests)
+  - `frontend-skill-executor/theming.yaml` (8 tests)
+- `test-subagents.yml` - CI workflow for validation
+- Resume test scenarios in `evaluation/subagent-tests/resume/`
 
 **Delegated Execution Mode (Solves Context Rot):**
 - `delegated.md` - New orchestrator that spawns fresh-context sub-agents per skill

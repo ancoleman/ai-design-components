@@ -1,0 +1,533 @@
+# Skillchain Progress File Schema
+# Version: 1.0
+# Purpose: Enable resumable skillchain sessions across context boundaries
+#
+# Usage:
+# - Created by delegated.md orchestrator at skillchain start
+# - Updated after each skill completes
+# - Read by /skillchain resume to continue interrupted sessions
+# - Stored in project root as .skillchain-progress.json
+
+---
+schema:
+  version: "1.0"
+  format: "json"
+  filename: ".skillchain-progress.json"
+  location: "project_root"
+
+# =============================================================================
+# TOP-LEVEL SCHEMA
+# =============================================================================
+
+fields:
+  # Schema version for compatibility
+  version:
+    type: string
+    required: true
+    pattern: "^\\d+\\.\\d+$"
+    example: "1.0"
+    description: "Schema version for future compatibility"
+
+  # Unique session identifier
+  session_id:
+    type: string
+    required: true
+    format: "uuid"
+    example: "550e8400-e29b-41d4-a716-446655440000"
+    description: "UUID v4 for session identification and potential resume"
+
+  # User's original goal
+  goal:
+    type: string
+    required: true
+    max_length: 500
+    example: "Build a RAG pipeline with chat interface and observability"
+    description: "Original user goal from /skillchain invocation"
+
+  # Blueprint used (if any)
+  blueprint:
+    type: string
+    required: false
+    nullable: true
+    example: "rag-pipeline"
+    description: "Blueprint name if using predefined chain, null for dynamic"
+
+  # Maturity level selected
+  maturity:
+    type: string
+    required: true
+    enum: ["starter", "intermediate", "production"]
+    default: "intermediate"
+    description: "Determines completeness requirements for validation"
+
+  # Session timestamps
+  started_at:
+    type: string
+    required: true
+    format: "iso8601"
+    example: "2025-12-10T12:30:00Z"
+    description: "When skillchain started"
+
+  updated_at:
+    type: string
+    required: true
+    format: "iso8601"
+    example: "2025-12-10T12:45:00Z"
+    description: "Last modification timestamp"
+
+  # Skills array
+  skills:
+    type: array
+    required: true
+    items: "$ref:skill_entry"
+    description: "Ordered list of skills in the chain"
+
+  # Accumulated context from all skills
+  accumulated_context:
+    type: object
+    required: true
+    "$ref": "accumulated_context_schema"
+    description: "Context passed between skills"
+
+  # Validation results
+  validation:
+    type: object
+    required: false
+    nullable: true
+    "$ref": "validation_schema"
+    description: "Results from skillchain-validator"
+
+  # Execution metadata
+  execution:
+    type: object
+    required: true
+    "$ref": "execution_schema"
+    description: "Execution mode and statistics"
+
+# =============================================================================
+# SKILL ENTRY SCHEMA
+# =============================================================================
+
+skill_entry:
+  name:
+    type: string
+    required: true
+    example: "implementing-api-patterns"
+    description: "Skill name (from skill registry)"
+
+  invocation:
+    type: string
+    required: true
+    pattern: "^[a-z-]+:[a-z-]+$"
+    example: "backend-api-skills:implementing-api-patterns"
+    description: "Full invocation string (plugin:skill)"
+
+  status:
+    type: string
+    required: true
+    enum: ["pending", "in_progress", "complete", "failed", "skipped"]
+    description: "Current execution status"
+
+  executor:
+    type: string
+    required: false
+    enum: ["skill-executor", "frontend-skill-executor", "backend-skill-executor", "infra-skill-executor"]
+    default: "skill-executor"
+    description: "Which executor subagent handled this skill"
+
+  agent_id:
+    type: string
+    required: false
+    nullable: true
+    description: "Task tool agent ID for potential resume (if supported)"
+
+  started_at:
+    type: string
+    required: false
+    format: "iso8601"
+    description: "When skill execution started"
+
+  completed_at:
+    type: string
+    required: false
+    format: "iso8601"
+    description: "When skill execution completed"
+
+  error:
+    type: string
+    required: false
+    nullable: true
+    description: "Error message if status is 'failed'"
+
+  outputs:
+    type: object
+    required: false
+    nullable: true
+    properties:
+      files_created:
+        type: array
+        items:
+          type: string
+        description: "Absolute paths to files created"
+
+      decisions:
+        type: object
+        description: "Key decisions made during skill execution"
+        example:
+          framework: "FastAPI"
+          database: "PostgreSQL"
+          auth_method: "JWT"
+
+      exports:
+        type: object
+        description: "Values to pass to subsequent skills"
+        example:
+          api_base: "/api/v1"
+          auth_middleware_path: "src/api/middleware/auth.py"
+
+# =============================================================================
+# ACCUMULATED CONTEXT SCHEMA
+# =============================================================================
+
+accumulated_context_schema:
+  project_path:
+    type: string
+    required: true
+    description: "Absolute path to project root"
+
+  # Theme/styling context (from theming-components)
+  theme:
+    type: object
+    required: false
+    nullable: true
+    properties:
+      tokens_path:
+        type: string
+        description: "Path to design tokens file"
+      theme_context_path:
+        type: string
+        description: "Path to theme context/provider"
+      color_scheme:
+        type: string
+        description: "Primary color scheme used"
+
+  # API context (from implementing-api-patterns)
+  api:
+    type: object
+    required: false
+    nullable: true
+    properties:
+      base_url:
+        type: string
+        description: "API base URL prefix"
+      endpoints:
+        type: array
+        items:
+          type: string
+        description: "List of API endpoints created"
+      auth_method:
+        type: string
+        description: "Authentication method used"
+
+  # Database context (from using-*-databases)
+  database:
+    type: object
+    required: false
+    nullable: true
+    properties:
+      type:
+        type: string
+        description: "Database type (postgresql, mongodb, etc.)"
+      schema_path:
+        type: string
+        description: "Path to schema/migrations"
+      models:
+        type: array
+        items:
+          type: string
+        description: "List of models/tables created"
+
+  # Frontend context (from UI skills)
+  frontend:
+    type: object
+    required: false
+    nullable: true
+    properties:
+      framework:
+        type: string
+        description: "Frontend framework (React, Vue, etc.)"
+      components:
+        type: array
+        items:
+          type: string
+        description: "List of components created"
+      routing:
+        type: string
+        description: "Routing library used"
+
+  # AI context (from ai-data-engineering, model-serving)
+  ai:
+    type: object
+    required: false
+    nullable: true
+    properties:
+      vector_store:
+        type: string
+        description: "Vector database used"
+      embedding_model:
+        type: string
+        description: "Embedding model used"
+      llm_provider:
+        type: string
+        description: "LLM provider (anthropic, openai, etc.)"
+
+  # Infrastructure context (from observability, deployment)
+  infrastructure:
+    type: object
+    required: false
+    nullable: true
+    properties:
+      observability_stack:
+        type: string
+        description: "Monitoring/logging stack"
+      deployment_target:
+        type: string
+        description: "Deployment target (k8s, docker, serverless)"
+      ci_cd:
+        type: string
+        description: "CI/CD platform"
+
+  # Additional custom context
+  custom:
+    type: object
+    required: false
+    nullable: true
+    description: "Additional context not fitting above categories"
+
+# =============================================================================
+# VALIDATION SCHEMA
+# =============================================================================
+
+validation_schema:
+  last_run:
+    type: string
+    format: "iso8601"
+    description: "When validation was last run"
+
+  completeness:
+    type: integer
+    minimum: 0
+    maximum: 100
+    description: "Percentage of deliverables complete"
+
+  status:
+    type: string
+    enum: ["PASS", "PARTIAL", "FAIL"]
+    description: "Overall validation status"
+
+  deliverables:
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: ["verified", "missing", "partial", "skipped"]
+        details:
+          type: string
+
+  missing:
+    type: array
+    items:
+      type: string
+    description: "List of missing deliverables"
+
+  warnings:
+    type: array
+    items:
+      type: string
+    description: "Non-critical issues found"
+
+# =============================================================================
+# EXECUTION SCHEMA
+# =============================================================================
+
+execution_schema:
+  mode:
+    type: string
+    enum: ["delegated", "standard"]
+    description: "Execution mode used"
+
+  total_skills:
+    type: integer
+    minimum: 1
+    description: "Total number of skills in chain"
+
+  completed_count:
+    type: integer
+    minimum: 0
+    description: "Number of skills completed"
+
+  failed_count:
+    type: integer
+    minimum: 0
+    description: "Number of skills that failed"
+
+  skipped_count:
+    type: integer
+    minimum: 0
+    description: "Number of skills skipped"
+
+  current_index:
+    type: integer
+    minimum: 0
+    description: "Index of current/next skill to execute"
+
+  activation_rate:
+    type: number
+    minimum: 0
+    maximum: 100
+    description: "Percentage of skills that actually invoked"
+
+  parallel_batches:
+    type: array
+    required: false
+    items:
+      type: array
+      items:
+        type: string
+    description: "Skills grouped for parallel execution"
+
+# =============================================================================
+# EXAMPLE DOCUMENT
+# =============================================================================
+
+example:
+  version: "1.0"
+  session_id: "550e8400-e29b-41d4-a716-446655440000"
+  goal: "Build a RAG pipeline with chat interface"
+  blueprint: "rag-pipeline"
+  maturity: "intermediate"
+  started_at: "2025-12-10T12:30:00Z"
+  updated_at: "2025-12-10T12:45:00Z"
+
+  skills:
+    - name: "theming-components"
+      invocation: "ui-foundation-skills:theming-components"
+      status: "complete"
+      executor: "frontend-skill-executor"
+      started_at: "2025-12-10T12:30:00Z"
+      completed_at: "2025-12-10T12:32:00Z"
+      outputs:
+        files_created:
+          - "/project/src/styles/tokens.css"
+          - "/project/src/contexts/ThemeContext.tsx"
+        decisions:
+          color_scheme: "blue-gray"
+          dark_mode: true
+        exports:
+          tokens_path: "src/styles/tokens.css"
+          theme_context_path: "src/contexts/ThemeContext.tsx"
+
+    - name: "implementing-api-patterns"
+      invocation: "backend-api-skills:implementing-api-patterns"
+      status: "complete"
+      executor: "backend-skill-executor"
+      started_at: "2025-12-10T12:32:00Z"
+      completed_at: "2025-12-10T12:38:00Z"
+      outputs:
+        files_created:
+          - "/project/src/api/routes.py"
+          - "/project/src/api/schemas.py"
+        decisions:
+          framework: "FastAPI"
+          auth_method: "JWT"
+        exports:
+          api_base: "/api/v1"
+          auth_middleware: "src/api/middleware/auth.py"
+
+    - name: "using-vector-databases"
+      invocation: "backend-data-skills:using-vector-databases"
+      status: "in_progress"
+      executor: "backend-skill-executor"
+      agent_id: "task-abc123"
+      started_at: "2025-12-10T12:38:00Z"
+
+    - name: "building-ai-chat"
+      invocation: "ui-interaction-skills:building-ai-chat"
+      status: "pending"
+      executor: "frontend-skill-executor"
+
+  accumulated_context:
+    project_path: "/Users/jane/projects/rag-app"
+    theme:
+      tokens_path: "src/styles/tokens.css"
+      theme_context_path: "src/contexts/ThemeContext.tsx"
+      color_scheme: "blue-gray"
+    api:
+      base_url: "/api/v1"
+      endpoints:
+        - "POST /api/v1/auth/login"
+        - "POST /api/v1/chat/message"
+        - "GET /api/v1/chat/history"
+      auth_method: "JWT"
+
+  validation: null
+
+  execution:
+    mode: "delegated"
+    total_skills: 4
+    completed_count: 2
+    failed_count: 0
+    skipped_count: 0
+    current_index: 2
+    activation_rate: 100.0
+    parallel_batches: []
+
+# =============================================================================
+# OPERATIONS
+# =============================================================================
+
+operations:
+  create:
+    description: "Create new progress file at skillchain start"
+    location: "delegated.md Step 2"
+    trigger: "After user confirms execution plan"
+
+  update_skill_start:
+    description: "Mark skill as in_progress"
+    location: "delegated.md Step 4.2"
+    trigger: "Before spawning skill-executor"
+
+  update_skill_complete:
+    description: "Update skill outputs and mark complete"
+    location: "delegated.md Step 4.3"
+    trigger: "After skill-executor returns"
+
+  update_context:
+    description: "Merge skill outputs into accumulated_context"
+    location: "delegated.md Step 4.3"
+    trigger: "After processing skill outputs"
+
+  update_validation:
+    description: "Store validation results"
+    location: "delegated.md Step 6"
+    trigger: "After skillchain-validator returns"
+
+  read_for_resume:
+    description: "Load progress file to continue session"
+    location: "resume.md"
+    trigger: "/skillchain resume command"
+
+# =============================================================================
+# COMPATIBILITY NOTES
+# =============================================================================
+
+notes:
+  - "version 1.0 is initial schema - future versions must maintain backward compatibility"
+  - "agent_id field may not always be useful due to Claude Code limitation (GitHub #11712)"
+  - "accumulated_context should remain reasonably small (<50KB) to fit in prompts"
+  - "If context grows too large, summarize older skill outputs"
+  - "Always update updated_at timestamp on any modification"
