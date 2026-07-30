@@ -103,7 +103,7 @@ aws ec2 modify-volume \
 
 **DynamoDB On-Demand vs. Provisioned:**
 ```
-On-Demand: $1.25/million writes, $0.25/million reads
+On-Demand: $0.625/million writes, $0.125/million reads
 Provisioned: $0.00065/WCU/hour, $0.00013/RCU/hour
 
 Break-even: ~350 WCU or 1,750 RCU continuous usage

@@ -510,7 +510,7 @@ def lambda_handler(event, context):
 
 | Mode | Use Case | Cost |
 |------|----------|------|
-| **On-Demand** | Unpredictable traffic, dev/test | $1.25/million writes, $0.25/million reads |
+| **On-Demand** | Unpredictable traffic, dev/test | $0.625/million writes, $0.125/million reads |
 | **Provisioned** | Predictable traffic | $0.47/WCU/month, $0.09/RCU/month |
 | **Reserved** | Steady workloads (1-3 year) | Save up to 77% |
 
