@@ -279,8 +279,8 @@ Fully managed NoSQL database. Single-digit millisecond latency. Infinite horizon
 - Automatic scaling
 
 **Pricing (us-east-1):**
-- Write: $1.25 per million write request units
-- Read: $0.25 per million read request units
+- Write: $0.625 per million write request units
+- Read: $0.125 per million read request units
 - Storage: $0.25/GB-month
 
 **Provisioned:**
