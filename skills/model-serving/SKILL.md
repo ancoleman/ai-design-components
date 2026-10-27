@@ -300,6 +300,14 @@ services:
       - name: prometheus
 ```
 
+**Or an AI gateway:** [Bifrost](https://github.com/maximhq/bifrost) (open source, OpenAI-compatible) registers vLLM as a provider and adds virtual keys with rate limits and budgets, fallbacks, and Prometheus metrics at `/metrics`. Clients call `/v1/chat/completions` with `"model": "vllm/meta-llama/Llama-3.1-8B-Instruct"`:
+```json
+{ "providers": { "vllm": { "keys": [{
+  "name": "vllm-llama-8b", "value": "", "models": ["meta-llama/Llama-3.1-8B-Instruct"], "weight": 1.0,
+  "vllm_key_config": { "url": "http://vllm-llama-8b:8000", "model_name": "meta-llama/Llama-3.1-8B-Instruct" }
+}]}}}
+```
+
 ### Monitoring Metrics
 
 **Essential LLM metrics:**

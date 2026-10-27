@@ -419,7 +419,7 @@ python -c "from vllm import ModelRegistry; print(ModelRegistry.get_supported_arc
 3. **Enable monitoring** with Prometheus metrics
 4. **Add health checks** in load balancer
 5. **Use quantization** (AWQ) for GPU memory constrained deployments
-6. **Deploy behind API gateway** (Kong, Nginx) for auth and rate limiting
+6. **Deploy behind API gateway** (Kong, Nginx, or an AI gateway such as [Bifrost](https://github.com/maximhq/bifrost)) for auth and rate limiting
 7. **Monitor queue depth** - scale if consistently >10
 
 ## Resources
